@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.0</TargetFrameworks>
@@ -22,6 +22,10 @@
     <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="build*.*" PackagePath="%(Filename)/$(PackageId)%(Extension)" />
+  </ItemGroup>
+
   <Choose>
     <When Condition=" '$(UseSpanParsing)' == 'true' ">
       <ItemGroup>
@@ -35,6 +39,14 @@
       </ItemGroup>
     </Otherwise>
   </Choose>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true"
+                      SetTargetFramework="TargetFramework=netstandard2.0"/>
+  </ItemGroup>
 
   <ItemGroup>
     <Using Remove="System.Net.Http" />
