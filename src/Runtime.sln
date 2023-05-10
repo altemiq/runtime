@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{ADA6846F-9E58-47B8-B588-99EAD1F8D40E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B6EEB70-F0EC-418F-92E4-67849BFBDD46}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.globalconfig = .globalconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		nuget.config = nuget.config
+		stylecop.json = stylecop.json
+		testenvironments.json = testenvironments.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\app.config = Tests\app.config
+		Tests\coverlet.runsettings = Tests\coverlet.runsettings
+		Tests\Directory.Build.props = Tests\Directory.Build.props
+		Tests\Directory.Build.targets = Tests\Directory.Build.targets
+		Tests\Directory.Packages.props = Tests\Directory.Packages.props
+		Tests\xunit.runner.json = Tests\xunit.runner.json
+		Tests\xunit.runner.net.json = Tests\xunit.runner.net.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "Tests\Core.Tests\Core.Tests.csproj", "{13D5CD7C-9515-4F79-8ACD-A2069578ED38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADA6846F-9E58-47B8-B588-99EAD1F8D40E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADA6846F-9E58-47B8-B588-99EAD1F8D40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADA6846F-9E58-47B8-B588-99EAD1F8D40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADA6846F-9E58-47B8-B588-99EAD1F8D40E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13D5CD7C-9515-4F79-8ACD-A2069578ED38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13D5CD7C-9515-4F79-8ACD-A2069578ED38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13D5CD7C-9515-4F79-8ACD-A2069578ED38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13D5CD7C-9515-4F79-8ACD-A2069578ED38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{13D5CD7C-9515-4F79-8ACD-A2069578ED38} = {02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EDE5C0E4-46E8-4D62-9B9D-9A718FAF2208}
+	EndGlobalSection
+EndGlobal

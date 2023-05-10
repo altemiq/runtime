@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net7.0;net6.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="**\List.*.cs" DependentUpon="List.cs" />
+    <Compile Update="**\MemoryExtensions.*.cs" DependentUpon="MemoryExtensions.cs" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) ">
+    <PackageReference Include="System.Diagnostics.Contracts" />
+    <PackageReference Include="System.ValueTuple" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) ">
+    <PackageReference Include="System.Reflection.TypeExtensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">
+    <PackageReference Include="System.ValueTuple" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition=" '$(UseSpanParsing)' == 'true' ">
+      <ItemGroup>
+        <Compile Update="**\*.Span.cs" DependentUpon="$([System.String]::Copy('%(Filename)').Replace('.Span','')).cs" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Compile Remove="**\*Span*.cs" />
+        <Compile Remove="**\MemoryExtensions*.cs" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <Using Remove="System.Net.Http" />
+    <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+  </ItemGroup>
+
+</Project>

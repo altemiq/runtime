@@ -1,0 +1,36 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="System.Diagnostics.Contracts" Version="4.3.0" />
+    <PackageVersion Include="System.Reflection.TypeExtensions" Version="4.1.0" />
+    <PackageVersion Include="System.ValueTuple" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Source Generators">
+    <GlobalPackageReference Include="PolySharp" Version="1.13.1" />
+  </ItemGroup>
+
+  <ItemGroup Label="Analyzers">
+    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.45" />
+    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.3.0" />
+    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="9.0.0.68202" />
+    <GlobalPackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.435" />
+  </ItemGroup>
+
+  <ItemGroup Label="Build">
+    <GlobalPackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" />
+    <GlobalPackageReference Include="DotNet.ReproducibleBuilds.Isolated" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup Label="Reference Assemblies" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" VersionOverride="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

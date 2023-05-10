@@ -1,0 +1,39 @@
+<Project>
+
+  <PropertyGroup>
+    <Company>Altemiq</Company>
+    <RootNamespace>$(Company).$(MSBuildProjectName)</RootNamespace>
+    <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
+    <RootNamespace Condition="$(RootNamespace.Contains('.Tests'))">$(RootNamespace.Replace('.Tests', ''))</RootNamespace>
+    <AssemblyName>$(Company).$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RunSettingsFilePath>$([MSBuild]::GetPathOfFileAbove(coverlet.runsettings))</RunSettingsFilePath>
+    <IsNetOnCore>false</IsNetOnCore>
+    <IsNetOnCore Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' And '$(MSBuildRuntimeType)' == 'Core' ">true</IsNetOnCore>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$([MSBuild]::GetPathOfFileAbove(.editorconfig))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$([MSBuild]::GetPathOfFileAbove(xunit.runner.net.json))" CopyToOutputDirectory="PreserveNewest" Condition="$(IsNetOnCore)" Link="xunit.runner.json" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove(xunit.runner.json))" CopyToOutputDirectory="PreserveNewest" Condition="!$(IsNetOnCore)" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove(app.config))" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="FluentAssertions;Xunit" />
+  </ItemGroup>
+
+</Project>

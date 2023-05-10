@@ -1,0 +1,55 @@
+<Project>
+
+  <PropertyGroup>
+    <Company>Altemiq</Company>
+    <RootNamespace>$(Company).$(MSBuildProjectName)</RootNamespace>
+    <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
+    <AssemblyName>$(Company).$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <VersionPrefix Condition="'$(VersionPrefix)' == ''">1.0</VersionPrefix>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$([MSBuild]::GetPathOfFileAbove(Core.snk))</AssemblyOriginatorKeyFile>
+    <Authors>Ross King</Authors>
+    <Description>A collection of base classes.</Description>
+    <PackageProjectUrl>https://github.com/altemiq/runtime</PackageProjectUrl>
+
+    <PackageTags>Core</PackageTags>
+    <NeutralLanguage>en-AU</NeutralLanguage>
+    <Copyright>Copyright © $(Company) Pty Ltd 2023</Copyright>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PublicKey>002400000480000094000000060200000024000052534131000400000100010095e864d575cc14c8873fc39f8497976caa11c567b8fb62208efc332418833e7902fd73655b8aa51611ae0b00c3e58ae0a9147978f62de10cc1620cc3e48bc6c12fd361fabb9dc1f4e72d4837e0d1a99aab45a9fb14332f65d427ba361f225ee672bb6857ace94005bb338034eb4c2c351b0e50f858f98b14148a2af99a0d7acd</PublicKey>
+    <ProduceReferenceAssembly Condition=" '$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))' == '.NETStandard' or '$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))' == '.NETFramework' ">true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Analyzers">
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <AnalysisMode>Recommended</AnalysisMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$([MSBuild]::GetPathOfFileAbove(stylecop.json))" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove(.editorconfig))" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove(.globalconfig))" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);SA1642;SA1643</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <UseSpanParsing>false</UseSpanParsing>
+    <UseSpanParsing Condition=" ('$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))' == '.NETStandard' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion($(TargetFramework))), 2.1))) or ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.1'))) ">true</UseSpanParsing>
+    <DefineConstants Condition=" '$(UseSpanParsing)' == 'true' ">$(DefineConstants);USE_SPAN_PARSING</DefineConstants>
+
+    <UseGenericMath>false</UseGenericMath>
+    <UseGenericMath Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">true</UseGenericMath>
+    <DefineConstants Condition=" '$(UseGenericMath)' == 'true' ">$(DefineConstants);USE_GENERIC_MATH</DefineConstants>
+  </PropertyGroup>
+
+</Project>

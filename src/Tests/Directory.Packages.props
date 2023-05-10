@@ -1,0 +1,33 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageVersion Include="FluentAssertions" Version="6.10.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageVersion Include="Moq" Version="4.18.4" />
+    <PackageVersion Include="System.Text.Json" Version="7.0.2" />
+    <PackageVersion Include="xunit" Version="2.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="xunit" />
+  </ItemGroup>
+
+  <ItemGroup Label="Analyzers">
+    <GlobalPackageReference Include="coverlet.collector" Version="3.2.0" />
+    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.17.2" />
+    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+  </ItemGroup>
+
+  <ItemGroup Label="Reference Assemblies" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" VersionOverride="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
