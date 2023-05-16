@@ -84,6 +84,17 @@ public static class MemoryExtensions
     public static T GetNextValue<T>(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, Parse<T> parser) => parser(span.GetNextOrThrow(ref enumerator));
 
     /// <summary>
+    /// Gets the next value from the span.
+    /// </summary>
+    /// <typeparam name="T">The type of value to get.</typeparam>
+    /// <param name="span">The span.</param>
+    /// <param name="enumerator">The span enumerator.</param>
+    /// <param name="parser">The parser for <typeparamref name="T"/>.</param>
+    /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
+    /// <returns>The result from <paramref name="parser"/> for the next value from <paramref name="span"/>.</returns>
+    public static T GetNextValue<T>(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, Parse<char, T> parser, IFormatProvider? provider) => parser(span.GetNextOrThrow(ref enumerator), provider);
+
+    /// <summary>
     /// Gets the next value from the span as the specified enum.
     /// </summary>
     /// <typeparam name="T">The type of enum to get.</typeparam>
