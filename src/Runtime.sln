@@ -30,7 +30,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02FBFB2A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "Tests\Core.Tests\Core.Tests.csproj", "{13D5CD7C-9515-4F79-8ACD-A2069578ED38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.OneOf.CodeGeneration", "Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj", "{0BAE6FF3-3EC4-47A9-BDA7-BF4187BF51D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.OneOf.CodeGeneration", "Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj", "{0BAE6FF3-3EC4-47A9-BDA7-BF4187BF51D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{4C61AF75-C30B-490B-AA21-C27F3DDA543F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{BF42944F-DC2F-4E52-822F-F85C286A5D86}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
+		..\.github\workflows\docs.yml = ..\.github\workflows\docs.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +64,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{13D5CD7C-9515-4F79-8ACD-A2069578ED38} = {02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}
+		{BF42944F-DC2F-4E52-822F-F85C286A5D86} = {4C61AF75-C30B-490B-AA21-C27F3DDA543F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDE5C0E4-46E8-4D62-9B9D-9A718FAF2208}
