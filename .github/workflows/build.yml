@@ -99,10 +99,21 @@ jobs:
       working-directory: ${{ github.workspace }}/src
       run: dotnet build --no-restore
 
+    - name: Get Suffix
+      id: suffix
+      run: |
+        suffix=alpha
+        if [ ${{ github.event_name }} == push ];
+        then
+          suffix=beta;
+        fi
+
+        echo "value=$suffix" >> $GITHUB_OUTPUT
+
     # Pack
     - name: Pack with dotnet
       working-directory: ${{ github.workspace }}/src
-      run: dotnet pack --no-build --output ${{ github.workspace }}/nupkg -property:ComputeSemanticVersion=true -property:SemanticVersionOutputPath=${{ github.workspace }}/versions
+      run: dotnet pack --no-build --output ${{ github.workspace }}/nupkg -property:ComputeSemanticVersion=true -property:SemanticVersionOutputPath=${{ github.workspace }}/versions --version-suffix ${{ steps.suffix.outputs.value }}
 
     - name: Upload NuPkg
       uses: actions/upload-artifact@v3
