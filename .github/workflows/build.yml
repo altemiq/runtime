@@ -56,7 +56,7 @@ jobs:
     - name: Test Results
       run: |
         # remove BOM from summary
-        sed '1s/^\xEF\xBB\xBF//' < '${{ github.workspace }}/CoverageReports/Summary.md' > Summary.md
+        sed '1s/^\xEF\xBB\xBF//' < '${{ github.workspace }}/coverage/reports/Summary.md' > Summary.md
         echo 'This run completed at `${{ steps.date_time.outputs.value }}`' >> $GITHUB_STEP_SUMMARY
         echo '' >> $GITHUB_STEP_SUMMARY # this is a blank line
         cat Summary.md >> $GITHUB_STEP_SUMMARY
@@ -90,15 +90,19 @@ jobs:
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Restore with dotnet
+      working-directory: ${{ github.workspace }}/src
+      run: dotnet restore
         
     - name: Build with dotnet
       working-directory: ${{ github.workspace }}/src
-      run: dotnet build
+      run: dotnet build --no-restore
 
     # Pack
     - name: Pack with dotnet
       working-directory: ${{ github.workspace }}/src
-      run: dotnet pack --output ${{ github.workspace }}/nupkg -property:ComputeSemanticVersion=true -property:SemanticVersionOutputPath=${{ github.workspace }}/versions
+      run: dotnet pack --no-build --output ${{ github.workspace }}/nupkg -property:ComputeSemanticVersion=true -property:SemanticVersionOutputPath=${{ github.workspace }}/versions
 
     - name: Upload NuPkg
       uses: actions/upload-artifact@v3
