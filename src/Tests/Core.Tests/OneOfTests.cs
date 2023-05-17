@@ -17,7 +17,7 @@ public class OneOfTests
     [Fact]
     public void AreEqual()
     {
-        var a = OneOf.From<int>(1);
+        var a = OneOf.From(1);
         var b = a;
         _ = a.Should().Be(b);
     }

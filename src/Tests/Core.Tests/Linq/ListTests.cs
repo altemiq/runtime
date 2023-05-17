@@ -8,6 +8,11 @@ namespace Altemiq.Linq;
 
 public partial class ListTests
 {
+    public static IEnumerable<object?[]> CreateNulls(int count)
+    {
+        yield return Enumerable.Range(0, count).Select<int, object?>(_ => null).ToArray();
+    }
+
     public static IEnumerable<object[]> GetLists()
     {
         foreach (var first in CreateListsCore(1, 2, 3, 4, 5))

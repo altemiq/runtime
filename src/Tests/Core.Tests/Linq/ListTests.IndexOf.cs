@@ -5,11 +5,6 @@
 // -----------------------------------------------------------------------
 
 namespace Altemiq.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public partial class ListTests
 {
@@ -17,7 +12,19 @@ public partial class ListTests
     [MemberData(nameof(GetLists))]
     public void IndexOf(object first, object second)
     {
-        TestListList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
-        TestReadOnlyListReadOnlyList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
+        _ = TestListList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
+        _ = TestReadOnlyListReadOnlyList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
     }
+
+    [Theory]
+    [MemberData(nameof(CreateNulls), 2)]
+    public void IndexOfWithNull(object first, object second)
+    {
+        ((IList<int>)first).IndexOf((IList<int>)second).Should().Be(-1);
+        ((IReadOnlyList<int>)first).IndexOf((IReadOnlyList<int>)second).Should().Be(-1);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetInt32Lists))]
+    public void IndexOfValue(IReadOnlyList<int> list) => list.IndexOf(10, 1).Should().Be(2);
 }
