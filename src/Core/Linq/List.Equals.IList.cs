@@ -36,7 +36,7 @@ public static partial class List
 
         for (int i = firstIndex, j = secondIndex; i < firstIndex + count && j < secondIndex + count; i++, j++)
         {
-            if (first[i].Equals(second[j]))
+            if (!first[i].Equals(second[j]))
             {
                 return false;
             }
@@ -70,7 +70,7 @@ public static partial class List
 
         for (int i = firstIndex, j = secondIndex; i < firstIndex + count && j < secondIndex + count; i++, j++)
         {
-            if (first[i].Equals(second[j]))
+            if (!first[i].Equals(second[j]))
             {
                 return false;
             }
