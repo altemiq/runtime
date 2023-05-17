@@ -25,7 +25,7 @@ public partial class SourceGenerator
                 Token(SyntaxKind.PublicKeyword),
                 Token(SyntaxKind.StaticKeyword)))
             .WithMembers(List(GetMemberDeclarations(count)
-                .Append(GetNoneStructDeclaration(count))))
+            .Append(GetNoneStructDeclaration(count))))
             .WithLeadingTrivia(
             Trivia(
                 DocumentationCommentTrivia(
@@ -129,27 +129,27 @@ public partial class SourceGenerator
                                 TypeArgumentList(
                                     SeparatedList<TypeSyntax>(Join(GetTypes(count))))),
                             Identifier("From"))
-                        .WithModifiers(
+                            .WithModifiers(
                             TokenList(
                                 Token(SyntaxKind.PublicKeyword),
                                 Token(SyntaxKind.StaticKeyword)))
-                        .WithTypeParameterList(
+                            .WithTypeParameterList(
                             TypeParameterList(
                                 SeparatedList<TypeParameterSyntax>(
                                     Join(GetTypeParameterNames(count).Select(TypeParameter)))))
-                        .WithParameterList(
+                            .WithParameterList(
                             ParameterList(
                                 SingletonSeparatedList(
                                     Parameter(
                                         Identifier(InputVariableName))
                                     .WithType(
                                         IdentifierName(GetTypeParameterName(i))))))
-                        .WithExpressionBody(
+                            .WithExpressionBody(
                             ArrowExpressionClause(
                                 IdentifierName(InputVariableName)))
-                        .WithSemicolonToken(
+                            .WithSemicolonToken(
                             Token(SyntaxKind.SemicolonToken))
-                        .WithLeadingTrivia(
+                            .WithLeadingTrivia(
                             Trivia(
                                 DocumentationCommentTrivia(
                                     SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -158,7 +158,7 @@ public partial class SourceGenerator
                         static IEnumerable<XmlNodeSyntax> GetDocumentation(int index, int count)
                         {
                             yield return XmlText()
-                            .WithTextTokens(
+                                .WithTextTokens(
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
@@ -231,22 +231,23 @@ public partial class SourceGenerator
                                             Space,
                                             Space,
                                             TriviaList()))))
-                            .WithStartTag(
+                                .WithStartTag(
                                 XmlElementStartTag(
                                     XmlName(
                                         Identifier(Keywords.Summary))))
-                            .WithEndTag(
+                                .WithEndTag(
                                 XmlElementEndTag(
                                     XmlName(
                                         Identifier(Keywords.Summary))));
                             yield return XmlText()
-                            .WithTextTokens(
+                                .WithTextTokens(
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
                                         NewLine,
                                         NewLine,
                                         TriviaList())));
+
                             for (var i = 0; i < count; i++)
                             {
                                 var example = count == 1
@@ -254,7 +255,7 @@ public partial class SourceGenerator
                                     : $"The {(i + 1).ToOrdinalWords()} type parameter.";
 
                                 yield return XmlText()
-                                .WithTextTokens(
+                                    .WithTextTokens(
                                     TokenList(
                                         XmlTextLiteral(
                                             TriviaList(
@@ -272,7 +273,7 @@ public partial class SourceGenerator
                                                     example,
                                                     example,
                                                     TriviaList())))))
-                                .WithStartTag(
+                                    .WithStartTag(
                                     XmlElementStartTag(
                                         XmlName(
                                             Identifier(Keywords.TypeParam)))
@@ -284,12 +285,12 @@ public partial class SourceGenerator
                                                 Token(SyntaxKind.DoubleQuoteToken),
                                                 IdentifierName(GetTypeParameterName(i)),
                                                 Token(SyntaxKind.DoubleQuoteToken)))))
-                                .WithEndTag(
+                                    .WithEndTag(
                                     XmlElementEndTag(
                                         XmlName(
                                             Identifier(Keywords.TypeParam))));
                                 yield return XmlText()
-                                .WithTextTokens(
+                                    .WithTextTokens(
                                     TokenList(
                                         XmlTextNewLine(
                                             TriviaList(),
@@ -299,7 +300,7 @@ public partial class SourceGenerator
                             }
 
                             yield return XmlText()
-                            .WithTextTokens(
+                                .WithTextTokens(
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
@@ -317,7 +318,7 @@ public partial class SourceGenerator
                                                 "The value.",
                                                 "The value.",
                                                 TriviaList())))))
-                            .WithStartTag(
+                                .WithStartTag(
                                 XmlElementStartTag(
                                     XmlName(
                                         Identifier(
@@ -334,7 +335,7 @@ public partial class SourceGenerator
                                             Token(SyntaxKind.DoubleQuoteToken),
                                             IdentifierName(InputVariableName),
                                             Token(SyntaxKind.DoubleQuoteToken)))))
-                            .WithEndTag(
+                                .WithEndTag(
                                 XmlElementEndTag(
                                     XmlName(
                                         Identifier(
@@ -344,7 +345,7 @@ public partial class SourceGenerator
                                             Keywords.Param,
                                             TriviaList()))));
                             yield return XmlText()
-                            .WithTextTokens(
+                                .WithTextTokens(
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
@@ -385,16 +386,16 @@ public partial class SourceGenerator
                                             Period,
                                             Period,
                                             TriviaList()))))
-                            .WithStartTag(
+                                .WithStartTag(
                                 XmlElementStartTag(
                                     XmlName(
                                         Identifier(Keywords.Returns))))
-                            .WithEndTag(
+                                .WithEndTag(
                                 XmlElementEndTag(
                                     XmlName(
                                         Identifier(Keywords.Returns))));
                             yield return XmlText()
-                            .WithTextTokens(
+                                .WithTextTokens(
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
@@ -413,9 +414,9 @@ public partial class SourceGenerator
 
             return StructDeclaration(None)
                 .WithModifiers(
-                    TokenList(
-                        Token(SyntaxKind.PublicKeyword),
-                        Token(SyntaxKind.ReadOnlyKeyword)))
+                TokenList(
+                    Token(SyntaxKind.PublicKeyword),
+                    Token(SyntaxKind.ReadOnlyKeyword)))
                 .WithMembers(
                 List(GetMemberDeclarations(count)))
                 .WithLeadingTrivia(
@@ -494,21 +495,21 @@ public partial class SourceGenerator
                                 SeparatedList<TypeSyntax>(
                                     Join(fullTypeParameterNames.Select(IdentifierName))))),
                         Identifier("Of"))
-                    .WithModifiers(
+                        .WithModifiers(
                         TokenList(
                             Token(SyntaxKind.PublicKeyword),
                             Token(SyntaxKind.StaticKeyword)))
-                    .WithTypeParameterList(
+                        .WithTypeParameterList(
                         TypeParameterList(
                             SeparatedList<TypeParameterSyntax>(
                                 Join(typeParameterNames.Select(TypeParameter)))))
-                    .WithExpressionBody(
+                        .WithExpressionBody(
                         ArrowExpressionClause(
                             DefaultExpression(
                                 IdentifierName(None))))
-                    .WithSemicolonToken(
+                        .WithSemicolonToken(
                         Token(SyntaxKind.SemicolonToken))
-                    .WithLeadingTrivia(
+                        .WithLeadingTrivia(
                         Trivia(
                             DocumentationCommentTrivia(
                                 SyntaxKind.SingleLineDocumentationCommentTrivia,
@@ -520,7 +521,7 @@ public partial class SourceGenerator
                         var fullTypeParameterNames = typeParameterNames.Append(None);
 
                         yield return XmlText()
-                        .WithTextTokens(
+                            .WithTextTokens(
                             TokenList(
                                 XmlTextLiteral(
                                     TriviaList(
@@ -587,16 +588,16 @@ public partial class SourceGenerator
                                         Space,
                                         Space,
                                         TriviaList()))))
-                        .WithStartTag(
+                            .WithStartTag(
                             XmlElementStartTag(
                                 XmlName(
                                     Identifier(Keywords.Summary))))
-                        .WithEndTag(
+                            .WithEndTag(
                             XmlElementEndTag(
                                 XmlName(
                                     Identifier(Keywords.Summary))));
                         yield return XmlText()
-                        .WithTextTokens(
+                            .WithTextTokens(
                             TokenList(
                                 XmlTextNewLine(
                                     TriviaList(),
@@ -610,7 +611,7 @@ public partial class SourceGenerator
                                 : $"The {(i + 1).ToOrdinalWords()} type in the ";
 
                             yield return XmlText()
-                            .WithTextTokens(
+                                .WithTextTokens(
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
@@ -646,7 +647,7 @@ public partial class SourceGenerator
                                             Period,
                                             Period,
                                             TriviaList()))))
-                            .WithStartTag(
+                                .WithStartTag(
                                 XmlElementStartTag(
                                     XmlName(
                                         Identifier(Keywords.TypeParam)))
@@ -658,12 +659,12 @@ public partial class SourceGenerator
                                             Token(SyntaxKind.DoubleQuoteToken),
                                             IdentifierName(GetTypeParameterName(i)),
                                             Token(SyntaxKind.DoubleQuoteToken)))))
-                            .WithEndTag(
+                                .WithEndTag(
                                 XmlElementEndTag(
                                     XmlName(
                                         Identifier(Keywords.TypeParam))));
                             yield return XmlText()
-                            .WithTextTokens(
+                                .WithTextTokens(
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
@@ -709,16 +710,16 @@ public partial class SourceGenerator
                                         Period,
                                         Period,
                                         TriviaList()))))
-                        .WithStartTag(
+                            .WithStartTag(
                             XmlElementStartTag(
                                 XmlName(
                                     Identifier(Keywords.Returns))))
-                        .WithEndTag(
+                            .WithEndTag(
                             XmlElementEndTag(
                                 XmlName(
                                     Identifier(Keywords.Returns))));
                         yield return XmlText()
-                        .WithTextTokens(
+                            .WithTextTokens(
                             TokenList(
                                 XmlTextNewLine(
                                     TriviaList(),
