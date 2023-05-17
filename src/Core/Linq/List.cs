@@ -208,7 +208,7 @@ public static partial class List
         }
         else
         {
-            QuickSort(values, comparison);
+            QuickSort(values, 0, values.Count, comparison);
         }
     }
 
@@ -388,9 +388,22 @@ public static partial class List
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
         System.Diagnostics.Contracts.Contract.EndContractBlock();
-        if (values.Count > 1)
+        if (values.Count <= 1)
         {
-            values.QuickSort(0, values.Count);
+            return;
+        }
+
+        if (values is T[] @array)
+        {
+            Array.Sort(array);
+        }
+        else if (values is List<T> list)
+        {
+            list.Sort();
+        }
+        else
+        {
+            QuickSort(values, 0, values.Count);
         }
     }
 
@@ -513,7 +526,6 @@ public static partial class List
         }
     }
 
-#if NET
     private readonly struct ComparisonWrapper<T>
         : IComparer<T>
     {
@@ -521,17 +533,12 @@ public static partial class List
 
         public ComparisonWrapper(Comparison<T> comparison) => this.comparison = comparison;
 
-        public int Compare(T? x, T? y) => this.comparison(x, y);
+        public int Compare(T? x, T? y) => (x, y) switch
+        {
+            (null, null) => 0,
+            (null, not null) => 1,
+            (not null, null) => -1,
+            _ => this.comparison(x, y),
+        };
     }
-#else
-    private readonly struct ComparisonWrapper<T>
-        : IComparer<T>
-    {
-        private readonly Comparison<T> comparison;
-
-        public ComparisonWrapper(Comparison<T> comparison) => this.comparison = comparison;
-
-        public int Compare(T x, T y) => this.comparison(x, y);
-    }
-#endif
 }
