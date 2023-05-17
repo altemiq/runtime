@@ -32,6 +32,8 @@ public partial class SourceGenerator : ISourceGenerator
     private const string TrippleSlash = "///";
     private const string Period = ".";
     private const string Space = " ";
+    private const string NewLine = @"
+";
 
     /// <inheritdoc/>
     public void Execute(GeneratorExecutionContext context)

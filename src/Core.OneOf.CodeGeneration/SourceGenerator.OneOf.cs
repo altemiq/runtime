@@ -48,8 +48,8 @@ public partial class SourceGenerator
                                     TokenList(
                                         XmlTextNewLine(
                                             TriviaList(),
-                                            Environment.NewLine,
-                                            Environment.NewLine,
+                                            NewLine,
+                                            NewLine,
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
@@ -73,8 +73,8 @@ public partial class SourceGenerator
                                             TriviaList()),
                                         XmlTextNewLine(
                                             TriviaList(),
-                                            Environment.NewLine,
-                                            Environment.NewLine,
+                                            NewLine,
+                                            NewLine,
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
@@ -95,8 +95,8 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
-                                        Environment.NewLine,
-                                        Environment.NewLine,
+                                        NewLine,
+                                        NewLine,
                                         TriviaList()))),
                         }))));
 
@@ -172,8 +172,8 @@ public partial class SourceGenerator
                                     TokenList(
                                         XmlTextNewLine(
                                             TriviaList(),
-                                            Environment.NewLine,
-                                            Environment.NewLine,
+                                            NewLine,
+                                            NewLine,
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
@@ -222,8 +222,8 @@ public partial class SourceGenerator
                                             TriviaList()),
                                         XmlTextNewLine(
                                             TriviaList(),
-                                            Environment.NewLine,
-                                            Environment.NewLine,
+                                            NewLine,
+                                            NewLine,
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
@@ -244,8 +244,8 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
-                                        Environment.NewLine,
-                                        Environment.NewLine,
+                                        NewLine,
+                                        NewLine,
                                         TriviaList())));
                             for (var i = 0; i < count; i++)
                             {
@@ -293,8 +293,8 @@ public partial class SourceGenerator
                                     TokenList(
                                         XmlTextNewLine(
                                             TriviaList(),
-                                            Environment.NewLine,
-                                            Environment.NewLine,
+                                            NewLine,
+                                            NewLine,
                                             TriviaList())));
                             }
 
@@ -348,8 +348,8 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
-                                        Environment.NewLine,
-                                        Environment.NewLine,
+                                        NewLine,
+                                        NewLine,
                                         TriviaList()),
                                     XmlTextLiteral(
                                         TriviaList(
@@ -398,8 +398,8 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
-                                        Environment.NewLine,
-                                        Environment.NewLine,
+                                        NewLine,
+                                        NewLine,
                                         TriviaList())));
                         }
                     }
@@ -441,8 +441,8 @@ public partial class SourceGenerator
                                             TokenList(
                                                 XmlTextNewLine(
                                                     TriviaList(),
-                                                    Environment.NewLine,
-                                                    Environment.NewLine,
+                                                    NewLine,
+                                                    NewLine,
                                                     TriviaList()),
                                                 XmlTextLiteral(
                                                     TriviaList(
@@ -452,8 +452,8 @@ public partial class SourceGenerator
                                                     TriviaList()),
                                                 XmlTextNewLine(
                                                     TriviaList(),
-                                                    Environment.NewLine,
-                                                    Environment.NewLine,
+                                                    NewLine,
+                                                    NewLine,
                                                     TriviaList()),
                                                 XmlTextLiteral(
                                                     TriviaList(
@@ -474,8 +474,8 @@ public partial class SourceGenerator
                                     TokenList(
                                         XmlTextNewLine(
                                             TriviaList(),
-                                            Environment.NewLine,
-                                            Environment.NewLine,
+                                            NewLine,
+                                            NewLine,
                                             TriviaList()))),
                             }))));
 
@@ -534,8 +534,8 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
-                                        Environment.NewLine,
-                                        Environment.NewLine,
+                                        NewLine,
+                                        NewLine,
                                         TriviaList()),
                                     XmlTextLiteral(
                                         TriviaList(
@@ -578,8 +578,8 @@ public partial class SourceGenerator
                                         TriviaList()),
                                     XmlTextNewLine(
                                         TriviaList(),
-                                        Environment.NewLine,
-                                        Environment.NewLine,
+                                        NewLine,
+                                        NewLine,
                                         TriviaList()),
                                     XmlTextLiteral(
                                         TriviaList(
@@ -600,8 +600,8 @@ public partial class SourceGenerator
                             TokenList(
                                 XmlTextNewLine(
                                     TriviaList(),
-                                    Environment.NewLine,
-                                    Environment.NewLine,
+                                    NewLine,
+                                    NewLine,
                                     TriviaList())));
                         for (var i = 0; i < count; i++)
                         {
@@ -667,8 +667,8 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextNewLine(
                                         TriviaList(),
-                                        Environment.NewLine,
-                                        Environment.NewLine,
+                                        NewLine,
+                                        NewLine,
                                         TriviaList())));
                         }
 
@@ -722,8 +722,8 @@ public partial class SourceGenerator
                             TokenList(
                                 XmlTextNewLine(
                                     TriviaList(),
-                                    Environment.NewLine,
-                                    Environment.NewLine,
+                                    NewLine,
+                                    NewLine,
                                     TriviaList())));
                     }
                 }
