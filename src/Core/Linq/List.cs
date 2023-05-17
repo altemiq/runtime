@@ -172,10 +172,13 @@ public static partial class List
     public static void QuickSort<T>(this IList<T> values, IComparer<T> comparer)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        if (values.Count > 1)
+        System.Diagnostics.Contracts.Contract.EndContractBlock();
+        if (values.Count <= 1)
         {
-            values.QuickSort(0, values.Count, comparer);
+            return;
         }
+
+        QuickSort(values, 0, values.Count, comparer);
     }
 
     /// <summary>
@@ -186,16 +189,26 @@ public static partial class List
     /// <param name="comparison">The comparison.</param>
     public static void QuickSort<T>(
         this IList<T> values,
-#if NET
-        Func<T?, T?, int> comparison)
-#else
-        Func<T, T, int> comparison)
-#endif
+        Comparison<T> comparison)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        if (values.Count > 1)
+        System.Diagnostics.Contracts.Contract.EndContractBlock();
+        if (values.Count <= 1)
         {
-            values.QuickSort(0, values.Count, comparison);
+            return;
+        }
+
+        if (values is T[] @array)
+        {
+            Array.Sort(array, comparison);
+        }
+        else if (values is List<T> list)
+        {
+            list.Sort(comparison);
+        }
+        else
+        {
+            QuickSort(values, comparison);
         }
     }
 
@@ -209,6 +222,13 @@ public static partial class List
     /// <param name="comparer">The comparer.</param>
     public static void QuickSort<T>(this IList<T> values, int index, int length, IComparer<T> comparer)
     {
+        ArgumentNullExceptionThrower.ThrowIfNull(values);
+        System.Diagnostics.Contracts.Contract.EndContractBlock();
+        if (values.Count <= 1 || length <= 1)
+        {
+            return;
+        }
+
         if (values is T[] @array)
         {
             Array.Sort(array, index, length, comparer);
@@ -220,7 +240,11 @@ public static partial class List
         else
         {
             comparer ??= Comparer<T>.Default;
-            values.QuickSort(index, length, comparer.Compare);
+            QuickSort(
+                values,
+                index,
+                length,
+                comparer.Compare);
         }
     }
 
@@ -236,11 +260,7 @@ public static partial class List
         this IList<T> values,
         int index,
         int length,
-#if NET
-        Func<T?, T?, int> comparison)
-#else
-        Func<T, T, int> comparison)
-#endif
+        Comparison<T> comparison)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
         ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(index);
@@ -268,7 +288,7 @@ public static partial class List
             QuickSortImpl(values, index, end, comparison);
         }
 
-        static void QuickSortImpl(IList<T> values, int left, int right, Func<T, T, int> comparer)
+        static void QuickSortImpl(IList<T> values, int left, int right, Comparison<T> comparer)
         {
             // The code in this function looks very similar to QuickSort in ArraySortHelper<T> class.
             // So the IL code will be different. This function is faster than the one in ArraySortHelper<T>.
@@ -367,6 +387,7 @@ public static partial class List
         where T : IComparable<T>
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
+        System.Diagnostics.Contracts.Contract.EndContractBlock();
         if (values.Count > 1)
         {
             values.QuickSort(0, values.Count);
@@ -496,9 +517,9 @@ public static partial class List
     private readonly struct ComparisonWrapper<T>
         : IComparer<T>
     {
-        private readonly Func<T?, T?, int> comparison;
+        private readonly Comparison<T> comparison;
 
-        public ComparisonWrapper(Func<T?, T?, int> comparison) => this.comparison = comparison;
+        public ComparisonWrapper(Comparison<T> comparison) => this.comparison = comparison;
 
         public int Compare(T? x, T? y) => this.comparison(x, y);
     }
@@ -506,9 +527,9 @@ public static partial class List
     private readonly struct ComparisonWrapper<T>
         : IComparer<T>
     {
-        private readonly Func<T, T, int> comparison;
+        private readonly Comparison<T> comparison;
 
-        public ComparisonWrapper(Func<T, T, int> comparison) => this.comparison = comparison;
+        public ComparisonWrapper(Comparison<T> comparison) => this.comparison = comparison;
 
         public int Compare(T x, T y) => this.comparison(x, y);
     }
