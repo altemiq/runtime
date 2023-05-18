@@ -23,4 +23,6 @@
     <Compile Remove="**\MemoryExtensions*.cs" />
   </ItemGroup>
 
+  <Import Project="..\..\Core\build.props"/>
+
 </Project>

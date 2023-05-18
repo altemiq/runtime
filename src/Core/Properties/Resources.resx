@@ -118,12 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotReturnAsType" xml:space="preserve">
-    <value>Cannot return as {0} as result is T{1}</value>
+    <value>Cannot return as {0} as result is T{1}.</value>
   </data>
   <data name="IncorrectInputString" xml:space="preserve">
     <value>Input string was not in a correct format.</value>
   </data>
+  <data name="MustBeBetween" xml:space="preserve">
+    <value>{0} must be between {1} and {2} but {3} is not.</value>
+  </data>
   <data name="MustBeGreaterThanZero" xml:space="preserve">
-    <value>{0} must be greater than zero</value>
+    <value>{0} must be greater than zero.</value>
   </data>
 </root>

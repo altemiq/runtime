@@ -62,7 +62,7 @@ namespace Altemiq.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot return as {0} as result is T{1}.
+        ///   Looks up a localized string similar to Cannot return as {0} as result is T{1}..
         /// </summary>
         internal static string CannotReturnAsType {
             get {
@@ -80,7 +80,16 @@ namespace Altemiq.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} must be greater than zero.
+        ///   Looks up a localized string similar to {0} must be between {1} and {2} but {3} is not..
+        /// </summary>
+        internal static string MustBeBetween {
+            get {
+                return ResourceManager.GetString("MustBeBetween", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be greater than zero..
         /// </summary>
         internal static string MustBeGreaterThanZero {
             get {

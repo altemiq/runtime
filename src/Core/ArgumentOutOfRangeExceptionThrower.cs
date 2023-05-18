@@ -33,7 +33,26 @@ public class ArgumentOutOfRangeExceptionEx
         }
     }
 
+    /// <summary>
+    /// Throws an exception if <paramref name="argument"/> is less not between the specified minimum and maximum, inclusive.
+    /// </summary>
+    /// <param name="argument">The value to validate as greater or equal to zero.</param>
+    /// <param name="minimum">The value that <paramref name="argument"/> cannot be less than.</param>
+    /// <param name="maximum">The value that <paramref name="argument"/> cannot be more than.</param>
+    /// <param name="paramName">The name of the parameter with which <paramref name="argument"/> corresponds.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="argument"/> is less than zero.</exception>
+    public static void ThrowIfNotBetween(int argument, int minimum = int.MinValue, int maximum = int.MaxValue, [Runtime.CompilerServices.CallerArgumentExpression(nameof(argument))] string? paramName = null)
+    {
+        if (argument < minimum || argument > maximum)
+        {
+            ThrowOutOfRange(paramName, minimum, maximum, argument);
+        }
+    }
+
     [Diagnostics.CodeAnalysis.DoesNotReturn]
     private static void ThrowLessThanZero(string? paramName) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeGreaterThanZero, paramName));
+
+    [Diagnostics.CodeAnalysis.DoesNotReturn]
+    private static void ThrowOutOfRange(string? paramName, int minimum, int maximum, int argument) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeBetween, paramName, minimum, maximum, argument));
 }
 #pragma warning restore IDE0130, SA1649
