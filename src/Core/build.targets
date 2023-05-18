@@ -1,3 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+
+  <Choose>
+    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
+      <ItemGroup>
+        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) ">
+      <ItemGroup>
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' ">
+      <ItemGroup>
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullExceptionEx" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+  </Choose>
+
 </Project>

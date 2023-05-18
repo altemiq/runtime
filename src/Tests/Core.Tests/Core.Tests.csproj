@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\Core\build.props"/>
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;netcoreapp3.1</TargetFrameworks>
@@ -23,6 +24,5 @@
     <Compile Remove="**\MemoryExtensions*.cs" />
   </ItemGroup>
 
-  <Import Project="..\..\Core\build.props"/>
-
+  <Import Project="..\..\Core\build.targets"/>
 </Project>
