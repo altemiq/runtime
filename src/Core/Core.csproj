@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net6.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.0</TargetFrameworks>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -11,6 +12,7 @@
   <ItemGroup>
     <Compile Update="**\List.*.cs" DependentUpon="List.cs" />
     <Compile Update="**\MemoryExtensions.*.cs" DependentUpon="MemoryExtensions.cs" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove(README.md))" Pack="true" PackagePath="\" />
   </ItemGroup>
   
   <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) ">

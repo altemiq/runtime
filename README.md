@@ -157,10 +157,10 @@ For example:
 IReadOnlyList<double> list = new[] { 1D, 5D, 10D, 15D, 20D };
 
 # this will return 1
-list.IndexOfClosest(7D).Should().Be(1);
+list.IndexOfClosest(7D);
 ```
 
-## QuickSort
+## `QuickSort`
 This performs a quick sort of a list with an `IComparable` implementation or a `Comparer`.
 
 ```
