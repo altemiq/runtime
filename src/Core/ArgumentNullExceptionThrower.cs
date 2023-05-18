@@ -4,8 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable SA1402, SA1403, SA1638, SA1649
+#pragma warning disable IDE0130, SA1402, SA1403, SA1638, SA1649
 namespace System;
+#pragma warning restore IDE0130
 
 /// <summary>
 /// <see cref="ArgumentNullException"/> helper.
