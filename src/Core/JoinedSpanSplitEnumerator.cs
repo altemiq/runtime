@@ -84,8 +84,8 @@ public ref struct JoinedSpanSplitEnumerator<T>
     /// <summary>
     /// Gets the current element of the enumeration.
     /// </summary>
-    /// <returns>Returns a <see cref="System.Range"/> instance that indicates the bounds of the current element withing the source span.</returns>
-    public Range Current => new(this.startCurrent, this.endCurrent);
+    /// <returns>Returns a <see cref="Range"/> instance that indicates the bounds of the current element withing the source span.</returns>
+    public readonly Range Current => new(this.startCurrent, this.endCurrent);
 
     /// <summary>
     /// Returns an enumerator that allows for iteration over the split span.
