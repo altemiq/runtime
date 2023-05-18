@@ -10,7 +10,7 @@ namespace System;
 /// <summary>
 /// <see cref="ArgumentOutOfRangeException"/> helper.
 /// </summary>
-internal class ArgumentOutOfRangeExceptionEx
+public class ArgumentOutOfRangeExceptionEx
 {
     /// <summary>
     /// Initialises a new instance of the <see cref="ArgumentOutOfRangeExceptionEx"/> class.

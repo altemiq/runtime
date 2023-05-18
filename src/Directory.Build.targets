@@ -16,32 +16,6 @@
     <None Update="**\Settings.settings" Generator="SettingsSingleFileGenerator" LastGenOutput="%(Filename).Designer.cs" CustomToolNamespace="$(RootNamespace).Properties" />
   </ItemGroup>
 
-  <Choose>
-    <When Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
-      <ItemGroup>
-        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
-        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
-      </ItemGroup>
-    </When>
-    <When Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) ">
-      <ItemGroup>
-        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
-        
-        <Compile Include="$([MSBuild]::GetPathOfFileAbove(ArgumentExceptionThrower.cs))" Condition=" '$(DoNotImportArgumentExceptionThrower)' != 'true' " />
-        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <Compile Include="$([MSBuild]::GetPathOfFileAbove(ArgumentNullExceptionThrower.cs))" Condition=" '$(DoNotImportArgumentNullExceptionThrower)' != 'true' " />
-        <Using Include="System.ArgumentNullExceptionEx" Alias="ArgumentNullExceptionThrower" />
-
-        <Compile Include="$([MSBuild]::GetPathOfFileAbove(ArgumentExceptionThrower.cs))" Condition=" '$(DoNotImportArgumentExceptionThrower)' != 'true' " />
-        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-
   <PropertyGroup>
     <!-- Supress warning NU5131 (https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu5131) which is reported because .nuspec file is not updated -->
     <!-- to contain <references> element (https://learn.microsoft.com/en-us/nuget/reference/nuspec#explicit-assembly-references) for all files inside the 'ref\' directory.  -->

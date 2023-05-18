@@ -1,11 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
+  <PropertyGroup>
+    <_AltemiqImplicitUsings>false</_AltemiqImplicitUsings>
+    <_AltemiqImplicitUsings Condition=" '$(ImplicitUsings)' == 'true' Or '$(ImplicitUsings)' == 'enable' ">true</_AltemiqImplicitUsings>
+    <ImplicitUsingsForExceptionThrowers Condition=" '$(ImplicitUsingsForExceptionThrowers)' == '' ">$(_AltemiqImplicitUsings)</ImplicitUsingsForExceptionThrowers>
+  </PropertyGroup>
+
   <!-- Implicit imports -->
-  <ItemGroup Condition="'$(ImplicitUsings)' == 'true' Or '$(ImplicitUsings)' == 'enable'">
+  <ItemGroup Condition="$(_AltemiqImplicitUsings)">
     <Using Include="Altemiq" />
     <Using Include="Altemiq.IO" />
     <Using Include="Altemiq.Linq" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" $(ImplicitUsingsForExceptionThrowers) and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
+      <ItemGroup>
+        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+    <When Condition=" $(ImplicitUsingsForExceptionThrowers) and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) ">
+      <ItemGroup>
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+    <When Condition="$(ImplicitUsingsForExceptionThrowers)">
+      <ItemGroup>
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullExceptionEx" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+  </Choose>
   
 </Project>

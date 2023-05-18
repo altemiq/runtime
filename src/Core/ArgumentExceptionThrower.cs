@@ -10,7 +10,7 @@ namespace System;
 /// <summary>
 /// <see cref="ArgumentNullException"/> helper.
 /// </summary>
-internal class ArgumentExceptionEx
+public class ArgumentExceptionEx
 {
     /// <summary>
     /// Initialises a new instance of the <see cref="ArgumentExceptionEx"/> class.

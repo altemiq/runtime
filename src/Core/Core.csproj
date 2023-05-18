@@ -47,6 +47,35 @@
     </Otherwise>
   </Choose>
 
+  <Choose>
+    <When Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
+      <ItemGroup>
+        <Compile Remove="ArgumentExceptionThrower.cs" />
+        <Compile Remove="ArgumentNullExceptionThrower.cs" />
+
+        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+    <When Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) ">
+      <ItemGroup>
+        <Compile Remove="ArgumentNullExceptionThrower.cs" />
+
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullExceptionEx" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
   <ItemGroup>
     <ProjectReference Include="..\Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj"
                       OutputItemType="Analyzer"

@@ -10,7 +10,7 @@ namespace System;
 /// <summary>
 /// <see cref="ArgumentNullException"/> helper.
 /// </summary>
-internal sealed class ArgumentNullExceptionEx : ArgumentExceptionEx
+public sealed class ArgumentNullExceptionEx : ArgumentExceptionEx
 {
     /// <summary>
     /// Throws an <see cref="ArgumentNullException"/> if <paramref name="argument"/> is null.
