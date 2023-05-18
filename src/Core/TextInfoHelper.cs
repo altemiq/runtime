@@ -11,7 +11,7 @@ namespace System.Globalization;
 /// <summary>
 /// The <see cref="TextInfo"/> helper.
 /// </summary>
-internal static class TextInfoHelper
+public static class TextInfoHelper
 {
     /// <summary>
     /// Gets the <see cref="TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.
