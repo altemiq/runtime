@@ -39,7 +39,11 @@ jobs:
     # Test
     - name: Test with dotnet
       working-directory: ${{ github.workspace }}/src
-      run: dotnet test --results-directory ${{ github.workspace }}/coverage/results
+      run: >
+        dotnet test
+        --results-directory ${{ github.workspace }}/coverage/results
+        --logger GitHubActions
+        -- RunConfiguration.CollectSourceInformation=true
 
     - name: Report Generator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.20

@@ -23,6 +23,7 @@
     <GlobalPackageReference Include="coverlet.collector" Version="6.0.0-preview.7.gd93613826b" />
     <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.17.2" />
     <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <GlobalPackageReference Include="GitHubActionsTestLogger" Version="2.3.2" />
   </ItemGroup>
 
   <ItemGroup Label="Reference Assemblies" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">
