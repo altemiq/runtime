@@ -59,10 +59,31 @@ public class ExceptionThrowerTests
         }
 
         [Fact]
-        public void ThrowOnInvalid()
+        public void ThrowOnTooLow()
         {
             var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(-1, 0, 1);
             act.Should().Throw<System.ArgumentOutOfRangeException>();
+        }
+
+        [Fact]
+        public void ThrowOnTooHigh()
+        {
+            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(2, 0, 1);
+            act.Should().Throw<System.ArgumentOutOfRangeException>();
+        }
+
+        [Fact]
+        public void NotThrowIfPositive()
+        {
+            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(1);
+            act.Should().NotThrow<System.ArgumentOutOfRangeException>();
+        }
+
+        [Fact]
+        public void NotThrowIfValid()
+        {
+            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(1, 0, 2);
+            act.Should().NotThrow<System.ArgumentOutOfRangeException>();
         }
     }
 }
