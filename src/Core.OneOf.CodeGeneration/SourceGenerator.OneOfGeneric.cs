@@ -572,18 +572,18 @@ public partial class SourceGenerator
                                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                                             MemberAccessExpression(
                                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                                IdentifierName("Properties"),
-                                                                                IdentifierName("Resources")),
-                                                                            IdentifierName("Culture"))),
+                                                                                IdentifierName(nameof(Properties)),
+                                                                                IdentifierName(nameof(Properties.Resources))),
+                                                                            IdentifierName(nameof(Properties.Resources.Culture)))),
                                                                     Token(SyntaxKind.CommaToken),
                                                                     Argument(
                                                                         MemberAccessExpression(
                                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                                             MemberAccessExpression(
                                                                                 SyntaxKind.SimpleMemberAccessExpression,
-                                                                                IdentifierName("Properties"),
-                                                                                IdentifierName("Resources")),
-                                                                            IdentifierName("CannotReturnAsType"))),
+                                                                                IdentifierName(nameof(Properties)),
+                                                                                IdentifierName(nameof(Properties.Resources))),
+                                                                            IdentifierName(nameof(Properties.Resources.CannotReturnAsType)))),
                                                                     Token(SyntaxKind.CommaToken),
                                                                     Argument(
                                                                         InvocationExpression(
@@ -1605,7 +1605,7 @@ public partial class SourceGenerator
                 Identifier("Match"))
                 .WithModifiers(
                 TokenList(
-                        Token(SyntaxKind.PublicKeyword)))
+                    Token(SyntaxKind.PublicKeyword)))
                 .WithTypeParameterList(
                 TypeParameterList(
                     SingletonSeparatedList(
@@ -1873,7 +1873,7 @@ public partial class SourceGenerator
                                         NullableType(
                                             IdentifierName(typeParameterNames[i])),
                                         Token(SyntaxKind.CommaToken),
-                                        IdentifierName(SourceGenerator.ResultsTypeParameter),
+                                        IdentifierName(ResultsTypeParameter),
                                     }))));
                 }
             }
@@ -2246,7 +2246,7 @@ public partial class SourceGenerator
                         XmlNullKeywordElement()
                         .WithName(
                             XmlName(
-                                Identifier("paramref")))
+                                Identifier(Keywords.ParamRef)))
                         .WithAttributes(
                             SingletonList<XmlAttributeSyntax>(
                                 XmlNameAttribute(
@@ -2275,7 +2275,7 @@ public partial class SourceGenerator
                         .WithStartTag(
                         XmlElementStartTag(
                             XmlName(
-                                Identifier("exception")))
+                                Identifier(ExceptionVariableName)))
                         .WithAttributes(
                             SingletonList<XmlAttributeSyntax>(
                                 XmlCrefAttribute(
@@ -2284,7 +2284,7 @@ public partial class SourceGenerator
                         .WithEndTag(
                         XmlElementEndTag(
                             XmlName(
-                                Identifier("exception"))));
+                                Identifier(ExceptionVariableName))));
                     yield return XmlText()
                         .WithTextTokens(
                         TokenList(
@@ -2331,7 +2331,7 @@ public partial class SourceGenerator
                         .WithStartTag(
                         XmlElementStartTag(
                             XmlName(
-                                Identifier("exception")))
+                                Identifier(ExceptionVariableName)))
                         .WithAttributes(
                             SingletonList<XmlAttributeSyntax>(
                                 XmlCrefAttribute(
@@ -2340,7 +2340,7 @@ public partial class SourceGenerator
                         .WithEndTag(
                         XmlElementEndTag(
                             XmlName(
-                                Identifier("exception"))));
+                                Identifier(ExceptionVariableName))));
                     yield return XmlText()
                         .WithTextTokens(
                         TokenList(
@@ -2622,7 +2622,7 @@ public partial class SourceGenerator
                                                     XmlName(
                                                         Identifier(Keywords.Name)),
                                                     Token(SyntaxKind.DoubleQuoteToken),
-                                                    IdentifierName("remainder"),
+                                                    IdentifierName(RemainderVariableName),
                                                     Token(SyntaxKind.DoubleQuoteToken)))))
                                     .WithEndTag(
                                         XmlElementEndTag(
@@ -2653,15 +2653,15 @@ public partial class SourceGenerator
                                             SingletonList<XmlAttributeSyntax>(
                                                 XmlTextAttribute(
                                                     XmlName(
-                                                        Identifier("langword")),
+                                                        Identifier(Keywords.Langword)),
                                                     Token(SyntaxKind.DoubleQuoteToken),
                                                     Token(SyntaxKind.DoubleQuoteToken))
                                                 .WithTextTokens(
                                                     TokenList(
                                                         XmlTextLiteral(
                                                             TriviaList(),
-                                                            "true",
-                                                            "true",
+                                                            Keywords.True,
+                                                            Keywords.True,
                                                             TriviaList()))))),
                                         XmlText()
                                         .WithTextTokens(
@@ -2676,15 +2676,15 @@ public partial class SourceGenerator
                                             SingletonList<XmlAttributeSyntax>(
                                                 XmlTextAttribute(
                                                     XmlName(
-                                                        Identifier("langword")),
+                                                        Identifier(Keywords.Langword)),
                                                     Token(SyntaxKind.DoubleQuoteToken),
                                                     Token(SyntaxKind.DoubleQuoteToken))
                                                 .WithTextTokens(
                                                     TokenList(
                                                         XmlTextLiteral(
                                                             TriviaList(),
-                                                            "false",
-                                                            "false",
+                                                            Keywords.False,
+                                                            Keywords.False,
                                                             TriviaList()))))),
                                         XmlText()
                                         .WithTextTokens(
@@ -2722,7 +2722,7 @@ public partial class SourceGenerator
                                             SingletonList<XmlAttributeSyntax>(
                                                 XmlCrefAttribute(
                                                     NameMemberCref(
-                                                        IdentifierName("Index"))))),
+                                                        IdentifierName(IndexPropertyName))))),
                                         XmlText()
                                         .WithTextTokens(
                                             TokenList(
@@ -2734,16 +2734,16 @@ public partial class SourceGenerator
                                     .WithStartTag(
                                         XmlElementStartTag(
                                             XmlName(
-                                                Identifier("exception")))
+                                                Identifier(ExceptionVariableName)))
                                         .WithAttributes(
                                             SingletonList<XmlAttributeSyntax>(
                                                 XmlCrefAttribute(
                                                     NameMemberCref(
-                                                        IdentifierName("InvalidOperationException"))))))
+                                                        IdentifierName(nameof(InvalidOperationException)))))))
                                     .WithEndTag(
                                         XmlElementEndTag(
                                             XmlName(
-                                                Identifier("exception")))),
+                                                Identifier(ExceptionVariableName)))),
                                     XmlText()
                                     .WithTextTokens(
                                         TokenList(
@@ -2765,7 +2765,7 @@ public partial class SourceGenerator
                         NullableType(
                             IdentifierName(typeParameterNames[index])));
                     yield return Parameter(
-                        Identifier("remainder"))
+                        Identifier(RemainderVariableName))
                         .WithModifiers(
                         TokenList(
                             Token(SyntaxKind.OutKeyword)))
@@ -2799,7 +2799,7 @@ public partial class SourceGenerator
                     yield return ExpressionStatement(
                         AssignmentExpression(
                             SyntaxKind.SimpleAssignmentExpression,
-                            IdentifierName("remainder"),
+                            IdentifierName(RemainderVariableName),
                             SwitchExpression(
                                 MemberAccessExpression(
                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -2929,7 +2929,7 @@ public partial class SourceGenerator
                 ParameterList(
                     SingletonSeparatedList(
                         Parameter(
-                            Identifier("obj"))
+                            Identifier(ObjVariableName))
                         .WithType(
                             NullableType(
                                 PredefinedType(
@@ -2939,7 +2939,7 @@ public partial class SourceGenerator
                     BinaryExpression(
                         SyntaxKind.LogicalAndExpression,
                         IsPatternExpression(
-                            IdentifierName("obj"),
+                            IdentifierName(ObjVariableName),
                             DeclarationPattern(
                                 GenericName(
                                     Identifier(OneOf))
@@ -2948,7 +2948,7 @@ public partial class SourceGenerator
                                         SeparatedList<TypeSyntax>(
                                             Join(typeParameterNames.Select(IdentifierName))))),
                                 SingleVariableDesignation(
-                                    Identifier("o")))),
+                                    Identifier(OVariableName)))),
                         InvocationExpression(
                             MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -2958,7 +2958,7 @@ public partial class SourceGenerator
                             ArgumentList(
                                 SingletonSeparatedList(
                                     Argument(
-                                        IdentifierName("o"))))))))
+                                        IdentifierName(OVariableName))))))))
                 .WithSemicolonToken(
                 Token(SyntaxKind.SemicolonToken))
                 .WithLeadingTrivia(

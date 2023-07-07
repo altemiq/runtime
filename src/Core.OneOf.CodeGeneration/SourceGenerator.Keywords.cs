@@ -20,7 +20,11 @@ public partial class SourceGenerator
         public const string TypeParamRef = "typeparamref";
         public const string TypeParam = "typeparam";
         public const string Param = "param";
+        public const string ParamRef = "paramref";
         public const string Returns = "returns";
         public const string NameOf = "nameof";
+        public const string Langword = "langword";
+        public const string True = "true";
+        public const string False = "true";
     }
 }

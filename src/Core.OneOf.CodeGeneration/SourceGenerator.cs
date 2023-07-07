@@ -29,6 +29,11 @@ public partial class SourceGenerator : ISourceGenerator
     private const string RightVariableName = "right";
     private const string OtherVariableName = "other";
 
+    private const string ExceptionVariableName = "exception";
+    private const string RemainderVariableName = "remainder";
+    private const string ObjVariableName = "obj";
+    private const string OVariableName = "o";
+
     private const string TrippleSlash = "///";
     private const string Period = ".";
     private const string Space = " ";
