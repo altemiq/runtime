@@ -169,15 +169,7 @@ public static class StringExtensions
 #if NET5_0_OR_GREATER
             if (options.HasFlag(StringSplitOptions.TrimEntries))
             {
-                while (char.IsWhiteSpace(s[startIndex]))
-                {
-                    startIndex++;
-                }
-
-                while (char.IsWhiteSpace(s[endIndex]))
-                {
-                    endIndex--;
-                }
+                TrimStartEnd(s, ref startIndex, ref endIndex);
             }
 #endif
 
@@ -188,7 +180,16 @@ public static class StringExtensions
 
         if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || s.Length - lastIndex != 0)
         {
-            values[returnIndex] = s[lastIndex..];
+            var startIndex = lastIndex;
+            var endIndex = s.Length;
+#if NET5_0_OR_GREATER
+            if (options.HasFlag(StringSplitOptions.TrimEntries))
+            {
+                TrimStartEnd(s, ref startIndex, ref endIndex);
+            }
+#endif
+
+            values[returnIndex] = s[startIndex..endIndex];
             returnIndex++;
         }
 
@@ -212,6 +213,21 @@ public static class StringExtensions
 
             return false;
         }
+
+#if NET5_0_OR_GREATER
+        static void TrimStartEnd(string s, ref int startIndex, ref int endIndex)
+        {
+            while (char.IsWhiteSpace(s[startIndex]) && startIndex < endIndex)
+            {
+                startIndex++;
+            }
+
+            while (char.IsWhiteSpace(s[endIndex - 1]) && startIndex < endIndex)
+            {
+                endIndex--;
+            }
+        }
+#endif
     }
 
     private static string SmartQuote(string value, IList<char> delimeter, StringQuoteOptions options)

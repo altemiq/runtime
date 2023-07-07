@@ -108,6 +108,6 @@ public class StringExtensionsTests
 
 #if NET5_0_OR_GREATER
     [Fact]
-    public void TrimEntries() => "This , is, a".Split(',', StringSplitOptions.TrimEntries).Should().BeEquivalentTo(new string[] { "This", "is", "a" });
+    public void TrimEntries() => "This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries).Should().BeEquivalentTo(new string[] { "This", "is", "a" });
 #endif
 }
