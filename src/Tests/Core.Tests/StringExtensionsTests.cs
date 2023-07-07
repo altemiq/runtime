@@ -103,6 +103,11 @@ public class StringExtensionsTests
         input.Quote(d, options).Should().Be(quoted ? "\"" + input + "\"" : input);
     }
 
+    [Theory]
+    [InlineData("value,second", ',', StringQuoteOptions.QuoteAll, true)]
+    [InlineData("value,second", ',', StringQuoteOptions.None, true)]
+    public void QuoteChar(string input, char delimeter, StringQuoteOptions options, bool quoted) => input.Quote(delimeter, options).Should().Be(quoted ? "\"" + input + "\"" : input);
+
     [Fact]
     public void QuoteNull() => default(string).Quote().Should().Be(string.Empty);
 
