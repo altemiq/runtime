@@ -46,7 +46,7 @@ jobs:
         -- RunConfiguration.CollectSourceInformation=true
 
     - name: Report Generator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.20
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
       with:
         reports: '${{ github.workspace }}/coverage/results/*/coverage.cobertura.xml'
         targetdir: '${{ github.workspace }}/coverage/reports'

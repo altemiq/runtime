@@ -3,15 +3,15 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageVersion Include="FluentAssertions" Version="6.11.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
     <PackageVersion Include="Moq" Version="4.18.4" />
-    <PackageVersion Include="System.Text.Json" Version="7.0.2" />
-    <PackageVersion Update="System.Text.Json" Version="6.0.7" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' And $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0'))" />
-    <PackageVersion Include="xunit" Version="2.4.2" />
-    <PackageVersion Include="xunit.runner.utility" Version="2.4.2" />
+    <PackageVersion Include="System.Text.Json" Version="7.0.3" />
+    <PackageVersion Update="System.Text.Json" Version="6.0.8" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' And $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) " />
+    <PackageVersion Include="xunit" Version="2.5.0" />
+    <PackageVersion Include="xunit.runner.utility" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,9 +20,10 @@
   </ItemGroup>
 
   <ItemGroup Label="Analyzers">
-    <GlobalPackageReference Include="coverlet.collector" Version="6.0.0-preview.7.gd93613826b" />
-    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.17.2" />
-    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <GlobalPackageReference Include="coverlet.collector" Version="6.0.0" />
+    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.21.0" />
+    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.5.0" />
+    <GlobalPackageReference Update="xunit.runner.visualstudio" Version="2.4.5" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' And $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) " />
     <GlobalPackageReference Include="GitHubActionsTestLogger" Version="2.3.2" />
   </ItemGroup>
 
