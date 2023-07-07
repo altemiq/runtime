@@ -8,7 +8,7 @@
     <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <VersionPrefix Condition="'$(VersionPrefix)' == ''">1.0</VersionPrefix>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly Condition=" '$(Configuration)' != 'Debug' ">true</SignAssembly>
     <AssemblyOriginatorKeyFile>$([MSBuild]::GetPathOfFileAbove(Core.snk))</AssemblyOriginatorKeyFile>
     <Authors>Ross King</Authors>
     <Description>A collection of base classes.</Description>
