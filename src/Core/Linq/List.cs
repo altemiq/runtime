@@ -172,7 +172,6 @@ public static partial class List
     public static void QuickSort<T>(this IList<T> values, IComparer<T> comparer)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        System.Diagnostics.Contracts.Contract.EndContractBlock();
         if (values.Count <= 1)
         {
             return;
@@ -192,7 +191,7 @@ public static partial class List
         Comparison<T> comparison)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        System.Diagnostics.Contracts.Contract.EndContractBlock();
+
         if (values.Count <= 1)
         {
             return;
@@ -223,7 +222,7 @@ public static partial class List
     public static void QuickSort<T>(this IList<T> values, int index, int length, IComparer<T> comparer)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        System.Diagnostics.Contracts.Contract.EndContractBlock();
+
         if (values.Count <= 1 || length <= 1)
         {
             return;
@@ -266,7 +265,6 @@ public static partial class List
         ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(index);
         ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(length);
         ArgumentNullExceptionThrower.ThrowIfNull(comparison);
-        System.Diagnostics.Contracts.Contract.EndContractBlock();
 
         if (values is T[] @array)
         {
@@ -387,7 +385,7 @@ public static partial class List
         where T : IComparable<T>
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        System.Diagnostics.Contracts.Contract.EndContractBlock();
+
         if (values.Count <= 1)
         {
             return;
@@ -419,7 +417,6 @@ public static partial class List
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
         ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(index);
-        System.Diagnostics.Contracts.Contract.EndContractBlock();
 
         if (length is int.MinValue)
         {

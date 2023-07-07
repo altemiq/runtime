@@ -68,7 +68,6 @@ public static partial class List
         ArgumentNullExceptionThrower.ThrowIfNull(source);
         ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(index);
         ArgumentNullExceptionThrower.ThrowIfNull(comparison);
-        System.Diagnostics.Contracts.Contract.EndContractBlock();
 
         var low = index;
         var high = index + length - 1;

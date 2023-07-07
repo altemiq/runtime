@@ -15,17 +15,12 @@
     <Compile Update="**\MemoryExtensions.*.cs" DependentUpon="MemoryExtensions.cs" />
     <None Include="$([MSBuild]::GetPathOfFileAbove(README.md))" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
-  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) ">
-    <PackageReference Include="System.Diagnostics.Contracts" />
-    <PackageReference Include="System.ValueTuple" />
-  </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) ">
     <PackageReference Include="System.Reflection.TypeExtensions" />
   </ItemGroup>
 
-  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' or ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')))">
     <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
 
