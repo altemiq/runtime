@@ -18,117 +18,30 @@ public static class StringExtensions
     private const string EscapedQuoteString = QuoteString + QuoteString;
 
     /// <summary>
-    /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
+    /// Splits a string into substrings based on specified delimiting characters, ignoring separators in quoted areas.
     /// </summary>
     /// <param name="s">The string to split.</param>
-    /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
-    /// <param name="options"><see cref="StringSplitOptions"/>.<see cref="StringSplitOptions.RemoveEmptyEntries"/> to omit empty array elements from the array returned; or <see cref="StringSplitOptions"/>.<see cref="StringSplitOptions.None"/> to include empty array elements in the array returned.</param>
+    /// <param name="separator">An array of delimiting characters, an empty array that contains no delimiters, or <see langword="null"/>.</param>
     /// <returns>An array whose elements contain the substrings from <paramref name="s"/> that are delimited by <paramref name="separator"/>.</returns>
-    [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(s))]
-    public static string[]? SplitQuoted(this string s, char separator, StringSplitOptions options = StringSplitOptions.None) => SplitQuoted(s, new[] { separator }, options);
+    public static string[] SplitQuoted(this string s, params char[]? separator) => SplitQuotedInternal(s, separator, StringSplitOptions.None);
 
     /// <summary>
-    /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
+    /// Splits a string into substrings based on a specified delimiting character, ignoring separators in quoted areas.
     /// </summary>
     /// <param name="s">The string to split.</param>
     /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
-    /// <param name="options"><see cref="StringSplitOptions"/>.<see cref="StringSplitOptions.RemoveEmptyEntries"/> to omit empty array elements from the array returned; or <see cref="StringSplitOptions"/>.<see cref="StringSplitOptions.None"/> to include empty array elements in the array returned.</param>
+    /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>An array whose elements contain the substrings from <paramref name="s"/> that are delimited by <paramref name="separator"/>.</returns>
-    [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(s))]
-    public static string[] SplitQuoted(this string s, char[] separator, StringSplitOptions options = StringSplitOptions.None)
-    {
-        ArgumentNullExceptionThrower.ThrowIfNull(s);
-        if (s.Length == 0)
-        {
-#if NETSTANDARD1_3_OR_GREATER || NET46_OR_GREATER || NETCOREAPP1_0_OR_GREATER
-            return Array.Empty<string>();
-#else
-            return new string[0];
-#endif
-        }
+    public static string[]? SplitQuoted(this string s, char separator, StringSplitOptions options = StringSplitOptions.None) => SplitQuotedInternal(s, new[] { separator }, options);
 
-        // work through each one
-        var splits = new List<int>();
-        var combining = false;
-        for (var i = 0; i < s.Length; i++)
-        {
-            if ((separator is null && char.IsWhiteSpace(s[i])) || Contains(separator!, s[i]))
-            {
-                if (!combining)
-                {
-                    splits.Add(i);
-                }
-            }
-            else if (s[i] == QuoteChar)
-            {
-                combining = !combining;
-            }
-        }
-
-        var values = new string[splits.Count + 1];
-        var returnIndex = 0;
-        var lastIndex = 0;
-
-        foreach (var index in splits)
-        {
-            if (index == lastIndex)
-            {
-                if (options == StringSplitOptions.RemoveEmptyEntries)
-                {
-                    lastIndex++;
-                }
-                else
-                {
-                    returnIndex++;
-                }
-
-                continue;
-            }
-
-            var startIndex = lastIndex;
-            if (s[startIndex] == QuoteChar)
-            {
-                startIndex++;
-            }
-
-            var endIndex = index;
-            if (s[endIndex - 1] == QuoteChar)
-            {
-                endIndex--;
-            }
-
-            values[returnIndex] = s[startIndex..endIndex];
-            lastIndex = index + 1;
-            returnIndex++;
-        }
-
-        if (options != StringSplitOptions.RemoveEmptyEntries || s.Length - lastIndex != 0)
-        {
-            values[returnIndex] = s[lastIndex..];
-            returnIndex++;
-        }
-
-        // resize the array
-        if (values.Length != returnIndex)
-        {
-            Array.Resize(ref values, returnIndex);
-        }
-
-        return values;
-
-        static bool Contains(IList<char> characters, char character)
-        {
-            for (var i = 0; i < characters.Count; i++)
-            {
-                if (characters[i] == character)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-    }
+    /// <summary>
+    /// Splits a string into substrings based on specified delimiting characters, ignoring separators in quoted areas.
+    /// </summary>
+    /// <param name="s">The string to split.</param>
+    /// <param name="separator">An array of delimiting characters, an empty array that contains no delimiters, or <see langword="null"/>.</param>
+    /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
+    /// <returns>An array whose elements contain the substrings from <paramref name="s"/> that are delimited by <paramref name="separator"/>.</returns>
+    public static string[] SplitQuoted(this string s, char[]? separator, StringSplitOptions options = StringSplitOptions.None) => SplitQuotedInternal(s, separator, options);
 
     /// <summary>
     /// Quotes the specified string.
@@ -176,6 +89,130 @@ public static class StringExtensions
     /// <param name="provider">The provider to use to format the value.</param>
     /// <returns>The value of <paramref name="formattable"/> using <paramref name="provider"/>.</returns>
     public static string? ToString(this IFormattable formattable, IFormatProvider? provider) => formattable.ToString(format: default, provider);
+
+    private static string[] SplitQuotedInternal(string s, IList<char>? separator, StringSplitOptions options)
+    {
+        ArgumentNullExceptionThrower.ThrowIfNull(s);
+        if (s.Length == 0)
+        {
+            if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries))
+            {
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER
+                return Array.Empty<string>();
+#else
+                return new string[0];
+#endif
+            }
+
+            return new string[] { s };
+        }
+
+        var splitOnWhiteSpace = separator is null || separator.Count == 0;
+#if NET5_0_OR_GREATER
+        if (splitOnWhiteSpace)
+        {
+            options &= ~StringSplitOptions.TrimEntries;
+        }
+#endif
+
+        // work through each one
+        var splits = new List<int>();
+        var combining = false;
+        for (var i = 0; i < s.Length; i++)
+        {
+            var isSplit = splitOnWhiteSpace ? char.IsWhiteSpace(s[i]) : Contains(separator!, s[i]);
+            if (isSplit)
+            {
+                if (!combining)
+                {
+                    splits.Add(i);
+                }
+            }
+            else if (s[i] == QuoteChar)
+            {
+                combining = !combining;
+            }
+        }
+
+        var values = new string[splits.Count + 1];
+        var returnIndex = 0;
+        var lastIndex = 0;
+
+        foreach (var index in splits)
+        {
+            if (index == lastIndex)
+            {
+                if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries))
+                {
+                    lastIndex++;
+                }
+                else
+                {
+                    returnIndex++;
+                }
+
+                continue;
+            }
+
+            var startIndex = lastIndex;
+            if (s[startIndex] == QuoteChar)
+            {
+                startIndex++;
+            }
+
+            var endIndex = index;
+            if (s[endIndex - 1] == QuoteChar)
+            {
+                endIndex--;
+            }
+
+#if NET5_0_OR_GREATER
+            if (options.HasFlag(StringSplitOptions.TrimEntries))
+            {
+                while (char.IsWhiteSpace(s[startIndex]))
+                {
+                    startIndex++;
+                }
+
+                while (char.IsWhiteSpace(s[endIndex]))
+                {
+                    endIndex--;
+                }
+            }
+#endif
+
+            values[returnIndex] = s[startIndex..endIndex];
+            lastIndex = index + 1;
+            returnIndex++;
+        }
+
+        if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || s.Length - lastIndex != 0)
+        {
+            values[returnIndex] = s[lastIndex..];
+            returnIndex++;
+        }
+
+        // resize the array
+        if (values.Length != returnIndex)
+        {
+            Array.Resize(ref values, returnIndex);
+        }
+
+        return values;
+
+        static bool Contains(IList<char> characters, char character)
+        {
+            for (var i = 0; i < characters.Count; i++)
+            {
+                if (characters[i] == character)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 
     private static string SmartQuote(string value, IList<char> delimeter, StringQuoteOptions options)
     {

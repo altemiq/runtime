@@ -52,10 +52,13 @@ public class StringExtensionsTests
         """;
 
     [Fact]
-    public void NullString() => new Func<string[]>(() => default(string?)!.SplitQuoted(',')).Should().ThrowExactly<ArgumentNullException>();
+    public void NullString() => new Func<string[]>(() => default(string)!.SplitQuoted()).Should().ThrowExactly<ArgumentNullException>();
 
     [Fact]
-    public void EmptyString() => string.Empty.SplitQuoted(',').Should().BeEmpty();
+    public void EmptyString() => string.Empty.SplitQuoted().Should().HaveCount(1).And.HaveElementAt(0, string.Empty);
+
+    [Fact]
+    public void EmptyStringWithOptions() => string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries).Should().BeEmpty();
 
     [Theory]
     [InlineData(SingleLineSimple, "3", 5, StringSplitOptions.None)]
@@ -102,4 +105,9 @@ public class StringExtensionsTests
 
     [Fact]
     public void QuoteNull() => default(string).Quote().Should().Be(string.Empty);
+
+#if NET5_0_OR_GREATER
+    [Fact]
+    public void TrimEntries() => "This , is, a".Split(',', StringSplitOptions.TrimEntries).Should().BeEquivalentTo(new string[] { "This", "is", "a" });
+#endif
 }
