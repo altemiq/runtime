@@ -25,7 +25,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02FBFB2A
 		Tests\Directory.Build.props = Tests\Directory.Build.props
 		Tests\Directory.Build.targets = Tests\Directory.Build.targets
 		Tests\Directory.Packages.props = Tests\Directory.Packages.props
-		Tests\nuget.config = Tests\nuget.config
 		Tests\xunit.runner.json = Tests\xunit.runner.json
 		Tests\xunit.runner.net.json = Tests\xunit.runner.net.json
 	EndProjectSection
