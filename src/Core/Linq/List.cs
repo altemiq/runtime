@@ -49,8 +49,7 @@ public static partial class List
         }
 
         // Start the new list.
-        var destination = CreateList(source, sourceType)
-            ?? new List<TResult>(source.Count);
+        var destination = CreateList(source, sourceType) ?? new List<TResult>(source.Count);
 
         // If the list is readonly then just return it.
         if (destination.IsReadOnly)
@@ -172,6 +171,7 @@ public static partial class List
     public static void QuickSort<T>(this IList<T> values, IComparer<T> comparer)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
+
         if (values.Count <= 1)
         {
             return;

@@ -24,25 +24,25 @@ public static partial class List
     public static bool Equals<T>(this IList<T> first, int firstIndex, IList<T> second, int secondIndex, int count)
         where T : IEquatable<T>
     {
-        if (first is null)
+        return (first, second) switch
         {
-            return second is null;
-        }
+            (null, not null) or (not null, null) => false,
+            (null, null) => true,
+            (not null, not null) => EqualsCore(first, firstIndex, second, secondIndex, count),
+        };
 
-        if (second is null)
+        static bool EqualsCore(IList<T> first, int firstIndex, IList<T> second, int secondIndex, int count)
         {
-            return false;
-        }
-
-        for (int i = firstIndex, j = secondIndex; i < firstIndex + count && j < secondIndex + count; i++, j++)
-        {
-            if (!first[i].Equals(second[j]))
+            for (int i = firstIndex, j = secondIndex; i < firstIndex + count && j < secondIndex + count; i++, j++)
             {
-                return false;
+                if (!first[i].Equals(second[j]))
+                {
+                    return false;
+                }
             }
-        }
 
-        return true;
+            return true;
+        }
     }
 
     /// <summary>
@@ -58,24 +58,24 @@ public static partial class List
     public static bool Equals<T>(this IList<T> first, int firstIndex, IReadOnlyList<T> second, int secondIndex, int count)
         where T : IEquatable<T>
     {
-        if (first is null)
+        return (first, second) switch
         {
-            return second is null;
-        }
+            (null, not null) or (not null, null) => false,
+            (null, null) => true,
+            (not null, not null) => EqualsCore(first, firstIndex, second, secondIndex, count),
+        };
 
-        if (second is null)
+        static bool EqualsCore(IList<T> first, int firstIndex, IReadOnlyList<T> second, int secondIndex, int count)
         {
-            return false;
-        }
-
-        for (int i = firstIndex, j = secondIndex; i < firstIndex + count && j < secondIndex + count; i++, j++)
-        {
-            if (!first[i].Equals(second[j]))
+            for (int i = firstIndex, j = secondIndex; i < firstIndex + count && j < secondIndex + count; i++, j++)
             {
-                return false;
+                if (!first[i].Equals(second[j]))
+                {
+                    return false;
+                }
             }
-        }
 
-        return true;
+            return true;
+        }
     }
 }

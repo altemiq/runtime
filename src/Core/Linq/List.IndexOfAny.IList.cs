@@ -31,9 +31,7 @@ public static partial class List
     /// <param name="anyOf">The array of <typeparamref name="T"/> sequences to seek.</param>
     /// <returns>The zero-based index position of the first occurrence in this instance where any <typeparamref name="T"/> sequence in <paramref name="anyOf"/> was found; -1 if no byte sequence in <paramref name="anyOf"/> was found.</returns>
     public static int IndexOfAny<T>(this IList<T> buffer, int startIndex, params IList<T>[] anyOf)
-        where T : IEquatable<T> => buffer is null || buffer.Count <= startIndex
-        ? -1
-        : IndexOfAny(buffer, startIndex, buffer.Count - startIndex, anyOf);
+        where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? IndexOfAny(buffer, startIndex, buffer.Count - startIndex, anyOf) : -1;
 
     /// <summary>
     /// Reports the zero-based index of the first occurrence in this specified instance of any sequence of <typeparamref name="T"/> in the specified arguments.
