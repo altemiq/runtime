@@ -12,7 +12,6 @@
     <AssemblyOriginatorKeyFile>$([MSBuild]::GetPathOfFileAbove(Core.snk))</AssemblyOriginatorKeyFile>
     <Authors>Ross King</Authors>
     <Description>A collection of base classes.</Description>
-    <PackageProjectUrl>https://github.com/altemiq/runtime</PackageProjectUrl>
 
     <PackageTags>Core</PackageTags>
     <NeutralLanguage>en-AU</NeutralLanguage>

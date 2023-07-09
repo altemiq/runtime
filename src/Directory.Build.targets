@@ -31,4 +31,14 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="_GeneratePackageProjectUrl" AfterTargets="_InitializeNuspecRepositoryInformationProperties">
+    <PropertyGroup>
+      <_RepositoryUrl Condition=" '$(RepositoryUrl)' != '' ">$(RepositoryUrl)</_RepositoryUrl>
+      <_RepositoryUrl Condition=" '$(RepositoryUrl)' == '' ">$(PrivateRepositoryUrl)</_RepositoryUrl>
+      <_PackageProjectUrl Condition=" '$(_RepositoryUrl)' != '' and $(_RepositoryUrl.StartsWith('http'))">$(_RepositoryUrl)</_PackageProjectUrl>
+      <_PackageProjectUrl Condition=" '$(_PackageProjectUrl)' != '' and $(_PackageProjectUrl.EndsWith('.git'))">$(_PackageProjectUrl.Substring(0,$(_PackageProjectUrl.LastIndexOf('.'))))</_PackageProjectUrl>
+      <PackageProjectUrl Condition=" '$(PackageProjectUrl)' == '' and '$(_PackageProjectUrl)' != ''">$(_PackageProjectUrl)</PackageProjectUrl>
+    </PropertyGroup>
+  </Target>
+
 </Project>
