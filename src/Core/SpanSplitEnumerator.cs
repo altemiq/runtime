@@ -140,7 +140,7 @@ public ref struct SpanSplitEnumerator<T>
                 var firstSeparatorIndex = slice.IndexOf(this.firstSpanSeparator);
                 var secondSeparatorIndex = slice.IndexOf(this.secondSpanSeparator);
 
-    #pragma warning disable SA1008 // Opening parenthesis should be spaced correctly
+#pragma warning disable SA1008 // Opening parenthesis should be spaced correctly
                 (elementLength, var length) = (firstSeparatorIndex, secondSeparatorIndex) switch
                 {
                     ( < 0, >= 0) => (secondSeparatorIndex, this.secondSpanSeparator.Length),
@@ -149,7 +149,7 @@ public ref struct SpanSplitEnumerator<T>
                     ( >= 0, >= 0) when firstSeparatorIndex < secondSeparatorIndex => (firstSeparatorIndex, this.firstSpanSeparator.Length),
                     _ => (slice.Length, 1),
                 };
-    #pragma warning restore SA1008 // Opening parenthesis should be spaced correctly
+#pragma warning restore SA1008 // Opening parenthesis should be spaced correctly
 
                 this.endCurrent = this.startCurrent + elementLength;
                 this.startNext = this.endCurrent + length;

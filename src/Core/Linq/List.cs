@@ -523,19 +523,15 @@ public static partial class List
         }
     }
 
-    private readonly struct ComparisonWrapper<T>
+    private readonly struct ComparisonWrapper<T>(Comparison<T> comparison)
         : IComparer<T>
     {
-        private readonly Comparison<T> comparison;
-
-        public ComparisonWrapper(Comparison<T> comparison) => this.comparison = comparison;
-
         public int Compare(T? x, T? y) => (x, y) switch
         {
             (null, null) => 0,
             (null, not null) => 1,
             (not null, null) => -1,
-            _ => this.comparison(x, y),
+            _ => comparison(x, y),
         };
     }
 }

@@ -11,6 +11,7 @@ public class ExceptionThrowerTests
     public class ArgumentNullException
     {
         [Fact]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "This is required for .NET 7.0")]
         public void ThrowOnNull()
         {
             var act = () => ArgumentNullExceptionThrower.ThrowIfNull(default(object));
