@@ -28,6 +28,7 @@ public partial class SourceGenerator : ISourceGenerator
     private const string LeftVariableName = "left";
     private const string RightVariableName = "right";
     private const string OtherVariableName = "other";
+    private const string ProviderParameterName = "provider";
 
     private const string ExceptionVariableName = "exception";
     private const string RemainderVariableName = "remainder";

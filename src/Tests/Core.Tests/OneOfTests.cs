@@ -59,6 +59,11 @@ public class OneOfTests
     [InlineData("en-US", "System.DateTime: 1/2/2019 1:02:03 AM")]
     public void RightSideFormatsWithCurrentCulture(string cultureName, string expectedResult) => RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(new DateTime(2019, 1, 2, 1, 2, 3)).ToString).Should().Be(expectedResult);
 
+    [Theory]
+    [InlineData("en-NZ", "System.DateTime: 2/01/2019 1:02:03 am")]
+    [InlineData("en-US", "System.DateTime: 1/2/2019 1:02:03 AM")]
+    public void SpecifyCulture(string cultureName, string expectedResult) => OneOf.From<string, DateTime>(new DateTime(2019, 1, 2, 1, 2, 3)).ToString(new System.Globalization.CultureInfo(cultureName, false)).Should().Be(expectedResult);
+
     private static string? RunInCulture(System.Globalization.CultureInfo culture, Func<string?> action)
     {
         var originalCulture = Thread.CurrentThread.CurrentCulture;

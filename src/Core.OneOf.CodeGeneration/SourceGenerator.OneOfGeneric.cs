@@ -51,7 +51,8 @@ public partial class SourceGenerator
                 .Concat(GetMapMethodDeclarations(typeParameterNames))
                 .Concat(GetTryPickMethodDeclarations(typeParameterNames))
                 .Concat(GetEqualsMethodDeclarations(typeParameterNames))
-                .Append(GetToStringMethodDeclaration(typeParameterNames))
+                .Append(GetToStringMethodDeclaration())
+                .Append(GetToStringWithProviderMethodDeclaration(typeParameterNames))
                 .Append(GetGetHashCodeMethodDefinition(typeParameterNames))))
             .WithLeadingTrivia(
             Trivia(
@@ -3039,10 +3040,8 @@ public partial class SourceGenerator
             }
         }
 
-        static MethodDeclarationSyntax GetToStringMethodDeclaration(IList<string> typeParameterNames)
+        static MethodDeclarationSyntax GetToStringMethodDeclaration()
         {
-            const string FormatValue = nameof(FormatValue);
-
             return MethodDeclaration(
                 NullableType(
                     PredefinedType(
@@ -3052,67 +3051,24 @@ public partial class SourceGenerator
                 TokenList(
                     Token(SyntaxKind.PublicKeyword),
                     Token(SyntaxKind.OverrideKeyword)))
-                .WithBody(
-                Block(
-                    ReturnStatement(
-                        SwitchExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                ThisExpression(),
-                                IdentifierName(IndexPropertyName)))
-                        .WithArms(
-                            SeparatedList<SwitchExpressionArmSyntax>(
-                                GetSwitchExpressionArms(typeParameterNames)))),
-                    LocalFunctionStatement(
-                        PredefinedType(
-                            Token(SyntaxKind.StringKeyword)),
-                        Identifier(FormatValue))
-                    .WithModifiers(
-                        TokenList(
-                            Token(SyntaxKind.StaticKeyword)))
-                    .WithTypeParameterList(
-                        TypeParameterList(
+                .WithExpressionBody(
+                ArrowExpressionClause(
+                    InvocationExpression(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            ThisExpression(),
+                            IdentifierName(nameof(ToString))))
+                    .WithArgumentList(
+                        ArgumentList(
                             SingletonSeparatedList(
-                                TypeParameter(
-                                    Identifier(TTypeParameter)))))
-                    .WithParameterList(
-                        ParameterList(
-                            SingletonSeparatedList(
-                                Parameter(
-                                    Identifier(ValueVariableName))
-                                .WithType(
-                                    IdentifierName(TTypeParameter)))))
-                    .WithBody(
-                        Block(
-                            SingletonList<StatementSyntax>(
-                                ReturnStatement(
-                                    InterpolatedStringExpression(
-                                        Token(SyntaxKind.InterpolatedStringStartToken))
-                                    .WithContents(
-                                        List(
-                                            new InterpolatedStringContentSyntax[]
-                                            {
-                                                Interpolation(
-                                                    MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        TypeOfExpression(
-                                                            IdentifierName(TTypeParameter)),
-                                                        IdentifierName(nameof(Type.FullName)))),
-                                                InterpolatedStringText()
-                                                .WithTextToken(
-                                                    Token(
-                                                        TriviaList(),
-                                                        SyntaxKind.InterpolatedStringTextToken,
-                                                        ": ",
-                                                        ": ",
-                                                        TriviaList())),
-                                                Interpolation(
-                                                    ConditionalAccessExpression(
-                                                        IdentifierName(ValueVariableName),
-                                                        InvocationExpression(
-                                                            MemberBindingExpression(
-                                                                IdentifierName(nameof(ToString)))))),
-                                            }))))))))
+                                Argument(
+                                    LiteralExpression(
+                                        SyntaxKind.NullLiteralExpression))
+                                .WithNameColon(
+                                    NameColon(
+                                        IdentifierName(ProviderParameterName))))))))
+                .WithSemicolonToken(
+                Token(SyntaxKind.SemicolonToken))
                 .WithLeadingTrivia(
                 Trivia(
                     DocumentationCommentTrivia(
@@ -3139,6 +3095,186 @@ public partial class SourceGenerator
                                             NewLine,
                                             TriviaList()))),
                             }))));
+        }
+
+        static MethodDeclarationSyntax GetToStringWithProviderMethodDeclaration(IList<string> typeParameterNames)
+        {
+            const string FormatValue = nameof(FormatValue);
+
+            return MethodDeclaration(
+                NullableType(
+                    PredefinedType(
+                        Token(SyntaxKind.StringKeyword))),
+                Identifier(nameof(ToString)))
+                .WithModifiers(
+                TokenList(
+                    Token(SyntaxKind.PublicKeyword)))
+                .WithParameterList(
+                ParameterList(
+                    SingletonSeparatedList(
+                        Parameter(
+                            Identifier(ProviderParameterName))
+                        .WithType(
+                            NullableType(
+                                IdentifierName(nameof(IFormatProvider)))))))
+                .WithBody(
+                Block(
+                    ReturnStatement(
+                        SwitchExpression(
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                ThisExpression(),
+                                IdentifierName(IndexPropertyName)))
+                        .WithArms(
+                            SeparatedList<SwitchExpressionArmSyntax>(
+                                GetSwitchExpressionArms(typeParameterNames)))),
+                    LocalFunctionStatement(
+                        PredefinedType(
+                            Token(SyntaxKind.StringKeyword)),
+                        Identifier(FormatValue))
+                    .WithModifiers(
+                        TokenList(
+                            Token(SyntaxKind.StaticKeyword)))
+                    .WithTypeParameterList(
+                        TypeParameterList(
+                            SingletonSeparatedList(
+                                TypeParameter(
+                                    Identifier(TTypeParameter)))))
+                    .WithParameterList(
+                        ParameterList(
+                            SeparatedList<ParameterSyntax>(
+                                new SyntaxNodeOrToken[]
+                                {
+                                    Parameter(
+                                        Identifier(ValueVariableName))
+                                    .WithType(
+                                        IdentifierName(TTypeParameter)),
+                                    Token(SyntaxKind.CommaToken),
+                                    Parameter(
+                                        Identifier(ProviderParameterName))
+                                    .WithType(
+                                        NullableType(
+                                            IdentifierName(nameof(IFormatProvider)))),
+                                })))
+                    .WithBody(
+                        Block(
+                            SingletonList<StatementSyntax>(
+                                ReturnStatement(
+                                    InvocationExpression(
+                                        MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            PredefinedType(
+                                                Token(SyntaxKind.StringKeyword)),
+                                            IdentifierName(nameof(string.Format))))
+                                    .WithArgumentList(
+                                        ArgumentList(
+                                            SeparatedList<ArgumentSyntax>(
+                                                new SyntaxNodeOrToken[]
+                                                {
+                                                    Argument(
+                                                        IdentifierName(ProviderParameterName)),
+                                                    Token(SyntaxKind.CommaToken),
+                                                    Argument(
+                                                        LiteralExpression(
+                                                            SyntaxKind.StringLiteralExpression,
+                                                            Literal("{0}: {1}"))),
+                                                    Token(SyntaxKind.CommaToken),
+                                                    Argument(
+                                                        MemberAccessExpression(
+                                                            SyntaxKind.SimpleMemberAccessExpression,
+                                                            TypeOfExpression(
+                                                                IdentifierName(TTypeParameter)),
+                                                            IdentifierName(nameof(Type.FullName)))),
+                                                    Token(SyntaxKind.CommaToken),
+                                                    Argument(
+                                                        IdentifierName(ValueVariableName)),
+                                                })))))))))
+                .WithLeadingTrivia(
+                Trivia(
+                    DocumentationCommentTrivia(
+                        SyntaxKind.SingleLineDocumentationCommentTrivia,
+                        List(
+                            new XmlNodeSyntax[]
+                            {
+                                XmlText()
+                                .WithTextTokens(
+                                    TokenList(
+                                        XmlTextLiteral(
+                                            TriviaList(
+                                                DocumentationCommentExterior(TrippleSlash)),
+                                            Space,
+                                            Space,
+                                            TriviaList()))),
+                                XmlNullKeywordElement()
+                                .WithName(
+                                    XmlName(
+                                        Identifier(Keywords.InheritDoc)))
+                                .WithAttributes(
+                                    SingletonList<XmlAttributeSyntax>(
+                                        XmlCrefAttribute(
+                                            NameMemberCref(
+                                                IdentifierName(nameof(ToString)))
+                                            .WithParameters(
+                                                CrefParameterList())))),
+                                XmlText()
+                                .WithTextTokens(
+                                    TokenList(
+                                        XmlTextNewLine(
+                                            TriviaList(),
+                                            NewLine,
+                                            NewLine,
+                                            TriviaList()),
+                                        XmlTextLiteral(
+                                            TriviaList(
+                                                DocumentationCommentExterior(TrippleSlash)),
+                                            Space,
+                                            Space,
+                                            TriviaList()))),
+                                XmlExampleElement(
+                                    SingletonList<XmlNodeSyntax>(
+                                        XmlText()
+                                        .WithTextTokens(
+                                            TokenList(
+                                                XmlTextLiteral(
+                                                    TriviaList(),
+                                                    "The format provider.",
+                                                    "The format provider.",
+                                                    TriviaList())))))
+                                .WithStartTag(
+                                    XmlElementStartTag(
+                                        XmlName(
+                                            Identifier(
+                                                TriviaList(),
+                                                SyntaxKind.ParamKeyword,
+                                                Keywords.Param,
+                                                Keywords.Param,
+                                                TriviaList())))
+                                    .WithAttributes(
+                                        SingletonList<XmlAttributeSyntax>(
+                                            XmlNameAttribute(
+                                                XmlName(
+                                                    Identifier(Keywords.Name)),
+                                                Token(SyntaxKind.DoubleQuoteToken),
+                                                IdentifierName(ProviderParameterName),
+                                                Token(SyntaxKind.DoubleQuoteToken)))))
+                                .WithEndTag(
+                                    XmlElementEndTag(
+                                        XmlName(
+                                            Identifier(
+                                                TriviaList(),
+                                                SyntaxKind.ParamKeyword,
+                                                Keywords.Param,
+                                                Keywords.Param,
+                                                TriviaList())))),
+                                XmlText()
+                                .WithTextTokens(
+                                    TokenList(
+                                        XmlTextNewLine(
+                                            TriviaList(),
+                                            NewLine,
+                                            NewLine,
+                                            TriviaList()))),
+                            }))));
 
             static IEnumerable<SyntaxNodeOrToken> GetSwitchExpressionArms(IList<string> typeParameterNames)
             {
@@ -3153,12 +3289,18 @@ public partial class SourceGenerator
                             IdentifierName(FormatValue))
                         .WithArgumentList(
                             ArgumentList(
-                                SingletonSeparatedList(
-                                    Argument(
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            ThisExpression(),
-                                            IdentifierName(GetValueName(i))))))));
+                                SeparatedList<ArgumentSyntax>(
+                                    new SyntaxNodeOrToken[]
+                                    {
+                                        Argument(
+                                            MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                ThisExpression(),
+                                                IdentifierName(GetValueName(i)))),
+                                        Token(SyntaxKind.CommaToken),
+                                        Argument(
+                                            IdentifierName(ProviderParameterName)),
+                                    }))));
                     yield return Token(SyntaxKind.CommaToken);
                 }
 
