@@ -31,6 +31,8 @@ public ref struct JoinedSpanSplitEnumerator<T>
 
     private readonly bool isInitialized;
 
+    private readonly StringSplitOptions options;
+
     private int startCurrent;
     private int endCurrent;
     private int startNext;
@@ -41,7 +43,8 @@ public ref struct JoinedSpanSplitEnumerator<T>
     /// <param name="span">The span.</param>
     /// <param name="separators">The separators.</param>
     /// <param name="joiners">The joiners.</param>
-    internal JoinedSpanSplitEnumerator(ReadOnlySpan<T> span, ReadOnlySpan<T> separators, ReadOnlySpan<T> joiners)
+    /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
+    internal JoinedSpanSplitEnumerator(ReadOnlySpan<T> span, ReadOnlySpan<T> separators, ReadOnlySpan<T> joiners, StringSplitOptions options)
     {
         this.isInitialized = true;
         this.buffer = span;
@@ -53,6 +56,7 @@ public ref struct JoinedSpanSplitEnumerator<T>
         this.joinOnSingleToken = false;
         this.separatorLength = this.separators.Length != 0 ? this.separators.Length : 1;
         this.joinerLength = this.joiners.Length != 0 ? this.joiners.Length : 1;
+        this.options = options;
         this.startCurrent = 0;
         this.endCurrent = 0;
         this.startNext = 0;
@@ -64,7 +68,8 @@ public ref struct JoinedSpanSplitEnumerator<T>
     /// <param name="span">The span.</param>
     /// <param name="separator">The separator.</param>
     /// <param name="joiner">The joiner.</param>
-    internal JoinedSpanSplitEnumerator(ReadOnlySpan<T> span, T separator, T joiner)
+    /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
+    internal JoinedSpanSplitEnumerator(ReadOnlySpan<T> span, T separator, T joiner, StringSplitOptions options)
     {
         this.isInitialized = true;
         this.buffer = span;
@@ -76,6 +81,7 @@ public ref struct JoinedSpanSplitEnumerator<T>
         this.joinOnSingleToken = true;
         this.separatorLength = 1;
         this.joinerLength = 1;
+        this.options = options;
         this.startCurrent = 0;
         this.endCurrent = 0;
         this.startNext = 0;
@@ -104,44 +110,59 @@ public ref struct JoinedSpanSplitEnumerator<T>
             return false;
         }
 
-        var slice = this.buffer[this.startNext..];
-
-        // go through the slice to get the next value
-        var separatorIndex = -1;
-        var combining = false;
-        var currentStart = 0;
-        while (true)
+        int elementLength;
+        bool currentValid = false;
+        bool removeEmpty = this.options.HasFlag(StringSplitOptions.RemoveEmptyEntries);
+        do
         {
-            var testSlice = slice[currentStart..];
-            var tempSeparatorIndex = this.splitOnSingleToken ? testSlice.IndexOf(this.separator) : testSlice.IndexOf(this.separators);
-            if (tempSeparatorIndex < 0)
+            if (this.startNext > this.buffer.Length)
             {
                 break;
             }
 
-            var joinCount = this.joinOnSingleToken
-                ? GetJoinCountSingle(testSlice, this.joiner, this.joinerLength)
-                : GetJoinCountMultiple(testSlice, this.joiners, this.joinerLength);
-            if (joinCount % 2 != 0)
+            var slice = this.buffer[this.startNext..];
+
+            // go through the slice to get the next value
+            var separatorIndex = -1;
+            var combining = false;
+            var currentStart = 0;
+            while (true)
             {
-                combining = !combining;
+                var testSlice = slice[currentStart..];
+                var tempSeparatorIndex = this.splitOnSingleToken ? testSlice.IndexOf(this.separator) : testSlice.IndexOf(this.separators);
+                if (tempSeparatorIndex < 0)
+                {
+                    break;
+                }
+
+                var joinCount = this.joinOnSingleToken
+                    ? GetJoinCountSingle(testSlice, this.joiner, this.joinerLength)
+                    : GetJoinCountMultiple(testSlice, this.joiners, this.joinerLength);
+                if (joinCount % 2 != 0)
+                {
+                    combining = !combining;
+                }
+
+                if (!combining)
+                {
+                    separatorIndex = currentStart + tempSeparatorIndex;
+                }
+
+                currentStart = tempSeparatorIndex + this.separatorLength;
             }
 
-            if (!combining)
-            {
-                separatorIndex = currentStart + tempSeparatorIndex;
-            }
+            this.startCurrent = this.startNext;
 
-            currentStart = tempSeparatorIndex + this.separatorLength;
+            elementLength = separatorIndex != -1 ? separatorIndex : slice.Length;
+
+            this.endCurrent = this.startCurrent + elementLength;
+            this.startNext = this.endCurrent + this.separatorLength;
+
+            currentValid = !removeEmpty || elementLength != 0;
         }
+        while (!currentValid);
 
-        this.startCurrent = this.startNext;
-
-        var elementLength = separatorIndex != -1 ? separatorIndex : slice.Length;
-
-        this.endCurrent = this.startCurrent + elementLength;
-        this.startNext = this.endCurrent + this.separatorLength;
-        return true;
+        return currentValid;
 
         static int GetJoinCountSingle(ReadOnlySpan<T> span, T joiner, int joinerLength)
         {

@@ -32,6 +32,15 @@ public class MemoryExtensionsTests
         _ = enumerator.MoveNext().Should().BeFalse();
     }
 
+    [Fact]
+    public void SplitEmptyValuesOnChar()
+    {
+        const string EmptyValues = ",,,,";
+        var span = EmptyValues.AsSpan();
+        var enumerator = span.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        enumerator.MoveNext().Should().BeFalse();
+    }
+
     [Theory]
     [InlineData(" ")]
     [InlineData(",")]
@@ -48,6 +57,15 @@ public class MemoryExtensionsTests
         _ = span.GetNextString(ref enumerator).Should().Be(values[3]);
         _ = span.GetNextString(ref enumerator).Should().Be(values[4]);
         _ = enumerator.MoveNext().Should().BeFalse();
+    }
+
+    [Fact]
+    public void SplitEmptyValuesOnString()
+    {
+        const string EmptyValues = ",,,,";
+        var span = EmptyValues.AsSpan();
+        var enumerator = span.Split(",", StringSplitOptions.RemoveEmptyEntries);
+        enumerator.MoveNext().Should().BeFalse();
     }
 
     [Theory]

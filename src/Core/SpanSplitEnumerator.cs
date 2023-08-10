@@ -27,6 +27,8 @@ public ref struct SpanSplitEnumerator<T>
 
     private readonly bool isInitialized;
 
+    private readonly StringSplitOptions options;
+
     private int startCurrent;
     private int endCurrent;
     private int startNext;
@@ -36,7 +38,8 @@ public ref struct SpanSplitEnumerator<T>
     /// </summary>
     /// <param name="span">The span.</param>
     /// <param name="separator">The separators.</param>
-    internal SpanSplitEnumerator(ReadOnlySpan<T> span, ReadOnlySpan<T> separator)
+    /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
+    internal SpanSplitEnumerator(ReadOnlySpan<T> span, ReadOnlySpan<T> separator, StringSplitOptions options)
     {
         this.isInitialized = true;
         this.buffer = span;
@@ -46,6 +49,7 @@ public ref struct SpanSplitEnumerator<T>
         this.splitOnSingleToken = false;
         this.multipleTokens = false;
         this.separatorLength = this.firstSpanSeparator.Length != 0 ? this.firstSpanSeparator.Length : 1;
+        this.options = options;
         this.startCurrent = 0;
         this.endCurrent = 0;
         this.startNext = 0;
@@ -57,7 +61,8 @@ public ref struct SpanSplitEnumerator<T>
     /// <param name="span">The span.</param>
     /// <param name="firstSeparator">The first separator.</param>
     /// <param name="secondSeparator">The second separator.</param>
-    internal SpanSplitEnumerator(ReadOnlySpan<T> span, ReadOnlySpan<T> firstSeparator, ReadOnlySpan<T> secondSeparator)
+    /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
+    internal SpanSplitEnumerator(ReadOnlySpan<T> span, ReadOnlySpan<T> firstSeparator, ReadOnlySpan<T> secondSeparator, StringSplitOptions options)
     {
         this.isInitialized = true;
         this.buffer = span;
@@ -67,6 +72,7 @@ public ref struct SpanSplitEnumerator<T>
         this.splitOnSingleToken = false;
         this.multipleTokens = true;
         this.separatorLength = -1;
+        this.options = options;
         this.startCurrent = 0;
         this.endCurrent = 0;
         this.startNext = 0;
@@ -77,7 +83,8 @@ public ref struct SpanSplitEnumerator<T>
     /// </summary>
     /// <param name="span">The span.</param>
     /// <param name="separator">The separator.</param>
-    internal SpanSplitEnumerator(ReadOnlySpan<T> span, T separator)
+    /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
+    internal SpanSplitEnumerator(ReadOnlySpan<T> span, T separator, StringSplitOptions options)
     {
         this.isInitialized = true;
         this.buffer = span;
@@ -86,6 +93,7 @@ public ref struct SpanSplitEnumerator<T>
         this.splitOnSingleToken = true;
         this.multipleTokens = false;
         this.separatorLength = 1;
+        this.options = options;
         this.startCurrent = 0;
         this.endCurrent = 0;
         this.startNext = 0;
@@ -114,37 +122,51 @@ public ref struct SpanSplitEnumerator<T>
             return false;
         }
 
-        var slice = this.buffer[this.startNext..];
-        this.startCurrent = this.startNext;
-
-        if (this.multipleTokens)
+        int elementLength;
+        bool currentValid = false;
+        bool removeEmpty = this.options.HasFlag(StringSplitOptions.RemoveEmptyEntries);
+        do
         {
-            var firstSeparatorIndex = slice.IndexOf(this.firstSpanSeparator);
-            var secondSeparatorIndex = slice.IndexOf(this.secondSpanSeparator);
-
-#pragma warning disable SA1008 // Opening parenthesis should be spaced correctly
-            var (elementLength, length) = (firstSeparatorIndex, secondSeparatorIndex) switch
+            if (this.startNext > this.buffer.Length)
             {
-                ( < 0, >= 0) => (secondSeparatorIndex, this.secondSpanSeparator.Length),
-                ( >= 0, >= 0) when secondSeparatorIndex < firstSeparatorIndex => (secondSeparatorIndex, this.secondSpanSeparator.Length),
-                ( >= 0, < 0) => (firstSeparatorIndex, this.firstSpanSeparator.Length),
-                ( >= 0, >= 0) when firstSeparatorIndex < secondSeparatorIndex => (firstSeparatorIndex, this.firstSpanSeparator.Length),
-                _ => (slice.Length, 1),
-            };
-#pragma warning restore SA1008 // Opening parenthesis should be spaced correctly
+                break;
+            }
 
-            this.endCurrent = this.startCurrent + elementLength;
-            this.startNext = this.endCurrent + length;
+            var slice = this.buffer[this.startNext..];
+            this.startCurrent = this.startNext;
+
+            if (this.multipleTokens)
+            {
+                var firstSeparatorIndex = slice.IndexOf(this.firstSpanSeparator);
+                var secondSeparatorIndex = slice.IndexOf(this.secondSpanSeparator);
+
+    #pragma warning disable SA1008 // Opening parenthesis should be spaced correctly
+                (elementLength, var length) = (firstSeparatorIndex, secondSeparatorIndex) switch
+                {
+                    ( < 0, >= 0) => (secondSeparatorIndex, this.secondSpanSeparator.Length),
+                    ( >= 0, >= 0) when secondSeparatorIndex < firstSeparatorIndex => (secondSeparatorIndex, this.secondSpanSeparator.Length),
+                    ( >= 0, < 0) => (firstSeparatorIndex, this.firstSpanSeparator.Length),
+                    ( >= 0, >= 0) when firstSeparatorIndex < secondSeparatorIndex => (firstSeparatorIndex, this.firstSpanSeparator.Length),
+                    _ => (slice.Length, 1),
+                };
+    #pragma warning restore SA1008 // Opening parenthesis should be spaced correctly
+
+                this.endCurrent = this.startCurrent + elementLength;
+                this.startNext = this.endCurrent + length;
+            }
+            else
+            {
+                var separatorIndex = this.splitOnSingleToken ? slice.IndexOf(this.separator) : slice.IndexOf(this.firstSpanSeparator);
+                elementLength = separatorIndex != -1 ? separatorIndex : slice.Length;
+
+                this.endCurrent = this.startCurrent + elementLength;
+                this.startNext = this.endCurrent + this.separatorLength;
+            }
+
+            currentValid = !removeEmpty || elementLength != 0;
         }
-        else
-        {
-            var separatorIndex = this.splitOnSingleToken ? slice.IndexOf(this.separator) : slice.IndexOf(this.firstSpanSeparator);
-            var elementLength = separatorIndex != -1 ? separatorIndex : slice.Length;
+        while (!currentValid);
 
-            this.endCurrent = this.startCurrent + elementLength;
-            this.startNext = this.endCurrent + this.separatorLength;
-        }
-
-        return true;
+        return currentValid;
     }
 }
