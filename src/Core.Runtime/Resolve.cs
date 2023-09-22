@@ -28,7 +28,7 @@ public static class Resolve
     private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args)
     {
         System.Reflection.AssemblyName requiredAssemblyName = new(args.Name);
-        if (FindPath(RuntimeInformation.GetRuntimeLibraryPath(), requiredAssemblyName.Name) is string path)
+        if (FindPath(InteropServices.RuntimeInformation.GetRuntimeLibraryPath(), requiredAssemblyName.Name) is string path)
         {
             var assembly = System.Reflection.Assembly.LoadFile(path);
             var assemblyName = assembly.GetName();

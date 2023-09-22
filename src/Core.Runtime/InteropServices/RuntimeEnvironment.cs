@@ -1,15 +1,15 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="RuntimeConfiguration.cs" company="Altemiq">
+// <copyright file="RuntimeEnvironment.cs" company="Altemiq">
 // Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altemiq.Runtime;
+namespace Altemiq.Runtime.InteropServices;
 
 /// <summary>
 /// Class for runtime configuration.
 /// </summary>
-public static class RuntimeConfiguration
+public static class RuntimeEnvironment
 {
     private static readonly string PathVariableName = GetPathVariableName();
 

@@ -1,10 +1,10 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="RuntimeInformationTests.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="RuntimeInformationTests.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec.Runtime;
+namespace Altemiq.Runtime.InteropServices;
 
 public class RuntimeInformationTests
 {

@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altemiq.Runtime;
+namespace Altemiq.Runtime.InteropServices;
 
 using System.Reflection;
 using Microsoft.Extensions.DependencyModel;

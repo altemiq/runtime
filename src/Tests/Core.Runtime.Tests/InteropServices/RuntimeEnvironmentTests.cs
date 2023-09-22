@@ -1,24 +1,24 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="RuntimeConfigurationTests.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="RuntimeConfigurationTests.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec.Runtime;
+namespace Altemiq.Runtime.InteropServices;
 
-public class RuntimeConfigurationTests
+public class RuntimeEnvironmentTests
 {
     [Fact]
     public void AddLibraryPath()
     {
-        RuntimeConfiguration.AddLibraryRuntimeFolder();
+        RuntimeEnvironment.AddLibraryRuntimeFolder();
         Environment.GetEnvironmentVariable("PATH").Should().Contain(RuntimeInformation.GetRuntimeLibraryPath());
     }
 
     [Fact]
     public void AddNativePath()
     {
-        RuntimeConfiguration.AddNativeRuntimeFolder();
+        RuntimeEnvironment.AddNativeRuntimeFolder();
         Environment.GetEnvironmentVariable("PATH").Should().Contain(RuntimeInformation.GetRuntimeNativePath());
     }
 }
