@@ -19,19 +19,19 @@ public static class RuntimeEnvironment
     private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
 
     /// <summary>
-    /// Gets the runtime native path.
+    /// Gets the runtime native directory.
     /// </summary>
-    /// <returns>The runtime native path.</returns>
-    public static string? GetRuntimeNativePath() => GetRuntimePath("native");
+    /// <returns>The runtime native directory.</returns>
+    public static string? GetRuntimeNativeDirectory() => GetRuntimeDirectory("native");
 
     /// <summary>
-    /// Gets the runtime library path.
+    /// Gets the runtime library directory.
     /// </summary>
-    /// <returns>The runtime library path.</returns>
+    /// <returns>The runtime library directory.</returns>
     /// <exception cref="InvalidOperationException">Unable to get the current target framework.</exception>
-    public static string? GetRuntimeLibraryPath()
+    public static string? GetRuntimeLibraryDirectory()
     {
-        var runtimesLibraryDirectory = GetRuntimePath("lib");
+        var runtimesLibraryDirectory = GetRuntimeDirectory("lib");
         if (runtimesLibraryDirectory is null || !Directory.Exists(runtimesLibraryDirectory))
         {
             return default;
@@ -52,140 +52,140 @@ public static class RuntimeEnvironment
 
 #if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
     /// <summary>
-    /// Adds the runtime native path to the path environment variable if required.
+    /// Adds the runtime native directory to the path environment variable if required.
     /// </summary>
-    public static void AddNativeRuntimeFolder() => AddNativeRuntimeFolder(EnvironmentVariableTarget.Process);
+    public static void AddRuntimeNativeDirectory() => AddNativeRuntimeDirectory(EnvironmentVariableTarget.Process);
 
     /// <summary>
-    /// Adds the runtime native path to the path environment variable if required.
+    /// Adds the runtime native directory to the path environment variable if required.
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddNativeRuntimeFolder(EnvironmentVariableTarget target)
+    public static void AddNativeRuntimeDirectory(EnvironmentVariableTarget target)
     {
-        if (GetRuntimeNativePath() is string nativeFolder
-            && Directory.Exists(nativeFolder)
-            && !IsAlreadyInAppContext(nativeFolder, "NATIVE_DLL_SEARCH_DIRECTORIES"))
+        if (GetRuntimeNativeDirectory() is string nativeDirectory
+            && Directory.Exists(nativeDirectory)
+            && !IsAlreadyInAppContext(nativeDirectory, "NATIVE_DLL_SEARCH_DIRECTORIES"))
         {
-            AddFolderToPath(nativeFolder, target);
+            AddDirectoryToPath(nativeDirectory, target);
         }
     }
 
     /// <summary>
-    /// Adds the runtime library path to the path environment variable if required.
+    /// Adds the runtime library directory to the path environment variable if required.
     /// </summary>
-    public static void AddLibraryRuntimeFolder() => AddLibraryRuntimeFolder(EnvironmentVariableTarget.Process);
+    public static void AddRuntimeLibraryDirectory() => AddLibraryRuntimeDirectory(EnvironmentVariableTarget.Process);
 
     /// <summary>
-    /// Adds the runtime library path to the path environment variable if required.
+    /// Adds the runtime library directory to the path environment variable if required.
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddLibraryRuntimeFolder(EnvironmentVariableTarget target)
+    public static void AddLibraryRuntimeDirectory(EnvironmentVariableTarget target)
     {
-        if (GetRuntimeLibraryPath() is string libraryFolder
-            && Directory.Exists(libraryFolder)
-            && !IsAlreadyInAppContext(libraryFolder, "APP_PATHS"))
+        if (GetRuntimeLibraryDirectory() is string libraryDirectory
+            && Directory.Exists(libraryDirectory)
+            && !IsAlreadyInAppContext(libraryDirectory, "APP_PATHS"))
         {
-            AddFolderToPath(libraryFolder, target);
+            AddDirectoryToPath(libraryDirectory, target);
         }
     }
 
     /// <summary>
-    /// Adds the runtime paths to the path variable if required.
+    /// Adds the runtime directories to the path variable if required.
     /// </summary>
-    public static void AddRuntimeFolders() => AddRuntimeFolders(EnvironmentVariableTarget.Process);
+    public static void AddRuntimeDirectories() => AddRuntimeDirectories(EnvironmentVariableTarget.Process);
 
     /// <summary>
-    /// Adds the runtime paths to the path variable if required.
+    /// Adds the runtime directories to the path variable if required.
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddRuntimeFolders(EnvironmentVariableTarget target)
+    public static void AddRuntimeDirectories(EnvironmentVariableTarget target)
     {
-        AddLibraryRuntimeFolder(target);
-        AddNativeRuntimeFolder(target);
+        AddLibraryRuntimeDirectory(target);
+        AddNativeRuntimeDirectory(target);
     }
 
     /// <summary>
-    /// Adds a folder to the path environment variable in the current process.
+    /// Adds a directory to the path environment variable in the current process.
     /// </summary>
-    /// <param name="folder">The folder to add.</param>
-    public static void AddFolderToPath(string folder) => AddFolderToPath(folder, EnvironmentVariableTarget.Process);
+    /// <param name="directory">The directory to add.</param>
+    public static void AddDirectoryToPath(string directory) => AddDirectoryToPath(directory, EnvironmentVariableTarget.Process);
 
     /// <summary>
-    /// Adds a folder to the path environment variable in the current process or from the Windows operating system registry key for the current user or local machine.
+    /// Adds a directory to the path environment variable in the current process or from the Windows operating system registry key for the current user or local machine.
     /// </summary>
-    /// <param name="folder">The folder to add.</param>
+    /// <param name="directory">The directory to add.</param>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddFolderToPath(string folder, EnvironmentVariableTarget target)
+    public static void AddDirectoryToPath(string directory, EnvironmentVariableTarget target)
     {
         var path = Environment.GetEnvironmentVariable(PathVariableName, target);
         if (path is null)
         {
-            Environment.SetEnvironmentVariable(PathVariableName, folder);
+            Environment.SetEnvironmentVariable(PathVariableName, directory);
             return;
         }
 
-        if (path.Contains(folder))
+        if (path.Contains(directory))
         {
             return;
         }
 
-        Environment.SetEnvironmentVariable(PathVariableName, folder + Path.PathSeparator + path, target);
+        Environment.SetEnvironmentVariable(PathVariableName, directory + Path.PathSeparator + path, target);
     }
 #else
     /// <summary>
-    /// Adds the runtime native path to the path variable if required.
+    /// Adds the runtime native directory to the path variable if required.
     /// </summary>
-    public static void AddNativeRuntimeFolder()
+    public static void AddRuntimeNativeDirectory()
     {
-        if (RuntimeInformation.GetRuntimeNativePath() is string nativeFolder
-            && Directory.Exists(nativeFolder)
-            && !IsAlreadyInAppContext(nativeFolder, "NATIVE_DLL_SEARCH_DIRECTORIES"))
+        if (GetRuntimeNativeDirectory() is string nativeDirectory
+            && Directory.Exists(nativeDirectory)
+            && !IsAlreadyInAppContext(nativeDirectory, "NATIVE_DLL_SEARCH_DIRECTORIES"))
         {
-            AddFolderToPath(nativeFolder);
+            AddDirectoryToPath(nativeDirectory);
         }
     }
 
     /// <summary>
-    /// Adds the runtime library path to the path variable if required.
+    /// Adds the runtime library directory to the path variable if required.
     /// </summary>
-    public static void AddLibraryRuntimeFolder()
+    public static void AddLibraryRuntimeDirectory()
     {
-        if (RuntimeInformation.GetRuntimeLibraryPath() is string libraryFolder
-            && Directory.Exists(libraryFolder)
-            && !IsAlreadyInAppContext(libraryFolder, "APP_PATHS"))
+        if (GetRuntimeLibraryDirectory() is string libraryDirectory
+            && Directory.Exists(libraryDirectory)
+            && !IsAlreadyInAppContext(libraryDirectory, "APP_PATHS"))
         {
-            AddFolderToPath(libraryFolder);
+            AddDirectoryToPath(libraryDirectory);
         }
     }
 
     /// <summary>
-    /// Adds the runtime paths to the path variable if required.
+    /// Adds the runtime directories to the path variable if required.
     /// </summary>
-    public static void AddRuntimeFolders()
+    public static void AddRuntimeDirectories()
     {
-        AddLibraryRuntimeFolder();
-        AddNativeRuntimeFolder();
+        AddLibraryRuntimeDirectory();
+        AddRuntimeNativeDirectory();
     }
 
     /// <summary>
-    /// Adds a folder to the path environment variable.
+    /// Adds a directory to the path environment variable.
     /// </summary>
-    /// <param name="folder">The folder to add.</param>
-    public static void AddFolderToPath(string folder)
+    /// <param name="directory">The directory to add.</param>
+    public static void AddDirectoryToPath(string directory)
     {
         var path = Environment.GetEnvironmentVariable(PathVariableName);
         if (path is null)
         {
-            Environment.SetEnvironmentVariable(PathVariableName, folder);
+            Environment.SetEnvironmentVariable(PathVariableName, directory);
             return;
         }
 
-        if (path.Contains(folder))
+        if (path.Contains(directory))
         {
             return;
         }
 
-        Environment.SetEnvironmentVariable(PathVariableName, folder + Path.PathSeparator + path);
+        Environment.SetEnvironmentVariable(PathVariableName, directory + Path.PathSeparator + path);
     }
 #endif
 
@@ -218,7 +218,7 @@ public static class RuntimeEnvironment
         throw new InvalidOperationException();
     }
 
-    private static string? GetRuntimePath(string name)
+    private static string? GetRuntimeDirectory(string name)
     {
         var baseDirectory =
 #if NET451
@@ -283,7 +283,7 @@ public static class RuntimeEnvironment
                 static Stream GetManifestStream()
                 {
                     var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
-                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.IndexOf("runtime.json", StringComparison.OrdinalIgnoreCase) >= 0))!;
+                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.Contains("runtime.json")))!;
                 }
             }
         }

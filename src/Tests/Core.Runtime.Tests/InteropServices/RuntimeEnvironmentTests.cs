@@ -9,31 +9,31 @@ namespace Altemiq.Runtime.InteropServices;
 public class RuntimeEnvironmentTests
 {
     [Fact]
-    public void GetRuntimeNativePath() => RuntimeEnvironment.GetRuntimeNativePath().Should().NotBeNull();
+    public void GetRuntimeNativeDirectory() => RuntimeEnvironment.GetRuntimeNativeDirectory().Should().NotBeNull();
 
     [Fact]
-    public void GetRuntimeLibraryPath() => RuntimeEnvironment.GetRuntimeLibraryPath().Should().NotBeNull();
+    public void GetRuntimeLibraryDirectory() => RuntimeEnvironment.GetRuntimeLibraryDirectory().Should().NotBeNull();
 
     [Fact]
-    public void AddLibraryPath()
+    public void AddLibraryDirectory()
     {
-        RuntimeEnvironment.AddLibraryRuntimeFolder();
-        Environment.GetEnvironmentVariable("PATH").Should().Contain(RuntimeEnvironment.GetRuntimeLibraryPath());
+        RuntimeEnvironment.AddRuntimeLibraryDirectory();
+        Environment.GetEnvironmentVariable("PATH").Should().Contain(RuntimeEnvironment.GetRuntimeLibraryDirectory());
     }
 
     [Fact]
-    public void AddNativePath()
+    public void AddNativeDirectory()
     {
-        RuntimeEnvironment.AddNativeRuntimeFolder();
-        Environment.GetEnvironmentVariable("PATH").Should().Contain(RuntimeEnvironment.GetRuntimeNativePath());
+        RuntimeEnvironment.AddRuntimeNativeDirectory();
+        Environment.GetEnvironmentVariable("PATH").Should().Contain(RuntimeEnvironment.GetRuntimeNativeDirectory());
     }
 
     [Fact]
     public void AddPathTwice()
     {
-        RuntimeEnvironment.AddLibraryRuntimeFolder();
+        RuntimeEnvironment.AddRuntimeLibraryDirectory();
         var path = Environment.GetEnvironmentVariable("PATH");
-        RuntimeEnvironment.AddLibraryRuntimeFolder();
+        RuntimeEnvironment.AddRuntimeLibraryDirectory();
         Environment.GetEnvironmentVariable("PATH").Should().Be(path);
     }
 }
