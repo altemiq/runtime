@@ -16,6 +16,50 @@ public static class RuntimeInformation
 {
     private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
 
+#if !NET5_0_OR_GREATER
+    private static string? runtimeIdentifier;
+#endif
+
+    private static string? targetFramework;
+
+    /// <summary>
+    /// Gets the target framework.
+    /// </summary>
+    public static string TargetFramework
+    {
+        get
+        {
+            return targetFramework ??= GetFrameworkName() ?? throw new InvalidOperationException();
+
+            static string? GetFrameworkName()
+            {
+                var frameworkName = GetFrameworkNameFromAssembly(Assembly.GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
+
+#if NETCOREAPP3_0_OR_GREATER || NET20_OR_GREATER
+                frameworkName ??= AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
+#elif NETSTANDARD2_0_OR_GREATER
+                if (frameworkName is null)
+                {
+                    var setupInformationProperty = typeof(AppDomain).GetProperty("SetupInformation") ?? throw new InvalidOperationException();
+                    var setupInformation = setupInformationProperty.GetValue(AppDomain.CurrentDomain, null);
+                    frameworkName = setupInformation?
+                        .GetType()
+                        .GetProperty("TargetFrameworkName")?
+                        .GetValue(setupInformation, null) as string;
+                }
+#endif
+                return frameworkName;
+
+                static string? GetFrameworkNameFromAssembly(Assembly? assembly)
+                {
+                    return assembly?.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetFrameworkAttribute)) is System.Runtime.Versioning.TargetFrameworkAttribute attribute
+                        ? attribute.FrameworkName
+                        : default;
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Gets the platform for which the runtime was built (or on which an app is running).
     /// </summary>
@@ -27,9 +71,9 @@ public static class RuntimeInformation
         get
         {
 #if NETSTANDARD2_0_OR_GREATER || NET47_OR_GREATER
-            return AppContext.GetData("RUNTIME_IDENTIFIER") as string ?? GetRidCore();
+            return runtimeIdentifier ??= AppContext.GetData("RUNTIME_IDENTIFIER") as string ?? GetRidCore();
 #else
-            return GetRidCore();
+            return runtimeIdentifier ??= GetRidCore();
 #endif
 
             static string GetRidCore()
@@ -111,39 +155,9 @@ public static class RuntimeInformation
         }
 
         // get the closest TFM from the list
-        return NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTfms, GetTfm(), NuGet.Frameworks.NuGetFramework.ParseFolder) is string nearest
+        return NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTfms, NuGet.Frameworks.NuGetFramework.ParseFrameworkName(TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance), NuGet.Frameworks.NuGetFramework.ParseFolder) is string nearest
             ? Path.Combine(runtimesLibraryDirectory, nearest)
             : runtimesLibraryDirectory;
-
-        static NuGet.Frameworks.NuGetFramework GetTfm()
-        {
-            var frameworkName = GetFrameworkNameFromAssembly(Assembly.GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
-
-#if NETCOREAPP3_0_OR_GREATER || NET20_OR_GREATER
-            frameworkName ??= AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
-#elif NETSTANDARD2_0_OR_GREATER
-            if (frameworkName is null)
-            {
-                var setupInformationProperty = typeof(AppDomain).GetProperty("SetupInformation") ?? throw new InvalidOperationException();
-                var setupInformation = setupInformationProperty.GetValue(AppDomain.CurrentDomain, null);
-                frameworkName = setupInformation?
-                    .GetType()
-                    .GetProperty("TargetFrameworkName")?
-                    .GetValue(setupInformation, null) as string;
-            }
-#endif
-
-            return frameworkName is not null
-                ? NuGet.Frameworks.NuGetFramework.ParseFrameworkName(frameworkName, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance)
-                : throw new InvalidOperationException();
-
-            static string? GetFrameworkNameFromAssembly(Assembly? assembly)
-            {
-                return assembly?.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetFrameworkAttribute)) is System.Runtime.Versioning.TargetFrameworkAttribute attribute
-                    ? attribute.FrameworkName
-                    : default;
-            }
-        }
     }
 
     private static string? GetRuntimePath(string name)
