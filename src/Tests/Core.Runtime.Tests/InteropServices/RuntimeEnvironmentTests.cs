@@ -21,4 +21,13 @@ public class RuntimeEnvironmentTests
         RuntimeEnvironment.AddNativeRuntimeFolder();
         Environment.GetEnvironmentVariable("PATH").Should().Contain(RuntimeInformation.GetRuntimeNativePath());
     }
+
+    [Fact]
+    public void AddPathTwice()
+    {
+        RuntimeEnvironment.AddLibraryRuntimeFolder();
+        var path = Environment.GetEnvironmentVariable("PATH");
+        RuntimeEnvironment.AddLibraryRuntimeFolder();
+        Environment.GetEnvironmentVariable("PATH").Should().Be(path);
+    }
 }
