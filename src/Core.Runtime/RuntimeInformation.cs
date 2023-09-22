@@ -117,9 +117,32 @@ public static class RuntimeInformation
 
         static NuGet.Frameworks.NuGetFramework GetTfm()
         {
-            return Assembly.GetEntryAssembly() is Assembly assembly && assembly.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetFrameworkAttribute)) is System.Runtime.Versioning.TargetFrameworkAttribute attribute
-                ? NuGet.Frameworks.NuGetFramework.ParseFrameworkName(attribute.FrameworkName, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance)
+            var frameworkName = GetFrameworkNameFromAssembly(Assembly.GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
+
+#if NETCOREAPP3_0_OR_GREATER || NET20_OR_GREATER
+            frameworkName ??= AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
+#elif NETSTANDARD2_0_OR_GREATER
+            if (frameworkName is null)
+            {
+                var setupInformationProperty = typeof(AppDomain).GetProperty("SetupInformation") ?? throw new InvalidOperationException();
+                var setupInformation = setupInformationProperty.GetValue(AppDomain.CurrentDomain, null);
+                frameworkName = setupInformation?
+                    .GetType()
+                    .GetProperty("TargetFrameworkName")?
+                    .GetValue(setupInformation, null) as string;
+            }
+#endif
+
+            return frameworkName is not null
+                ? NuGet.Frameworks.NuGetFramework.ParseFrameworkName(frameworkName, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance)
                 : throw new InvalidOperationException();
+
+            static string? GetFrameworkNameFromAssembly(Assembly? assembly)
+            {
+                return assembly?.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetFrameworkAttribute)) is System.Runtime.Versioning.TargetFrameworkAttribute attribute
+                    ? attribute.FrameworkName
+                    : default;
+            }
         }
     }
 
