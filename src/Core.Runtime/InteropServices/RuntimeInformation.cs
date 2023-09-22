@@ -7,15 +7,12 @@
 namespace Altemiq.Runtime.InteropServices;
 
 using System.Reflection;
-using Microsoft.Extensions.DependencyModel;
 
 /// <summary>
 /// Runtime information.
 /// </summary>
 public static class RuntimeInformation
 {
-    private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
-
 #if !NET5_0_OR_GREATER
     private static string? runtimeIdentifier;
 #endif
@@ -127,107 +124,4 @@ public static class RuntimeInformation
         }
     }
 #endif
-
-    /// <summary>
-    /// Gets the runtime native path.
-    /// </summary>
-    /// <returns>The runtime native path.</returns>
-    public static string? GetRuntimeNativePath() => GetRuntimePath("native");
-
-    /// <summary>
-    /// Gets the runtime library path.
-    /// </summary>
-    /// <returns>The runtime library path.</returns>
-    /// <exception cref="InvalidOperationException">Unable to get the current target framework.</exception>
-    public static string? GetRuntimeLibraryPath()
-    {
-        var runtimesLibraryDirectory = GetRuntimePath("lib");
-        if (runtimesLibraryDirectory is null || !Directory.Exists(runtimesLibraryDirectory))
-        {
-            return default;
-        }
-
-        // get all the tfms
-        var availableTfms = Directory.GetDirectories(runtimesLibraryDirectory).Select(Path.GetFileName).ToArray();
-        if (availableTfms.Length == 0)
-        {
-            return runtimesLibraryDirectory;
-        }
-
-        // get the closest TFM from the list
-        return NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTfms, NuGet.Frameworks.NuGetFramework.ParseFrameworkName(TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance), NuGet.Frameworks.NuGetFramework.ParseFolder) is string nearest
-            ? Path.Combine(runtimesLibraryDirectory, nearest)
-            : runtimesLibraryDirectory;
-    }
-
-    private static string? GetRuntimePath(string name)
-    {
-        var baseDirectory =
-#if NET451
-            AppDomain.CurrentDomain.BaseDirectory;
-#else
-            AppContext.BaseDirectory;
-#endif
-        var runtimesDirectory = Path.Combine(baseDirectory, "runtimes");
-        if (!Directory.Exists(runtimesDirectory))
-        {
-            return default;
-        }
-
-        // get the rids
-        var availableRids = Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToArray();
-        if (availableRids.Length == 0)
-        {
-            return runtimesDirectory;
-        }
-
-        if (GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid)
-        {
-            return Path.Combine(runtimesDirectory, rid, name);
-        }
-
-        return Path.Combine(runtimesDirectory, name);
-
-        static IEnumerable<string> GetRuntimeRids()
-        {
-            runtimeGraph ??= GetRuntimeGraph();
-            if (runtimeGraph.Count > 0)
-            {
-                var rid = RuntimeIdentifier;
-                var rids = runtimeGraph.First(g => string.Equals(g.Runtime, rid, StringComparison.Ordinal)).Fallbacks.ToList();
-                rids.Insert(0, rid);
-                return rids;
-            }
-
-            return Enumerable.Empty<string>();
-
-            static IReadOnlyList<RuntimeFallbacks> GetRuntimeGraph()
-            {
-                DependencyContext? dependencyContext;
-                try
-                {
-                    dependencyContext = DependencyContext.Default;
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.Fail(ex.ToString());
-                    dependencyContext = null;
-                }
-
-                if (dependencyContext?.RuntimeGraph is IReadOnlyList<RuntimeFallbacks> runtimeFallbacks && runtimeFallbacks.Count != 0)
-                {
-                    return runtimeFallbacks;
-                }
-
-                using var stream = new System.IO.Compression.GZipStream(GetManifestStream(), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
-                return JsonRuntimeFormat.ReadRuntimeGraph(stream).ToList();
-
-                static Stream GetManifestStream()
-                {
-                    var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
-                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.IndexOf("runtime.json", StringComparison.OrdinalIgnoreCase) >= 0))!;
-                }
-            }
-        }
-    }
 }

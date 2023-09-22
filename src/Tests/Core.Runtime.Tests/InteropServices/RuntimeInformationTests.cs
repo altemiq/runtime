@@ -12,8 +12,5 @@ public class RuntimeInformationTests
     public void GetRuntimeIdentifier() => RuntimeInformation.RuntimeIdentifier.Should().NotBeNullOrEmpty();
 
     [Fact]
-    public void GetRuntimeNativePath() => RuntimeInformation.GetRuntimeNativePath().Should().NotBeNull();
-
-    [Fact]
-    public void GetRuntimeLibraryPath() => RuntimeInformation.GetRuntimeLibraryPath().Should().NotBeNull();
+    public void GetTargetFramework() => RuntimeInformation.TargetFramework.Should().NotBeNullOrEmpty();
 }

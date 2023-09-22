@@ -6,12 +6,49 @@
 
 namespace Altemiq.Runtime.InteropServices;
 
+using System.Reflection;
+using Microsoft.Extensions.DependencyModel;
+
 /// <summary>
 /// Class for runtime configuration.
 /// </summary>
 public static class RuntimeEnvironment
 {
     private static readonly string PathVariableName = GetPathVariableName();
+
+    private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
+
+    /// <summary>
+    /// Gets the runtime native path.
+    /// </summary>
+    /// <returns>The runtime native path.</returns>
+    public static string? GetRuntimeNativePath() => GetRuntimePath("native");
+
+    /// <summary>
+    /// Gets the runtime library path.
+    /// </summary>
+    /// <returns>The runtime library path.</returns>
+    /// <exception cref="InvalidOperationException">Unable to get the current target framework.</exception>
+    public static string? GetRuntimeLibraryPath()
+    {
+        var runtimesLibraryDirectory = GetRuntimePath("lib");
+        if (runtimesLibraryDirectory is null || !Directory.Exists(runtimesLibraryDirectory))
+        {
+            return default;
+        }
+
+        // get all the tfms
+        var availableTfms = Directory.GetDirectories(runtimesLibraryDirectory).Select(Path.GetFileName).ToArray();
+        if (availableTfms.Length == 0)
+        {
+            return runtimesLibraryDirectory;
+        }
+
+        // get the closest TFM from the list
+        return NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTfms, NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance), NuGet.Frameworks.NuGetFramework.ParseFolder) is string nearest
+            ? Path.Combine(runtimesLibraryDirectory, nearest)
+            : runtimesLibraryDirectory;
+    }
 
 #if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
     /// <summary>
@@ -25,7 +62,7 @@ public static class RuntimeEnvironment
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     public static void AddNativeRuntimeFolder(EnvironmentVariableTarget target)
     {
-        if (RuntimeInformation.GetRuntimeNativePath() is string nativeFolder
+        if (GetRuntimeNativePath() is string nativeFolder
             && Directory.Exists(nativeFolder)
             && !IsAlreadyInAppContext(nativeFolder, "NATIVE_DLL_SEARCH_DIRECTORIES"))
         {
@@ -44,7 +81,7 @@ public static class RuntimeEnvironment
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     public static void AddLibraryRuntimeFolder(EnvironmentVariableTarget target)
     {
-        if (RuntimeInformation.GetRuntimeLibraryPath() is string libraryFolder
+        if (GetRuntimeLibraryPath() is string libraryFolder
             && Directory.Exists(libraryFolder)
             && !IsAlreadyInAppContext(libraryFolder, "APP_PATHS"))
         {
@@ -179,5 +216,76 @@ public static class RuntimeEnvironment
         }
 
         throw new InvalidOperationException();
+    }
+
+    private static string? GetRuntimePath(string name)
+    {
+        var baseDirectory =
+#if NET451
+            AppDomain.CurrentDomain.BaseDirectory;
+#else
+            AppContext.BaseDirectory;
+#endif
+        var runtimesDirectory = Path.Combine(baseDirectory, "runtimes");
+        if (!Directory.Exists(runtimesDirectory))
+        {
+            return default;
+        }
+
+        // get the rids
+        var availableRids = Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToArray();
+        if (availableRids.Length == 0)
+        {
+            return runtimesDirectory;
+        }
+
+        if (GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid)
+        {
+            return Path.Combine(runtimesDirectory, rid, name);
+        }
+
+        return Path.Combine(runtimesDirectory, name);
+
+        static IEnumerable<string> GetRuntimeRids()
+        {
+            runtimeGraph ??= GetRuntimeGraph();
+            if (runtimeGraph.Count > 0)
+            {
+                var rid = RuntimeInformation.RuntimeIdentifier;
+                var rids = runtimeGraph.First(g => string.Equals(g.Runtime, rid, StringComparison.Ordinal)).Fallbacks.ToList();
+                rids.Insert(0, rid);
+                return rids;
+            }
+
+            return Enumerable.Empty<string>();
+
+            static IReadOnlyList<RuntimeFallbacks> GetRuntimeGraph()
+            {
+                DependencyContext? dependencyContext;
+                try
+                {
+                    dependencyContext = DependencyContext.Default;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.Fail(ex.ToString());
+                    dependencyContext = null;
+                }
+
+                if (dependencyContext?.RuntimeGraph is IReadOnlyList<RuntimeFallbacks> runtimeFallbacks && runtimeFallbacks.Count != 0)
+                {
+                    return runtimeFallbacks;
+                }
+
+                using var stream = new System.IO.Compression.GZipStream(GetManifestStream(), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
+                return JsonRuntimeFormat.ReadRuntimeGraph(stream).ToList();
+
+                static Stream GetManifestStream()
+                {
+                    var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
+                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.IndexOf("runtime.json", StringComparison.OrdinalIgnoreCase) >= 0))!;
+                }
+            }
+        }
     }
 }
