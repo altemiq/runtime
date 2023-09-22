@@ -14,6 +14,11 @@ using Microsoft.Extensions.DependencyModel;
 /// </summary>
 public static class RuntimeEnvironment
 {
+    private const string NativeDllSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES";
+    private const string AppPaths = "APP_PATHS";
+    private const string RuntimesDirectory = "runtimes";
+    private const string NativeDirectory = "native";
+    private const string LibraryDirectory = "lib";
     private static readonly string PathVariableName = GetPathVariableName();
 
     private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
@@ -22,7 +27,7 @@ public static class RuntimeEnvironment
     /// Gets the runtime native directory.
     /// </summary>
     /// <returns>The runtime native directory.</returns>
-    public static string? GetRuntimeNativeDirectory() => GetRuntimeDirectory("native");
+    public static string? GetRuntimeNativeDirectory() => GetRuntimeDirectory(NativeDirectory);
 
     /// <summary>
     /// Gets the runtime library directory.
@@ -31,7 +36,7 @@ public static class RuntimeEnvironment
     /// <exception cref="InvalidOperationException">Unable to get the current target framework.</exception>
     public static string? GetRuntimeLibraryDirectory()
     {
-        var runtimesLibraryDirectory = GetRuntimeDirectory("lib");
+        var runtimesLibraryDirectory = GetRuntimeDirectory(LibraryDirectory);
         if (runtimesLibraryDirectory is null || !Directory.Exists(runtimesLibraryDirectory))
         {
             return default;
@@ -64,7 +69,7 @@ public static class RuntimeEnvironment
     {
         if (GetRuntimeNativeDirectory() is string nativeDirectory
             && Directory.Exists(nativeDirectory)
-            && !IsAlreadyInAppContext(nativeDirectory, "NATIVE_DLL_SEARCH_DIRECTORIES"))
+            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
         {
             AddDirectoryToPath(nativeDirectory, target);
         }
@@ -83,7 +88,7 @@ public static class RuntimeEnvironment
     {
         if (GetRuntimeLibraryDirectory() is string libraryDirectory
             && Directory.Exists(libraryDirectory)
-            && !IsAlreadyInAppContext(libraryDirectory, "APP_PATHS"))
+            && !IsAlreadyInAppContext(libraryDirectory, AppPaths))
         {
             AddDirectoryToPath(libraryDirectory, target);
         }
@@ -143,7 +148,7 @@ public static class RuntimeEnvironment
     {
         if (GetRuntimeNativeDirectory() is string nativeDirectory
             && Directory.Exists(nativeDirectory)
-            && !IsAlreadyInAppContext(nativeDirectory, "NATIVE_DLL_SEARCH_DIRECTORIES"))
+            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
         {
             AddDirectoryToPath(nativeDirectory);
         }
@@ -156,7 +161,7 @@ public static class RuntimeEnvironment
     {
         if (GetRuntimeLibraryDirectory() is string libraryDirectory
             && Directory.Exists(libraryDirectory)
-            && !IsAlreadyInAppContext(libraryDirectory, "APP_PATHS"))
+            && !IsAlreadyInAppContext(libraryDirectory, AppPaths))
         {
             AddDirectoryToPath(libraryDirectory);
         }
@@ -235,7 +240,7 @@ public static class RuntimeEnvironment
 #else
             AppContext.BaseDirectory;
 #endif
-        var runtimesDirectory = Path.Combine(baseDirectory, "runtimes");
+        var runtimesDirectory = Path.Combine(baseDirectory, RuntimesDirectory);
         if (!Directory.Exists(runtimesDirectory))
         {
             return default;
