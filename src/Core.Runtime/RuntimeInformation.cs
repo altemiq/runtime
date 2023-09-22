@@ -17,6 +17,74 @@ public static class RuntimeInformation
     private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
 
     /// <summary>
+    /// Gets the platform for which the runtime was built (or on which an app is running).
+    /// </summary>
+    public static string RuntimeIdentifier
+#if NET5_0_OR_GREATER
+        => System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier;
+#else
+    {
+        get
+        {
+#if NETSTANDARD2_0_OR_GREATER || NET47_OR_GREATER
+            return AppContext.GetData("RUNTIME_IDENTIFIER") as string ?? GetRidCore();
+#else
+            return GetRidCore();
+#endif
+
+            static string GetRidCore()
+            {
+                return Microsoft.DotNet.PlatformAbstractions.RuntimeEnvironment.GetRuntimeIdentifier() ?? GetNaïveRid();
+
+                static string GetNaïveRid()
+                {
+                    return $"{GetRidFront()}-{GetRidBack()}";
+
+                    static string GetRidFront()
+                    {
+                        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                        {
+                            return "win";
+                        }
+
+                        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+                        {
+                            return "linux";
+                        }
+
+                        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+                        {
+                            return "osx";
+                        }
+
+                        throw new InvalidOperationException();
+                    }
+
+                    static string GetRidBack()
+                    {
+                        const string Arm = "arm";
+                        const string Arm64 = "arm64";
+                        const string X86 = "x86";
+                        const string X64 = "x64";
+
+                        return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
+                        {
+                            System.Runtime.InteropServices.Architecture.Arm => Arm,
+                            System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size == 4 => Arm,
+                            System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
+                            System.Runtime.InteropServices.Architecture.X86 => X86,
+                            System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size == 4 => X86,
+                            System.Runtime.InteropServices.Architecture.X64 => X64,
+                            _ => throw new InvalidOperationException(),
+                        };
+                    }
+                }
+            }
+        }
+    }
+#endif
+
+    /// <summary>
     /// Gets the runtime native path.
     /// </summary>
     /// <returns>The runtime native path.</returns>
@@ -88,7 +156,7 @@ public static class RuntimeInformation
             runtimeGraph ??= GetRuntimeGraph();
             if (runtimeGraph.Count > 0)
             {
-                var rid = GetRid();
+                var rid = RuntimeIdentifier;
                 var rids = runtimeGraph.First(g => string.Equals(g.Runtime, rid, StringComparison.Ordinal)).Fallbacks.ToList();
                 rids.Insert(0, rid);
                 return rids;
@@ -117,68 +185,6 @@ public static class RuntimeInformation
                 var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
                 using var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.EndsWith("runtime.json", StringComparison.OrdinalIgnoreCase)))!;
                 return JsonRuntimeFormat.ReadRuntimeGraph(stream).ToList();
-            }
-
-            static string GetRid()
-            {
-#if NET5_0_OR_GREATER
-                return System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier;
-#elif NETSTANDARD2_0_OR_GREATER || NET47_OR_GREATER
-                return AppContext.GetData("RUNTIME_IDENTIFIER") as string ?? GetRidCore();
-#else
-                return GetRidCore();
-#endif
-
-#if !NET5_0_OR_GREATER
-                static string GetRidCore()
-                {
-                    return Microsoft.DotNet.PlatformAbstractions.RuntimeEnvironment.GetRuntimeIdentifier() ?? GetNaïveRid();
-
-                    static string GetNaïveRid()
-                    {
-                        return $"{GetRidFront()}-{GetRidBack()}";
-
-                        static string GetRidFront()
-                        {
-                            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-                            {
-                                return "win";
-                            }
-
-                            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-                            {
-                                return "linux";
-                            }
-
-                            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
-                            {
-                                return "osx";
-                            }
-
-                            throw new InvalidOperationException();
-                        }
-
-                        static string GetRidBack()
-                        {
-                            const string Arm = "arm";
-                            const string Arm64 = "arm64";
-                            const string X86 = "x86";
-                            const string X64 = "x64";
-
-                            return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
-                            {
-                                System.Runtime.InteropServices.Architecture.Arm => Arm,
-                                System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size == 4 => Arm,
-                                System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
-                                System.Runtime.InteropServices.Architecture.X86 => X86,
-                                System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size == 4 => X86,
-                                System.Runtime.InteropServices.Architecture.X64 => X64,
-                                _ => throw new InvalidOperationException(),
-                            };
-                        }
-                    }
-                }
-#endif
             }
         }
     }
