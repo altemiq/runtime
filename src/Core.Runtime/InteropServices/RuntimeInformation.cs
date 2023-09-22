@@ -38,11 +38,11 @@ public static class RuntimeInformation
                 if (frameworkName is null)
                 {
                     var setupInformationProperty = typeof(AppDomain).GetProperty("SetupInformation") ?? throw new InvalidOperationException();
-                    var setupInformation = setupInformationProperty.GetValue(AppDomain.CurrentDomain, null);
+                    var setupInformation = setupInformationProperty.GetValue(AppDomain.CurrentDomain, index: null);
                     frameworkName = setupInformation?
                         .GetType()
                         .GetProperty("TargetFrameworkName")?
-                        .GetValue(setupInformation, null) as string;
+                        .GetValue(setupInformation, index: null) as string;
                 }
 #endif
                 return frameworkName;

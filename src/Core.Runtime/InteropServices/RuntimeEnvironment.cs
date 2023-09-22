@@ -124,7 +124,11 @@ public static class RuntimeEnvironment
             return;
         }
 
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        if (path.Contains(directory, StringComparison.Ordinal))
+#else
         if (path.Contains(directory))
+#endif
         {
             return;
         }
@@ -190,7 +194,12 @@ public static class RuntimeEnvironment
 #endif
 
 #if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
-    private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data && data.Contains(value);
+    private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        && data.Contains(value, StringComparison.Ordinal);
+#else
+        && data.Contains(value);
+#endif
 #else
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "This is required for a common API")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for a common API")]
@@ -282,8 +291,14 @@ public static class RuntimeEnvironment
 
                 static Stream GetManifestStream()
                 {
+                    const string RuntimeJson = "runtime.json";
                     var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
-                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.Contains("runtime.json")))!;
+                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+                        .First(n => n.Contains(RuntimeJson, StringComparison.Ordinal)))!;
+#else
+                        .First(n => n.Contains(RuntimeJson)))!;
+#endif
                 }
             }
         }
