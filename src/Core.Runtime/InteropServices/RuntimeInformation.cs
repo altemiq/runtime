@@ -219,9 +219,14 @@ public static class RuntimeInformation
                     return runtimeFallbacks;
                 }
 
-                var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
-                using var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.EndsWith("runtime.json", StringComparison.OrdinalIgnoreCase)))!;
+                using var stream = new System.IO.Compression.GZipStream(GetManifestStream(), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
                 return JsonRuntimeFormat.ReadRuntimeGraph(stream).ToList();
+
+                static Stream GetManifestStream()
+                {
+                    var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
+                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.IndexOf("runtime.json", StringComparison.OrdinalIgnoreCase) >= 0))!;
+                }
             }
         }
     }

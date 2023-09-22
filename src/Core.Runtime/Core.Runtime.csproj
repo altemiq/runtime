@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="*.json" />
+    <EmbeddedResource Include="*.json" Generator="" />
+    <None Include="*.json.gz" DependentUpon="$([System.String]::Copy('%(Filename)'))" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,8 +20,67 @@
     <Using Remove="System.Net.Http" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="runtime.json" Generator="" />
-  </ItemGroup>
+  <UsingTask TaskName="GZip" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <Result ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.IO.Compression" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+if (Files.Length > 0)
+{
+    Result = new TaskItem[Files.Length];
+    for (var i = 0; i < Files.Length; i++)
+    {
+        var item = Files[i];
+        var sourcePath = item.GetMetadata("FullPath");
+        var sourceItemSpec = item.ItemSpec;
+
+        var destinationSuffix = ".gz";
+        var destinationPath = sourcePath + destinationSuffix;
+        var destinationItemSpec = sourceItemSpec + destinationSuffix;
+
+        if (!File.Exists(destinationItemSpec))
+        {
+            Log.LogMessage(MessageImportance.Normal, "EmbeddedResource Src : " + sourceItemSpec);
+
+            using (var sourceStream = File.OpenRead(sourcePath))
+            {
+                using (var destinationStream = File.OpenWrite(destinationPath))
+                {
+                    using (var destinationGZip = new GZipStream(destinationStream, CompressionLevel.Optimal))
+                    {
+                        sourceStream.CopyTo(destinationGZip);
+                    }
+                }
+            }
+        }
+
+        var destinationItem = new TaskItem(destinationItemSpec);
+
+        Log.LogMessage(MessageImportance.Normal, "EmbeddedResource GZip: " + destinationItem.ItemSpec);
+
+        Result[i] = destinationItem;
+    }
+}
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="ZipResources" BeforeTargets="BeforeBuild">
+    <GZip Files="@(EmbeddedResource)">
+      <Output ItemName="GZipEmbeddedResource" TaskParameter="Result" />
+    </GZip>
+    <Message Text="Source EmbeddedResources: @(EmbeddedResource)" />
+    <Message Text="GZipped EmbeddedResources: @(GZipEmbeddedResource)" />
+    <ItemGroup>
+      <EmbeddedResource Remove="@(EmbeddedResource)" />
+      <EmbeddedResource Include="@(GZipEmbeddedResource)" />
+    </ItemGroup>
+  </Target>
 
 </Project>
