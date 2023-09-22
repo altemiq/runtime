@@ -54,13 +54,13 @@ public static class RuntimeEnvironment
     /// <summary>
     /// Adds the runtime native directory to the path environment variable if required.
     /// </summary>
-    public static void AddRuntimeNativeDirectory() => AddNativeRuntimeDirectory(EnvironmentVariableTarget.Process);
+    public static void AddRuntimeNativeDirectory() => AddRuntimeNativeDirectory(EnvironmentVariableTarget.Process);
 
     /// <summary>
     /// Adds the runtime native directory to the path environment variable if required.
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddNativeRuntimeDirectory(EnvironmentVariableTarget target)
+    public static void AddRuntimeNativeDirectory(EnvironmentVariableTarget target)
     {
         if (GetRuntimeNativeDirectory() is string nativeDirectory
             && Directory.Exists(nativeDirectory)
@@ -73,13 +73,13 @@ public static class RuntimeEnvironment
     /// <summary>
     /// Adds the runtime library directory to the path environment variable if required.
     /// </summary>
-    public static void AddRuntimeLibraryDirectory() => AddLibraryRuntimeDirectory(EnvironmentVariableTarget.Process);
+    public static void AddRuntimeLibraryDirectory() => AddRuntimeLibraryDirectory(EnvironmentVariableTarget.Process);
 
     /// <summary>
     /// Adds the runtime library directory to the path environment variable if required.
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddLibraryRuntimeDirectory(EnvironmentVariableTarget target)
+    public static void AddRuntimeLibraryDirectory(EnvironmentVariableTarget target)
     {
         if (GetRuntimeLibraryDirectory() is string libraryDirectory
             && Directory.Exists(libraryDirectory)
@@ -100,8 +100,8 @@ public static class RuntimeEnvironment
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     public static void AddRuntimeDirectories(EnvironmentVariableTarget target)
     {
-        AddLibraryRuntimeDirectory(target);
-        AddNativeRuntimeDirectory(target);
+        AddRuntimeLibraryDirectory(target);
+        AddRuntimeNativeDirectory(target);
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ public static class RuntimeEnvironment
     /// <summary>
     /// Adds the runtime library directory to the path variable if required.
     /// </summary>
-    public static void AddLibraryRuntimeDirectory()
+    public static void AddRuntimeLibraryDirectory()
     {
         if (GetRuntimeLibraryDirectory() is string libraryDirectory
             && Directory.Exists(libraryDirectory)
@@ -167,7 +167,7 @@ public static class RuntimeEnvironment
     /// </summary>
     public static void AddRuntimeDirectories()
     {
-        AddLibraryRuntimeDirectory();
+        AddRuntimeLibraryDirectory();
         AddRuntimeNativeDirectory();
     }
 
