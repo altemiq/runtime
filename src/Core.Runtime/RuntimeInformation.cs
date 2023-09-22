@@ -115,7 +115,7 @@ public static class RuntimeInformation
                 }
 
                 var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
-                using var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.EndsWith("runtime.json", StringComparison.OrdinalIgnoreCase)));
+                using var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.EndsWith("runtime.json", StringComparison.OrdinalIgnoreCase)))!;
                 return JsonRuntimeFormat.ReadRuntimeGraph(stream).ToList();
             }
 
