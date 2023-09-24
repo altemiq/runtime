@@ -28,25 +28,56 @@ public static class Resolve
     private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args)
     {
         System.Reflection.AssemblyName requiredAssemblyName = new(args.Name);
+
+        // check to see if this is in the currently loaded assemblies
+        if (FromLoaded(requiredAssemblyName) is System.Reflection.Assembly alreadyLoadedAssembly)
+        {
+            return alreadyLoadedAssembly;
+        }
+
         if (FindPath(InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectory(), requiredAssemblyName.Name) is string path)
         {
             var assembly = System.Reflection.Assembly.LoadFile(path);
-            var assemblyName = assembly.GetName();
-            if (string.Equals(assemblyName.Name, requiredAssemblyName.Name, StringComparison.OrdinalIgnoreCase)
-                && assemblyName.Version >= requiredAssemblyName.Version
-                && string.Equals(assemblyName.CultureName, requiredAssemblyName.CultureName, StringComparison.OrdinalIgnoreCase))
+            if (IsValid(assembly.GetName(), requiredAssemblyName))
             {
-                return System.Reflection.Assembly.LoadFrom(path);
+                return System.Reflection.Assembly.LoadFrom(assembly.Location);
             }
         }
 
         return default;
 
+        static System.Reflection.Assembly? FromLoaded(System.Reflection.AssemblyName assemblyName)
+        {
+            return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), assembly => IsValid(assembly.GetName(), assemblyName));
+        }
+
+        static bool IsValid(System.Reflection.AssemblyName assemblyName, System.Reflection.AssemblyName requiredAssemblyName)
+        {
+            return IsNullOrEqual(assemblyName.Name, requiredAssemblyName.Name)
+                && IsNullOrLess(assemblyName.Version, requiredAssemblyName.Version)
+                && IsNullOrEqual(assemblyName.CultureName, requiredAssemblyName.CultureName);
+
+            static bool IsNullOrLess(Version? value, Version? other)
+            {
+                return IsNullOr(value, other, (v, o) => v >= o);
+            }
+
+            static bool IsNullOrEqual(string? value, string? other)
+            {
+                return IsNullOr(value, other, (v, o) => string.Equals(v, o, StringComparison.OrdinalIgnoreCase));
+            }
+
+            static bool IsNullOr<T>(T? value, T? other, Func<T, T, bool> check)
+            {
+                return other is null || (value is not null && check(value, other));
+            }
+        }
+
         static string? FindPath(string? basePath, string? file)
         {
-            return basePath is null || file is null
-                ? default
-                : Extensions.Select(extension => Path.Combine(basePath, file + extension)).FirstOrDefault(File.Exists);
+            return basePath is not null && file is not null
+                ? Extensions.Select(extension => Path.Combine(basePath, file + extension)).FirstOrDefault(File.Exists)
+                : default;
         }
     }
 }
