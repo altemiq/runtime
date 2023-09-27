@@ -6,18 +6,26 @@
 
 namespace Altemiq.Runtime.InteropServices;
 
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Runtime information.
 /// </summary>
 public static class RuntimeInformation
 {
+    /// <summary>
+    /// The path variable name.
+    /// </summary>
+    public static readonly string PathVariable = GetPathVariable();
+
 #if !NET5_0_OR_GREATER
     private static string? runtimeIdentifier;
 #endif
 
     private static string? targetFramework;
+    private static string? targetPlatform;
 
     /// <summary>
     /// Gets the target framework.
@@ -30,7 +38,7 @@ public static class RuntimeInformation
 
             static string? GetFrameworkName()
             {
-                var frameworkName = GetFrameworkNameFromAssembly(Assembly.GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
+                var frameworkName = GetFrameworkNameFromAssembly(GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
 
 #if NETCOREAPP3_0_OR_GREATER || NET20_OR_GREATER
                 frameworkName ??= AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
@@ -52,6 +60,35 @@ public static class RuntimeInformation
                     return assembly?.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetFrameworkAttribute)) is System.Runtime.Versioning.TargetFrameworkAttribute attribute
                         ? attribute.FrameworkName
                         : default;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the target platform, or an empty string.
+    /// </summary>
+    public static string TargetPlatform
+    {
+        get
+        {
+            return targetPlatform ??= GetPlatformName() ?? string.Empty;
+
+            static string? GetPlatformName()
+            {
+                return GetPlatformNameFromAssembly(GetEntryAssembly()) ?? GetPlatformNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
+
+                static string? GetPlatformNameFromAssembly(Assembly? assembly)
+                {
+#if NET5_0_OR_GREATER
+                    return assembly?.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetPlatformAttribute)) is System.Runtime.Versioning.TargetPlatformAttribute attribute
+                        ? attribute.PlatformName
+                        : default;
+#else
+                    return assembly?.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name.Contains("TargetPlatformAttribute")) is { } customAttribute
+                        ? customAttribute.GetType().GetTypeInfo().GetProperty("PlatformName").GetValue(customAttribute) as string
+                        : default;
+#endif
                 }
             }
         }
@@ -124,4 +161,38 @@ public static class RuntimeInformation
         }
     }
 #endif
+
+    private static Assembly? GetEntryAssembly()
+    {
+        var assembly = Assembly.GetEntryAssembly();
+#if NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
+        if (assembly?.FullName?.IndexOf("testhost", StringComparison.OrdinalIgnoreCase) >= 0
+            && Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) == true) is Assembly testAssembly)
+        {
+            return testAssembly;
+        }
+#endif
+
+        return assembly;
+    }
+
+    private static string GetPathVariable()
+    {
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            return "PATH";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            return "LD_LIBRARY_PATH";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+        {
+            return "DYLD_LIBRARY_PATH";
+        }
+
+        throw new InvalidOperationException();
+    }
 }

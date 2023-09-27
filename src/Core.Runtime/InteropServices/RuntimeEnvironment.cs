@@ -19,7 +19,6 @@ public static class RuntimeEnvironment
     private const string RuntimesDirectory = "runtimes";
     private const string NativeDirectory = "native";
     private const string LibraryDirectory = "lib";
-    private static readonly string PathVariableName = GetPathVariableName();
 
     private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
 
@@ -49,8 +48,16 @@ public static class RuntimeEnvironment
             return runtimesLibraryDirectory;
         }
 
+        // get the current TFM
+        var tfm = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance);
+        if (RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform)
+        {
+            tfm = NuGet.Frameworks.NuGetFramework.ParseFolder(string.Concat(tfm, "-", targetPlatform));
+        }
+
         // get the closest TFM from the list
-        return NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTfms, NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance), NuGet.Frameworks.NuGetFramework.ParseFolder) is string nearest
+        var nearest = NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTfms, tfm, NuGet.Frameworks.NuGetFramework.ParseFolder);
+        return nearest is not null
             ? Path.Combine(runtimesLibraryDirectory, nearest)
             : runtimesLibraryDirectory;
     }
@@ -120,12 +127,27 @@ public static class RuntimeEnvironment
     /// </summary>
     /// <param name="directory">The directory to add.</param>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddDirectoryToPath(string directory, EnvironmentVariableTarget target)
+    public static void AddDirectoryToPath(string directory, EnvironmentVariableTarget target) => AddDirectory(directory, RuntimeInformation.PathVariable, target);
+
+    /// <summary>
+    /// Adds a directory to the environment variable in the current process.
+    /// </summary>
+    /// <param name="directory">The directory to add.</param>
+    /// <param name="variable">The name of an environment variable.</param>
+    public static void AddDirectory(string directory, string variable) => AddDirectory(directory, variable, EnvironmentVariableTarget.Process);
+
+    /// <summary>
+    /// Adds a directory to the environment variable in the current process or from the Windows operating system registry key for the current user or local machine.
+    /// </summary>
+    /// <param name="directory">The directory to add.</param>
+    /// <param name="variable">The name of an environment variable.</param>
+    /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+    public static void AddDirectory(string directory, string variable, EnvironmentVariableTarget target)
     {
-        var path = Environment.GetEnvironmentVariable(PathVariableName, target);
+        var path = Environment.GetEnvironmentVariable(variable, target);
         if (path is null)
         {
-            Environment.SetEnvironmentVariable(PathVariableName, directory);
+            Environment.SetEnvironmentVariable(variable, directory);
             return;
         }
 
@@ -138,7 +160,7 @@ public static class RuntimeEnvironment
             return;
         }
 
-        Environment.SetEnvironmentVariable(PathVariableName, directory + Path.PathSeparator + path, target);
+        Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path, target);
     }
 #else
     /// <summary>
@@ -180,12 +202,19 @@ public static class RuntimeEnvironment
     /// Adds a directory to the path environment variable.
     /// </summary>
     /// <param name="directory">The directory to add.</param>
-    public static void AddDirectoryToPath(string directory)
+    public static void AddDirectoryToPath(string directory) => AddDirectory(directory, RuntimeInformation.PathVariable);
+
+    /// <summary>
+    /// Adds a directory to the path variable.
+    /// </summary>
+    /// <param name="directory">The directory to add.</param>
+    /// <param name="variable">The name of an environment variable.</param>
+    public static void AddDirectory(string directory, string variable)
     {
-        var path = Environment.GetEnvironmentVariable(PathVariableName);
+        var path = Environment.GetEnvironmentVariable(variable);
         if (path is null)
         {
-            Environment.SetEnvironmentVariable(PathVariableName, directory);
+            Environment.SetEnvironmentVariable(variable, directory);
             return;
         }
 
@@ -194,7 +223,7 @@ public static class RuntimeEnvironment
             return;
         }
 
-        Environment.SetEnvironmentVariable(PathVariableName, directory + Path.PathSeparator + path);
+        Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path);
     }
 #endif
 
@@ -211,26 +240,6 @@ public static class RuntimeEnvironment
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S1172:Unused method parameters should be removed", Justification = "This is required for a common API")]
     private static bool IsAlreadyInAppContext(string value, string variable) => false;
 #endif
-
-    private static string GetPathVariableName()
-    {
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            return "PATH";
-        }
-
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-        {
-            return "LD_LIBRARY_PATH";
-        }
-
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
-        {
-            return "DYLD_LIBRARY_PATH";
-        }
-
-        throw new InvalidOperationException();
-    }
 
     private static string? GetRuntimeDirectory(string name)
     {

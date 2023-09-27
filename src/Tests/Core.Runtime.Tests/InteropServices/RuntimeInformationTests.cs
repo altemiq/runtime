@@ -13,4 +13,12 @@ public class RuntimeInformationTests
 
     [Fact]
     public void GetTargetFramework() => RuntimeInformation.TargetFramework.Should().NotBeNullOrEmpty();
+
+    [Fact]
+    public void GetTargetPlatform()
+#if NET5_0_OR_GREATER && WINDOWS
+        => RuntimeInformation.TargetPlatform.Should().NotBeNullOrEmpty().And.Contain("Windows");
+#else
+        => RuntimeInformation.TargetPlatform.Should().NotBeNull().And.BeEmpty();
+#endif
 }
