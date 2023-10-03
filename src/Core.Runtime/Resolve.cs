@@ -35,7 +35,9 @@ public static class Resolve
             return alreadyLoadedAssembly;
         }
 
-        if (FindPath(InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectory(), requiredAssemblyName.Name) is string path)
+        if (GetPaths()
+            .Select(p => FindPath(p, requiredAssemblyName.Name))
+            .FirstOrDefault(p => p is not null) is string path)
         {
             var assembly = System.Reflection.Assembly.LoadFile(path);
             if (IsValid(assembly.GetName(), requiredAssemblyName))
@@ -71,6 +73,17 @@ public static class Resolve
             {
                 return other is null || (value is not null && check(value, other));
             }
+        }
+
+        static IEnumerable<string?> GetPaths()
+        {
+            yield return InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectory();
+#if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
+            yield return AppContext.BaseDirectory;
+#endif
+#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+            yield return AppDomain.CurrentDomain.BaseDirectory;
+#endif
         }
 
         static string? FindPath(string? basePath, string? file)
