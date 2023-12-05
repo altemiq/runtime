@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="RuntimeConfigurationTests.cs" company="Altemiq">
+// <copyright file="RuntimeEnvironmentTests.cs" company="Altemiq">
 // Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
@@ -18,14 +18,14 @@ public class RuntimeEnvironmentTests
     public void AddLibraryDirectory()
     {
         RuntimeEnvironment.AddRuntimeLibraryDirectory();
-        Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable).Should().Contain(RuntimeEnvironment.GetRuntimeLibraryDirectory());
+        _ = Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable).Should().Contain(RuntimeEnvironment.GetRuntimeLibraryDirectory());
     }
 
     [Fact]
     public void AddNativeDirectory()
     {
         RuntimeEnvironment.AddRuntimeNativeDirectory();
-        Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable).Should().Contain(RuntimeEnvironment.GetRuntimeNativeDirectory());
+        _ = Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable).Should().Contain(RuntimeEnvironment.GetRuntimeNativeDirectory());
     }
 
     [Fact]
@@ -34,6 +34,6 @@ public class RuntimeEnvironmentTests
         RuntimeEnvironment.AddRuntimeLibraryDirectory();
         var path = Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable);
         RuntimeEnvironment.AddRuntimeLibraryDirectory();
-        Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable).Should().Be(path);
+        _ = Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable).Should().Be(path);
     }
 }

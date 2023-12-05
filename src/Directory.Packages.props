@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.7.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
     <PackageVersion Include="Microsoft.DotNet.PlatformAbstractions" Version="3.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
     <PackageVersion Include="NuGet.Frameworks" Version="4.0.0" />
@@ -16,13 +16,13 @@
   </ItemGroup>
 
   <ItemGroup Label="Source Generators">
-    <GlobalPackageReference Include="PolySharp" Version="1.13.2" />
+    <GlobalPackageReference Include="PolySharp" Version="1.14.0" />
   </ItemGroup>
 
   <ItemGroup Label="Analyzers">
-    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.85" />
-    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.5.0" />
-    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="9.10.0.77988" />
+    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.118" />
+    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.7.0" />
+    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108" />
     <GlobalPackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.507" />
   </ItemGroup>
 

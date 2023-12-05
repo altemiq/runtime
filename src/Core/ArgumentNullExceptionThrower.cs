@@ -11,6 +11,7 @@ namespace System;
 /// <summary>
 /// <see cref="ArgumentNullException"/> helper.
 /// </summary>
+[Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "This is part of the API now")]
 public sealed class ArgumentNullExceptionEx : ArgumentExceptionEx
 {
     /// <summary>

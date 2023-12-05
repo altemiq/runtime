@@ -16,6 +16,6 @@ public class BinaryReaderExtensionsTests
         stream.Position = 0;
 
         using var reader = new BinaryReader(stream);
-        reader.ReadString(value.Length).Should().Be(value);
+        _ = reader.ReadString(value.Length).Should().Be(value);
     }
 }

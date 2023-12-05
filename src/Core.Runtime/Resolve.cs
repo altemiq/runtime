@@ -12,7 +12,7 @@ namespace Altemiq.Runtime;
 /// </summary>
 public static class Resolve
 {
-    private static readonly IEnumerable<string> Extensions = new[] { ".dll", ".DLL", ".exe", ".EXE" };
+    private static readonly string[] Extensions = [".dll", ".DLL", ".exe", ".EXE"];
 
     /// <summary>
     /// Resolves runtime assemblies.

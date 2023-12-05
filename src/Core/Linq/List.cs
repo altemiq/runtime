@@ -110,13 +110,7 @@ public static partial class List
                     genericType.GetTypeInfo().DeclaredConstructors;
 #endif
 
-                var parameterObjects =
-#if NETSTANDARD1_3_OR_GREATER || NET46_OR_GREATER || NETCOREAPP1_0_OR_GREATER
-                    Array.Empty<object>();
-#else
-                    new object[0];
-#endif
-
+                object[] parameterObjects = [];
                 foreach (var parameters in constructors.Select(constructor => constructor.GetParameters()))
                 {
                     if (parameters.Length >= parameterObjects.Length)

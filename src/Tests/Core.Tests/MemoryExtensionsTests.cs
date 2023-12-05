@@ -38,7 +38,7 @@ public class MemoryExtensionsTests
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
         var enumerator = span.Split(',', StringSplitOptions.RemoveEmptyEntries);
-        enumerator.MoveNext().Should().BeFalse();
+        _ = enumerator.MoveNext().Should().BeFalse();
     }
 
     [Theory]
@@ -65,7 +65,7 @@ public class MemoryExtensionsTests
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
         var enumerator = span.Split(",", StringSplitOptions.RemoveEmptyEntries);
-        enumerator.MoveNext().Should().BeFalse();
+        _ = enumerator.MoveNext().Should().BeFalse();
     }
 
     [Theory]
@@ -76,7 +76,7 @@ public class MemoryExtensionsTests
         var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
-        parsedValues.Should().BeEquivalentTo(randomValues);
+        _ = parsedValues.Should().BeEquivalentTo(randomValues);
     }
 
     public static IEnumerable<object[]> GetValuesData
@@ -152,8 +152,8 @@ public class MemoryExtensionsTests
         var random = new Random();
         var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
-        getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
-        parsedValues.Should().BeEquivalentTo(randomValues);
+        _ = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
+        _ = parsedValues.Should().BeEquivalentTo(randomValues);
     }
 
     public static IEnumerable<object[]> TryGetValuesData
@@ -206,12 +206,12 @@ public class MemoryExtensionsTests
         var span = value.AsSpan();
         var enumerator = span.Split('|');
         _ = span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var enumValue).Should().BeTrue();
-        enumValue.Should().Be(EnumValue.First);
+        _ = enumValue.Should().Be(EnumValue.First);
         _ = span.TryGetNextEnum(ref enumerator, out enumValue).Should().BeTrue();
-        enumValue.Should().Be(EnumValue.Second);
+        _ = enumValue.Should().Be(EnumValue.Second);
         _ = span.TryGetNextEnum(ref enumerator, true, out enumValue).Should().BeTrue();
-        enumValue.Should().Be(EnumValue.Third);
-        span.TryGetNextEnum<EnumValue>(ref enumerator, out _).Should().BeFalse();
+        _ = enumValue.Should().Be(EnumValue.Third);
+        _ = span.TryGetNextEnum<EnumValue>(ref enumerator, out _).Should().BeFalse();
     }
 
     public delegate bool TryGetValuesDelegate<T>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider, out T[]? output);

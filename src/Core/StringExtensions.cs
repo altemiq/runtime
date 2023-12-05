@@ -49,14 +49,7 @@ public static class StringExtensions
     /// <param name="s">The string to quote.</param>
     /// <param name="options">The options to use to quote the string.</param>
     /// <returns>The quoted string.</returns>
-    public static string Quote(this string? s, StringQuoteOptions options = StringQuoteOptions.None) => Quote(
-        s,
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER
-        Array.Empty<char>(),
-#else
-        new char[0],
-#endif
-        options);
+    public static string Quote(this string? s, StringQuoteOptions options = StringQuoteOptions.None) => Quote(s, [], options);
 
     /// <summary>
     /// Quotes the specified string.
@@ -65,7 +58,7 @@ public static class StringExtensions
     /// <param name="delimeter">The delimeter to quote.</param>
     /// <param name="options">The options to use to quote the string.</param>
     /// <returns>The quoted string.</returns>
-    public static string Quote(this string? s, char delimeter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => Quote(s, new[] { delimeter }, options);
+    public static string Quote(this string? s, char delimeter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => Quote(s, [delimeter], options);
 
     /// <summary>
     /// Quotes the specified string.
@@ -95,16 +88,7 @@ public static class StringExtensions
         ArgumentNullExceptionThrower.ThrowIfNull(s);
         if (s.Length == 0)
         {
-            if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries))
-            {
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER
-                return Array.Empty<string>();
-#else
-                return new string[0];
-#endif
-            }
-
-            return new string[] { s };
+            return options.HasFlag(StringSplitOptions.RemoveEmptyEntries) ? [] : [s];
         }
 
         var splitOnWhiteSpace = separator is null || separator.Count == 0;

@@ -123,8 +123,8 @@ public ref struct SpanSplitEnumerator<T>
         }
 
         int elementLength;
-        bool currentValid = false;
-        bool removeEmpty = this.options.HasFlag(StringSplitOptions.RemoveEmptyEntries);
+        var currentValid = false;
+        var removeEmpty = this.options.HasFlag(StringSplitOptions.RemoveEmptyEntries);
         do
         {
             if (this.startNext > this.buffer.Length)

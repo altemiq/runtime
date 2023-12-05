@@ -129,6 +129,11 @@ dotnet_diagnostic.S3928.severity = none
 # S3903: Move into fixed namespace
 dotnet_diagnostic.S3903.severity = none
 
+#### StyleCop ####
+
+# SA1010: Opening square brackets should be spaced correctly
+dotnet_diagnostic.SA1010.severity = none
+
 #### C# Coding Conventions ####
 
 # var preferences

@@ -6,10 +6,10 @@
 
   <ItemGroup>
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="System.Text.Json" Version="7.0.3" />
-    <PackageVersion Include="xunit" Version="2.5.1" />
-    <PackageVersion Include="xunit.runner.utility" Version="2.5.1" />
+    <PackageVersion Include="xunit" Version="2.6.2" />
+    <PackageVersion Include="xunit.runner.utility" Version="2.6.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,8 +19,8 @@
 
   <ItemGroup Label="Analyzers">
     <GlobalPackageReference Include="coverlet.collector" Version="6.0.0" />
-    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.24.0" />
-    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.5.1" />
+    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.26.0" />
+    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
     <GlobalPackageReference Include="GitHubActionsTestLogger" Version="2.3.3" />
   </ItemGroup>
 

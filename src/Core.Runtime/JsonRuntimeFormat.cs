@@ -133,7 +133,6 @@ internal static class JsonRuntimeFormat
         };
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3604:Member initializer values should not be redundant", Justification = "This is incorrect")]
     private sealed class Runtime(string name, IEnumerable<string> imports)
     {
         public string Name { get; } = name;

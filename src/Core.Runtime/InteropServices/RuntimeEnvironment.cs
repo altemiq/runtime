@@ -237,7 +237,6 @@ public static class RuntimeEnvironment
 #else
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "This is required for a common API")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for a common API")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S1172:Unused method parameters should be removed", Justification = "This is required for a common API")]
     private static bool IsAlreadyInAppContext(string value, string variable) => false;
 #endif
 
@@ -256,18 +255,14 @@ public static class RuntimeEnvironment
         }
 
         // get the rids
-        var availableRids = Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToArray();
-        if (availableRids.Length == 0)
+        return Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToList() switch
         {
-            return runtimesDirectory;
-        }
-
-        if (GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid)
-        {
-            return Path.Combine(runtimesDirectory, rid, name);
-        }
-
-        return Path.Combine(runtimesDirectory, name);
+            { Count: 0 } => runtimesDirectory,
+#pragma warning disable S2589 // Boolean expressions should not be gratuitous
+            var availableRids when GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid => Path.Combine(runtimesDirectory, rid, name),
+#pragma warning restore S2589 // Boolean expressions should not be gratuitous
+            _ => Path.Combine(runtimesDirectory, name),
+        };
 
         static IEnumerable<string> GetRuntimeRids()
         {

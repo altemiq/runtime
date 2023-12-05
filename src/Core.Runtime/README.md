@@ -1,4 +1,4 @@
-# Altavec Runtime library
+# Altemiq Runtime library
 
 This is the code library for base classes, extension methods, etc for runtime operations.
 

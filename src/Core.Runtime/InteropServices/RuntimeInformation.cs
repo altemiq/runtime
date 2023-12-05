@@ -8,7 +8,6 @@ namespace Altemiq.Runtime.InteropServices;
 
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Runtime information.
@@ -118,6 +117,7 @@ public static class RuntimeInformation
                 {
                     return $"{GetRidFront()}-{GetRidBack()}";
 
+#pragma warning disable IDE0046
                     static string GetRidFront()
                     {
                         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
@@ -137,6 +137,7 @@ public static class RuntimeInformation
 
                         throw new InvalidOperationException();
                     }
+#pragma warning restore IDE0046
 
                     static string GetRidBack()
                     {
@@ -178,6 +179,22 @@ public static class RuntimeInformation
 
     private static string GetPathVariable()
     {
+#if NET5_0_OR_GREATER
+        if (OperatingSystem.IsWindows())
+        {
+            return "PATH";
+        }
+
+        if (OperatingSystem.IsLinux())
+        {
+            return "LD_LIBRARY_PATH";
+        }
+
+        if (OperatingSystem.IsMacOS())
+        {
+            return "DYLD_LIBRARY_PATH";
+        }
+#else
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
         {
             return "PATH";
@@ -192,6 +209,7 @@ public static class RuntimeInformation
         {
             return "DYLD_LIBRARY_PATH";
         }
+#endif
 
         throw new InvalidOperationException();
     }

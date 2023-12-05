@@ -15,14 +15,14 @@ public class ExceptionThrowerTests
         public void ThrowOnNull()
         {
             var act = () => ArgumentNullExceptionThrower.ThrowIfNull(default(object));
-            act.Should().Throw<System.ArgumentNullException>();
+            _ = act.Should().Throw<System.ArgumentNullException>();
         }
 
         [Fact]
         public void NotThrowOnNotNull()
         {
             var act = () => ArgumentNullExceptionThrower.ThrowIfNull(string.Empty);
-            act.Should().NotThrow<System.ArgumentNullException>();
+            _ = act.Should().NotThrow<System.ArgumentNullException>();
         }
     }
 
@@ -32,21 +32,21 @@ public class ExceptionThrowerTests
         public void ThrowOnNull()
         {
             var act = () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default);
-            act.Should().Throw<System.ArgumentException>();
+            _ = act.Should().Throw<System.ArgumentException>();
         }
 
         [Fact]
         public void ThrowIfEmpty()
         {
             var act = () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty);
-            act.Should().Throw<System.ArgumentException>();
+            _ = act.Should().Throw<System.ArgumentException>();
         }
 
         [Fact]
         public void NotThrow()
         {
             var act = () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(nameof(string.Empty));
-            act.Should().NotThrow<System.ArgumentException>();
+            _ = act.Should().NotThrow<System.ArgumentException>();
         }
     }
 
@@ -56,35 +56,35 @@ public class ExceptionThrowerTests
         public void ThrowOnLessThanZero()
         {
             var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(-1);
-            act.Should().Throw<System.ArgumentOutOfRangeException>();
+            _ = act.Should().Throw<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void ThrowOnTooLow()
         {
             var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(-1, 0, 1);
-            act.Should().Throw<System.ArgumentOutOfRangeException>();
+            _ = act.Should().Throw<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void ThrowOnTooHigh()
         {
             var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(2, 0, 1);
-            act.Should().Throw<System.ArgumentOutOfRangeException>();
+            _ = act.Should().Throw<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void NotThrowIfPositive()
         {
             var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(1);
-            act.Should().NotThrow<System.ArgumentOutOfRangeException>();
+            _ = act.Should().NotThrow<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void NotThrowIfValid()
         {
             var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(1, 0, 2);
-            act.Should().NotThrow<System.ArgumentOutOfRangeException>();
+            _ = act.Should().NotThrow<System.ArgumentOutOfRangeException>();
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="StringExtensions.cs" company="Altemiq">
+// <copyright file="StringExtensionsTests.cs" company="Altemiq">
 // Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
 namespace Altemiq;
-
-using System.Runtime.Serialization.Json;
-
 public class StringExtensionsTests
 {
     public const string SingleLineSimple = "1,2,3,4,5";
@@ -65,7 +62,7 @@ public class StringExtensionsTests
     [InlineData(SingleLineWithEmptyValues, "", 5, StringSplitOptions.None)]
     [InlineData(SingleLineWithNullValues, null, 5, StringSplitOptions.None)]
     [InlineData(SingleLineWithNullValues, "4", 4, StringSplitOptions.RemoveEmptyEntries)]
-    public void ReadSimple(string input, string value, int length, StringSplitOptions options) =>
+    public void ReadSimple(string input, string? value, int length, StringSplitOptions options) =>
         input.SplitQuoted(',', options)
             .Should().NotBeNull()
             .And.Subject.Should().HaveCount(length)
@@ -100,7 +97,7 @@ public class StringExtensionsTests
     public void Quote(string input, string? delimeter, StringQuoteOptions options, bool quoted)
     {
         var d = delimeter?.ToCharArray() ?? Array.Empty<char>();
-        input.Quote(d, options).Should().Be(quoted ? "\"" + input + "\"" : input);
+        _ = input.Quote(d, options).Should().Be(quoted ? "\"" + input + "\"" : input);
     }
 
     [Theory]
