@@ -130,5 +130,5 @@ public partial class ArgumentOutOfRangeExceptionEx
 #endif
 
     [Diagnostics.CodeAnalysis.DoesNotReturn]
-    private static void ThrowNegative<T>(T value, string? paramName) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNonNegative, paramName));
+    private static void ThrowNegative<T>(T value, string? paramName) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNonNegative, paramName, value));
 }

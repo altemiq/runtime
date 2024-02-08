@@ -10,18 +10,18 @@ public partial class ListTests
 {
     [Theory]
     [MemberData(nameof(GetLists))]
-    public void IndexOf(object first, object second)
+    public void IndexOf(IEnumerable<int> first, IEnumerable<int> second)
     {
         _ = TestListList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
         _ = TestReadOnlyListReadOnlyList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
     }
 
     [Theory]
-    [MemberData(nameof(CreateNulls), 2)]
-    public void IndexOfWithNull(object first, object second)
+    [MemberData(nameof(CreateNulls))]
+    public void IndexOfWithNull(System.Collections.IEnumerable? first, System.Collections.IEnumerable? second)
     {
-        ((IList<int>)first).IndexOf((IList<int>)second).Should().Be(-1);
-        ((IReadOnlyList<int>)first).IndexOf((IReadOnlyList<int>)second).Should().Be(-1);
+        ((IList<int>)first!).IndexOf((IList<int>)second!).Should().Be(-1);
+        ((IReadOnlyList<int>)first!).IndexOf((IReadOnlyList<int>)second!).Should().Be(-1);
     }
 
     [Theory]
@@ -30,7 +30,7 @@ public partial class ListTests
 
     [Theory]
     [MemberData(nameof(GetLists))]
-    public void IndexOfAny(object first, object second)
+    public void IndexOfAny(IEnumerable<int> first, IEnumerable<int> second)
     {
         _ = TestListList<int, int>(first, second, (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
         _ = TestReadOnlyListReadOnlyList<int, int>(first, second, (f, s) => f.IndexOfAny(s), 1).Should().Be(1);

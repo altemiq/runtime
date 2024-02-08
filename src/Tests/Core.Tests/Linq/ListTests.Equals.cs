@@ -10,7 +10,7 @@ public partial class ListTests
 {
     [Theory]
     [MemberData(nameof(GetLists))]
-    public void DoesEquals(object first, object second)
+    public void DoesEquals(IEnumerable<int> first, IEnumerable<int> second)
     {
         _ = TestListList<int, bool>(first, second, (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
         _ = TestListReadOnlyList<int, bool>(first, second, (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
@@ -20,7 +20,7 @@ public partial class ListTests
 
     [Theory]
     [MemberData(nameof(GetLists))]
-    public void DoesNotEquals(object first, object second)
+    public void DoesNotEquals(IEnumerable<int> first, IEnumerable<int> second)
     {
         _ = TestListList<int, bool>(first, second, (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
         _ = TestListReadOnlyList<int, bool>(first, second, (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();

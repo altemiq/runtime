@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="ObjectDisposedExceptionThrower.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="ObjectDisposedExceptionThrower.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 

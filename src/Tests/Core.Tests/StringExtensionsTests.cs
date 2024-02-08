@@ -48,11 +48,13 @@ public class StringExtensionsTests
         ,",4,5
         """;
 
+    private static readonly string[] expectation = ["This", "is", "a"];
+
     [Fact]
     public void NullString() => new Func<string[]>(() => default(string)!.SplitQuoted()).Should().ThrowExactly<ArgumentNullException>();
 
     [Fact]
-    public void EmptyString() => string.Empty.SplitQuoted().Should().HaveCount(1).And.HaveElementAt(0, string.Empty);
+    public void EmptyString() => string.Empty.SplitQuoted().Should().ContainSingle().And.HaveElementAt(0, string.Empty);
 
     [Fact]
     public void EmptyStringWithOptions() => string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries).Should().BeEmpty();
@@ -96,7 +98,7 @@ public class StringExtensionsTests
     [InlineData("value€second", null, StringQuoteOptions.QuoteAll & ~StringQuoteOptions.QuoteNonAscii, false)]
     public void Quote(string input, string? delimeter, StringQuoteOptions options, bool quoted)
     {
-        var d = delimeter?.ToCharArray() ?? Array.Empty<char>();
+        var d = delimeter?.ToCharArray() ?? [];
         _ = input.Quote(d, options).Should().Be(quoted ? "\"" + input + "\"" : input);
     }
 
@@ -110,6 +112,6 @@ public class StringExtensionsTests
 
 #if NET5_0_OR_GREATER
     [Fact]
-    public void TrimEntries() => "This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries).Should().BeEquivalentTo(new string[] { "This", "is", "a" });
+    public void TrimEntries() => "This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries).Should().BeEquivalentTo(expectation);
 #endif
 }

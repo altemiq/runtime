@@ -8,8 +8,8 @@ namespace Altemiq.Linq;
 
 public partial class ListTests
 {
-    public static IEnumerable<object[]> GetInt32Lists() => CreateReadOnlyLists(1, 5, 10, 15, 20);
-    public static IEnumerable<object[]> GetDoubleLists() => CreateReadOnlyLists(1D, 5D, 10D, 15D, 20D);
+    public static TheoryData<IReadOnlyList<int>> GetInt32Lists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
+    public static TheoryData<IReadOnlyList<double>> GetDoubleLists() => new(CreateReadOnlyLists(1D, 5D, 10D, 15D, 20D));
 
     [Theory]
     [MemberData(nameof(GetInt32Lists))]

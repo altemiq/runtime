@@ -8,18 +8,17 @@ namespace Altemiq.Linq;
 
 public partial class ListTests
 {
-    public static IEnumerable<object?[]> CreateNulls(int count)
-    {
-        yield return Enumerable.Range(0, count).Select<int, object?>(_ => null).ToArray();
-    }
+    public static TheoryData<System.Collections.IEnumerable?, System.Collections.IEnumerable?> CreateNulls() => new() { { null, null } };
 
-    public static IEnumerable<object[]> GetLists()
+    public static TheoryData<IEnumerable<int>, IEnumerable<int>> GetLists()
     {
+        var theoryData = new TheoryData<IEnumerable<int>, IEnumerable<int>>();
+
         foreach (var first in CreateListsCore(1, 2, 3, 4, 5))
         {
             foreach (var second in CreateListsCore(2, 3, 4))
             {
-                yield return new object[] { first, second };
+                theoryData.Add(first, second);
             }
         }
 
@@ -27,7 +26,7 @@ public partial class ListTests
         {
             foreach (var second in CreateReadOnlyListsCore(2, 3, 4))
             {
-                yield return new object[] { first, second };
+                theoryData.Add(first, second);
             }
         }
 
@@ -35,7 +34,7 @@ public partial class ListTests
         {
             foreach (var second in CreateListsCore(2, 3, 4))
             {
-                yield return new object[] { first, second };
+                theoryData.Add(first, second);
             }
         }
 
@@ -43,14 +42,16 @@ public partial class ListTests
         {
             foreach (var second in CreateReadOnlyListsCore(2, 3, 4))
             {
-                yield return new object[] { first, second };
+                theoryData.Add(first, second);
             }
         }
+
+        return theoryData;
     }
 
-    private static IEnumerable<object[]> CreateReadOnlyLists<T>(params T[] a) => CreateReadOnlyListsCore(a).Select(x => new object[] { x });
+    private static IEnumerable<IReadOnlyList<T>> CreateReadOnlyLists<T>(params T[] a) => CreateReadOnlyListsCore(a);
 
-    private static IEnumerable<object[]> CreateLists<T>(params T[] a) => CreateListsCore(a).Select(x => new object[] { x });
+    private static IEnumerable<IList<T>> CreateLists<T>(params T[] a) => CreateListsCore(a);
 
     private static IEnumerable<IReadOnlyList<T>> CreateReadOnlyListsCore<T>(params T[] a)
     {

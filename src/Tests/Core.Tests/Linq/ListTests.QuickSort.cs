@@ -8,48 +8,57 @@ namespace Altemiq.Linq;
 
 public partial class ListTests
 {
-    public static IEnumerable<object[]> GetEmptyLists() => CreateLists<int>();
-    public static IEnumerable<object[]> GetSingleItemLists() => CreateLists(1);
-    public static IEnumerable<object[]> GetTwoItemsInOrderLists() => CreateLists(1, 2);
-    public static IEnumerable<object[]> GetTwoItemsNotInOrderLists() => CreateLists(2, 1);
-    public static IEnumerable<object[]> GetThreeItemsNotInOrderLists() => CreateLists(1, 2, 0);
-    public static IEnumerable<object[]> GetItemLists()
+    public static TheoryData<IList<int>> GetEmptyLists() => new(CreateLists<int>());
+    public static TheoryData<IList<int>> GetSingleItemLists() => new(CreateLists(1));
+    public static TheoryData<IList<int>> GetTwoItemsInOrderLists() => new(CreateLists(1, 2));
+    public static TheoryData<IList<int>> GetTwoItemsNotInOrderLists() => new(CreateLists(2, 1));
+    public static TheoryData<IList<int>> GetThreeItemsNotInOrderLists() => new(CreateLists(1, 2, 0));
+    public static TheoryData<IList<SimpleStruct>, SimpleStruct, SimpleStruct, SimpleStruct, SimpleStruct> GetItemLists()
     {
         var first = new SimpleStruct(0, 0D);
         var second = new SimpleStruct(1, 1D);
         var third = new SimpleStruct(2, 2D);
         var forth = new SimpleStruct(3, 3D);
 
+        var theoryData = new TheoryData<IList<SimpleStruct>, SimpleStruct, SimpleStruct, SimpleStruct, SimpleStruct>();
         foreach (var list in CreateListsCore(third, forth, second, first))
         {
-            yield return new object[] { list, first, second, third, forth };
+            theoryData.Add(list, first, second, third, forth);
         }
+
+        return theoryData;
     }
 
-    public static IEnumerable<object[]> GetTwoIdenticalValuesLists() => CreateLists(0, 0);
-    public static IEnumerable<object[]> GetThreeIdenticalValuesLists() => CreateLists(0, 0, 0);
-    public static IEnumerable<object[]> GetThreeIdenticalItemsList()
+    public static TheoryData<IList<int>> GetTwoIdenticalValuesLists() => new(CreateLists(0, 0));
+    public static TheoryData<IList<int>> GetThreeIdenticalValuesLists() => new(CreateLists(0, 0, 0));
+    public static TheoryData<IList<SimpleStruct>, SimpleStruct, SimpleStruct, SimpleStruct> GetThreeIdenticalItemsList()
     {
         var first = new SimpleStruct(0, 0D);
         var second = new SimpleStruct(0, 0D);
         var third = new SimpleStruct(0, 0D);
 
+        var theoryData = new TheoryData<IList<SimpleStruct>, SimpleStruct, SimpleStruct, SimpleStruct>();
         foreach (var list in CreateListsCore(first, second, third))
         {
-            yield return new object[] { list, first, second, third };
+            theoryData.Add(list, first, second, third);
         }
+
+        return theoryData;
     }
 
-    public static IEnumerable<object?[]> GetsItemsWithNulls()
+    public static TheoryData<IList<SimpleClass?>, SimpleClass, SimpleClass?, SimpleClass> GetsItemsWithNulls()
     {
         var first = new SimpleClass(0, 0D);
         var second = default(SimpleClass);
         var third = new SimpleClass(1, 1D);
 
+        var theoryData = new TheoryData<IList<SimpleClass?>, SimpleClass, SimpleClass?, SimpleClass>();
         foreach (var list in CreateListsCore(first, second, third))
         {
-            yield return new object?[] { list, first, second, third };
+            theoryData.Add(list, first, second, third);
         }
+
+        return theoryData;
     }
 
 
@@ -119,7 +128,7 @@ public partial class ListTests
 
     [Theory]
     [MemberData(nameof(GetsItemsWithNulls))]
-    public void QuickSortWithNullsAndComparer(IList<SimpleClass?> list, SimpleClass? first, SimpleClass? second, SimpleClass? third) => QuickSort(list, SimpleClass.Comparison).Should()
+    public void QuickSortWithNullsAndComparer(IList<SimpleClass?> list, SimpleClass first, SimpleClass? second, SimpleClass third) => QuickSort(list, SimpleClass.Comparison).Should()
         .HaveCount(3).And
         .HaveElementAt(0, first).And
         .HaveElementAt(1, third).And

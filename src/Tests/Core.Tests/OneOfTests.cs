@@ -39,9 +39,11 @@ public class OneOfTests
                 .Match(t1 => t1, t2 => t2, t3 => t3);
         }
     }
+    
+    private static readonly System.Text.Json.JsonSerializerOptions options = new() { Converters = { new OneOfJsonConverter() } };
 
     [Fact]
-    public void CanSerializeOneOfValueTransparently() => System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, new System.Text.Json.JsonSerializerOptions { Converters = { new OneOfJsonConverter() } }).Should().Be("{\"Value\":\"A string value\"}");
+    public void CanSerializeOneOfValueTransparently() => System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, options).Should().Be("{\"Value\":\"A string value\"}");
 
     [Fact]
     public void TheValueAndTypeNameAreFormattedCorrectly() => OneOf.From<string, int, DateTime, decimal>(42).ToString().Should().Be("System.Int32: 42");

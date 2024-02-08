@@ -70,7 +70,7 @@ public class MemoryExtensionsTests
 
     [Theory]
     [MemberData(nameof(GetValuesData))]
-    public void GetValues<T>(Func<Random, int, T> creator, GetValuesDelegate<T> getValues)
+    public void GetValues(Func<Random, int, double> creator, GetValuesDelegate<double> getValues)
     {
         var random = new Random();
         var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
@@ -79,16 +79,11 @@ public class MemoryExtensionsTests
         _ = parsedValues.Should().BeEquivalentTo(randomValues);
     }
 
-    public static IEnumerable<object[]> GetValuesData
-    {
-        get
-        {
-            yield return new object[] { (Random random, int _) => random.NextDouble(), new GetValuesDelegate<double>(MemoryExtensions.GetDoubleValues) };
-        }
-    }
+    public static TheoryData<Func<Random, int, double>, GetValuesDelegate<double>> GetValuesData() => new() { { (Random random, int _) => random.NextDouble(), new GetValuesDelegate<double>(MemoryExtensions.GetDoubleValues) } };
 
     [Theory]
     [MemberData(nameof(GetData))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "This cannot be expressed by TheoryData")]
     public void Get<T>(Func<Random, int, T> creator, GetDelegate<T> parser, System.Globalization.NumberStyles style)
     {
         var random = new Random();
@@ -147,7 +142,7 @@ public class MemoryExtensionsTests
 
     [Theory]
     [MemberData(nameof(TryGetValuesData))]
-    public void TryGetValues<T>(Func<Random, int, T> creator, TryGetValuesDelegate<T> getValues)
+    public void TryGetValues(Func<Random, int, double> creator, TryGetValuesDelegate<double> getValues)
     {
         var random = new Random();
         var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
@@ -156,16 +151,11 @@ public class MemoryExtensionsTests
         _ = parsedValues.Should().BeEquivalentTo(randomValues);
     }
 
-    public static IEnumerable<object[]> TryGetValuesData
-    {
-        get
-        {
-            yield return new object[] { (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<double>(MemoryExtensions.TryGetDoubleValues) };
-        }
-    }
+    public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<double>> TryGetValuesData() => new() { { (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
 
     [Theory]
     [MemberData(nameof(TryGetData))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "This cannot be expressed by TheoryData")]
     public static void TryGet<T>(Func<Random, int, T> creator, TryGetDelegate<T> parser)
     {
         var random = new Random();
