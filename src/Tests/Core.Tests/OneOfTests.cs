@@ -39,7 +39,7 @@ public class OneOfTests
                 .Match(t1 => t1, t2 => t2, t3 => t3);
         }
     }
-    
+
     private static readonly System.Text.Json.JsonSerializerOptions options = new() { Converters = { new OneOfJsonConverter() } };
 
     [Fact]

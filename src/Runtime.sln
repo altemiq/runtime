@@ -44,7 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Runtime", "Core.Runtime\Core.Runtime.csproj", "{BA1D383B-96DD-4C84-9BAC-3354469EAD04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Runtime.Tests", "Tests\Core.Runtime.Tests\Core.Runtime.Tests.csproj", "{22B5CC1C-4BAA-4364-8C89-73C8C467C178}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Runtime.Tests", "Tests\Core.Runtime.Tests\Core.Runtime.Tests.csproj", "{22B5CC1C-4BAA-4364-8C89-73C8C467C178}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
