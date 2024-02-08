@@ -22,16 +22,16 @@ jobs:
       DOTNET_MULTILEVEL_LOOKUP: false
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Install .NET
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-          3.1.x
           6.0.x
           7.0.x
+          8.0.x
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,31 +46,19 @@ jobs:
         -- RunConfiguration.CollectSourceInformation=true
 
     - name: Report Generator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.23
+      uses: danielpalme/ReportGenerator-GitHub-Action@5
       with:
         reports: '${{ github.workspace }}/coverage/results/*/coverage.cobertura.xml'
         targetdir: '${{ github.workspace }}/coverage/reports'
-        reporttypes: 'HtmlInline;Cobertura;MarkdownSummary'
+        reporttypes: 'HtmlInline;Cobertura;MarkdownSummaryGithub'
         verbosity: 'Verbose'
-
-    - name: Get current date
-      id: date_time
-      run: echo "value=$(date +'%Y/%m/%d %H:%M:%S')" >> $GITHUB_OUTPUT
 
     - name: Test Results
       run: |
-        echo "This run completed at ``$(date +'%Y/%m/%d %H:%M:%S')``" >> $GITHUB_STEP_SUMMARY
-
-        # this is a blank line
-        echo '' >> $GITHUB_STEP_SUMMARY
-
-        # remove BOM from summary
-        sed '1s/^\xEF\xBB\xBF//' < '${{ github.workspace }}/coverage/reports/Summary.md' > Summary.md
-        cat Summary.md >> $GITHUB_STEP_SUMMARY
-        rm Summary.md
+        cat '${{ github.workspace }}/coverage/reports/SummaryGithub.md' >> $GITHUB_STEP_SUMMARY
 
     - name: Upload Coverage Reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: CoverageReports
         path: ${{ github.workspace }}/coverage/reports
@@ -85,15 +73,15 @@ jobs:
       Configuration: Release
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0 # get all history here, for semantic versioning
 
     # Install the .NET workload
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -127,7 +115,7 @@ jobs:
       run: dotnet pack --output ${{ github.workspace }}/nupkg -property:ComputeSemanticVersion=true -property:SemanticVersionOutputPath=${{ github.workspace }}/versions -property:SemanticVersionIncrement=ReleaseLabel --version-suffix ${{ steps.suffix.outputs.value }}
 
     - name: Upload NuPkg
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: NuPkg
         if-no-files-found: error
@@ -135,7 +123,7 @@ jobs:
         path: ${{ github.workspace }}/nupkg
 
     - name: Upload Versions
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Versions
         if-no-files-found: error
@@ -152,7 +140,7 @@ jobs:
       DOTNET_MULTILEVEL_LOOKUP: false
 
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: NuPkg
         path: ${{ github.workspace }}/nupkg
@@ -163,7 +151,7 @@ jobs:
       run: dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
       
     # delete-artifact
-    - uses: GeekyEggo/delete-artifact@v2
+    - uses: GeekyEggo/delete-artifact@v4
       if: ${{ steps.push.conclusion == 'success' }}
       with:
         name: NuPkg
