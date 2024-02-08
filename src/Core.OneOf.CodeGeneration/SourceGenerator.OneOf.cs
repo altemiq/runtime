@@ -20,6 +20,9 @@ public partial class SourceGenerator
     private static (string Name, ClassDeclarationSyntax ClassDeclaration) GenerateOneOf(int count)
     {
         var classDeclaraion = ClassDeclaration(OneOf)
+            .WithAttributeLists(
+            List(
+                GetAttributes()))
             .WithModifiers(
             TokenList(
                 Token(SyntaxKind.PublicKeyword),
@@ -101,6 +104,13 @@ public partial class SourceGenerator
                         }))));
 
         return (OneOf, classDeclaraion);
+
+        static IEnumerable<AttributeListSyntax> GetAttributes()
+        {
+            yield return AttributeList(
+                SingletonSeparatedList(
+                    GetGeneratedCodeAttribute()));
+        }
 
         static IEnumerable<MemberDeclarationSyntax> GetMemberDeclarations(int count)
         {

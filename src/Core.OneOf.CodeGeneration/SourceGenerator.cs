@@ -41,6 +41,8 @@ public partial class SourceGenerator : ISourceGenerator
     private const string NewLine = @"
 ";
 
+    private static AttributeSyntax? generatedCodeAttribute;
+
     /// <inheritdoc/>
     public void Execute(GeneratorExecutionContext context)
     {
@@ -92,6 +94,59 @@ public partial class SourceGenerator : ISourceGenerator
         {
             yield return Token(SyntaxKind.CommaToken);
             yield return enumerator.Current;
+        }
+    }
+
+    private static AttributeSyntax GetGeneratedCodeAttribute()
+    {
+        return generatedCodeAttribute ??= GetGeneratedCodeAttributeCore();
+
+        static AttributeSyntax GetGeneratedCodeAttributeCore()
+        {
+            var assembly = new System.Reflection.AssemblyName(typeof(SourceGenerator).Assembly.FullName);
+            return
+                Attribute(
+                    GetQualifiedName(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute)))
+                .WithArgumentList(
+                    AttributeArgumentList(
+                        SeparatedList(
+                            new[]
+                            {
+                                AttributeArgument(
+                                    LiteralExpression(
+                                        SyntaxKind.StringLiteralExpression,
+                                        Literal(assembly.Name))),
+                                AttributeArgument(
+                                    LiteralExpression(
+                                        SyntaxKind.StringLiteralExpression,
+                                        Literal(assembly.Version.ToString()))),
+                            })));
+        }
+    }
+
+    private static NameSyntax GetQualifiedName(Type type)
+    {
+        var enumerator = GetNames(type).GetEnumerator();
+        _ = enumerator.MoveNext();
+
+        NameSyntax name = enumerator.Current;
+        while (enumerator.MoveNext())
+        {
+            name = QualifiedName(name, enumerator.Current);
+        }
+
+        return name;
+    }
+
+    private static IEnumerable<IdentifierNameSyntax> GetNames(Type type)
+    {
+        return type.FullName.Split('.').Select(RemoveAttribute).Select(IdentifierName);
+
+        static string RemoveAttribute(string name)
+        {
+            return name.EndsWith(nameof(Attribute), StringComparison.Ordinal)
+                ? name[..^nameof(Attribute).Length]
+                : name;
         }
     }
 }

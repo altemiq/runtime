@@ -24,16 +24,9 @@ public partial class SourceGenerator
         var typeParameters = GetTypeParameters(typeParameterNames);
 
         var structDeclaration = StructDeclaration(OneOf)
-            .WithAttributeLists(SingletonList(
-                AttributeList(
-                    SingletonSeparatedList(
-                        Attribute(
-                            GetQualifiedName(typeof(System.Runtime.InteropServices.StructLayoutAttribute)))
-                        .WithArgumentList(
-                            AttributeArgumentList(
-                                SingletonSeparatedList(
-                                    AttributeArgument(
-                                        GetMemberAccessExpression(System.Runtime.InteropServices.LayoutKind.Auto)))))))))
+            .WithAttributeLists(
+            List(
+                GetAttributes()))
             .WithModifiers(
             TokenList(Token(SyntaxKind.PublicKeyword), Token(SyntaxKind.ReadOnlyKeyword)))
             .WithTypeParameterList(typeParameters)
@@ -68,6 +61,23 @@ public partial class SourceGenerator
                     isActive: true)));
 
         return (name, structDeclaration);
+
+        static IEnumerable<AttributeListSyntax> GetAttributes()
+        {
+            yield return AttributeList(
+                SingletonSeparatedList(
+                    Attribute(
+                        GetQualifiedName(typeof(System.Runtime.InteropServices.StructLayoutAttribute)))
+                    .WithArgumentList(
+                        AttributeArgumentList(
+                            SingletonSeparatedList(
+                                AttributeArgument(
+                                    GetMemberAccessExpression(System.Runtime.InteropServices.LayoutKind.Auto)))))));
+
+            yield return AttributeList(
+                SingletonSeparatedList(
+                    GetGeneratedCodeAttribute()));
+        }
 
         static DocumentationCommentTriviaSyntax GetDocumentation(IList<string> typeParameterNames)
         {
@@ -3495,20 +3505,6 @@ public partial class SourceGenerator
             return GetName("f", number);
         }
 
-        static NameSyntax GetQualifiedName(Type type)
-        {
-            var enumerator = GetNames(type).GetEnumerator();
-            _ = enumerator.MoveNext();
-
-            NameSyntax name = enumerator.Current;
-            while (enumerator.MoveNext())
-            {
-                name = QualifiedName(name, enumerator.Current);
-            }
-
-            return name;
-        }
-
         static MemberAccessExpressionSyntax GetMemberAccessExpression<T>(T value)
             where T : Enum
         {
@@ -3533,18 +3529,6 @@ public partial class SourceGenerator
                 }
 
                 return memberAccessExpression;
-            }
-        }
-
-        static IEnumerable<IdentifierNameSyntax> GetNames(Type type)
-        {
-            return type.FullName.Split('.').Select(RemoveAttribute).Select(IdentifierName);
-
-            static string RemoveAttribute(string name)
-            {
-                return name.EndsWith(nameof(Attribute), StringComparison.Ordinal)
-                    ? name[..^nameof(Attribute).Length]
-                    : name;
             }
         }
     }
