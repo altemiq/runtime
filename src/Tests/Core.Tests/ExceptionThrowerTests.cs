@@ -93,4 +93,23 @@ public class ExceptionThrowerTests
             _ = act.Should().NotThrow<System.ArgumentOutOfRangeException>();
         }
     }
+
+    public class ObjectDisposedException
+    {
+        [Fact]
+        public void ThrowOnNull()
+        {
+            object? @null = default;
+            var act = () => ObjectDisposedExceptionThrower.ThrowIf(@null is null, @null);
+            act.Should().Throw<System.ObjectDisposedException>();
+        }
+
+        [Fact]
+        public void NotThrowNotNull()
+        {
+            var notNull = new object();
+            var act = () => ObjectDisposedExceptionThrower.ThrowIf(notNull is null, notNull);
+            act.Should().NotThrow<System.ObjectDisposedException>();
+        }
+    }
 }

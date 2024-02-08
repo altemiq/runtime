@@ -50,6 +50,7 @@
         <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeException" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedException" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">
@@ -60,6 +61,7 @@
         <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">
@@ -69,6 +71,7 @@
         <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
     <Otherwise>
@@ -76,6 +79,7 @@
         <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullExceptionEx" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </Otherwise>
   </Choose>

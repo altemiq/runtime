@@ -7,6 +7,7 @@
         <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeException" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedException" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
     <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
@@ -14,6 +15,7 @@
         <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
     <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) ">
@@ -21,6 +23,7 @@
         <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
     <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' ">
@@ -28,6 +31,7 @@
         <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullExceptionEx" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
+        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
   </Choose>
