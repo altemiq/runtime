@@ -11,7 +11,9 @@ public class ExceptionThrowerTests
     public class ArgumentNullException
     {
         [Fact]
+#if !NET7_0_OR_GREATER
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "This is required for .NET 7.0")]
+#endif
         public void ThrowOnNull()
         {
             var act = () => ArgumentNullExceptionThrower.ThrowIfNull(default(object));
@@ -53,37 +55,41 @@ public class ExceptionThrowerTests
     public class ArgumentOutOfRangeException
     {
         [Fact]
-        public void ThrowOnLessThanZero()
+        public void ThrowIfNegative()
         {
-            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(-1);
+            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(-1);
             _ = act.Should().Throw<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void ThrowOnTooLow()
         {
-            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(-1, 0, 1);
+            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan(-1, 0);
             _ = act.Should().Throw<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void ThrowOnTooHigh()
         {
-            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(2, 0, 1);
+            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(2, 0);
             _ = act.Should().Throw<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void NotThrowIfPositive()
         {
-            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(1);
+            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(1);
             _ = act.Should().NotThrow<System.ArgumentOutOfRangeException>();
         }
 
         [Fact]
         public void NotThrowIfValid()
         {
-            var act = () => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(1, 0, 2);
+            var act = () =>
+            {
+                ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan(1, 0);
+                ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(1, 2);
+            };
             _ = act.Should().NotThrow<System.ArgumentOutOfRangeException>();
         }
     }

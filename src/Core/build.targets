@@ -2,6 +2,13 @@
 <Project>
 
   <Choose>
+    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
+      <ItemGroup>
+        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeException" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
     <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
       <ItemGroup>
         <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />

@@ -66,7 +66,7 @@ public static partial class List
     public static int IndexOfClosest<TSource, TValue>(this IList<TSource> source, int index, int length, TValue value, Func<TSource, TValue, int> comparison)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(source);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(index);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(index);
         ArgumentNullExceptionThrower.ThrowIfNull(comparison);
 
         var low = index;

@@ -89,11 +89,83 @@ namespace Altemiq.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} must be greater than zero..
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be equal to &apos;{2}&apos;..
         /// </summary>
-        internal static string MustBeGreaterThanZero {
+        internal static string MustBeEqual {
             get {
-                return ResourceManager.GetString("MustBeGreaterThanZero", resourceCulture);
+                return ResourceManager.GetString("MustBeEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be greater than &apos;{2}&apos;..
+        /// </summary>
+        internal static string MustBeGreater {
+            get {
+                return ResourceManager.GetString("MustBeGreater", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be greater than or equal to &apos;{2}&apos;..
+        /// </summary>
+        internal static string MustBeGreaterOrEqual {
+            get {
+                return ResourceManager.GetString("MustBeGreaterOrEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be less than &apos;{2}&apos;..
+        /// </summary>
+        internal static string MustBeLess {
+            get {
+                return ResourceManager.GetString("MustBeLess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be less than or equal to &apos;{2}&apos;..
+        /// </summary>
+        internal static string MustBeLessOrEqual {
+            get {
+                return ResourceManager.GetString("MustBeLessOrEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be a non-negative value..
+        /// </summary>
+        internal static string MustBeNonNegative {
+            get {
+                return ResourceManager.GetString("MustBeNonNegative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be a non-negative and non-zero value..
+        /// </summary>
+        internal static string MustBeNonNegativeNonZero {
+            get {
+                return ResourceManager.GetString("MustBeNonNegativeNonZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be a non-zero value..
+        /// </summary>
+        internal static string MustBeNonZero {
+            get {
+                return ResourceManager.GetString("MustBeNonZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must not be equal to &apos;{2}&apos;..
+        /// </summary>
+        internal static string MustBeNotEqual {
+            get {
+                return ResourceManager.GetString("MustBeNotEqual", resourceCulture);
             }
         }
     }

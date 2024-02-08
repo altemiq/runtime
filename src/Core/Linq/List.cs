@@ -256,8 +256,8 @@ public static partial class List
         Comparison<T> comparison)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(index);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(length);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(index);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(length);
         ArgumentNullExceptionThrower.ThrowIfNull(comparison);
 
         if (values is T[] @array)
@@ -410,7 +410,7 @@ public static partial class List
         where T : IComparable<T>
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanZero(index);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(index);
 
         if (length is int.MinValue)
         {

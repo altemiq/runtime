@@ -124,9 +124,33 @@
     <value>Input string was not in a correct format.</value>
   </data>
   <data name="MustBeBetween" xml:space="preserve">
-    <value>{0} must be between {1} and {2} but {3} is not.</value>
+    <value>{0} ('{1}') must be between '{2}' and '{3}'.</value>
   </data>
-  <data name="MustBeGreaterThanZero" xml:space="preserve">
-    <value>{0} must be greater than zero.</value>
+  <data name="MustBeNonZero" xml:space="preserve">
+    <value>{0} ('{1}') must be a non-zero value.</value>
+  </data>
+  <data name="MustBeNonNegative" xml:space="preserve">
+    <value>{0} ('{1}') must be a non-negative value.</value>
+  </data>
+  <data name="MustBeNonNegativeNonZero" xml:space="preserve">
+    <value>{0} ('{1}') must be a non-negative and non-zero value.</value>
+  </data>
+  <data name="MustBeLessOrEqual" xml:space="preserve">
+    <value>{0} ('{1}') must be less than or equal to '{2}'.</value>
+  </data>
+  <data name="MustBeLess" xml:space="preserve">
+    <value>{0} ('{1}') must be less than '{2}'.</value>
+  </data>
+  <data name="MustBeGreaterOrEqual" xml:space="preserve">
+    <value>{0} ('{1}') must be greater than or equal to '{2}'.</value>
+  </data>
+  <data name="MustBeGreater" xml:space="preserve">
+    <value>{0} ('{1}') must be greater than '{2}'.</value>
+  </data>
+  <data name="MustBeEqual" xml:space="preserve">
+    <value>{0} ('{1}') must be equal to '{2}'.</value>
+  </data>
+  <data name="MustBeNotEqual" xml:space="preserve">
+    <value>{0} ('{1}') must not be equal to '{2}'.</value>
   </data>
 </root>

@@ -43,7 +43,16 @@
   </Choose>
 
   <Choose>
-    <When Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
+    <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+      <ItemGroup>
+        <Compile Remove="*ExceptionThrower*.cs" />
+
+        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
+        <Using Include="System.ArgumentOutOfRangeException" Alias="ArgumentOutOfRangeExceptionThrower" />
+      </ItemGroup>
+    </When>
+    <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">
       <ItemGroup>
         <Compile Remove="ArgumentExceptionThrower.cs" />
         <Compile Remove="ArgumentNullExceptionThrower.cs" />
@@ -53,7 +62,7 @@
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
       </ItemGroup>
     </When>
-    <When Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) ">
+    <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">
       <ItemGroup>
         <Compile Remove="ArgumentNullExceptionThrower.cs" />
 
@@ -81,7 +90,6 @@
 
   <ItemGroup>
     <Using Remove="System.Net.Http" />
-    <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
   </ItemGroup>
 
 </Project>
