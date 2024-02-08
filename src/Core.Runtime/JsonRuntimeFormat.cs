@@ -122,7 +122,6 @@ internal static class JsonRuntimeFormat
     {
         public static readonly IComparer<TKey> Instance = default(DuplicateComparer<TKey>);
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S2589:Boolean expressions should not be gratuitous", Justification = "This is required for returning the value")]
         public readonly int Compare(TKey x, TKey y) => x.CompareTo(y) switch
         {
             // Handle equality as being lesser.

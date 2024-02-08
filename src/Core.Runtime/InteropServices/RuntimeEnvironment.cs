@@ -257,9 +257,7 @@ public static class RuntimeEnvironment
         return Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToList() switch
         {
             { Count: 0 } => runtimesDirectory,
-#pragma warning disable S2589 // Boolean expressions should not be gratuitous
             var availableRids when GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid => Path.Combine(runtimesDirectory, rid, name),
-#pragma warning restore S2589 // Boolean expressions should not be gratuitous
             _ => Path.Combine(runtimesDirectory, name),
         };
 
