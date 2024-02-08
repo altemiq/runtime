@@ -55,23 +55,23 @@ public static class StringExtensions
     /// Quotes the specified string.
     /// </summary>
     /// <param name="s">The string to quote.</param>
-    /// <param name="delimeter">The delimeter to quote.</param>
+    /// <param name="delimiter">The delimiter to quote.</param>
     /// <param name="options">The options to use to quote the string.</param>
     /// <returns>The quoted string.</returns>
-    public static string Quote(this string? s, char delimeter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => Quote(s, [delimeter], options);
+    public static string Quote(this string? s, char delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => Quote(s, [delimiter], options);
 
     /// <summary>
     /// Quotes the specified string.
     /// </summary>
     /// <param name="s">The string to quote.</param>
-    /// <param name="delimeter">The delimeter to quote.</param>
+    /// <param name="delimiter">The delimiter to quote.</param>
     /// <param name="options">The options to use to quote the string.</param>
     /// <returns>The quoted string.</returns>
-    public static string Quote(this string? s, char[] delimeter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => s switch
+    public static string Quote(this string? s, char[] delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => s switch
     {
         // quote an empty string to differentiate it from a null string
         { Length: 0 } => string.Concat(QuoteString, QuoteString),
-        string value => SmartQuote(value, delimeter, options),
+        string value => SmartQuote(value, delimiter, options),
         _ => string.Empty,
     };
 
@@ -214,16 +214,16 @@ public static class StringExtensions
 #endif
     }
 
-    private static string SmartQuote(string value, IList<char> delimeter, StringQuoteOptions options)
+    private static string SmartQuote(string value, IList<char> delimiter, StringQuoteOptions options)
     {
-        var quoteDelimeter = ShouldQuoteDelimeter(delimeter);
+        var quoteDelimiter = ShouldQuoteDelimiter(delimiter);
         var quoteNewLine = options.HasFlag(StringQuoteOptions.QuoteNewLine);
         var quoteQuotes = options.HasFlag(StringQuoteOptions.QuoteQuotes);
         var quoteNonAscii = options.HasFlag(StringQuoteOptions.QuoteNonAscii);
 
-        if (!quoteDelimeter && !quoteNewLine && !quoteQuotes && !quoteNonAscii)
+        if (!quoteDelimiter && !quoteNewLine && !quoteQuotes && !quoteNonAscii)
         {
-            // we have no delimeter, and are not checking anything else
+            // we have no delimiter, and are not checking anything else
             return QuoteReturnString(value);
         }
 
@@ -231,7 +231,7 @@ public static class StringExtensions
         for (var i = 0; i < value.Length; i++)
         {
             var character = value[i];
-            if ((quoteDelimeter && delimeter[0] == character && CheckDelimeter(value, i, delimeter))
+            if ((quoteDelimiter && delimiter[0] == character && CheckDelimiter(value, i, delimiter))
                 || (quoteNewLine && character is '\r' or '\n')
                 || (quoteQuotes && character is QuoteChar)
                 || (quoteNonAscii && character >= 128))
@@ -242,21 +242,21 @@ public static class StringExtensions
 
         return value;
 
-        static bool ShouldQuoteDelimeter([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] IList<char>? delimeter)
+        static bool ShouldQuoteDelimiter([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] IList<char>? delimiter)
         {
-            return delimeter?.Count > 0;
+            return delimiter?.Count > 0;
         }
 
-        static bool CheckDelimeter(string s, int index, IList<char> delimeter)
+        static bool CheckDelimiter(string s, int index, IList<char> delimiter)
         {
-            if (delimeter.Count > s.Length - index)
+            if (delimiter.Count > s.Length - index)
             {
                 return false;
             }
 
-            for (var i = 0; i < delimeter.Count; i++)
+            for (var i = 0; i < delimiter.Count; i++)
             {
-                if (s[index + i] != delimeter[i])
+                if (s[index + i] != delimiter[i])
                 {
                     return false;
                 }

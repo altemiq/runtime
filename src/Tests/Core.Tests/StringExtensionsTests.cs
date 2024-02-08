@@ -96,16 +96,16 @@ public class StringExtensionsTests
     [InlineData("value\rsecond", null, StringQuoteOptions.QuoteAll & ~StringQuoteOptions.QuoteNewLine, false)]
     [InlineData("value€second", null, StringQuoteOptions.QuoteNonAscii, true)]
     [InlineData("value€second", null, StringQuoteOptions.QuoteAll & ~StringQuoteOptions.QuoteNonAscii, false)]
-    public void Quote(string input, string? delimeter, StringQuoteOptions options, bool quoted)
+    public void Quote(string input, string? delimiter, StringQuoteOptions options, bool quoted)
     {
-        var d = delimeter?.ToCharArray() ?? [];
+        var d = delimiter?.ToCharArray() ?? [];
         _ = input.Quote(d, options).Should().Be(quoted ? "\"" + input + "\"" : input);
     }
 
     [Theory]
     [InlineData("value,second", ',', StringQuoteOptions.QuoteAll, true)]
     [InlineData("value,second", ',', StringQuoteOptions.None, true)]
-    public void QuoteChar(string input, char delimeter, StringQuoteOptions options, bool quoted) => input.Quote(delimeter, options).Should().Be(quoted ? "\"" + input + "\"" : input);
+    public void QuoteChar(string input, char delimiter, StringQuoteOptions options, bool quoted) => input.Quote(delimiter, options).Should().Be(quoted ? "\"" + input + "\"" : input);
 
     [Fact]
     public void QuoteNull() => default(string).Quote().Should().Be(string.Empty);

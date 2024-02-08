@@ -35,13 +35,14 @@ public partial class SourceGenerator : ISourceGenerator
     private const string ObjVariableName = "obj";
     private const string OVariableName = "o";
 
-    private const string TrippleSlash = "///";
+    private const string TripleSlash = "///";
     private const string Period = ".";
     private const string Space = " ";
     private const string NewLine = @"
 ";
 
     private static AttributeSyntax? generatedCodeAttribute;
+    private static AttributeSyntax? compilerGeneratedAttribute;
 
     /// <inheritdoc/>
     public void Execute(GeneratorExecutionContext context)
@@ -121,6 +122,18 @@ public partial class SourceGenerator : ISourceGenerator
                                         SyntaxKind.StringLiteralExpression,
                                         Literal(assembly.Version.ToString()))),
                             })));
+        }
+    }
+
+    private static AttributeSyntax GetCompilerGeneratedAttribute()
+    {
+        return compilerGeneratedAttribute ??= GetCompilerGeneratedAttributeCore();
+
+        static AttributeSyntax GetCompilerGeneratedAttributeCore()
+        {
+            return
+                Attribute(
+                    GetQualifiedName(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute)));
         }
     }
 

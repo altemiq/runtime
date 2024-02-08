@@ -129,7 +129,7 @@ value.SplitQuoted(',');
 
 ## Writing quoted strings
 
-This can allow for embedded delimeters, quotes, new-lines, and also non 7-bit ASCII characters.
+This can allow for embedded delimiters, quotes, new-lines, and also non 7-bit ASCII characters.
 
 This will also quote an empty string as `""` to distinguish it from a `null` string which will be empty.
 

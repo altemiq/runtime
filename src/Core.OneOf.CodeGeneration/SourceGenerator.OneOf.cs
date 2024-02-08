@@ -19,7 +19,7 @@ public partial class SourceGenerator
 {
     private static (string Name, ClassDeclarationSyntax ClassDeclaration) GenerateOneOf(int count)
     {
-        var classDeclaraion = ClassDeclaration(OneOf)
+        var classDeclaration = ClassDeclaration(OneOf)
             .WithAttributeLists(
             List(
                 GetAttributes()))
@@ -41,7 +41,7 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         Space,
                                         Space,
                                         TriviaList()))),
@@ -56,7 +56,7 @@ public partial class SourceGenerator
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
-                                                DocumentationCommentExterior(TrippleSlash)),
+                                                DocumentationCommentExterior(TripleSlash)),
                                             Space,
                                             Space,
                                             TriviaList()))),
@@ -81,7 +81,7 @@ public partial class SourceGenerator
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
-                                                DocumentationCommentExterior(TrippleSlash)),
+                                                DocumentationCommentExterior(TripleSlash)),
                                             Space,
                                             Space,
                                             TriviaList()))))
@@ -103,13 +103,16 @@ public partial class SourceGenerator
                                         TriviaList()))),
                         }))));
 
-        return (OneOf, classDeclaraion);
+        return (OneOf, classDeclaration);
 
         static IEnumerable<AttributeListSyntax> GetAttributes()
         {
             yield return AttributeList(
                 SingletonSeparatedList(
                     GetGeneratedCodeAttribute()));
+            yield return AttributeList(
+                SingletonSeparatedList(
+                    GetCompilerGeneratedAttribute()));
         }
 
         static IEnumerable<MemberDeclarationSyntax> GetMemberDeclarations(int count)
@@ -172,7 +175,7 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         Space,
                                         Space,
                                         TriviaList())));
@@ -187,7 +190,7 @@ public partial class SourceGenerator
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
-                                                DocumentationCommentExterior(TrippleSlash)),
+                                                DocumentationCommentExterior(TripleSlash)),
                                             " Converts a ",
                                             " Converts a ",
                                             TriviaList()))),
@@ -237,7 +240,7 @@ public partial class SourceGenerator
                                             TriviaList()),
                                         XmlTextLiteral(
                                             TriviaList(
-                                                DocumentationCommentExterior(TrippleSlash)),
+                                                DocumentationCommentExterior(TripleSlash)),
                                             Space,
                                             Space,
                                             TriviaList()))))
@@ -269,7 +272,7 @@ public partial class SourceGenerator
                                     TokenList(
                                         XmlTextLiteral(
                                             TriviaList(
-                                                DocumentationCommentExterior(TrippleSlash)),
+                                                DocumentationCommentExterior(TripleSlash)),
                                             Space,
                                             Space,
                                             TriviaList())));
@@ -314,7 +317,7 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         Space,
                                         Space,
                                         TriviaList())));
@@ -364,7 +367,7 @@ public partial class SourceGenerator
                                         TriviaList()),
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         Space,
                                         Space,
                                         TriviaList())));
@@ -441,7 +444,7 @@ public partial class SourceGenerator
                                     TokenList(
                                         XmlTextLiteral(
                                             TriviaList(
-                                                DocumentationCommentExterior(TrippleSlash)),
+                                                DocumentationCommentExterior(TripleSlash)),
                                             Space,
                                             Space,
                                             TriviaList()))),
@@ -457,7 +460,7 @@ public partial class SourceGenerator
                                                     TriviaList()),
                                                 XmlTextLiteral(
                                                     TriviaList(
-                                                        DocumentationCommentExterior(TrippleSlash)),
+                                                        DocumentationCommentExterior(TripleSlash)),
                                                     " Value of none.",
                                                     " Value of none.",
                                                     TriviaList()),
@@ -468,7 +471,7 @@ public partial class SourceGenerator
                                                     TriviaList()),
                                                 XmlTextLiteral(
                                                     TriviaList(
-                                                        DocumentationCommentExterior(TrippleSlash)),
+                                                        DocumentationCommentExterior(TripleSlash)),
                                                     Space,
                                                     Space,
                                                     TriviaList())))))
@@ -535,7 +538,7 @@ public partial class SourceGenerator
                             TokenList(
                                 XmlTextLiteral(
                                     TriviaList(
-                                        DocumentationCommentExterior(TrippleSlash)),
+                                        DocumentationCommentExterior(TripleSlash)),
                                     Space,
                                     Space,
                                     TriviaList())));
@@ -550,7 +553,7 @@ public partial class SourceGenerator
                                         TriviaList()),
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         " Creates a new instance of ",
                                         " Creates a new instance of ",
                                         TriviaList()))),
@@ -594,7 +597,7 @@ public partial class SourceGenerator
                                         TriviaList()),
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         Space,
                                         Space,
                                         TriviaList()))))
@@ -625,7 +628,7 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         Space,
                                         Space,
                                         TriviaList())));
@@ -688,7 +691,7 @@ public partial class SourceGenerator
                                 TokenList(
                                     XmlTextLiteral(
                                         TriviaList(
-                                            DocumentationCommentExterior(TrippleSlash)),
+                                            DocumentationCommentExterior(TripleSlash)),
                                         Space,
                                         Space,
                                         TriviaList())));

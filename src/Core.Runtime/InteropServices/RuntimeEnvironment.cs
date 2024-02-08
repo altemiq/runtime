@@ -41,24 +41,23 @@ public static class RuntimeEnvironment
             return default;
         }
 
-        // get all the tfms
-        var availableTfms = Directory.GetDirectories(runtimesLibraryDirectory).Select(Path.GetFileName).ToArray();
-        if (availableTfms.Length == 0)
+        // get all the available TFMs
+        var availableTargetFrameworkMonikers = Directory.GetDirectories(runtimesLibraryDirectory).Select(Path.GetFileName).ToArray();
+        if (availableTargetFrameworkMonikers.Length == 0)
         {
             return runtimesLibraryDirectory;
         }
 
         // get the current TFM
-        var tfm = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance);
+        var currentTargetFrameworkMoniker = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance);
         if (RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform)
         {
-            tfm = NuGet.Frameworks.NuGetFramework.ParseFolder(string.Concat(tfm, "-", targetPlatform));
+            currentTargetFrameworkMoniker = NuGet.Frameworks.NuGetFramework.ParseFolder(string.Concat(currentTargetFrameworkMoniker, "-", targetPlatform));
         }
 
         // get the closest TFM from the list
-        var nearest = NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTfms, tfm, NuGet.Frameworks.NuGetFramework.ParseFolder);
-        return nearest is not null
-            ? Path.Combine(runtimesLibraryDirectory, nearest)
+        return NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTargetFrameworkMonikers, currentTargetFrameworkMoniker, NuGet.Frameworks.NuGetFramework.ParseFolder) is { } nearestTargetFrameworkMoniker
+            ? Path.Combine(runtimesLibraryDirectory, nearestTargetFrameworkMoniker)
             : runtimesLibraryDirectory;
     }
 

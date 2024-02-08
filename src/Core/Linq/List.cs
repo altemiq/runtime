@@ -277,10 +277,10 @@ public static partial class List
                 end = values.Count - 1;
             }
 
-            QuickSortImpl(values, index, end, comparison);
+            QuickSortCore(values, index, end, comparison);
         }
 
-        static void QuickSortImpl(IList<T> values, int left, int right, Comparison<T> comparer)
+        static void QuickSortCore(IList<T> values, int left, int right, Comparison<T> comparer)
         {
             // The code in this function looks very similar to QuickSort in ArraySortHelper<T> class.
             // So the IL code will be different. This function is faster than the one in ArraySortHelper<T>.
@@ -340,7 +340,7 @@ public static partial class List
                 {
                     if (left < j)
                     {
-                        QuickSortImpl(values, left, j, comparer);
+                        QuickSortCore(values, left, j, comparer);
                     }
 
                     left = i;
@@ -349,7 +349,7 @@ public static partial class List
                 {
                     if (i < right)
                     {
-                        QuickSortImpl(values, i, right, comparer);
+                        QuickSortCore(values, i, right, comparer);
                     }
 
                     right = j;
@@ -423,9 +423,9 @@ public static partial class List
             end = values.Count - 1;
         }
 
-        QuickSortImpl(values, index, end);
+        QuickSortCore(values, index, end);
 
-        static void QuickSortImpl(IList<T> values, int left, int right)
+        static void QuickSortCore(IList<T> values, int left, int right)
         {
             // The code in this function looks very similar to QuickSort in ArraySortHelper<T> class.
             // The difference is that T is constrained to IComparable<T> here.
@@ -486,7 +486,7 @@ public static partial class List
                 {
                     if (left < j)
                     {
-                        QuickSortImpl(values, left, j);
+                        QuickSortCore(values, left, j);
                     }
 
                     left = i;
@@ -495,7 +495,7 @@ public static partial class List
                 {
                     if (i < right)
                     {
-                        QuickSortImpl(values, i, right);
+                        QuickSortCore(values, i, right);
                     }
 
                     right = j;
