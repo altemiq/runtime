@@ -6,7 +6,6 @@
 
 namespace Altemiq.Runtime.InteropServices;
 
-using System.Linq;
 using System.Reflection;
 
 /// <summary>
@@ -164,18 +163,29 @@ public static class RuntimeInformation
 #endif
 
     private static Assembly? GetEntryAssembly()
-    {
-        var assembly = Assembly.GetEntryAssembly();
 #if NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
-        if (assembly?.FullName?.IndexOf("testhost", StringComparison.OrdinalIgnoreCase) >= 0
-            && Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) == true) is Assembly testAssembly)
+    {
+        if (Assembly.GetEntryAssembly() is { } assembly)
         {
-            return testAssembly;
-        }
+            if (assembly.FullName is { } fullName
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+                && fullName.Contains("testhost", StringComparison.OrdinalIgnoreCase)
+#else
+                && fullName.IndexOf("testhost", StringComparison.OrdinalIgnoreCase) >= 0
 #endif
+                && Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) == true) is { } testAssembly)
+            {
+                return testAssembly;
+            }
 
-        return assembly;
+            return assembly;
+        }
+
+        return default;
     }
+#else
+        => Assembly.GetEntryAssembly();
+#endif
 
     private static string GetPathVariable()
     {
