@@ -5,7 +5,6 @@
 // -----------------------------------------------------------------------
 
 namespace Altemiq.Runtime.InteropServices;
-
 public class RuntimeInformationTests
 {
     [Fact]

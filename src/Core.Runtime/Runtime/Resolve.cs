@@ -7,6 +7,8 @@
 #if NETSTANDARD2_0_OR_GREATER || NET20_OR_GREATER || NETCOREAPP2_0_OR_GREATER
 namespace Altemiq.Runtime;
 
+using Altemiq.Reflection;
+
 /// <summary>
 /// Class to help with assembly resolution.
 /// </summary>
@@ -40,7 +42,7 @@ public static class Resolve
             .FirstOrDefault(p => p is not null) is string path)
         {
             var assembly = System.Reflection.Assembly.LoadFile(path);
-            if (IsValid(assembly.GetName(), requiredAssemblyName))
+            if (assembly.IsCompatible(requiredAssemblyName))
             {
                 return System.Reflection.Assembly.LoadFrom(assembly.Location);
             }
@@ -48,31 +50,9 @@ public static class Resolve
 
         return default;
 
-        static System.Reflection.Assembly? FromLoaded(System.Reflection.AssemblyName assemblyName)
+        static System.Reflection.Assembly? FromLoaded(System.Reflection.AssemblyName requiredAssemblyName)
         {
-            return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), assembly => IsValid(assembly.GetName(), assemblyName));
-        }
-
-        static bool IsValid(System.Reflection.AssemblyName assemblyName, System.Reflection.AssemblyName requiredAssemblyName)
-        {
-            return IsNullOrEqual(assemblyName.Name, requiredAssemblyName.Name)
-                && IsNullOrLess(assemblyName.Version, requiredAssemblyName.Version)
-                && IsNullOrEqual(assemblyName.CultureName, requiredAssemblyName.CultureName);
-
-            static bool IsNullOrLess(Version? value, Version? other)
-            {
-                return IsNullOr(value, other, (v, o) => v >= o);
-            }
-
-            static bool IsNullOrEqual(string? value, string? other)
-            {
-                return IsNullOr(value, other, (v, o) => string.Equals(v, o, StringComparison.OrdinalIgnoreCase));
-            }
-
-            static bool IsNullOr<T>(T? value, T? other, Func<T, T, bool> check)
-            {
-                return other is null || (value is not null && check(value, other));
-            }
+            return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), assembly => assembly.IsCompatible(requiredAssemblyName));
         }
 
         static IEnumerable<string?> GetPaths()

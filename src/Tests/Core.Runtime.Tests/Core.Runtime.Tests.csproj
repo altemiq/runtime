@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net7.0;net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);net8.0-windows;net7.0-windows;net6.0-windows;net472</TargetFrameworks>
+    <RootNamespace Condition="$(RootNamespace.Contains('.Runtime'))">$(RootNamespace.Replace('.Runtime', ''))</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
