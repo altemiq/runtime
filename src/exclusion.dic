@@ -3,3 +3,4 @@ subpatterns
 linux
 testhost
 roslynator
+runtimeconfig

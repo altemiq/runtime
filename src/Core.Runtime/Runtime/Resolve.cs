@@ -58,12 +58,10 @@ public static class Resolve
         static IEnumerable<string?> GetPaths()
         {
             yield return InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectory();
-#if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
-            yield return AppContext.BaseDirectory;
-#endif
-#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
-            yield return AppDomain.CurrentDomain.BaseDirectory;
-#endif
+            foreach (var directory in InteropServices.RuntimeInformation.GetBaseDirectories())
+            {
+                yield return directory;
+            }
         }
 
         static string? FindPath(string? basePath, string? file)

@@ -25,6 +25,8 @@ public static class RuntimeInformation
     private static string? targetFramework;
     private static string? targetPlatform;
 
+    private static Assembly? entryAssembly;
+
     /// <summary>
     /// Gets the target framework.
     /// </summary>
@@ -162,29 +164,70 @@ public static class RuntimeInformation
     }
 #endif
 
-    private static Assembly? GetEntryAssembly()
+    /// <summary>
+    /// Gets the file path of the base directories that the assembly resolver uses to probe for assemblies.
+    /// </summary>
+    /// <returns>The base directories.</returns>
+    internal static IEnumerable<string> GetBaseDirectories()
+    {
+#if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
+        yield return AppContext.BaseDirectory;
+#endif
+#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+        yield return AppDomain.CurrentDomain.BaseDirectory;
+#endif
+    }
+
+    /// <summary>
+    /// Gets the entry assembly, taking into account <c>testhost</c> to make sure we get the required assembly.
+    /// </summary>
+    /// <returns>The entry assembly.</returns>
+    internal static Assembly? GetEntryAssembly()
 #if NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
     {
-        if (Assembly.GetEntryAssembly() is { } assembly)
+        return entryAssembly ??= GetEntryAssemblyCore();
+
+        static Assembly? GetEntryAssemblyCore()
         {
-            if (assembly.FullName is { } fullName
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                && fullName.Contains("testhost", StringComparison.OrdinalIgnoreCase)
-#else
-                && fullName.IndexOf("testhost", StringComparison.OrdinalIgnoreCase) >= 0
-#endif
-                && Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) == true) is { } testAssembly)
+            if (Assembly.GetEntryAssembly() is { } assembly)
+            {
+                if (assembly.FullName is { } fullName
+                    && IsTestAssembly(fullName)
+                    && GetTestAssembly() is { } testAssembly)
+                {
+                    return testAssembly;
+                }
+
+                return assembly;
+            }
+            else if (System.Diagnostics.Process.GetCurrentProcess() is { } process
+                && IsTestAssembly(process.ProcessName)
+                && GetTestAssembly() is { } testAssembly)
             {
                 return testAssembly;
             }
 
-            return assembly;
-        }
+            return default;
 
-        return default;
+            static bool IsTestAssembly(string name)
+            {
+                const string TestHost = "testhost";
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+                return name.Contains(TestHost, StringComparison.OrdinalIgnoreCase);
+#else
+                return name.IndexOf(TestHost, StringComparison.OrdinalIgnoreCase) >= 0;
+#endif
+            }
+
+            static Assembly? GetTestAssembly()
+            {
+                return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) == true);
+            }
+        }
     }
 #else
-        => Assembly.GetEntryAssembly();
+        => entryAssembly ??= Assembly.GetEntryAssembly();
 #endif
 
     private static string GetPathVariable()

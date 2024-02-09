@@ -292,8 +292,34 @@ public static class RuntimeEnvironment
                     return runtimeFallbacks;
                 }
 
-                using var stream = new System.IO.Compression.GZipStream(GetManifestStream(false), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
+                using var stream = new System.IO.Compression.GZipStream(GetManifestStream(!ShouldUseRidGraph()), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
                 return JsonRuntimeFormat.ReadRuntimeGraph(stream);
+
+                static bool ShouldUseRidGraph()
+                {
+                    const string RuntimeConfigJson = "runtimeconfig.json";
+
+                    if (RuntimeInformation.GetEntryAssembly() is { } assembly
+                        && assembly.FullName is { } fullName)
+                    {
+                        var name = new AssemblyName(fullName);
+                        var fileName = $"{name.Name}.{RuntimeConfigJson}";
+
+                        if (RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, fileName)).FirstOrDefault(File.Exists) is { } path)
+                        {
+                            var config = RuntimeConfig.FromFile(path);
+                            if (config.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value && bool.TryParse(value, out var result))
+                            {
+                                return result;
+                            }
+
+                            // if we have a runtime graph, then return false
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
 
                 static Stream GetManifestStream(bool portable = true)
                 {
