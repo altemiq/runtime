@@ -9,23 +9,27 @@ namespace Altemiq.Runtime;
 #if DEBUG
 public class JsonRuntimeFormatTests
 {
-    [Fact]
-    public void GetManifestStream()
+    [Theory]
+    [InlineData("PortableRuntimeIdentifierGraph.json.gz")]
+    [InlineData("runtime.json.gz")]
+    public void GetManifestStream(string name)
     {
-        Func<Stream> func = GetManifestStreamFromAssembly;
+        Func<Stream> func = () => GetManifestStreamFromAssembly(name);
         func.Should().NotThrow<InvalidOperationException>();
     }
 
-    [Fact]
-    public void ReadJsonFromAssembly()
+    [Theory]
+    [InlineData("PortableRuntimeIdentifierGraph.json.gz")]
+    [InlineData("runtime.json.gz")]
+    public void ReadJsonFromAssembly(string name)
     {
-        using var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(), System.IO.Compression.CompressionMode.Decompress, false);
+        using var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(name), System.IO.Compression.CompressionMode.Decompress, false);
         var json = JsonRuntimeFormat.ReadRuntimeGraph(stream!);
         json.Should().NotBeNull().And.HaveCountGreaterThan(10);
 
-        json[0].Runtime.Should().Be("alpine");
+        json.Select(x => x.Runtime).Should().Contain("linux");
     }
 
-    private static Stream GetManifestStreamFromAssembly() => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), "runtime.json.gz") ?? throw new InvalidOperationException();
+    private static Stream GetManifestStreamFromAssembly(string name) => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();
 }
 #endif

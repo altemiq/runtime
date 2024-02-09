@@ -292,19 +292,25 @@ public static class RuntimeEnvironment
                     return runtimeFallbacks;
                 }
 
-                using var stream = new System.IO.Compression.GZipStream(GetManifestStream(), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
+                using var stream = new System.IO.Compression.GZipStream(GetManifestStream(false), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
                 return JsonRuntimeFormat.ReadRuntimeGraph(stream);
 
-                static Stream GetManifestStream()
+                static Stream GetManifestStream(bool portable = true)
                 {
-                    const string RuntimeJson = "runtime.json";
-                    var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
-                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()
+                    return portable
+                        ? GetManifestStream("PortableRuntimeIdentifierGraph.json")
+                        : GetManifestStream("runtime.json");
+
+                    static Stream GetManifestStream(string name)
+                    {
+                        var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
+                        return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                        .First(n => n.Contains(RuntimeJson, StringComparison.Ordinal)))!;
+                            .First(n => n.Contains(name, StringComparison.Ordinal)))!;
 #else
-                        .First(n => n.Contains(RuntimeJson)))!;
+                            .First(n => n.Contains(name)))!;
 #endif
+                    }
                 }
             }
         }
