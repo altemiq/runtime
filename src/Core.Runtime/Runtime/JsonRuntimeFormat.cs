@@ -37,48 +37,46 @@ internal static class JsonRuntimeFormat
     /// <returns>The runtime graph.</returns>
     public static IReadOnlyList<RuntimeFallbacks> ReadRuntimeGraph(Stream stream)
     {
-        var values = new List<Runtime>();
+        return Flatten(GetRuntimes(stream).ToList()).ToList();
+
+        static IEnumerable<Runtime> GetRuntimes(Stream stream)
+        {
 #if NET461_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
-        var runtimes = JsonDocument.Parse(stream).RootElement.GetProperty("runtimes");
-
-        foreach (var json in runtimes.EnumerateObject())
-        {
-            var name = json.Name;
-            var imports = json.Value.GetProperty("#import").EnumerateArray().ToArray();
-            values.Add(new Runtime(name, imports.Select(p => p.GetString()!)));
-        }
+            foreach (var json in JsonDocument.Parse(stream).RootElement.GetProperty("runtimes").EnumerateObject())
+            {
+                yield return new Runtime(
+                    json.Name,
+                    json.Value.GetProperty("#import").EnumerateArray().Select(p => p.GetString()!).ToArray());
+            }
 #else
-        var loadSettings = new JsonLoadSettings()
-        {
-            LineInfoHandling = LineInfoHandling.Ignore,
-            CommentHandling = CommentHandling.Ignore,
-        };
+            var loadSettings = new JsonLoadSettings()
+            {
+                LineInfoHandling = LineInfoHandling.Ignore,
+                CommentHandling = CommentHandling.Ignore,
+            };
 
-        using var streamReader = new StreamReader(stream);
-        using var jsonReader = new JsonTextReader(streamReader);
-        var token = JToken.Load(jsonReader, loadSettings);
+            using var streamReader = new StreamReader(stream);
+            using var jsonReader = new JsonTextReader(streamReader);
+            var token = JToken.Load(jsonReader, loadSettings);
 
-        foreach (var json in EachProperty(token["runtimes"]))
-        {
-            var name = json.Key;
-            var imports = json.Value["#import"] is JArray i
-                ? i.Select(s => s.Value<string>())
-                : Enumerable.Empty<string>();
-            values.Add(new Runtime(name, imports));
-        }
+            foreach (var json in EachProperty(token["runtimes"]))
+            {
+                var imports = json.Value["#import"] is JArray import
+                    ? import.Select(s => s.Value<string>()).ToArray()
+                    : [];
+                yield return new Runtime(json.Key, imports);
+            }
 
-        static IEnumerable<KeyValuePair<string, JToken>> EachProperty(JToken json)
-        {
-            return json as IEnumerable<KeyValuePair<string, JToken>>
-                ?? Enumerable.Empty<KeyValuePair<string, JToken>>();
-        }
+            static IEnumerable<KeyValuePair<string, JToken>> EachProperty(JToken json)
+            {
+                return json as IEnumerable<KeyValuePair<string, JToken>>
+                    ?? Enumerable.Empty<KeyValuePair<string, JToken>>();
+            }
 #endif
-
-        // flatten this
-        return Flatten(values).ToList();
+        }
     }
 
-    private static IEnumerable<RuntimeFallbacks> Flatten(IList<Runtime> runtimes)
+    private static IEnumerable<RuntimeFallbacks> Flatten(List<Runtime> runtimes)
     {
         foreach (var runtime in runtimes)
         {
@@ -98,9 +96,9 @@ internal static class JsonRuntimeFormat
 
             yield return new RuntimeFallbacks(runtime.Name, fallbacks.Values.Distinct(StringComparer.Ordinal));
 
-            IEnumerable<KeyValuePair<int, string>> GetImports(string import, IList<Runtime> runtimes, int depth)
+            IEnumerable<KeyValuePair<int, string>> GetImports(string import, List<Runtime> runtimes, int depth)
             {
-                if (runtimes.FirstOrDefault(runtime => string.Equals(runtime.Name, import, StringComparison.Ordinal)) is not Runtime runtime)
+                if (runtimes.Find(runtime => string.Equals(runtime.Name, import, StringComparison.Ordinal)) is not Runtime runtime)
                 {
                     yield break;
                 }
