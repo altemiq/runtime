@@ -293,7 +293,7 @@ public static class RuntimeEnvironment
                 }
 
                 using var stream = new System.IO.Compression.GZipStream(GetManifestStream(), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
-                return JsonRuntimeFormat.ReadRuntimeGraph(stream).ToList();
+                return JsonRuntimeFormat.ReadRuntimeGraph(stream);
 
                 static Stream GetManifestStream()
                 {
