@@ -23,6 +23,10 @@
     <Using Remove="System.Net.Http" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(SignAssembly)' != 'true' ">
+    <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+  </ItemGroup>
+
   <UsingTask TaskName="GZip" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
