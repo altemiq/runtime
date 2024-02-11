@@ -14,7 +14,10 @@ on:
 
 jobs:
   run-tests:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        os: [ windows-latest, ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
 
     env:
       DOTNET_NOLOGO: true
@@ -53,14 +56,20 @@ jobs:
         reporttypes: 'HtmlInline;Cobertura;MarkdownSummaryGithub'
         verbosity: 'Verbose'
 
-    - name: Test Results
+    - name: Test Results - Windows
+      if: runner.os == 'Windows'
+      run: |
+        Get-Content '${{ github.workspace }}/coverage/reports/SummaryGithub.md' >> $env:GITHUB_STEP_SUMMARY
+
+    - name: Test Results - Linux
+      if: runner.os != 'Windows'
       run: |
         cat '${{ github.workspace }}/coverage/reports/SummaryGithub.md' >> $GITHUB_STEP_SUMMARY
 
     - name: Upload Coverage Reports
       uses: actions/upload-artifact@v4
       with:
-        name: CoverageReports
+        name: coverage_${{ matrix.os }}
         path: ${{ github.workspace }}/coverage/reports
 
   create-nuget:
