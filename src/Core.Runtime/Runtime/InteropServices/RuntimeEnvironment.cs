@@ -299,7 +299,7 @@ public static class RuntimeEnvironment
                 {
                     const string RuntimeConfigJson = "runtimeconfig.json";
 
-                    if (RuntimeInformation.GetEntryAssembly() is { } assembly
+                    if (Reflection.Assembly.GetEntryAssembly() is { } assembly
                         && assembly.FullName is { } fullName)
                     {
                         var name = new AssemblyName(fullName);
@@ -313,11 +313,12 @@ public static class RuntimeEnvironment
                                 return result;
                             }
 
-                            // if we have a runtime graph, then return false
+                            // if we have a runtime config, then return false
                             return false;
                         }
                     }
 
+                    // no runtime config to read, then return true
                     return true;
                 }
 

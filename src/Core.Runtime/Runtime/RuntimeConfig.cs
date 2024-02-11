@@ -13,7 +13,7 @@ namespace Altemiq.Runtime;
 /// <remarks>
 /// Creates new runtime config - overwrites existing file on Save if any.
 /// </remarks>
-internal class RuntimeConfig(string path)
+internal sealed class RuntimeConfig(string path)
 {
     private readonly List<Framework> frameworks = [];
     private readonly List<Framework> includedFrameworks = [];
@@ -470,7 +470,7 @@ internal class RuntimeConfig(string path)
     /// </remarks>
     /// <param name="name">The name.</param>
     /// <param name="version">The version.</param>
-    public class Framework(string name, string version)
+    public sealed class Framework(string name, string version)
     {
         /// <summary>
         /// Gets the name.

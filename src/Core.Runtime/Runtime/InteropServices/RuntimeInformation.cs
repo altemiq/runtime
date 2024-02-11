@@ -25,8 +25,6 @@ public static class RuntimeInformation
     private static string? targetFramework;
     private static string? targetPlatform;
 
-    private static Assembly? entryAssembly;
-
     /// <summary>
     /// Gets the target framework.
     /// </summary>
@@ -38,7 +36,7 @@ public static class RuntimeInformation
 
             static string? GetFrameworkName()
             {
-                var frameworkName = GetFrameworkNameFromAssembly(GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
+                var frameworkName = GetFrameworkNameFromAssembly(Reflection.Assembly.GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
 
 #if NETCOREAPP3_0_OR_GREATER || NET20_OR_GREATER
                 frameworkName ??= AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
@@ -76,7 +74,7 @@ public static class RuntimeInformation
 
             static string? GetPlatformName()
             {
-                return GetPlatformNameFromAssembly(GetEntryAssembly()) ?? GetPlatformNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
+                return GetPlatformNameFromAssembly(Reflection.Assembly.GetEntryAssembly()) ?? GetPlatformNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
 
                 static string? GetPlatformNameFromAssembly(Assembly? assembly)
                 {
@@ -177,58 +175,6 @@ public static class RuntimeInformation
         yield return AppDomain.CurrentDomain.BaseDirectory;
 #endif
     }
-
-    /// <summary>
-    /// Gets the entry assembly, taking into account <c>testhost</c> to make sure we get the required assembly.
-    /// </summary>
-    /// <returns>The entry assembly.</returns>
-    internal static Assembly? GetEntryAssembly()
-#if NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
-    {
-        return entryAssembly ??= GetEntryAssemblyCore();
-
-        static Assembly? GetEntryAssemblyCore()
-        {
-            if (Assembly.GetEntryAssembly() is { } assembly)
-            {
-                if (assembly.FullName is { } fullName
-                    && IsTestAssembly(fullName)
-                    && GetTestAssembly() is { } testAssembly)
-                {
-                    return testAssembly;
-                }
-
-                return assembly;
-            }
-            else if (System.Diagnostics.Process.GetCurrentProcess() is { } process
-                && IsTestAssembly(process.ProcessName)
-                && GetTestAssembly() is { } testAssembly)
-            {
-                return testAssembly;
-            }
-
-            return default;
-
-            static bool IsTestAssembly(string name)
-            {
-                const string TestHost = "testhost";
-
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                return name.Contains(TestHost, StringComparison.OrdinalIgnoreCase);
-#else
-                return name.IndexOf(TestHost, StringComparison.OrdinalIgnoreCase) >= 0;
-#endif
-            }
-
-            static Assembly? GetTestAssembly()
-            {
-                return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) == true);
-            }
-        }
-    }
-#else
-        => entryAssembly ??= Assembly.GetEntryAssembly();
-#endif
 
     private static string GetPathVariable()
     {
