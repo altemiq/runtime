@@ -6,9 +6,9 @@
 
 namespace Altemiq;
 
-/// <contents>
+/// <content>
 /// Extensions for getting the index of any value.
-/// </contents>
+/// </content>
 public static partial class MemoryExtensions
 {
     /// <summary>
