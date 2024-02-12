@@ -42,7 +42,6 @@ public partial class SourceGenerator : ISourceGenerator
 ";
 
     private static AttributeSyntax? generatedCodeAttribute;
-    private static AttributeSyntax? compilerGeneratedAttribute;
 
     /// <inheritdoc/>
     public void Execute(GeneratorExecutionContext context)
@@ -122,18 +121,6 @@ public partial class SourceGenerator : ISourceGenerator
                                         SyntaxKind.StringLiteralExpression,
                                         Literal(assembly.Version.ToString()))),
                             })));
-        }
-    }
-
-    private static AttributeSyntax GetCompilerGeneratedAttribute()
-    {
-        return compilerGeneratedAttribute ??= GetCompilerGeneratedAttributeCore();
-
-        static AttributeSyntax GetCompilerGeneratedAttributeCore()
-        {
-            return
-                Attribute(
-                    GetQualifiedName(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute)));
         }
     }
 

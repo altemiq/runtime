@@ -110,9 +110,6 @@ public partial class SourceGenerator
             yield return AttributeList(
                 SingletonSeparatedList(
                     GetGeneratedCodeAttribute()));
-            yield return AttributeList(
-                SingletonSeparatedList(
-                    GetCompilerGeneratedAttribute()));
         }
 
         static IEnumerable<MemberDeclarationSyntax> GetMemberDeclarations(int count)

@@ -77,10 +77,6 @@ public partial class SourceGenerator
             yield return AttributeList(
                 SingletonSeparatedList(
                     GetGeneratedCodeAttribute()));
-
-            yield return AttributeList(
-                SingletonSeparatedList(
-                    GetCompilerGeneratedAttribute()));
         }
 
         static DocumentationCommentTriviaSyntax GetDocumentation(IList<string> typeParameterNames)
