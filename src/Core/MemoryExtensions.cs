@@ -47,11 +47,65 @@ public delegate bool TryParse<T>(ReadOnlySpan<char> input, [System.Diagnostics.C
 /// <summary>
 /// Memory extensions.
 /// </summary>
-public static class MemoryExtensions
+public static partial class MemoryExtensions
 {
 #if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP2_1_OR_GREATER
     private static readonly char[] QuoteCharArray = ['\"'];
 #endif
+
+    /// <summary>
+    /// Returns a new span in which all occurrences of a specified span in the current instance are replaced with another specified span.
+    /// </summary>
+    /// <param name="input">The input.</param>
+    /// <param name="oldValue">The span to be replaced.</param>
+    /// <param name="newValue">The string to replace all occurrences of <paramref name="oldValue"/>.</param>
+    /// <returns>A <see cref="ReadOnlySpan{T}"/> that is equivalent to <paramref name="input"/> except that all instances of <paramref name="oldValue"/> are replaced with <paramref name="newValue"/>. If <paramref name="oldValue"/> is not found in the current instance, the method returns <paramref name="input"/> unchanged.</returns>
+    /// <exception cref="InvalidOperationException">The length of <paramref name="newValue"/> must be less than <paramref name="oldValue"/>.</exception>
+    public static ReadOnlySpan<char> Replace(this ReadOnlySpan<char> input, ReadOnlySpan<char> oldValue, ReadOnlySpan<char> newValue)
+    {
+        var oldLength = oldValue.Length;
+        var newLength = newValue.Length;
+
+        if (newLength > oldLength)
+        {
+            throw new InvalidOperationException();
+        }
+
+        var initialised = false;
+        Span<char> span = default;
+
+        var current = 0;
+        var temp = input;
+        int idx;
+        while ((idx = temp.IndexOf(oldValue, StringComparison.Ordinal)) is not -1)
+        {
+            if (!initialised)
+            {
+                span = new Span<char>(new char[input.Length - (oldLength - newLength)]);
+                initialised = true;
+            }
+
+            temp[..idx].CopyTo(span[current..]);
+            current += idx;
+            newValue.CopyTo(span[current..]);
+            current += newLength;
+
+            idx += oldLength;
+            temp = temp[idx..];
+        }
+
+        if (!initialised)
+        {
+            // no changes, just return the input.
+            return input;
+        }
+
+        // copy the rest
+        temp.CopyTo(span[current..]);
+        current += temp.Length;
+
+        return span[..current];
+    }
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span

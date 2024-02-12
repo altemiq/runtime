@@ -37,6 +37,10 @@
     <Compile Remove="**\MemoryExtensions*.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0')) or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20')) or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">
+    <Compile Remove="Collections\BitArrayExtensions.Polyfill.cs" />
+  </ItemGroup>
+
   <Choose>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
       <ItemGroup>
@@ -80,11 +84,7 @@
   </Choose>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false"
-                      SkipGetTargetFrameworkProperties="true"
-                      SetTargetFramework="TargetFramework=netstandard2.0"/>
+    <ProjectReference Include="..\Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
   <ItemGroup>

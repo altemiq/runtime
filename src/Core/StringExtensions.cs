@@ -180,7 +180,7 @@ public static class StringExtensions
         // resize the array
         if (values.Length != returnIndex)
         {
-            Array.Resize(ref values, returnIndex);
+            System.Array.Resize(ref values, returnIndex);
         }
 
         return values;

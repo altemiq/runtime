@@ -62,6 +62,15 @@ namespace Altemiq.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only supported array types for CopyTo on BitArrays are Boolean[], Int32[] and Byte[]..
+        /// </summary>
+        internal static string BitArrayTypeUnsupported {
+            get {
+                return ResourceManager.GetString("BitArrayTypeUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot return as {0} as result is T{1}..
         /// </summary>
         internal static string CannotReturnAsType {
@@ -80,7 +89,16 @@ namespace Altemiq.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} must be between {1} and {2} but {3} is not..
+        ///   Looks up a localized string similar to Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection..
+        /// </summary>
+        internal static string InvalidOffLen {
+            get {
+                return ResourceManager.GetString("InvalidOffLen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (&apos;{1}&apos;) must be between &apos;{2}&apos; and &apos;{3}&apos;..
         /// </summary>
         internal static string MustBeBetween {
             get {
@@ -166,6 +184,15 @@ namespace Altemiq.Properties {
         internal static string MustBeNotEqual {
             get {
                 return ResourceManager.GetString("MustBeNotEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only single dimensional arrays are supported for the requested action..
+        /// </summary>
+        internal static string RankMultiDimNotSupported {
+            get {
+                return ResourceManager.GetString("RankMultiDimNotSupported", resourceCulture);
             }
         }
     }

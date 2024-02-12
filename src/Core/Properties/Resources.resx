@@ -153,4 +153,13 @@
   <data name="MustBeNotEqual" xml:space="preserve">
     <value>{0} ('{1}') must not be equal to '{2}'.</value>
   </data>
+  <data name="BitArrayTypeUnsupported" xml:space="preserve">
+    <value>Only supported array types for CopyTo on BitArrays are Boolean[], Int32[] and Byte[].</value>
+  </data>
+  <data name="InvalidOffLen" xml:space="preserve">
+    <value>Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.</value>
+  </data>
+  <data name="RankMultiDimNotSupported" xml:space="preserve">
+    <value>Only single dimensional arrays are supported for the requested action.</value>
+  </data>
 </root>

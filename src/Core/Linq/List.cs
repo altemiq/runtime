@@ -193,7 +193,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            Array.Sort(array, comparison);
+            System.Array.Sort(array, comparison);
         }
         else if (values is List<T> list)
         {
@@ -224,7 +224,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            Array.Sort(array, index, length, comparer);
+            System.Array.Sort(array, index, length, comparer);
         }
         else if (values is List<T> list)
         {
@@ -262,7 +262,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            Array.Sort(array, index, length, new ComparisonWrapper<T>(comparison));
+            System.Array.Sort(array, index, length, new ComparisonWrapper<T>(comparison));
         }
         else if (values is List<T> list)
         {
@@ -387,7 +387,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            Array.Sort(array);
+            System.Array.Sort(array);
         }
         else if (values is List<T> list)
         {
