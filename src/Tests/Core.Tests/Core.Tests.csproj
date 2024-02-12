@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\Core\build.props"/>
+  <Import Project="..\..\Core\build.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net7.0;net6.0</TargetFrameworks>
@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="System.Text.Json" />
-    <PackageReference Include="xunit.runner.utility" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,9 +19,5 @@
     <Compile Update="Linq\ListTests.*.cs" DependentUpon="ListTests.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">
-    <Compile Remove="**\MemoryExtensions*.cs" />
-  </ItemGroup>
-
-  <Import Project="..\..\Core\build.targets"/>
+  <Import Project="..\..\Core\build.targets" />
 </Project>

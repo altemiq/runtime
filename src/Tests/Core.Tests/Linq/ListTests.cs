@@ -8,6 +8,8 @@ namespace Altemiq.Linq;
 
 public partial class ListTests
 {
+    public static TheoryData<IReadOnlyList<int>> GetInt32Lists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
+
     public static TheoryData<System.Collections.IEnumerable?, System.Collections.IEnumerable?> CreateNulls() => new() { { null, null } };
 
     public static TheoryData<IEnumerable<int>, IEnumerable<int>> GetLists()

@@ -68,6 +68,33 @@ public class MemoryExtensionsTests
         _ = enumerator.MoveNext().Should().BeFalse();
     }
 
+    [Fact]
+    public void GetEnumValues()
+    {
+        var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
+        var span = value.AsSpan();
+        var enumerator = span.Split('|');
+        _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.First);
+        _ = span.GetNextEnum<EnumValue>(ref enumerator).Should().Be(EnumValue.Second);
+        _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.Third);
+    }
+
+    [Fact]
+    public void TryGetEnumValues()
+    {
+        var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
+        var span = value.AsSpan();
+        var enumerator = span.Split('|');
+        _ = span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var enumValue).Should().BeTrue();
+        _ = enumValue.Should().Be(EnumValue.First);
+        _ = span.TryGetNextEnum(ref enumerator, out enumValue).Should().BeTrue();
+        _ = enumValue.Should().Be(EnumValue.Second);
+        _ = span.TryGetNextEnum(ref enumerator, true, out enumValue).Should().BeTrue();
+        _ = enumValue.Should().Be(EnumValue.Third);
+        _ = span.TryGetNextEnum<EnumValue>(ref enumerator, out _).Should().BeFalse();
+    }
+
+#if NETCOREAPP2_1_OR_GREATER
     [Theory]
     [MemberData(nameof(GetValuesData))]
     public void GetValues(Func<Random, int, double> creator, GetValuesDelegate<double> getValues)
@@ -129,17 +156,6 @@ public class MemoryExtensionsTests
         }
     }
 
-    [Fact]
-    public void GetEnumValues()
-    {
-        var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
-        var span = value.AsSpan();
-        var enumerator = span.Split('|');
-        _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.First);
-        _ = span.GetNextEnum<EnumValue>(ref enumerator).Should().Be(EnumValue.Second);
-        _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.Third);
-    }
-
     [Theory]
     [MemberData(nameof(TryGetValuesData))]
     public void TryGetValues(Func<Random, int, double> creator, TryGetValuesDelegate<double> getValues)
@@ -189,21 +205,6 @@ public class MemoryExtensionsTests
         }
     }
 
-    [Fact]
-    public void TryGetEnumValues()
-    {
-        var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
-        var span = value.AsSpan();
-        var enumerator = span.Split('|');
-        _ = span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var enumValue).Should().BeTrue();
-        _ = enumValue.Should().Be(EnumValue.First);
-        _ = span.TryGetNextEnum(ref enumerator, out enumValue).Should().BeTrue();
-        _ = enumValue.Should().Be(EnumValue.Second);
-        _ = span.TryGetNextEnum(ref enumerator, true, out enumValue).Should().BeTrue();
-        _ = enumValue.Should().Be(EnumValue.Third);
-        _ = span.TryGetNextEnum<EnumValue>(ref enumerator, out _).Should().BeFalse();
-    }
-
     public delegate bool TryGetValuesDelegate<T>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider, out T[]? output);
 
     public delegate bool TryGetDelegate<T>(ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out T value);
@@ -211,6 +212,7 @@ public class MemoryExtensionsTests
     public delegate T[] GetValuesDelegate<T>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider);
 
     public delegate T GetDelegate<T>(ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider);
+#endif
 
     private enum EnumValue
     {

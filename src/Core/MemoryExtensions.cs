@@ -49,6 +49,10 @@ public delegate bool TryParse<T>(ReadOnlySpan<char> input, [System.Diagnostics.C
 /// </summary>
 public static class MemoryExtensions
 {
+#if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP2_1_OR_GREATER
+    private static readonly char[] QuoteCharArray = ['\"'];
+#endif
+
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
     /// using a single space as a separator character.
@@ -102,7 +106,14 @@ public static class MemoryExtensions
     /// <param name="separator">The separator string to be used to split the provided span.</param>
     /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
-    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator, StringSplitOptions options) => new(span, separator ?? string.Empty, options);
+    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator, StringSplitOptions options) => new(
+        span,
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        separator ?? string.Empty,
+#else
+        new ReadOnlySpan<char>(separator.ToCharArray()),
+#endif
+        options);
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
@@ -123,7 +134,16 @@ public static class MemoryExtensions
     /// <param name="second">The second separator string to be used to split the provided span.</param>
     /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
-    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string first, string second, StringSplitOptions options) => new(span, first ?? string.Empty, second ?? string.Empty, options);
+    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string first, string second, StringSplitOptions options) => new(
+        span,
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        first ?? string.Empty,
+        second ?? string.Empty,
+#else
+        new ReadOnlySpan<char>(first.ToCharArray()),
+        new ReadOnlySpan<char>(second.ToCharArray()),
+#endif
+        options);
 
     /// <summary>
     /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
@@ -157,7 +177,16 @@ public static class MemoryExtensions
     /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
     /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
-    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, string separator, StringSplitOptions options) => new(s, separator, "\"", options);
+    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, string separator, StringSplitOptions options) => new(
+        s,
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        separator,
+        "\"",
+#else
+        new ReadOnlySpan<char>(separator.ToCharArray()),
+        new ReadOnlySpan<char>(QuoteCharArray),
+#endif
+        options);
 
     /// <summary>
     /// Gets the next value from <paramref name="enumerator"/> or throw.
@@ -204,6 +233,7 @@ public static class MemoryExtensions
     /// <returns>The result from <paramref name="parser"/> for the next value from <paramref name="span"/>.</returns>
     public static T GetNextValue<T>(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, Parse<char, T> parser, IFormatProvider? provider) => parser(span.GetNextOrThrow(ref enumerator), provider);
 
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
     /// <summary>
     /// Gets the next value from the span as the specified enum.
     /// </summary>
@@ -211,14 +241,26 @@ public static class MemoryExtensions
     /// <param name="span">The span.</param>
     /// <param name="enumerator">The span enumerator.</param>
     /// <returns>The result from <see cref="Enum.Parse{T}(string)"/> for the next value from <paramref name="span"/>.</returns>
+#else
+    /// <summary>
+    /// Gets the next value from the span as the specified enum.
+    /// </summary>
+    /// <typeparam name="T">The type of enum to get.</typeparam>
+    /// <param name="span">The span.</param>
+    /// <param name="enumerator">The span enumerator.</param>
+    /// <returns>The result from <see cref="Enum.Parse(Type, string)"/> for the next value from <paramref name="span"/>.</returns>
+#endif
     public static T GetNextEnum<T>(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator)
         where T : struct, Enum =>
 #if NET6_0_OR_GREATER
          Enum.Parse<T>(span.GetNextOrThrow(ref enumerator));
-#else
+#elif NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
          Enum.Parse<T>(span.GetNextOrThrow(ref enumerator).ToString());
+#else
+         (T)Enum.Parse(typeof(T), span.GetNextOrThrow(ref enumerator).ToString());
 #endif
 
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
     /// <summary>
     /// Gets the next value from the span as the specified enum.
     /// </summary>
@@ -227,14 +269,27 @@ public static class MemoryExtensions
     /// <param name="enumerator">The span enumerator.</param>
     /// <param name="ignoreCase"><see langword="true"/> to ignore case; <see langword="false"/> to regard case.</param>
     /// <returns>The result from <see cref="Enum.Parse{T}(string, bool)"/> for the next value from <paramref name="span"/>.</returns>
+#else
+    /// <summary>
+    /// Gets the next value from the span as the specified enum.
+    /// </summary>
+    /// <typeparam name="T">The type of enum to get.</typeparam>
+    /// <param name="span">The span.</param>
+    /// <param name="enumerator">The span enumerator.</param>
+    /// <param name="ignoreCase"><see langword="true"/> to ignore case; <see langword="false"/> to regard case.</param>
+    /// <returns>The result from <see cref="Enum.Parse(Type, string, bool)"/> for the next value from <paramref name="span"/>.</returns>
+#endif
     public static T GetNextEnum<T>(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, bool ignoreCase)
         where T : struct, Enum =>
 #if NET6_0_OR_GREATER
         Enum.Parse<T>(span.GetNextOrThrow(ref enumerator), ignoreCase);
-#else
+#elif NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
         Enum.Parse<T>(span.GetNextOrThrow(ref enumerator).ToString(), ignoreCase);
+#else
+        (T)Enum.Parse(typeof(T), span.GetNextOrThrow(ref enumerator).ToString(), ignoreCase);
 #endif
 
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <summary>
     /// Gets the next value from the span as a <see cref="double"/> value.
     /// </summary>
@@ -324,6 +379,7 @@ public static class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <returns>The next value from the span as a <see cref="byte"/> value.</returns>
     public static byte GetNextByte(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => byte.Parse(v, style: style, provider: provider));
+#endif
 
     /// <summary>
     /// Gets the next value from the span as a <see cref="string"/> value.
@@ -424,6 +480,7 @@ public static class MemoryExtensions
         }
     }
 
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <summary>
     /// Tries to get the next value from the span as a <see cref="double"/>, with the result indicating success.
     /// </summary>
@@ -684,6 +741,7 @@ public static class MemoryExtensions
             return byte.TryParse(v, style, provider, out value);
         }
     }
+#endif
 
     /// <summary>
     /// Tries to get the next value from the span as a <see cref="string"/>, with the result indicating success.
@@ -741,6 +799,7 @@ public static class MemoryExtensions
         IFormatProvider? provider,
         [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T[]? output) => TryGetValues(input, input.Split(separator), count, parser, provider, out output);
 
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <summary>
     /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
     /// </summary>
@@ -824,6 +883,7 @@ public static class MemoryExtensions
             return double.TryParse(input, System.Globalization.NumberStyles.Float, provider, out output);
         }
     }
+#endif
 
     private static TOutput[] GetValues<TInput, TOutput>(
         ReadOnlySpan<TInput> input,

@@ -49,11 +49,11 @@
 
   <PropertyGroup>
     <UseSpanParsing>false</UseSpanParsing>
-    <UseSpanParsing Condition=" ('$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))' == '.NETStandard' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion($(TargetFramework))), 2.1))) or ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.1'))) ">true</UseSpanParsing>
+    <UseSpanParsing Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.1')) ">true</UseSpanParsing>
     <DefineConstants Condition=" '$(UseSpanParsing)' == 'true' ">$(DefineConstants);USE_SPAN_PARSING</DefineConstants>
 
     <UseGenericMath>false</UseGenericMath>
-    <UseGenericMath Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">true</UseGenericMath>
+    <UseGenericMath Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0')) ">true</UseGenericMath>
     <DefineConstants Condition=" '$(UseGenericMath)' == 'true' ">$(DefineConstants);USE_GENERIC_MATH</DefineConstants>
   </PropertyGroup>
 
