@@ -15,6 +15,9 @@ public class RuntimeEnvironmentTests
     public void GetRuntimeLibraryDirectory() => RuntimeEnvironment.GetRuntimeLibraryDirectory().Should().NotBeNull();
 
     [Fact]
+    public void GetRuntimeNativeDirectoryWithModule() => RuntimeEnvironment.GetRuntimeNativeDirectory(RuntimeEnvironment.CreateModuleName("e_sqlite3")).Should().NotBeNull();
+
+    [Fact]
     public void AddLibraryDirectory()
     {
         RuntimeEnvironment.AddRuntimeLibraryDirectory();

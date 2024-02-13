@@ -18,6 +18,16 @@ public static class RuntimeInformation
     /// </summary>
     public static readonly string PathVariable = GetPathVariable();
 
+    /// <summary>
+    /// The shared library extension.
+    /// </summary>
+    public static readonly string SharedLibraryExtension = GetSharedLibraryExtension();
+
+    /// <summary>
+    /// The shared library prefix.
+    /// </summary>
+    public static readonly string SharedLibraryPrefix = GetSharedLibraryPrefix();
+
 #if !NET5_0_OR_GREATER
     private static string? runtimeIdentifier;
 #endif
@@ -111,52 +121,6 @@ public static class RuntimeInformation
             static string GetRidCore()
             {
                 return Microsoft.DotNet.PlatformAbstractions.RuntimeEnvironment.GetRuntimeIdentifier() ?? GetNaïveRid();
-
-                static string GetNaïveRid()
-                {
-                    return $"{GetRidFront()}-{GetRidBack()}";
-
-#pragma warning disable IDE0046
-                    static string GetRidFront()
-                    {
-                        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-                        {
-                            return "win";
-                        }
-
-                        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-                        {
-                            return "linux";
-                        }
-
-                        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
-                        {
-                            return "osx";
-                        }
-
-                        throw new InvalidOperationException();
-                    }
-#pragma warning restore IDE0046
-
-                    static string GetRidBack()
-                    {
-                        const string Arm = "arm";
-                        const string Arm64 = "arm64";
-                        const string X86 = "x86";
-                        const string X64 = "x64";
-
-                        return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
-                        {
-                            System.Runtime.InteropServices.Architecture.Arm => Arm,
-                            System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size == 4 => Arm,
-                            System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
-                            System.Runtime.InteropServices.Architecture.X86 => X86,
-                            System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size == 4 => X86,
-                            System.Runtime.InteropServices.Architecture.X64 => X64,
-                            _ => throw new InvalidOperationException(),
-                        };
-                    }
-                }
             }
         }
     }
@@ -174,6 +138,72 @@ public static class RuntimeInformation
 #if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         yield return AppDomain.CurrentDomain.BaseDirectory;
 #endif
+    }
+
+    /// <summary>
+    /// Gets the naïve RID.
+    /// </summary>
+    /// <returns>The naïve RID.</returns>
+    /// <exception cref="InvalidOperationException">Invalid operating system.</exception>
+    internal static string GetNaïveRid()
+    {
+        return $"{GetRidFront()}-{GetRidBack()}";
+
+        static string GetRidFront()
+        {
+#if NET5_0_OR_GREATER
+            if (OperatingSystem.IsWindows())
+            {
+                return "win";
+            }
+
+            if (OperatingSystem.IsLinux())
+            {
+                return "linux";
+            }
+
+            if (OperatingSystem.IsMacOS())
+            {
+                return "osx";
+            }
+#else
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+                return "win";
+            }
+
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+            {
+                return "linux";
+            }
+
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+            {
+                return "osx";
+            }
+#endif
+
+            throw new InvalidOperationException();
+        }
+
+        static string GetRidBack()
+        {
+            const string Arm = "arm";
+            const string Arm64 = "arm64";
+            const string X86 = "x86";
+            const string X64 = "x64";
+
+            return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
+            {
+                System.Runtime.InteropServices.Architecture.Arm => Arm,
+                System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size == 4 => Arm,
+                System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
+                System.Runtime.InteropServices.Architecture.X86 => X86,
+                System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size == 4 => X86,
+                System.Runtime.InteropServices.Architecture.X64 => X64,
+                _ => throw new InvalidOperationException(),
+            };
+        }
     }
 
     private static string GetPathVariable()
@@ -207,6 +237,80 @@ public static class RuntimeInformation
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
         {
             return "DYLD_LIBRARY_PATH";
+        }
+#endif
+
+        throw new InvalidOperationException();
+    }
+
+    private static string GetSharedLibraryExtension()
+    {
+#if NET5_0_OR_GREATER
+        if (OperatingSystem.IsWindows())
+        {
+            return ".dll";
+        }
+
+        if (OperatingSystem.IsLinux())
+        {
+            return ".so";
+        }
+
+        if (OperatingSystem.IsMacOS())
+        {
+            return ".dylib";
+        }
+#else
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            return ".dll";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            return ".so";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+        {
+            return ".dylib";
+        }
+#endif
+
+        throw new InvalidOperationException();
+    }
+
+    private static string GetSharedLibraryPrefix()
+    {
+#if NET5_0_OR_GREATER
+        if (OperatingSystem.IsWindows())
+        {
+            return string.Empty;
+        }
+
+        if (OperatingSystem.IsLinux())
+        {
+            return "lib";
+        }
+
+        if (OperatingSystem.IsMacOS())
+        {
+            return "lib";
+        }
+#else
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            return string.Empty;
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            return "lib";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+        {
+            return "lib";
         }
 #endif
 
