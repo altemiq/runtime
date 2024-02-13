@@ -1,1 +1,1 @@
-dotnet nuget-promote source Altemiq --version %1
+dotnet nuget-promote source %1 --version %2
