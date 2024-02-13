@@ -254,6 +254,36 @@ public static class RuntimeEnvironment
 
         Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path, target);
     }
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddNativeDirectory(string? path) => ShouldAddNativeDirectory(path, EnvironmentVariableTarget.Process);
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddNativeDirectory(string? path, EnvironmentVariableTarget target) => path is not null && !IsAlreadyInAppContext(path, NativeDllSearchDirectories) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, path);
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddLibraryDirectory(string? path) => ShouldAddNativeDirectory(path, EnvironmentVariableTarget.Process);
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddLibraryDirectory(string? path, EnvironmentVariableTarget target) => path is not null && !IsAlreadyInAppContext(path, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, path);
 #else
     /// <summary>
     /// Adds the runtime native directory to the path variable if required.
@@ -317,6 +347,20 @@ public static class RuntimeEnvironment
 
         Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path);
     }
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddNativeDirectory(string? path) => path is not null && !IsAlreadyInAppContext(path, NativeDllSearchDirectories) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, path);
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddLibraryDirectory(string? path) => path is not null && !IsAlreadyInAppContext(path, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, path);
 #endif
 
     /// <summary>
@@ -445,4 +489,32 @@ public static class RuntimeEnvironment
 
         return default;
     }
+
+#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+    private static bool EnvironmentVariableContains(string variable, EnvironmentVariableTarget target, string? value)
+    {
+        if (value is null)
+        {
+            return false;
+        }
+
+        return Environment.GetEnvironmentVariable(variable, target) is { } variableValue
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_2_OR_GREATER
+            && variableValue.Contains(value, StringComparison.Ordinal);
+#else
+            && variableValue.Contains(value);
+#endif
+    }
+#else
+    private static bool EnvironmentVariableContains(string variable, string? value)
+    {
+        if (value is null)
+        {
+            return false;
+        }
+
+        return Environment.GetEnvironmentVariable(variable) is { } variableValue
+            && variableValue.Contains(value);
+    }
+#endif
 }
