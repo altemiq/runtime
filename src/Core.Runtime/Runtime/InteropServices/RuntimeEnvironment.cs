@@ -420,25 +420,18 @@ public static class RuntimeEnvironment
 
     private static string? GetRuntimeDirectory(string name)
     {
-        var baseDirectory =
-#if NET451
-            AppDomain.CurrentDomain.BaseDirectory;
-#else
-            AppContext.BaseDirectory;
-#endif
-        var runtimesDirectory = Path.Combine(baseDirectory, RuntimesDirectory);
-        if (!Directory.Exists(runtimesDirectory))
+        if (RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is { } runtimesDirectory)
         {
-            return default;
+            // get the rids
+            return Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToList() switch
+            {
+                { Count: 0 } => runtimesDirectory,
+                var availableRids when GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid => Path.Combine(runtimesDirectory, rid, name),
+                _ => Path.Combine(runtimesDirectory, name),
+            };
         }
 
-        // get the rids
-        return Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToList() switch
-        {
-            { Count: 0 } => runtimesDirectory,
-            var availableRids when GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid => Path.Combine(runtimesDirectory, rid, name),
-            _ => Path.Combine(runtimesDirectory, name),
-        };
+        return default;
     }
 
     private static IEnumerable<string> GetRuntimeRids()
