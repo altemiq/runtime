@@ -175,6 +175,27 @@ public static class RuntimeEnvironment
     }
 
     /// <summary>
+    /// Adds the runtime native directory to the path environment variable if required.
+    /// </summary>
+    /// <param name="moduleName">The module name.</param>
+    public static void AddRuntimeNativeDirectory(string moduleName) => AddRuntimeNativeDirectory(moduleName, EnvironmentVariableTarget.Process);
+
+    /// <summary>
+    /// Adds the runtime native directory to the path environment variable if required.
+    /// </summary>
+    /// <param name="moduleName">The module name.</param>
+    /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+    public static void AddRuntimeNativeDirectory(string moduleName, EnvironmentVariableTarget target)
+    {
+        if (GetRuntimeNativeDirectory(moduleName) is string nativeDirectory
+            && Directory.Exists(nativeDirectory)
+            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
+        {
+            AddDirectoryToPath(nativeDirectory, target);
+        }
+    }
+
+    /// <summary>
     /// Adds the runtime library directory to the path environment variable if required.
     /// </summary>
     public static void AddRuntimeLibraryDirectory() => AddRuntimeLibraryDirectory(EnvironmentVariableTarget.Process);
@@ -291,6 +312,20 @@ public static class RuntimeEnvironment
     public static void AddRuntimeNativeDirectory()
     {
         if (GetRuntimeNativeDirectory() is string nativeDirectory
+            && Directory.Exists(nativeDirectory)
+            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
+        {
+            AddDirectoryToPath(nativeDirectory);
+        }
+    }
+
+    /// <summary>
+    /// Adds the runtime native directory to the path environment variable if required.
+    /// </summary>
+    /// <param name="moduleName">The module name.</param>
+    public static void AddRuntimeNativeDirectory(string moduleName)
+    {
+        if (GetRuntimeNativeDirectory(moduleName) is string nativeDirectory
             && Directory.Exists(nativeDirectory)
             && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
         {
