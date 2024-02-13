@@ -192,17 +192,32 @@ public static class RuntimeInformation
             const string Arm64 = "arm64";
             const string X86 = "x86";
             const string X64 = "x64";
+#if NET5_0_OR_GREATER
+            const string Wasm = "wasm";
+#endif
 
-            return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
+#if NETCOREAPP1_0_OR_GREATER || NET471_OR_GREATER || NETSTANDARD1_1_OR_GREATER
+            return System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture switch
             {
                 System.Runtime.InteropServices.Architecture.Arm => Arm,
-                System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size == 4 => Arm,
                 System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
                 System.Runtime.InteropServices.Architecture.X86 => X86,
-                System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size == 4 => X86,
+                System.Runtime.InteropServices.Architecture.X64 => X64,
+#if NET5_0_OR_GREATER
+                System.Runtime.InteropServices.Architecture.Wasm => Wasm,
+#endif
+                _ => throw new InvalidOperationException(),
+            };
+#else
+            return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
+            {
+                System.Runtime.InteropServices.Architecture.Arm or System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size == 4 => Arm,
+                System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
+                System.Runtime.InteropServices.Architecture.X86 or System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size == 4 => X86,
                 System.Runtime.InteropServices.Architecture.X64 => X64,
                 _ => throw new InvalidOperationException(),
             };
+#endif
         }
     }
 
