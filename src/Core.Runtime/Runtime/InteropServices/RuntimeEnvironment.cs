@@ -471,7 +471,7 @@ public static class RuntimeEnvironment
             return rids;
         }
 
-        return Enumerable.Empty<string>();
+        return [];
 
         static IReadOnlyList<RuntimeFallbacks> GetRuntimeGraph()
         {

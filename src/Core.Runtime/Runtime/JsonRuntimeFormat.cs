@@ -69,8 +69,7 @@ internal static class JsonRuntimeFormat
 
             static IEnumerable<KeyValuePair<string, JToken>> EachProperty(JToken json)
             {
-                return json as IEnumerable<KeyValuePair<string, JToken>>
-                    ?? Enumerable.Empty<KeyValuePair<string, JToken>>();
+                return json as IEnumerable<KeyValuePair<string, JToken>> ?? [];
             }
 #endif
         }
