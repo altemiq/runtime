@@ -405,6 +405,32 @@ public static class RuntimeEnvironment
     /// <returns>The module name.</returns>
     public static string CreateModuleName(string name) => $"{RuntimeInformation.SharedLibraryPrefix}{name}{RuntimeInformation.SharedLibraryExtension}";
 
+    /// <summary>
+    /// Gets the runtime config file name.
+    /// </summary>
+    /// <returns>The runtime config file name.</returns>
+    internal static string? GetRuntimeConfigFileName()
+    {
+        const string RuntimeConfigJson = "runtimeconfig.json";
+
+        if (Reflection.Assembly.GetEntryAssembly() is { } assembly
+            && assembly.FullName is { } fullName)
+        {
+            var name = new AssemblyName(fullName);
+            var fileName = $"{name.Name}.{RuntimeConfigJson}";
+
+            return RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, fileName)).FirstOrDefault(File.Exists);
+        }
+
+        return default;
+    }
+
+    /// <summary>
+    /// Gets the runtime config.
+    /// </summary>
+    /// <returns>The runtime config.</returns>
+    internal static RuntimeConfig? GetRuntimeConfig() => GetRuntimeConfigFileName() is { } path ? RuntimeConfig.FromFile(path) : default;
+
 #if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
     private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
@@ -426,7 +452,7 @@ public static class RuntimeEnvironment
             return Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToList() switch
             {
                 { Count: 0 } => runtimesDirectory,
-                var availableRids when GetRuntimeRids().FirstOrDefault(availableRids.Contains) is string rid => Path.Combine(runtimesDirectory, rid, name),
+                var availableRids when GetRuntimeRids().Find(availableRids.Contains) is string rid => Path.Combine(runtimesDirectory, rid, name),
                 _ => Path.Combine(runtimesDirectory, name),
             };
         }
@@ -434,7 +460,7 @@ public static class RuntimeEnvironment
         return default;
     }
 
-    private static IEnumerable<string> GetRuntimeRids()
+    private static List<string> GetRuntimeRids()
     {
         runtimeGraph ??= GetRuntimeGraph();
         if (runtimeGraph.Count > 0)
@@ -459,25 +485,15 @@ public static class RuntimeEnvironment
 
             static bool ShouldUseRidGraph()
             {
-                const string RuntimeConfigJson = "runtimeconfig.json";
-
-                if (Reflection.Assembly.GetEntryAssembly() is { } assembly
-                    && assembly.FullName is { } fullName)
+                if (GetRuntimeConfig() is { } runtimeConfig)
                 {
-                    var name = new AssemblyName(fullName);
-                    var fileName = $"{name.Name}.{RuntimeConfigJson}";
-
-                    if (RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, fileName)).FirstOrDefault(File.Exists) is { } path)
+                    if (runtimeConfig.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value && bool.TryParse(value, out var result))
                     {
-                        var config = RuntimeConfig.FromFile(path);
-                        if (config.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value && bool.TryParse(value, out var result))
-                        {
-                            return result;
-                        }
-
-                        // if we have a runtime config, then return false
-                        return false;
+                        return result;
                     }
+
+                    // if we have a runtime config, then return false
+                    return false;
                 }
 
                 // no runtime config to read, then return true

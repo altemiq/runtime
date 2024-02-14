@@ -44,93 +44,83 @@ internal sealed class RuntimeConfig(string path)
             var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(path));
             var root = document.RootElement;
             var runtimeOptions = root.GetProperty("runtimeOptions");
-            if (runtimeOptions.TryGetProperty("framework", out var singleFramework))
+            TryGetFromProperty(runtimeOptions, "tfm", tfm =>
             {
-                _ = runtimeConfig.WithFramework(Framework.FromJson(singleFramework));
-            }
-
-            if (runtimeOptions.TryGetProperty("frameworks", out var frameworksElement))
-            {
-                foreach (var framework in frameworksElement.EnumerateArray())
+                if (tfm.GetString() is { } v)
                 {
-                    _ = runtimeConfig.WithFramework(Framework.FromJson(framework));
+                    runtimeConfig.WithTfm(v);
+                }
+            });
+            TryGetFromProperty(runtimeOptions, "framework", framework => runtimeConfig.WithFramework(Framework.FromJson(framework)));
+            TryGetFromProperty(runtimeOptions, "frameworks", frameworks => ForEach(frameworks.EnumerateArray(), framework => runtimeConfig.WithFramework(Framework.FromJson(framework))));
+            TryGetFromProperty(runtimeOptions, "includedFrameworks", includedFrameworks => ForEach(includedFrameworks.EnumerateArray(), includedFramework => runtimeConfig.WithIncludedFramework(Framework.FromJson(includedFramework))));
+            TryGetFromProperty(runtimeOptions, "configProperties", configProperties => ForEach(configProperties.EnumerateObject(), property =>
+            {
+                var value = property.Value switch
+                {
+                    { ValueKind: System.Text.Json.JsonValueKind.True } => "true",
+                    { ValueKind: System.Text.Json.JsonValueKind.False } => "false",
+                    var v => v.ToString(),
+                };
+
+                _ = runtimeConfig.WithProperty(property.Name, value);
+            }));
+            TryGetFromProperty(runtimeOptions, Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward => runtimeConfig.rollForward = rollForward.GetString());
+            TryGetFromProperty(runtimeOptions, Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx => runtimeConfig.rollForwardOnNoCandidateFx = rollForwardOnNoCandidateFx.GetInt32());
+            TryGetFromProperty(runtimeOptions, Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches => runtimeConfig.applyPatches = applyPatches.GetBoolean());
+
+            static void TryGetFromProperty(System.Text.Json.JsonElement element, string name, Action<System.Text.Json.JsonElement> action)
+            {
+                if (element.TryGetProperty(name, out var property))
+                {
+                    action(property);
                 }
             }
 
-            if (runtimeOptions.TryGetProperty("includedFrameworks", out var includedFrameworksElement))
+            static void ForEach<T>(IEnumerable<T> source, Action<T> action)
             {
-                foreach (var includedFramework in includedFrameworksElement.EnumerateArray())
+                foreach (var item in source)
                 {
-                    _ = runtimeConfig.WithIncludedFramework(Framework.FromJson(includedFramework));
+                    action(item);
                 }
-            }
-
-            if (runtimeOptions.TryGetProperty("configProperties", out var configProperties))
-            {
-                foreach (var property in configProperties.EnumerateObject())
-                {
-                    var value = property.Value switch
-                    {
-                        { ValueKind: System.Text.Json.JsonValueKind.True } => "true",
-                        { ValueKind: System.Text.Json.JsonValueKind.False } => "false",
-                        var v => v.ToString(),
-                    };
-
-                    _ = runtimeConfig.WithProperty(property.Name, value);
-                }
-            }
-
-            if (runtimeOptions.TryGetProperty(Constants.RollForwardSetting.RuntimeConfigPropertyName, out var rollForwardElement))
-            {
-                runtimeConfig.rollForward = rollForwardElement.GetString();
-            }
-
-            if (runtimeOptions.TryGetProperty(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, out var rollForwardOnNoCandidateFxElement))
-            {
-                runtimeConfig.rollForwardOnNoCandidateFx = rollForwardOnNoCandidateFxElement.GetInt32();
-            }
-
-            if (runtimeOptions.TryGetProperty(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, out var applyPatchesElement))
-            {
-                runtimeConfig.applyPatches = applyPatchesElement.GetBoolean();
             }
 #else
             using var textReader = File.OpenText(path);
             using var reader = new Newtonsoft.Json.JsonTextReader(textReader) { MaxDepth = null };
             var root = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.Linq.JToken.ReadFrom(reader);
             var runtimeOptions = (Newtonsoft.Json.Linq.JObject)root["runtimeOptions"];
-            if (runtimeOptions["framework"] is Newtonsoft.Json.Linq.JObject singleFramework)
-            {
-                runtimeConfig.WithFramework(Framework.FromJson(singleFramework));
-            }
-
-            if (runtimeOptions["frameworks"] is { } frameworksToken)
-            {
-                foreach (var framework in frameworksToken.OfType<Newtonsoft.Json.Linq.JObject>())
-                {
-                    runtimeConfig.WithFramework(Framework.FromJson(framework));
-                }
-            }
-
-            if (runtimeOptions["includedFrameworks"] is { } includedFrameworksToken)
-            {
-                foreach (var includedFramework in includedFrameworksToken.OfType<Newtonsoft.Json.Linq.JObject>())
-                {
-                    runtimeConfig.WithFramework(Framework.FromJson(includedFramework));
-                }
-            }
-
-            if (runtimeOptions["configProperties"] is Newtonsoft.Json.Linq.JObject configProperties)
+            TryGetFromProperty<Newtonsoft.Json.Linq.JToken>(runtimeOptions, "tfm", tfm => runtimeConfig.WithTfm((string)tfm));
+            TryGetFromProperty<Newtonsoft.Json.Linq.JObject>(runtimeOptions, "framework", singleFramework => runtimeConfig.WithFramework(Framework.FromJson(singleFramework)));
+            TryGetFromProperty<Newtonsoft.Json.Linq.JToken>(runtimeOptions, "frameworks", frameworksToken => ForEach<Newtonsoft.Json.Linq.JObject>(frameworksToken, framework => runtimeConfig.WithFramework(Framework.FromJson(framework))));
+            TryGetFromProperty<Newtonsoft.Json.Linq.JToken>(runtimeOptions, "includedFrameworks", includedFrameworksToken => ForEach<Newtonsoft.Json.Linq.JObject>(includedFrameworksToken, includedFramework => runtimeConfig.WithFramework(Framework.FromJson(includedFramework))));
+            TryGetFromProperty<Newtonsoft.Json.Linq.JObject>(runtimeOptions, "configProperties", configProperties =>
             {
                 foreach (var property in configProperties)
                 {
                     runtimeConfig.WithProperty(property.Key, (string)property.Value);
                 }
+            });
+            TryGetFromProperty<Newtonsoft.Json.Linq.JToken>(runtimeOptions, Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward => runtimeConfig.rollForward = (string)rollForward);
+            TryGetFromProperty<Newtonsoft.Json.Linq.JToken>(runtimeOptions, Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx => runtimeConfig.rollForwardOnNoCandidateFx = (int?)rollForwardOnNoCandidateFx);
+            TryGetFromProperty<Newtonsoft.Json.Linq.JToken>(runtimeOptions, Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches => runtimeConfig.applyPatches = (bool?)applyPatches);
+
+            static void TryGetFromProperty<T>(Newtonsoft.Json.Linq.JObject @object, string name, Action<T> action)
+                where T : Newtonsoft.Json.Linq.JToken
+            {
+                if (@object[name] is T value)
+                {
+                    action(value);
+                }
             }
 
-            runtimeConfig.rollForward = (string)runtimeOptions[Constants.RollForwardSetting.RuntimeConfigPropertyName];
-            runtimeConfig.rollForwardOnNoCandidateFx = (int?)runtimeOptions[Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName];
-            runtimeConfig.applyPatches = (bool?)runtimeOptions[Constants.ApplyPatchesSetting.RuntimeConfigPropertyName];
+            static void ForEach<T>(IEnumerable<Newtonsoft.Json.Linq.JToken> source, Action<T> action)
+                where T : Newtonsoft.Json.Linq.JToken
+            {
+                foreach (var item in source.OfType<T>())
+                {
+                    action(item);
+                }
+            }
 #endif
         }
 
@@ -285,182 +275,179 @@ internal sealed class RuntimeConfig(string path)
         return this;
     }
 
-    /// <summary>
-    /// Saves this instance.
-    /// </summary>
-    public void Save()
+    /// <inheritdoc/>
+    public override string ToString()
     {
 #if NET461_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         using var stream = new MemoryStream();
-        using (var writer = new System.Text.Json.Utf8JsonWriter(stream))
+        using (var writer = new System.Text.Json.Utf8JsonWriter(stream, new System.Text.Json.JsonWriterOptions { Indented = true }))
         {
             writer.WriteStartObject();
-
             writer.WritePropertyName("runtimeOptions");
-
             writer.WriteStartObject();
-
-            if (this.frameworks.Count != 0)
+            WriteNull(writer, this.Tfm, (writer, tfm) => writer.WriteString("tfm", tfm));
+            WriteArray(writer, "framework", this.frameworks, (writer, framework) => framework.Save(writer));
+            WriteArray(writer, "includedFramework", this.includedFrameworks, (writer, framework) => framework.Save(writer));
+            WriteNull(writer, this.rollForward, (writer, rollForward) => writer.WriteString(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
+            WriteNullable(writer, this.rollForwardOnNoCandidateFx, (writer, rollForwardOnNoCandidateFx) => writer.WriteNumber(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
+            WriteNullable(writer, this.applyPatches, (writer, applyPatches) => writer.WriteBoolean(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
+            WriteArray(writer, Constants.AdditionalProbingPath.RuntimeConfigPropertyName, this.additionalProbingPaths, (writer, additionalProbingPath) => writer.WriteStringValue(additionalProbingPath));
+            WriteObject(writer, "configProperties", this.properties, (writer, value) =>
             {
-                writer.WritePropertyName("frameworks");
-                writer.WriteStartArray();
-                foreach (var framework in this.frameworks)
+                if (bool.TryParse(value, out var result))
                 {
-                    framework.Save(writer);
+                    writer.WriteBooleanValue(result);
+                }
+                else
+                {
+                    writer.WriteStringValue(value);
+                }
+            });
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+
+            static void WriteArray<T>(System.Text.Json.Utf8JsonWriter writer, string name, List<T> values, Action<System.Text.Json.Utf8JsonWriter, T> write)
+            {
+                if (values.Count is 0)
+                {
+                    return;
                 }
 
-                writer.WriteEndArray();
+                if (values.Count is 1)
+                {
+                    writer.WritePropertyName(name);
+                    write(writer, values[0]);
+                }
+                else
+                {
+                    writer.WritePropertyName(name + "s");
+                    writer.WriteStartArray();
+                    foreach (var value in values)
+                    {
+                        write(writer, value);
+                    }
+
+                    writer.WriteEndArray();
+                }
             }
 
-            if (this.includedFrameworks.Count != 0)
+            static void WriteObject(System.Text.Json.Utf8JsonWriter writer, string name, List<Tuple<string, string?>> values, Action<System.Text.Json.Utf8JsonWriter, string?> write)
             {
-                writer.WritePropertyName("includedFrameworks");
-                writer.WriteStartArray();
-                foreach (var framework in this.includedFrameworks)
+                if (values.Count is 0)
                 {
-                    framework.Save(writer);
+                    return;
                 }
 
-                writer.WriteEndArray();
-            }
-
-            if (this.rollForward != null)
-            {
-                writer.WriteString(
-                    Constants.RollForwardSetting.RuntimeConfigPropertyName,
-                    this.rollForward);
-            }
-
-            if (this.rollForwardOnNoCandidateFx.HasValue)
-            {
-                writer.WriteNumber(
-                    Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName,
-                    this.rollForwardOnNoCandidateFx.Value);
-            }
-
-            if (this.applyPatches.HasValue)
-            {
-                writer.WriteBoolean(
-                    Constants.ApplyPatchesSetting.RuntimeConfigPropertyName,
-                    this.applyPatches.Value);
-            }
-
-            if (this.Tfm is not null)
-            {
-                writer.WriteString("tfm", this.Tfm);
-            }
-
-            if (this.additionalProbingPaths.Count > 0)
-            {
-                writer.WritePropertyName(Constants.AdditionalProbingPath.RuntimeConfigPropertyName);
-                writer.WriteStartArray();
-                foreach (var additionalProbingPath in this.additionalProbingPaths)
-                {
-                    writer.WriteStringValue(additionalProbingPath);
-                }
-
-                writer.WriteEndArray();
-            }
-
-            if (this.properties.Count > 0)
-            {
-                writer.WritePropertyName("configProperties");
+                writer.WritePropertyName(name);
                 writer.WriteStartObject();
 
-                foreach (var property in this.properties)
+                foreach (var value in values)
                 {
-                    writer.WritePropertyName(property.Item1);
-                    if (bool.TryParse(property.Item2, out var result))
-                    {
-                        writer.WriteBooleanValue(result);
-                    }
-                    else
-                    {
-                        writer.WriteStringValue(property.Item2);
-                    }
+                    writer.WritePropertyName(value.Item1);
+                    write(writer, value.Item2);
                 }
 
                 writer.WriteEndObject();
             }
 
-            writer.WriteEndObject();
-            writer.WriteEndObject();
+            static void WriteNull<T>(System.Text.Json.Utf8JsonWriter writer, T? value, Action<System.Text.Json.Utf8JsonWriter, T> write)
+                where T : class
+            {
+                if (value is T v)
+                {
+                    write(writer, v);
+                }
+            }
+
+            static void WriteNullable<T>(System.Text.Json.Utf8JsonWriter writer, T? value, Action<System.Text.Json.Utf8JsonWriter, T> write)
+                where T : struct
+            {
+                if (value.HasValue)
+                {
+                    write(writer, value.Value);
+                }
+            }
         }
 
         stream.Position = 0;
 
-        File.WriteAllBytes(path, stream.ToArray());
+        return System.Text.Encoding.UTF8.GetString(stream.ToArray());
 #else
         Newtonsoft.Json.Linq.JObject runtimeOptions = [];
-        if (this.frameworks.Count != 0)
+        WriteNull(this.Tfm, tfm => runtimeOptions.Add("tfm", tfm));
+        WriteArray(runtimeOptions, "framework", this.frameworks, framework => framework.ToJson());
+        WriteArray(runtimeOptions, "includedFramework", this.includedFrameworks, framework => framework.ToJson());
+        WriteNull(this.rollForward, rollForward => runtimeOptions.Add(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
+        WriteNullable(this.rollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => runtimeOptions.Add(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
+        WriteNullable(this.applyPatches, applyPatches => runtimeOptions.Add(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
+        WriteArray(runtimeOptions, "additionalProbingPath", this.additionalProbingPaths, additionalProbingPath => new Newtonsoft.Json.Linq.JValue(additionalProbingPath));
+        WriteObject(runtimeOptions, "configProperties", this.properties, property =>
         {
-            runtimeOptions.Add(
-                "frameworks",
-                new Newtonsoft.Json.Linq.JArray(this.frameworks.Select(f => f.ToJson()).ToArray()));
-        }
-
-        if (this.includedFrameworks.Count != 0)
-        {
-            runtimeOptions.Add(
-                "includedFrameworks",
-                new Newtonsoft.Json.Linq.JArray(this.includedFrameworks.Select(f => f.ToJson()).ToArray()));
-        }
-
-        if (this.rollForward != null)
-        {
-            runtimeOptions.Add(
-                Constants.RollForwardSetting.RuntimeConfigPropertyName,
-                this.rollForward);
-        }
-
-        if (this.rollForwardOnNoCandidateFx.HasValue)
-        {
-            runtimeOptions.Add(
-                Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName,
-                this.rollForwardOnNoCandidateFx.Value);
-        }
-
-        if (this.applyPatches.HasValue)
-        {
-            runtimeOptions.Add(
-                Constants.ApplyPatchesSetting.RuntimeConfigPropertyName,
-                this.applyPatches.Value);
-        }
-
-        if (this.Tfm is not null)
-        {
-            runtimeOptions.Add("tfm", this.Tfm);
-        }
-
-        if (this.additionalProbingPaths.Count > 0)
-        {
-            runtimeOptions.Add(
-                Constants.AdditionalProbingPath.RuntimeConfigPropertyName,
-                new Newtonsoft.Json.Linq.JArray(this.additionalProbingPaths.Select(p => new Newtonsoft.Json.Linq.JValue(p)).ToArray()));
-        }
-
-        if (this.properties.Count > 0)
-        {
-            Newtonsoft.Json.Linq.JObject configProperties = [];
-            foreach (var property in this.properties)
-            {
-                Newtonsoft.Json.Linq.JToken tokenValue = bool.TryParse(property.Item2, out var result)
-                    ? result
-                    : property.Item2;
-                configProperties.Add(property.Item1, tokenValue);
-            }
-
-            runtimeOptions.Add("configProperties", configProperties);
-        }
+            Newtonsoft.Json.Linq.JToken tokenValue = bool.TryParse(property, out var result)
+                ? result
+                : property;
+            return tokenValue;
+        });
 
         var json = new Newtonsoft.Json.Linq.JObject
         {
             ["runtimeOptions"] = runtimeOptions,
         };
 
-        File.WriteAllText(path, json.ToString());
+        return json.ToString();
+
+        static void WriteArray<T>(Newtonsoft.Json.Linq.JObject runtimeOptions, string name, List<T> values, Func<T, Newtonsoft.Json.Linq.JToken> write)
+        {
+            if (values.Count is 0)
+            {
+                return;
+            }
+
+            if (values.Count is 1)
+            {
+                runtimeOptions.Add(name, write(values[0]));
+            }
+            else
+            {
+                runtimeOptions.Add(name + "s", new Newtonsoft.Json.Linq.JArray(values.Select(write).ToArray()));
+            }
+        }
+
+        static void WriteObject(Newtonsoft.Json.Linq.JObject runtimeOptions, string name, List<Tuple<string, string?>> values, Func<string?, Newtonsoft.Json.Linq.JToken> write)
+        {
+            Newtonsoft.Json.Linq.JObject @object = [];
+            foreach (var value in values)
+            {
+                @object.Add(value.Item1, write(value.Item2));
+            }
+
+            runtimeOptions.Add(name, @object);
+        }
+
+        static void WriteNull<T>(T? value, Action<T> write)
+            where T : class
+        {
+            if (value is T t)
+            {
+                write(t);
+            }
+        }
+
+        static void WriteNullable<T>(T? value, Action<T> write)
+            where T : struct
+        {
+            if (value.HasValue)
+            {
+                write(value.Value);
+            }
+        }
 #endif
     }
+
+    /// <summary>
+    /// Saves this instance.
+    /// </summary>
+    public void Save() => File.WriteAllText(path, this.ToString());
 
     /// <summary>
     /// The framework class.
@@ -539,22 +526,18 @@ internal sealed class RuntimeConfig(string path)
         internal static Framework FromJson(System.Text.Json.JsonElement element)
         {
             var framework = new Framework(element.GetProperty("name").GetString()!, element.GetProperty("version").GetString()!);
-            if (element.TryGetProperty(Constants.RollForwardSetting.RuntimeConfigPropertyName, out var rollForwardElement))
-            {
-                framework.RollForward = rollForwardElement.GetString();
-            }
-
-            if (element.TryGetProperty(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, out var rollForwardOnNoCandidateFxElement))
-            {
-                framework.RollForwardOnNoCandidateFx = rollForwardOnNoCandidateFxElement.GetInt32();
-            }
-
-            if (element.TryGetProperty(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, out var applyPatchesElement))
-            {
-                framework.ApplyPatches = applyPatchesElement.GetBoolean();
-            }
-
+            TryGetFromProperty(element, Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward => framework.RollForward = rollForward.GetString());
+            TryGetFromProperty(element, Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx => framework.RollForwardOnNoCandidateFx = rollForwardOnNoCandidateFx.GetInt32());
+            TryGetFromProperty(element, Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches => framework.ApplyPatches = applyPatches.GetBoolean());
             return framework;
+
+            static void TryGetFromProperty(System.Text.Json.JsonElement element, string name, Action<System.Text.Json.JsonElement> action)
+            {
+                if (element.TryGetProperty(name, out var property))
+                {
+                    action(property);
+                }
+            }
         }
 
         /// <summary>
@@ -564,33 +547,30 @@ internal sealed class RuntimeConfig(string path)
         internal void Save(System.Text.Json.Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-
-            if (this.Name is { } nameToWrite)
-            {
-                writer.WriteString("name", nameToWrite);
-            }
-
-            if (this.Version is { } versionToWrite)
-            {
-                writer.WriteString("version", versionToWrite);
-            }
-
-            if (this.RollForward is { } rollForward)
-            {
-                writer.WriteString(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward);
-            }
-
-            if (this.RollForwardOnNoCandidateFx is int rollForwardOnNoCandidateFx)
-            {
-                writer.WriteNumber(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx);
-            }
-
-            if (this.ApplyPatches is bool applyPatches)
-            {
-                writer.WriteBoolean(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches);
-            }
-
+            WriteNull(this.Name, name => writer.WriteString("name", name));
+            WriteNull(this.Version, version => writer.WriteString("version", version));
+            WriteNull(this.RollForward, rollForward => writer.WriteString(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
+            WriteNullable(this.RollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => writer.WriteNumber(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
+            WriteNullable(this.ApplyPatches, applyPatches => writer.WriteBoolean(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
             writer.WriteEndObject();
+
+            static void WriteNull<T>(T? value, Action<T> write)
+                where T : class
+            {
+                if (value is T v)
+                {
+                    write(v);
+                }
+            }
+
+            static void WriteNullable<T>(T? value, Action<T> write)
+                where T : struct
+            {
+                if (value.HasValue)
+                {
+                    write(value.Value);
+                }
+            }
         }
 #else
         /// <summary>
@@ -613,38 +593,31 @@ internal sealed class RuntimeConfig(string path)
         {
             Newtonsoft.Json.Linq.JObject frameworkReference = [];
 
-            if (this.Name is { } nameToWrite)
-            {
-                frameworkReference.Add("name", nameToWrite);
-            }
-
-            if (this.Version is { } versionToWrite)
-            {
-                frameworkReference.Add("version", versionToWrite);
-            }
-
-            if (this.RollForward is { } rollForward)
-            {
-                frameworkReference.Add(
-                    Constants.RollForwardSetting.RuntimeConfigPropertyName,
-                    rollForward);
-            }
-
-            if (this.RollForwardOnNoCandidateFx is { } rollForwardOnNoCandidateFx)
-            {
-                frameworkReference.Add(
-                    Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName,
-                    rollForwardOnNoCandidateFx);
-            }
-
-            if (this.ApplyPatches is { } applyPatches)
-            {
-                frameworkReference.Add(
-                    Constants.ApplyPatchesSetting.RuntimeConfigPropertyName,
-                    applyPatches);
-            }
+            WriteNull(this.Name, name => frameworkReference.Add("name", name));
+            WriteNull(this.Version, versionToWrite => frameworkReference.Add("version", versionToWrite));
+            WriteNull(this.RollForward, rollForward => frameworkReference.Add(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
+            WriteNullable(this.RollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => frameworkReference.Add(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
+            WriteNullable(this.ApplyPatches, applyPatches => frameworkReference.Add(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
 
             return frameworkReference;
+
+            static void WriteNull<T>(T? value, Action<T> write)
+                where T : class
+            {
+                if (value is T t)
+                {
+                    write(t);
+                }
+            }
+
+            static void WriteNullable<T>(T? value, Action<T> write)
+                where T : struct
+            {
+                if (value.HasValue)
+                {
+                    write(value.Value);
+                }
+            }
         }
 #endif
     }
