@@ -24,134 +24,139 @@ public static partial class List
         where TSource : class, TResult
         where TResult : class
     {
-        // Check if the list is null
         if (source is null)
         {
-            // If the list is null, return null
             return null;
         }
 
         // Get the type of the input list
         var sourceType = source.GetType();
 
-        // short cut this if it's an array
-        if (sourceType.IsArray)
-        {
-            // get the array type here
-            var newArray = new TResult[source.Count];
+        return CreateArray(source, sourceType) ?? CreateList(source, sourceType);
 
-            for (var i = 0; i < source.Count; i++)
+        static IList<TResult>? CreateArray(IList<TSource> source, Type sourceType)
+        {
+            if (sourceType.IsArray)
             {
-                newArray[i] = source[i];
-            }
+                // get the array type here
+                var destination = new TResult[source.Count];
 
-            return newArray;
-        }
-
-        // Start the new list.
-        var destination = CreateList(source, sourceType) ?? new List<TResult>(source.Count);
-
-        // If the list is readonly then just return it.
-        if (destination.IsReadOnly)
-        {
-            return destination;
-        }
-
-        // Go through each item
-        foreach (var item in source)
-        {
-            // Cast the list item
-            destination.Add(item);
-        }
-
-        return destination;
-
-        static IList<TResult>? CreateList(IList<TSource> source, Type sourceType)
-        {
-            return GetGenericTypeDefinition(sourceType) is Type type
-                ? CreateList(source, sourceType, type.MakeGenericType(typeof(TResult)))
-                : default;
-
-            static Type? GetGenericTypeDefinition(Type type)
-            {
-                var typeInfo = type.GetTypeInfo();
-
-                while (true)
+                for (var i = 0; i < source.Count; i++)
                 {
-                    // If this is a generic type definition, then use that.
-                    if (typeInfo.IsGenericTypeDefinition)
-                    {
-                        return typeInfo.AsType();
-                    }
-
-                    // If this is a generic type, then return the generic type definition for it.
-                    if (typeInfo.IsGenericType)
-                    {
-                        return type.GetGenericTypeDefinition();
-                    }
-
-                    // If this has no base type, then return null.
-                    if (typeInfo.BaseType is null)
-                    {
-                        return default;
-                    }
-
-                    typeInfo = typeInfo.BaseType.GetTypeInfo();
+                    destination[i] = source[i];
                 }
+
+                return destination;
             }
 
-            static IList<TResult> CreateList(IList<TSource> source, Type sourceType, Type genericType)
+            return default;
+        }
+
+        static IList<TResult> CreateList(IList<TSource> source, Type sourceType)
+        {
+            var destination = CreateListCore(source, sourceType) ?? new List<TResult>();
+
+            if (destination.IsReadOnly)
             {
-                // Get the constructor info
-                var constructors =
+                return destination;
+            }
+
+            // Go through each item
+            foreach (var item in source)
+            {
+                // Cast the list item
+                destination.Add(item);
+            }
+
+            return destination;
+
+            static IList<TResult>? CreateListCore(IList<TSource> source, Type sourceType)
+            {
+                return GetGenericTypeDefinition(sourceType) is Type type
+                    ? CreateList(source, sourceType, type.MakeGenericType(typeof(TResult)))
+                    : default;
+
+                static Type? GetGenericTypeDefinition(Type type)
+                {
+                    var typeInfo = type.GetTypeInfo();
+
+                    while (true)
+                    {
+                        // If this is a generic type definition, then use that.
+                        if (typeInfo.IsGenericTypeDefinition)
+                        {
+                            return typeInfo.AsType();
+                        }
+
+                        // If this is a generic type, then return the generic type definition for it.
+                        if (typeInfo.IsGenericType)
+                        {
+                            return type.GetGenericTypeDefinition();
+                        }
+
+                        // If this has no base type, then return null.
+                        if (typeInfo.BaseType is null)
+                        {
+                            return default;
+                        }
+
+                        typeInfo = typeInfo.BaseType.GetTypeInfo();
+                    }
+                }
+
+                static IList<TResult> CreateList(IList<TSource> source, Type sourceType, Type genericType)
+                {
+                    // Get the constructor info
+                    var constructors =
 #if NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
-                    genericType.GetConstructors();
+                        genericType.GetConstructors();
 #else
-                    genericType.GetTypeInfo().DeclaredConstructors;
+                        genericType.GetTypeInfo().DeclaredConstructors;
 #endif
 
-                object[] parameterObjects = [];
-                foreach (var parameters in constructors.Select(constructor => constructor.GetParameters()))
-                {
-                    if (parameters.Length >= parameterObjects.Length)
+                    object[] parameterObjects = [];
+                    foreach (var parameters in constructors.Select(constructor => constructor.GetParameters()))
                     {
-                        continue;
-                    }
-
-                    parameterObjects = new object[parameters.Length];
-
-                    // Use the first one
-                    foreach (var parameter in parameters)
-                    {
-                        if (parameter.Name is null)
+                        if (parameters.Length >= parameterObjects.Length)
                         {
                             continue;
                         }
 
-                        // See if there's a parameter on the original list with the same name.
-                        var listField =
-#if NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
-#pragma warning disable S3011
-                            sourceType.GetField(parameter.Name, BindingFlags.Instance | BindingFlags.NonPublic);
-#pragma warning restore S3011
-#else
-                            sourceType.GetTypeInfo().GetDeclaredField(parameter.Name);
-#endif
+                        parameterObjects = new object[parameters.Length];
 
-                        if (listField?.GetValue(source) is { } field)
+                        // Use the first one
+                        foreach (var parameter in parameters)
                         {
-                            if (source.IsReadOnly && field is IList<TSource> internalList)
+                            if (parameter.Name is null)
                             {
-                                field = internalList.Cast<TResult>();
+                                continue;
                             }
 
-                            parameterObjects[parameter.Position] = field;
+                            // See if there's a parameter on the original list with the same name.
+                            var listField =
+#if NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
+#pragma warning disable S3011
+                                sourceType.GetField(parameter.Name, BindingFlags.Instance | BindingFlags.NonPublic);
+#pragma warning restore S3011
+#else
+                                sourceType.GetTypeInfo().GetDeclaredField(parameter.Name);
+#endif
+
+                            if (listField?.GetValue(source) is { } field)
+                            {
+                                if (source.IsReadOnly && field is IList<TSource> internalList)
+                                {
+                                    field = internalList.Cast<TResult>();
+                                }
+
+                                parameterObjects[parameter.Position] = field;
+                            }
                         }
                     }
-                }
 
-                // Create the type
-                return Activator.CreateInstance(genericType, parameterObjects) as IList<TResult> ?? throw new InvalidOperationException($"Failed to create instance of {genericType}");
+                    // Create the type
+                    return Activator.CreateInstance(genericType, parameterObjects) as IList<TResult> ?? throw new InvalidOperationException($"Failed to create instance of {genericType}");
+                }
             }
         }
     }
