@@ -95,6 +95,22 @@ public partial class ListTests
         .HaveElementAt(2, 2);
 
     [Theory]
+    [MemberData(nameof(GetThreeItemsNotInOrderLists))]
+    public void QuickSortWithThreeItemsNotInOrderWithComparison(IList<int> list) => QuickSort(list, Comparer<int>.Default.Compare).Should()
+        .HaveCount(3).And
+        .HaveElementAt(0, 0).And
+        .HaveElementAt(1, 1).And
+        .HaveElementAt(2, 2);
+
+    [Theory]
+    [MemberData(nameof(GetThreeItemsNotInOrderLists))]
+    public void QuickSortWithThreeItemsNotInOrderWithComparisonAndSize(IList<int> list) => QuickSort(list, 0, list.Count, Comparer<int>.Default.Compare).Should()
+        .HaveCount(3).And
+        .HaveElementAt(0, 0).And
+        .HaveElementAt(1, 1).And
+        .HaveElementAt(2, 2);
+
+    [Theory]
     [MemberData(nameof(GetItemLists))]
     public void QuickSortWithItems(IList<SimpleStruct> list, SimpleStruct first, SimpleStruct second, SimpleStruct third, SimpleStruct forth) => QuickSort(list).Should()
         .HaveCount(4).And
@@ -134,6 +150,14 @@ public partial class ListTests
         .HaveElementAt(1, third).And
         .HaveElementAt(2, second);
 
+    [Theory]
+    [MemberData(nameof(GetsItemsWithNulls))]
+    public void QuickSortWithNullsAndComparerAndSize(IList<SimpleClass?> list, SimpleClass first, SimpleClass? second, SimpleClass third) => QuickSort(list, 0, list.Count, SimpleClass.Comparison).Should()
+        .HaveCount(3).And
+        .HaveElementAt(0, first).And
+        .HaveElementAt(1, third).And
+        .HaveElementAt(2, second);
+
     private static IList<T> QuickSort<T>(IList<T> source)
         where T : IComparable<T>
     {
@@ -144,6 +168,12 @@ public partial class ListTests
     private static IList<T> QuickSort<T>(IList<T> source, Comparison<T> comparison)
     {
         source.QuickSort(comparison);
+        return source;
+    }
+
+    private static IList<T> QuickSort<T>(IList<T> source, int start, int length, Comparison<T> comparison)
+    {
+        source.QuickSort(start, length, comparison);
         return source;
     }
 
