@@ -34,22 +34,16 @@ public static partial class BitArrayExtensions
         ArgumentNullExceptionThrower.ThrowIfNull(bits);
         ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(length, 8);
         ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(startIndex);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(startIndex + length, bits.Length);
 
-        var currentIndex = startIndex;
-        var count = 0;
+        byte @byte = 0;
 
-        byte tempByte = 0;
-        for (var j = 0; j < 8; j++)
+        for (var j = 0; j < length; j++)
         {
-            tempByte |= (byte)(bits[j + currentIndex] ? 0x01 << j : 0x00);
-            count++;
-            if (count == length)
-            {
-                break;
-            }
+            @byte |= (byte)(bits[j + startIndex] ? 0x01 << j : 0x00);
         }
 
-        return tempByte;
+        return @byte;
     }
 
     /// <summary>
