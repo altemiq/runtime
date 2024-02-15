@@ -128,6 +128,7 @@ public static partial class MemoryExtensions
         }
     }
 
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Auto)]
     private readonly ref struct Spans<T>
     {
         private readonly ReadOnlySpan<T> first;
