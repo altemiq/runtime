@@ -32,7 +32,7 @@ public static partial class BitArrayExtensions
     public static byte GetByte(this System.Collections.BitArray bits, int startIndex, int length)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(bits);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan(length, 8);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(length, 8);
         ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(startIndex);
 
         var currentIndex = startIndex;
