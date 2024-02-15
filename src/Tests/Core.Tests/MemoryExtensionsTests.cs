@@ -8,6 +8,23 @@ namespace Altemiq;
 
 public class MemoryExtensionsTests
 {
+    [Theory]
+    [InlineData("This is an old string", "an old", "a new", "This is a new string")]
+    [InlineData("This is an old string", "a new", "blah", "This is an old string")]
+    public void Replace(string input, string old, string @new, string expected) => new ReadOnlySpan<char>(input.ToCharArray()).Replace(new ReadOnlySpan<char>(old.ToCharArray()), new ReadOnlySpan<char>(@new.ToCharArray())).ToString().Should().Be(expected);
+
+    [Fact]
+    public void IndexOfAny()
+    {
+        Create("This is an old string").IndexOfAny(Create("is"), Create("an"), Create("old"), Create("string")).Should().Be(2);
+        default(ReadOnlySpan<char>).IndexOfAny(default, default).Should().Be(-1);
+
+        static ReadOnlySpan<char> Create(string input)
+        {
+            return new(input.ToCharArray());
+        }
+    }
+
     [Fact]
     public void MoveNextOnEmptyString() => string.Empty.AsSpan().Split().MoveNext().Should().BeFalse();
 

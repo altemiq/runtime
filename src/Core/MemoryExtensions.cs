@@ -63,48 +63,47 @@ public static partial class MemoryExtensions
     /// <exception cref="InvalidOperationException">The length of <paramref name="newValue"/> must be less than <paramref name="oldValue"/>.</exception>
     public static ReadOnlySpan<char> Replace(this ReadOnlySpan<char> input, ReadOnlySpan<char> oldValue, ReadOnlySpan<char> newValue)
     {
+        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(newValue.Length, oldValue.Length);
+
         var oldLength = oldValue.Length;
         var newLength = newValue.Length;
 
-        if (newLength > oldLength)
-        {
-            throw new InvalidOperationException();
-        }
-
-        var initialised = false;
         Span<char> span = default;
 
         var current = 0;
-        var temp = input;
+        var length = input.Length;
         int idx;
-        while ((idx = temp.IndexOf(oldValue, StringComparison.Ordinal)) is not -1)
+        while ((idx = input.IndexOf(oldValue, StringComparison.Ordinal)) is not -1)
         {
-            if (!initialised)
-            {
-                span = new Span<char>(new char[input.Length - (oldLength - newLength)]);
-                initialised = true;
-            }
-
-            temp[..idx].CopyTo(span[current..]);
+            Initialise(ref span, length);
+            input[..idx].CopyTo(span[current..]);
             current += idx;
             newValue.CopyTo(span[current..]);
             current += newLength;
 
             idx += oldLength;
-            temp = temp[idx..];
+            input = input[idx..];
         }
 
-        if (!initialised)
+        if (current is not 0)
         {
-            // no changes, just return the input.
-            return input;
+            // copy the rest
+            input.CopyTo(span[current..]);
+            current += input.Length;
+
+            return span[..current];
         }
 
-        // copy the rest
-        temp.CopyTo(span[current..]);
-        current += temp.Length;
+        // no changes, just return the input.
+        return input;
 
-        return span[..current];
+        void Initialise(ref Span<char> span, int length)
+        {
+            if (span.Length is 0)
+            {
+                span = new Span<char>(new char[length - (oldLength - newLength)]);
+            }
+        }
     }
 
     /// <summary>
