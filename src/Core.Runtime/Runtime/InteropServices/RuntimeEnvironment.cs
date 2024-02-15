@@ -321,7 +321,7 @@ public static class RuntimeEnvironment
     /// </summary>
     /// <param name="path">The path to check.</param>
     /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
-    public static bool ShouldAddLibraryDirectory(string? path) => ShouldAddNativeDirectory(path, EnvironmentVariableTarget.Process);
+    public static bool ShouldAddLibraryDirectory(string? path) => ShouldAddLibraryDirectory(path, EnvironmentVariableTarget.Process);
 
     /// <summary>
     /// Returns whether the specified path should be added.
