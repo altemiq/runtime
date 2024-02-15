@@ -117,7 +117,7 @@ public class MemoryExtensionsTests
     public void GetValues(Func<Random, int, double> creator, GetValuesDelegate<double> getValues)
     {
         var random = new Random();
-        var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
         _ = parsedValues.Should().BeEquivalentTo(randomValues);
@@ -131,7 +131,7 @@ public class MemoryExtensionsTests
     public void Get<T>(Func<Random, int, T> creator, GetDelegate<T> parser, System.Globalization.NumberStyles style)
     {
         var random = new Random();
-        var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var enumerator = span.Split("|");
         var count = 0;
@@ -178,7 +178,7 @@ public class MemoryExtensionsTests
     public void TryGetValues(Func<Random, int, double> creator, TryGetValuesDelegate<double> getValues)
     {
         var random = new Random();
-        var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         _ = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
         _ = parsedValues.Should().BeEquivalentTo(randomValues);
@@ -192,7 +192,7 @@ public class MemoryExtensionsTests
     public static void TryGet<T>(Func<Random, int, T> creator, TryGetDelegate<T> parser)
     {
         var random = new Random();
-        var randomValues = Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var enumerator = span.Split("|");
         var count = 0;
