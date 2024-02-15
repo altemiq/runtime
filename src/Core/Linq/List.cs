@@ -54,7 +54,7 @@ public static partial class List
 
         static IList<TResult> CreateList(IList<TSource> source, Type sourceType)
         {
-            var destination = CreateListCore(source, sourceType) ?? new List<TResult>();
+            var destination = CreateListCore(source, sourceType) ?? [];
 
             if (destination.IsReadOnly)
             {
@@ -522,6 +522,9 @@ public static partial class List
         }
     }
 
+#if NETCOREAPP2_0_OR_GREATER || NET40_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
     private readonly struct ComparisonWrapper<T>(Comparison<T> comparison)
         : IComparer<T>
     {

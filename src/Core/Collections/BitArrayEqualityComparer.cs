@@ -58,7 +58,8 @@ public sealed class BitArrayEqualityComparer : EqualityComparer<System.Collectio
 #else
         var hashCode = 0;
         var equalityComparer = EqualityComparer<bool>.Default;
-        for (var i = 0; i < obj.Length; i++)
+        var length = obj.Length;
+        for (var i = 0; i < length; i++)
         {
             hashCode = CombineHashCodes(hashCode, equalityComparer.GetHashCode(obj[i]));
         }

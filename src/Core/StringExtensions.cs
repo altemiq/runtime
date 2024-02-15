@@ -32,7 +32,7 @@ public static class StringExtensions
     /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
     /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>An array whose elements contain the substrings from <paramref name="s"/> that are delimited by <paramref name="separator"/>.</returns>
-    public static string[]? SplitQuoted(this string s, char separator, StringSplitOptions options = StringSplitOptions.None) => SplitQuotedInternal(s, new[] { separator }, options);
+    public static string[]? SplitQuoted(this string s, char separator, StringSplitOptions options = StringSplitOptions.None) => SplitQuotedInternal(s, [separator], options);
 
     /// <summary>
     /// Splits a string into substrings based on specified delimiting characters, ignoring separators in quoted areas.
