@@ -14,7 +14,7 @@
   <Choose>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
       <ItemGroup>
-        <PackageVersion Include="System.Text.Json" Version="8.0.1" />
+        <PackageVersion Include="System.Text.Json" Version="8.0.2" />
       </ItemGroup>
     </When>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">
