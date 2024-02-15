@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GlobalPackageReference Remove="@(GlobalPackageReference)" />
+    <Using Remove="@(Using)"/>
+  </ItemGroup>
+
+  <Target Name="_RemovePackageReferences" BeforeTargets="CollectPackageReferences">
+    <ItemGroup>
+      <PackageReference Remove="@(PackageReference)" Condition=" %(PackageReference.IsImplicitlyDefined) != 'true' " />
+    </ItemGroup>
+  </Target>
+
+</Project>

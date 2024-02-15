@@ -26,50 +26,50 @@ public static class Resolve
     /// </summary>
     public static void Remove() => AppDomain.CurrentDomain.AssemblyResolve -= ResolveRuntimeAssembliesHandler;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3885:\"Assembly.Load\" should be used", Justification = "We are trying to load an exact path")]
-    private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args)
+    /// <summary>
+    /// Resolves the runtime assembly.
+    /// </summary>
+    /// <param name="requiredAssemblyName">The required assembly name.</param>
+    /// <returns>The required assembly.</returns>
+    internal static System.Reflection.Assembly? ResolveRuntimeAssembly(System.Reflection.AssemblyName requiredAssemblyName)
     {
-        System.Reflection.AssemblyName requiredAssemblyName = new(args.Name);
-
-        // check to see if this is in the currently loaded assemblies
-        if (FromLoaded(requiredAssemblyName) is System.Reflection.Assembly alreadyLoadedAssembly)
-        {
-            return alreadyLoadedAssembly;
-        }
-
-        if (GetPaths()
-            .Select(p => FindPath(p, requiredAssemblyName.Name))
-            .FirstOrDefault(p => p is not null) is string path)
-        {
-            var assembly = System.Reflection.Assembly.LoadFile(path);
-            if (assembly.IsCompatible(requiredAssemblyName))
-            {
-                return System.Reflection.Assembly.LoadFrom(assembly.Location);
-            }
-        }
-
-        return default;
+        return FromLoaded(requiredAssemblyName) ?? FromPaths(requiredAssemblyName);
 
         static System.Reflection.Assembly? FromLoaded(System.Reflection.AssemblyName requiredAssemblyName)
         {
             return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), assembly => assembly.IsCompatible(requiredAssemblyName));
         }
 
-        static IEnumerable<string?> GetPaths()
+        static System.Reflection.Assembly? FromPaths(System.Reflection.AssemblyName requiredAssemblyName)
         {
-            yield return InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectory();
-            foreach (var directory in InteropServices.RuntimeInformation.GetBaseDirectories())
+            return GetPaths()
+                .Select(p => FindPath(p, requiredAssemblyName.Name))
+                .Where(p => p is not null)
+                .Select(System.Reflection.Assembly.LoadFile)
+                .FirstOrDefault(a => a.IsCompatible(requiredAssemblyName));
+
+            static IEnumerable<string?> GetPaths()
             {
-                yield return directory;
+                foreach (var directory in InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectories())
+                {
+                    yield return directory;
+                }
+
+                foreach (var directory in InteropServices.RuntimeInformation.GetBaseDirectories())
+                {
+                    yield return directory;
+                }
+            }
+
+            static string? FindPath(string? basePath, string? file)
+            {
+                return basePath is not null && file is not null
+                    ? Extensions.Select(extension => Path.Combine(basePath, file + extension)).FirstOrDefault(File.Exists)
+                    : default;
             }
         }
-
-        static string? FindPath(string? basePath, string? file)
-        {
-            return basePath is not null && file is not null
-                ? Extensions.Select(extension => Path.Combine(basePath, file + extension)).FirstOrDefault(File.Exists)
-                : default;
-        }
     }
+
+    private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args) => ResolveRuntimeAssembly(new System.Reflection.AssemblyName(args.Name));
 }
 #endif

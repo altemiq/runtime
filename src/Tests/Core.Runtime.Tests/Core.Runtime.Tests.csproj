@@ -21,10 +21,25 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core.Runtime\Core.Runtime.csproj" />
+    <ProjectReference Include="..\Dummy\Dummy.csproj">
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="**/_._" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <Target Name="_CopyItemsToCopy" BeforeTargets="PrepareForRun">
+    <PropertyGroup>
+      <_ItemTargetFramework>netstandard2.0</_ItemTargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+      <_ItemsToCopy Include="..\Dummy\bin\$(Configuration)\$(_ItemTargetFramework)\*.dll" />
+      <_Runtimes Include="linux-x64;linux-x86;win-x64;win-x86" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_ItemsToCopy)" DestinationFolder="$(OutputPath)runtimes\%(_Runtimes.Identity)\lib\$(_ItemTargetFramework)\" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>

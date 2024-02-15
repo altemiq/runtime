@@ -125,33 +125,58 @@ public static class RuntimeEnvironment
     /// Gets the runtime library directory.
     /// </summary>
     /// <returns>The runtime library directory.</returns>
-    /// <exception cref="InvalidOperationException">Unable to get the current target framework.</exception>
-    public static string? GetRuntimeLibraryDirectory()
+    public static string? GetRuntimeLibraryDirectory() => GetRuntimeLibraryDirectories().FirstOrDefault();
+
+    /// <summary>
+    /// Gets all possible runtime library directories.
+    /// </summary>
+    /// <returns>The runtime library directories.</returns>
+    public static IEnumerable<string> GetRuntimeLibraryDirectories()
     {
         var runtimesLibraryDirectory = GetRuntimeDirectory(LibraryDirectory);
         if (runtimesLibraryDirectory is null || !Directory.Exists(runtimesLibraryDirectory))
         {
-            return default;
+            yield break;
         }
 
+        var frameworkNameProvider = NuGet.Frameworks.DefaultFrameworkNameProvider.Instance;
+
         // get all the available TFMs
-        var availableTargetFrameworkMonikers = Directory.GetDirectories(runtimesLibraryDirectory).Select(Path.GetFileName).ToArray();
-        if (availableTargetFrameworkMonikers.Length == 0)
+        var availableFramework = Directory.GetDirectories(runtimesLibraryDirectory)
+            .Select(Path.GetFileName)
+            .Select(folder => NuGet.Frameworks.NuGetFramework.ParseFolder(folder, frameworkNameProvider))
+            .ToList();
+        if (availableFramework.Count is 0)
         {
-            return runtimesLibraryDirectory;
+            yield return runtimesLibraryDirectory;
+            yield break;
         }
 
         // get the current TFM
-        var currentTargetFrameworkMoniker = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, NuGet.Frameworks.DefaultFrameworkNameProvider.Instance);
-        if (RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform)
-        {
-            currentTargetFrameworkMoniker = NuGet.Frameworks.NuGetFramework.ParseFolder(string.Concat(currentTargetFrameworkMoniker, "-", targetPlatform));
-        }
+        var currentFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, frameworkNameProvider);
+        var currentFrameworkWithProfile = RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
+            ? new NuGet.Frameworks.NuGetFramework(currentFramework.Framework, currentFramework.Version, targetPlatform)
+            : default;
 
-        // get the closest TFM from the list
-        return NuGet.Frameworks.NuGetFrameworkUtility.GetNearest(availableTargetFrameworkMonikers, currentTargetFrameworkMoniker, NuGet.Frameworks.NuGetFramework.ParseFolder) is { } nearestTargetFrameworkMoniker
-            ? Path.Combine(runtimesLibraryDirectory, nearestTargetFrameworkMoniker)
-            : runtimesLibraryDirectory;
+        var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
+        while (true)
+        {
+            if (currentFrameworkWithProfile is not null && frameworkReducer.GetNearest(currentFrameworkWithProfile, availableFramework) is { } nearestFrameworkWithProfile)
+            {
+                yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
+                availableFramework.Remove(nearestFrameworkWithProfile);
+            }
+            else if (frameworkReducer.GetNearest(currentFramework, availableFramework) is { } nearestFramework)
+            {
+                yield return Path.Combine(runtimesLibraryDirectory, nearestFramework.GetShortFolderName());
+                availableFramework.Remove(nearestFramework);
+                currentFrameworkWithProfile = default;
+            }
+            else
+            {
+                yield break;
+            }
+        }
     }
 
 #if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
