@@ -45,6 +45,7 @@ public static class Resolve
             return GetPaths()
                 .Select(p => FindPath(p, requiredAssemblyName.Name))
                 .Where(p => p is not null)
+                .Cast<string>()
                 .Select(System.Reflection.Assembly.LoadFile)
                 .FirstOrDefault(a => a.IsCompatible(requiredAssemblyName));
 

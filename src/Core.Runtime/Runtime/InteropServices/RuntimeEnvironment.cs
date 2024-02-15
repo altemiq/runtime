@@ -26,7 +26,7 @@ public static class RuntimeEnvironment
     /// Gets the runtime native directory.
     /// </summary>
     /// <returns>The runtime native directory.</returns>
-    public static string? GetRuntimeNativeDirectory() => GetRuntimeDirectory(NativeDirectory);
+    public static string? GetRuntimeNativeDirectory() => GetRuntimeNativeDirectories().FirstOrDefault();
 
     /// <summary>
     /// Gets the runtime native directory that contains the specified module name.
@@ -35,32 +35,7 @@ public static class RuntimeEnvironment
     /// <returns>The directory containing <paramref name="name"/> if found; otherwise <see langword="null"/>.</returns>
     public static string? GetRuntimeNativeDirectory(string name)
     {
-        var candidateAssets = new Dictionary<string, int>(StringComparer.Ordinal);
-        var rids = GetRuntimeRids().ToList();
-
-        if (GetDependencyContext() is { } dependencyContext && dependencyContext.RuntimeLibraries is { Count: > 0 } runtimeLibraries)
-        {
-            foreach (var library in runtimeLibraries)
-            {
-                foreach (var group in library.NativeLibraryGroups)
-                {
-                    foreach (var path in group
-                        .RuntimeFiles
-                        .Where(runtimeFile => string.Equals(
-                            Path.GetFileName(runtimeFile.Path),
-                            name,
-                            StringComparison.OrdinalIgnoreCase))
-                        .Select(runtimeFile => runtimeFile.Path))
-                    {
-                        var fallbacks = rids.IndexOf(group.Runtime);
-                        if (fallbacks is not -1)
-                        {
-                            TryAdd(candidateAssets, library.Path + "/" + path, fallbacks);
-                        }
-                    }
-                }
-            }
-        }
+        var candidateAssets = GetCandidateAssets(name);
 
         TryAdd(candidateAssets, CreateAssetPath(RuntimeInformation.RuntimeIdentifier, name), 10001);
         TryAdd(candidateAssets, CreateAssetPath(RuntimeInformation.GetNaïveRid(), name), 10001);
@@ -71,21 +46,14 @@ public static class RuntimeEnvironment
 #else
         var probingDirectories = RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
 #endif
-        foreach (var assetPath in candidateAssets
-           .OrderBy(p => p.Value)
-           .Select(p => p.Key.Replace('/', Path.DirectorySeparatorChar)))
-        {
-            var assetFullPath = probingDirectories
-                .Select(directory => Path.Combine(directory, assetPath))
-                .LastOrDefault(File.Exists);
 
-            if (assetFullPath is not null)
-            {
-                return Path.GetDirectoryName(assetFullPath);
-            }
-        }
-
-        return default;
+        return candidateAssets
+            .OrderBy(p => p.Value)
+            .Select(p => p.Key.Replace('/', Path.DirectorySeparatorChar))
+            .SelectMany(assetPath => probingDirectories.Select(directory => Path.Combine(directory, assetPath)))
+            .Where(File.Exists)
+            .Select(Path.GetDirectoryName)
+            .FirstOrDefault();
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         static string CreateAssetPath(string rid, string name)
@@ -119,7 +87,46 @@ public static class RuntimeEnvironment
             }
 #endif
         }
+
+        static Dictionary<string, int> GetCandidateAssets(string name)
+        {
+            if (GetDependencyContext() is { } dependencyContext && dependencyContext.RuntimeLibraries is { Count: > 0 } runtimeLibraries)
+            {
+                var candidateAssets = new Dictionary<string, int>(StringComparer.Ordinal);
+                var rids = GetRuntimeRids().ToList();
+                foreach (var library in runtimeLibraries)
+                {
+                    foreach (var group in library.NativeLibraryGroups)
+                    {
+                        foreach (var path in group
+                            .RuntimeFiles
+                            .Where(runtimeFile => string.Equals(
+                                Path.GetFileName(runtimeFile.Path),
+                                name,
+                                StringComparison.OrdinalIgnoreCase))
+                            .Select(runtimeFile => runtimeFile.Path))
+                        {
+                            var fallbacks = rids.IndexOf(group.Runtime);
+                            if (fallbacks is not -1)
+                            {
+                                TryAdd(candidateAssets, library.Path + "/" + path, fallbacks);
+                            }
+                        }
+                    }
+                }
+
+                return candidateAssets;
+            }
+
+            return [];
+        }
     }
+
+    /// <summary>
+    /// Gets the runtime native directories.
+    /// </summary>
+    /// <returns>The runtime native directories.</returns>
+    public static IEnumerable<string> GetRuntimeNativeDirectories() => GetRuntimeDirectories(NativeDirectory);
 
     /// <summary>
     /// Gets the runtime library directory.
@@ -133,48 +140,48 @@ public static class RuntimeEnvironment
     /// <returns>The runtime library directories.</returns>
     public static IEnumerable<string> GetRuntimeLibraryDirectories()
     {
-        var runtimesLibraryDirectory = GetRuntimeDirectory(LibraryDirectory);
-        if (runtimesLibraryDirectory is null || !Directory.Exists(runtimesLibraryDirectory))
+        return GetRuntimeDirectories(LibraryDirectory)
+            .SelectMany(GetRuntimeLibraryDirectoriesCore);
+
+        static IEnumerable<string> GetRuntimeLibraryDirectoriesCore(string runtimesLibraryDirectory)
         {
-            yield break;
-        }
+            var frameworkNameProvider = NuGet.Frameworks.DefaultFrameworkNameProvider.Instance;
 
-        var frameworkNameProvider = NuGet.Frameworks.DefaultFrameworkNameProvider.Instance;
-
-        // get all the available TFMs
-        var availableFramework = Directory.GetDirectories(runtimesLibraryDirectory)
-            .Select(Path.GetFileName)
-            .Select(folder => NuGet.Frameworks.NuGetFramework.ParseFolder(folder, frameworkNameProvider))
-            .ToList();
-        if (availableFramework.Count is 0)
-        {
-            yield return runtimesLibraryDirectory;
-            yield break;
-        }
-
-        // get the current TFM
-        var currentFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, frameworkNameProvider);
-        var currentFrameworkWithProfile = RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
-            ? new NuGet.Frameworks.NuGetFramework(currentFramework.Framework, currentFramework.Version, targetPlatform)
-            : default;
-
-        var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
-        while (true)
-        {
-            if (currentFrameworkWithProfile is not null && frameworkReducer.GetNearest(currentFrameworkWithProfile, availableFramework) is { } nearestFrameworkWithProfile)
+            // get all the available TFMs
+            var availableFramework = Directory.GetDirectories(runtimesLibraryDirectory)
+                .Select(Path.GetFileName)
+                .Select(folder => NuGet.Frameworks.NuGetFramework.ParseFolder(folder, frameworkNameProvider))
+                .ToList();
+            if (availableFramework.Count is 0)
             {
-                yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
-                availableFramework.Remove(nearestFrameworkWithProfile);
-            }
-            else if (frameworkReducer.GetNearest(currentFramework, availableFramework) is { } nearestFramework)
-            {
-                yield return Path.Combine(runtimesLibraryDirectory, nearestFramework.GetShortFolderName());
-                availableFramework.Remove(nearestFramework);
-                currentFrameworkWithProfile = default;
-            }
-            else
-            {
+                yield return runtimesLibraryDirectory;
                 yield break;
+            }
+
+            // get the current TFM
+            var currentFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, frameworkNameProvider);
+            var currentFrameworkWithProfile = RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
+                ? new NuGet.Frameworks.NuGetFramework(currentFramework.Framework, currentFramework.Version, targetPlatform)
+                : default;
+
+            var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
+            while (true)
+            {
+                if (currentFrameworkWithProfile is not null && frameworkReducer.GetNearest(currentFrameworkWithProfile, availableFramework) is { } nearestFrameworkWithProfile)
+                {
+                    yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
+                    availableFramework.Remove(nearestFrameworkWithProfile);
+                }
+                else if (frameworkReducer.GetNearest(currentFramework, availableFramework) is { } nearestFramework)
+                {
+                    yield return Path.Combine(runtimesLibraryDirectory, nearestFramework.GetShortFolderName());
+                    availableFramework.Remove(nearestFramework);
+                    currentFrameworkWithProfile = default;
+                }
+                else
+                {
+                    yield break;
+                }
             }
         }
     }
@@ -469,20 +476,41 @@ public static class RuntimeEnvironment
     private static bool IsAlreadyInAppContext(string value, string variable) => false;
 #endif
 
-    private static string? GetRuntimeDirectory(string name)
+    private static IEnumerable<string> GetRuntimeDirectories(string name)
     {
         if (RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is { } runtimesDirectory)
         {
             // get the rids
-            return Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).ToList() switch
+            var availableRids = Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).Where(fileName => fileName is not null).Cast<string>().ToList();
+            if (availableRids is { Count: 0 })
             {
-                { Count: 0 } => runtimesDirectory,
-                var availableRids when GetRuntimeRids().Find(availableRids.Contains) is string rid => Path.Combine(runtimesDirectory, rid, name),
-                _ => Path.Combine(runtimesDirectory, name),
-            };
-        }
+                yield return runtimesDirectory;
+                yield break;
+            }
 
-        return default;
+            if (GetRuntimeRids().Intersect(availableRids, GetComparer()).ToList() is { Capacity: > 0 } rids)
+            {
+                foreach (var rid in rids)
+                {
+                    yield return Path.Combine(runtimesDirectory, rid, name);
+                }
+
+                yield break;
+            }
+
+            yield return Path.Combine(runtimesDirectory, name);
+
+            static IEqualityComparer<string?> GetComparer()
+            {
+#if NET5_0_OR_GREATER
+                return OperatingSystem.IsWindows()
+#else
+                return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+#endif
+                    ? StringComparer.OrdinalIgnoreCase
+                    : StringComparer.Ordinal;
+            }
+        }
     }
 
     private static List<string> GetRuntimeRids()
