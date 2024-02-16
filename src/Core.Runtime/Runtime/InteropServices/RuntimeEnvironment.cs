@@ -317,27 +317,18 @@ public static class RuntimeEnvironment
     /// <summary>
     /// Adds the runtime native directory to the path variable if required.
     /// </summary>
-    public static void AddRuntimeNativeDirectory()
-    {
-        AddRuntimeDirectory(GetRuntimeNativeDirectory(), NativeDllSearchDirectories);
-    }
+    public static void AddRuntimeNativeDirectory() => AddRuntimeDirectory(GetRuntimeNativeDirectory(), NativeDllSearchDirectories);
 
     /// <summary>
     /// Adds the runtime native directory to the path environment variable if required.
     /// </summary>
     /// <param name="moduleName">The module name.</param>
-    public static void AddRuntimeNativeDirectory(string moduleName)
-    {
-        AddRuntimeDirectory(GetRuntimeNativeDirectory(moduleName), NativeDllSearchDirectories);
-    }
+    public static void AddRuntimeNativeDirectory(string moduleName) => AddRuntimeDirectory(GetRuntimeNativeDirectory(moduleName), NativeDllSearchDirectories);
 
     /// <summary>
     /// Adds the runtime library directory to the path variable if required.
     /// </summary>
-    public static void AddRuntimeLibraryDirectory()
-    {
-        AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths);
-    }
+    public static void AddRuntimeLibraryDirectory() => AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths);
 
     /// <summary>
     /// Adds the runtime directories to the path variable if required.

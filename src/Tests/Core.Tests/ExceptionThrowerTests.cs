@@ -211,7 +211,7 @@ public class ExceptionThrowerTests
         {
             try
             {
-                methodInfo.Invoke(null, [..values, nameof(values)]);
+                methodInfo.Invoke(null, [.. values, nameof(values)]);
             }
             catch (System.Reflection.TargetInvocationException ex) when (ex.InnerException is not null)
             {

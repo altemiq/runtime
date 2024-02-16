@@ -12,6 +12,10 @@
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <ItemGroup Condition=" !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')))" >
+    <Compile Remove="Runtime\Resolve.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Condition=" !($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '5.0'))) " />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" />

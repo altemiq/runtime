@@ -380,12 +380,10 @@ internal sealed class RuntimeConfig(string path)
         WriteNull(this.rollForward, rollForward => runtimeOptions.Add(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
         WriteNullable(this.rollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => runtimeOptions.Add(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
         WriteNullable(this.applyPatches, applyPatches => runtimeOptions.Add(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
-        WriteArray(runtimeOptions, "additionalProbingPath", this.additionalProbingPaths, additionalProbingPath => new Newtonsoft.Json.Linq.JValue(additionalProbingPath));
+        WriteArray(runtimeOptions, Constants.AdditionalProbingPath.RuntimeConfigPropertyName, this.additionalProbingPaths, additionalProbingPath => new Newtonsoft.Json.Linq.JValue(additionalProbingPath));
         WriteObject(runtimeOptions, "configProperties", this.properties, property =>
         {
-            Newtonsoft.Json.Linq.JToken tokenValue = bool.TryParse(property, out var result)
-                ? result
-                : property;
+            Newtonsoft.Json.Linq.JToken tokenValue = bool.TryParse(property, out var result) ? result : property;
             return tokenValue;
         });
 

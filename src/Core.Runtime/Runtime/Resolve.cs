@@ -4,7 +4,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#if NETSTANDARD2_0_OR_GREATER || NET20_OR_GREATER || NETCOREAPP2_0_OR_GREATER
 namespace Altemiq.Runtime;
 
 using Altemiq.Reflection;
@@ -73,4 +72,3 @@ public static class Resolve
 
     private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args) => ResolveRuntimeAssembly(new System.Reflection.AssemblyName(args.Name));
 }
-#endif
