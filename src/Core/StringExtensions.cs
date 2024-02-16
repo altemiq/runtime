@@ -100,118 +100,129 @@ public static class StringExtensions
 #endif
 
         // work through each one
-        var splits = new List<int>();
-        var combining = false;
-        for (var i = 0; i < s.Length; i++)
+        var splits = Split(s, separator, splitOnWhiteSpace);
+
+        return ProcessSplits(s, options, splits);
+
+        static List<int> Split(string s, IList<char>? separator, bool splitOnWhiteSpace)
         {
-            var isSplit = splitOnWhiteSpace ? char.IsWhiteSpace(s[i]) : Contains(separator!, s[i]);
-            if (isSplit)
+            var splits = new List<int>();
+            var combining = false;
+            for (var i = 0; i < s.Length; i++)
             {
-                if (!combining)
+                if (splitOnWhiteSpace ? char.IsWhiteSpace(s[i]) : Contains(separator!, s[i]))
                 {
-                    splits.Add(i);
+                    if (!combining)
+                    {
+                        splits.Add(i);
+                    }
+                }
+                else if (s[i] == QuoteChar)
+                {
+                    combining = !combining;
                 }
             }
-            else if (s[i] == QuoteChar)
+
+            return splits;
+
+            static bool Contains(IList<char> characters, char character)
             {
-                combining = !combining;
+                for (var i = 0; i < characters.Count; i++)
+                {
+                    if (characters[i] == character)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
 
-        var values = new string[splits.Count + 1];
-        var returnIndex = 0;
-        var lastIndex = 0;
-
-        foreach (var index in splits)
+        static string[] ProcessSplits(string s, StringSplitOptions options, List<int> splits)
         {
-            if (index == lastIndex)
+            var values = new string[splits.Count + 1];
+            var returnIndex = 0;
+            var lastIndex = 0;
+
+            foreach (var index in splits)
             {
-                if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries))
+                if (index == lastIndex)
                 {
-                    lastIndex++;
+                    if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        lastIndex++;
+                    }
+                    else
+                    {
+                        returnIndex++;
+                    }
+
+                    continue;
                 }
-                else
+
+                var startIndex = lastIndex;
+                if (s[startIndex] == QuoteChar)
                 {
-                    returnIndex++;
+                    startIndex++;
                 }
 
-                continue;
-            }
-
-            var startIndex = lastIndex;
-            if (s[startIndex] == QuoteChar)
-            {
-                startIndex++;
-            }
-
-            var endIndex = index;
-            if (s[endIndex - 1] == QuoteChar)
-            {
-                endIndex--;
-            }
+                var endIndex = index;
+                if (s[endIndex - 1] == QuoteChar)
+                {
+                    endIndex--;
+                }
 
 #if NET5_0_OR_GREATER
-            if (options.HasFlag(StringSplitOptions.TrimEntries))
-            {
-                TrimStartEnd(s, ref startIndex, ref endIndex);
-            }
-#endif
-
-            values[returnIndex] = s[startIndex..endIndex];
-            lastIndex = index + 1;
-            returnIndex++;
-        }
-
-        if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || s.Length - lastIndex != 0)
-        {
-            var startIndex = lastIndex;
-            var endIndex = s.Length;
-#if NET5_0_OR_GREATER
-            if (options.HasFlag(StringSplitOptions.TrimEntries))
-            {
-                TrimStartEnd(s, ref startIndex, ref endIndex);
-            }
-#endif
-
-            values[returnIndex] = s[startIndex..endIndex];
-            returnIndex++;
-        }
-
-        // resize the array
-        if (values.Length != returnIndex)
-        {
-            System.Array.Resize(ref values, returnIndex);
-        }
-
-        return values;
-
-        static bool Contains(IList<char> characters, char character)
-        {
-            for (var i = 0; i < characters.Count; i++)
-            {
-                if (characters[i] == character)
+                if (options.HasFlag(StringSplitOptions.TrimEntries))
                 {
-                    return true;
+                    TrimStartEnd(s, ref startIndex, ref endIndex);
+                }
+#endif
+
+                values[returnIndex] = s[startIndex..endIndex];
+                lastIndex = index + 1;
+                returnIndex++;
+            }
+
+            if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || s.Length - lastIndex != 0)
+            {
+                var startIndex = lastIndex;
+                var endIndex = s.Length;
+#if NET5_0_OR_GREATER
+                if (options.HasFlag(StringSplitOptions.TrimEntries))
+                {
+                    TrimStartEnd(s, ref startIndex, ref endIndex);
+                }
+#endif
+
+                values[returnIndex] = s[startIndex..endIndex];
+                returnIndex++;
+            }
+
+            // resize the array
+            if (values.Length != returnIndex)
+            {
+                System.Array.Resize(ref values, returnIndex);
+            }
+
+            return values;
+
+#if NET5_0_OR_GREATER
+            static void TrimStartEnd(string s, ref int startIndex, ref int endIndex)
+            {
+                while (char.IsWhiteSpace(s[startIndex]) && startIndex < endIndex)
+                {
+                    startIndex++;
+                }
+
+                while (char.IsWhiteSpace(s[endIndex - 1]) && startIndex < endIndex)
+                {
+                    endIndex--;
                 }
             }
-
-            return false;
-        }
-
-#if NET5_0_OR_GREATER
-        static void TrimStartEnd(string s, ref int startIndex, ref int endIndex)
-        {
-            while (char.IsWhiteSpace(s[startIndex]) && startIndex < endIndex)
-            {
-                startIndex++;
-            }
-
-            while (char.IsWhiteSpace(s[endIndex - 1]) && startIndex < endIndex)
-            {
-                endIndex--;
-            }
-        }
 #endif
+        }
     }
 
     private static string SmartQuote(string value, IList<char> delimiter, StringQuoteOptions options)
@@ -221,48 +232,46 @@ public static class StringExtensions
         var quoteQuotes = options.HasFlag(StringQuoteOptions.QuoteQuotes);
         var quoteNonAscii = options.HasFlag(StringQuoteOptions.QuoteNonAscii);
 
-        if (!quoteDelimiter && !quoteNewLine && !quoteQuotes && !quoteNonAscii)
+        // see if we should quote or not
+        return !HaveOptions() || Enumerable.Range(0, value.Length).Any(IsQuotableAt)
+            ? QuoteReturnString(value)
+            : value;
+
+        bool HaveOptions()
         {
-            // we have no delimiter, and are not checking anything else
-            return QuoteReturnString(value);
+            return quoteDelimiter || quoteNewLine || quoteQuotes || quoteNonAscii;
         }
 
-        // see if we should quote or not
-        for (var i = 0; i < value.Length; i++)
+        bool IsQuotableAt(int i)
         {
             var character = value[i];
-            if ((quoteDelimiter && delimiter[0] == character && CheckDelimiter(value, i, delimiter))
+            return (quoteDelimiter && delimiter[0] == character && CheckDelimiter(value, i, delimiter))
                 || (quoteNewLine && character is '\r' or '\n')
                 || (quoteQuotes && character is QuoteChar)
-                || (quoteNonAscii && character >= 128))
+                || (quoteNonAscii && character >= 128);
+
+            static bool CheckDelimiter(string s, int index, IList<char> delimiter)
             {
-                return QuoteReturnString(value);
+                if (delimiter.Count > s.Length - index)
+                {
+                    return false;
+                }
+
+                for (var i = 0; i < delimiter.Count; i++)
+                {
+                    if (s[index + i] != delimiter[i])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         }
-
-        return value;
 
         static bool ShouldQuoteDelimiter([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] IList<char>? delimiter)
         {
             return delimiter?.Count > 0;
-        }
-
-        static bool CheckDelimiter(string s, int index, IList<char> delimiter)
-        {
-            if (delimiter.Count > s.Length - index)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < delimiter.Count; i++)
-            {
-                if (s[index + i] != delimiter[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 
