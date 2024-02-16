@@ -275,13 +275,7 @@ public static partial class List
         }
         else
         {
-            var end = index + length - 1;
-
-            if (end > values.Count)
-            {
-                end = values.Count - 1;
-            }
-
+            var end = Math.Min(index + length, values.Count) - 1;
             QuickSortCore(values, index, end, comparison);
         }
 
@@ -422,11 +416,7 @@ public static partial class List
             length = int.MinValue + 1;
         }
 
-        var end = index + length - 1;
-        if (end > values.Count)
-        {
-            end = values.Count - 1;
-        }
+        var end = Math.Min(index + length, values.Count) - 1;
 
         QuickSortCore(values, index, end);
 

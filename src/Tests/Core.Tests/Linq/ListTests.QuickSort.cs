@@ -61,7 +61,6 @@ public partial class ListTests
         return theoryData;
     }
 
-
     [Theory]
     [MemberData(nameof(GetEmptyLists))]
     public void QuickSortWithNoItems(IList<int> list) => QuickSort(list).Should().BeEmpty();
@@ -89,6 +88,14 @@ public partial class ListTests
     [Theory]
     [MemberData(nameof(GetThreeItemsNotInOrderLists))]
     public void QuickSortWithThreeItemsNotInOrder(IList<int> list) => QuickSort(list).Should()
+        .HaveCount(3).And
+        .HaveElementAt(0, 0).And
+        .HaveElementAt(1, 1).And
+        .HaveElementAt(2, 2);
+
+    [Theory]
+    [MemberData(nameof(GetThreeItemsNotInOrderLists))]
+    public void QuickSortWithThreeItemsNotInOrderWithSize(IList<int> list) => QuickSortWithLength(list).Should()
         .HaveCount(3).And
         .HaveElementAt(0, 0).And
         .HaveElementAt(1, 1).And
@@ -162,6 +169,13 @@ public partial class ListTests
         where T : IComparable<T>
     {
         source.QuickSort();
+        return source;
+    }
+
+    private static IList<T> QuickSortWithLength<T>(IList<T> source)
+        where T : IComparable<T>
+    {
+        source.QuickSort(0, source.Count, Comparer<T>.Default);
         return source;
     }
 

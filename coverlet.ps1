@@ -8,7 +8,9 @@ if (Test-Path -Path $results -Type Container) {
 dotnet test $PSScriptRoot\src --no-build --results-directory $results
 
 # install the report generator
-dotnet tool install -g dotnet-reportgenerator-globaltool
+if ((Get-Command 'reportGenerator' -errorAction SilentlyContinue) -eq $null) {
+	dotnet tool install -g dotnet-reportgenerator-globaltool
+}
 
 $reports = "$PSScriptRoot/coverage/reports"
 if (Test-Path -Path $reports -Type Container) {

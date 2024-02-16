@@ -8,7 +8,15 @@ namespace Altemiq.Linq;
 
 public partial class ListTests
 {
-    public static TheoryData<IReadOnlyList<int>> GetInt32Lists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
+    [Fact]
+    public void Cast()
+    {
+        IList<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
+        var cast = List.Cast<ISecond, IFirst>(list);
+        cast.Should().BeEquivalentTo(list);
+    }
+
+    public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
 
     public static TheoryData<System.Collections.IEnumerable?, System.Collections.IEnumerable?> CreateNulls() => new() { { null, null } };
 
@@ -67,5 +75,18 @@ public partial class ListTests
         yield return a;
         yield return new List<T>(a);
         yield return new System.Collections.ObjectModel.Collection<T>(new List<T>(a));
+    }
+
+    private interface IFirst
+    {
+    }
+
+    private interface ISecond : IFirst
+    {
+    }
+
+    private readonly struct Third : ISecond
+    {
+
     }
 }

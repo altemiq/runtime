@@ -57,27 +57,32 @@ public static partial class List
             return startIndex;
         }
 
-        var length = Math.Min(buffer.Count, startIndex + count);
-        var indexes = new int[anyOf.Length];
-        for (var i = startIndex; i < length; i++)
+        return IndexOfAnyCore(buffer, startIndex, count, anyOf);
+
+        static int IndexOfAnyCore(IReadOnlyList<T> buffer, int startIndex, int count, IReadOnlyList<T>[] anyOf)
         {
-            for (var j = 0; j < anyOf.Length; j++)
+            var length = Math.Min(buffer.Count, startIndex + count);
+            var indexes = new int[anyOf.Length];
+            for (var i = startIndex; i < length; i++)
             {
-                if (buffer[i].Equals(anyOf[j][indexes[j]]))
+                for (var j = 0; j < anyOf.Length; j++)
                 {
-                    indexes[j]++;
-                    if (indexes[j] == anyOf[j].Count)
+                    if (buffer[i].Equals(anyOf[j][indexes[j]]))
                     {
-                        return i - anyOf[j].Count + 1;
+                        indexes[j]++;
+                        if (indexes[j] == anyOf[j].Count)
+                        {
+                            return i - anyOf[j].Count + 1;
+                        }
+                    }
+                    else
+                    {
+                        indexes[j] = 0;
                     }
                 }
-                else
-                {
-                    indexes[j] = 0;
-                }
             }
-        }
 
-        return -1;
+            return -1;
+        }
     }
 }

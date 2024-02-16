@@ -25,7 +25,7 @@ public partial class ListTests
     }
 
     [Theory]
-    [MemberData(nameof(GetInt32Lists))]
+    [MemberData(nameof(GetInt32ReadOnlyLists))]
     public void IndexOfValue(IReadOnlyList<int> list) => list.IndexOf(10, 1).Should().Be(2);
 
     [Theory]
@@ -34,5 +34,28 @@ public partial class ListTests
     {
         _ = TestListList<int, int>(first, second, (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
         _ = TestReadOnlyListReadOnlyList<int, int>(first, second, (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetLists))]
+    public void IndexOfLists(IEnumerable<int> first, IEnumerable<int> second)
+    {
+        if (first is IList<int> firstList)
+        {
+            firstList.IndexOf(2, 0).Should().Be(1);
+        }
+        else if (first is IReadOnlyList<int> firstReadOnlyList)
+        {
+            firstReadOnlyList.IndexOf(2, 0).Should().Be(1);
+        }
+
+        if (second is IList<int> secondList)
+        {
+            secondList.IndexOf(2, 0).Should().Be(0);
+        }
+        else if (second is IReadOnlyList<int> secondReadOnlyList)
+        {
+            secondReadOnlyList.IndexOf(2, 0).Should().Be(0);
+        }
     }
 }

@@ -56,29 +56,34 @@ public static partial class List
             return startIndex;
         }
 
-        var j = 0;
+        return IndexOfCore(buffer, value, startIndex, count);
 
-        // Search until we get to the start or end value
-        var length = Math.Min(buffer.Count, startIndex + count);
-        for (var i = startIndex; i < length; i++)
+        static int IndexOfCore(IList<T> buffer, IList<T> value, int startIndex, int count)
         {
-            if (buffer[i].Equals(value[j]))
-            {
-                j++;
+            var j = 0;
 
-                if (j == value.Count)
+            // Search until we get to the start or end value
+            var length = Math.Min(buffer.Count, startIndex + count);
+            for (var i = startIndex; i < length; i++)
+            {
+                if (buffer[i].Equals(value[j]))
                 {
-                    // We have the start
-                    return i - value.Count + 1;
+                    j++;
+
+                    if (j == value.Count)
+                    {
+                        // We have the start
+                        return i - value.Count + 1;
+                    }
+                }
+                else
+                {
+                    j = 0;
                 }
             }
-            else
-            {
-                j = 0;
-            }
-        }
 
-        return -1;
+            return -1;
+        }
     }
 
     /// <summary>
@@ -114,23 +119,22 @@ public static partial class List
     public static int IndexOf<T>(this IList<T> buffer, T value, int startIndex, int count)
         where T : IEquatable<T>
     {
-        // Check to see if the buffer is applicable
-        if (buffer is null)
+        return buffer is null ? -1 : IndexOfCore(buffer, value, startIndex, count);
+
+        static int IndexOfCore(IList<T> buffer, T value, int startIndex, int count)
         {
+            // Search until we get to the value
+            var length = Math.Min(buffer.Count, startIndex + count);
+            for (var i = startIndex; i < length; i++)
+            {
+                if (buffer[i].Equals(value))
+                {
+                    // We have the start
+                    return i;
+                }
+            }
+
             return -1;
         }
-
-        // Search until we get to the value
-        var length = Math.Min(buffer.Count, startIndex + count);
-        for (var i = startIndex; i < length; i++)
-        {
-            if (buffer[i].Equals(value))
-            {
-                // We have the start
-                return i;
-            }
-        }
-
-        return -1;
     }
 }
