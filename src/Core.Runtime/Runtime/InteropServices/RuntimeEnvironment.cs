@@ -196,15 +196,7 @@ public static class RuntimeEnvironment
     /// Adds the runtime native directory to the path environment variable if required.
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddRuntimeNativeDirectory(EnvironmentVariableTarget target)
-    {
-        if (GetRuntimeNativeDirectory() is string nativeDirectory
-            && Directory.Exists(nativeDirectory)
-            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
-        {
-            AddDirectoryToPath(nativeDirectory, target);
-        }
-    }
+    public static void AddRuntimeNativeDirectory(EnvironmentVariableTarget target) => AddRuntimeDirectory(GetRuntimeNativeDirectory(), NativeDllSearchDirectories, target);
 
     /// <summary>
     /// Adds the runtime native directory to the path environment variable if required.
@@ -217,15 +209,7 @@ public static class RuntimeEnvironment
     /// </summary>
     /// <param name="moduleName">The module name.</param>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddRuntimeNativeDirectory(string moduleName, EnvironmentVariableTarget target)
-    {
-        if (GetRuntimeNativeDirectory(moduleName) is string nativeDirectory
-            && Directory.Exists(nativeDirectory)
-            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
-        {
-            AddDirectoryToPath(nativeDirectory, target);
-        }
-    }
+    public static void AddRuntimeNativeDirectory(string moduleName, EnvironmentVariableTarget target) => AddRuntimeDirectory(GetRuntimeNativeDirectory(moduleName), NativeDllSearchDirectories, target);
 
     /// <summary>
     /// Adds the runtime library directory to the path environment variable if required.
@@ -236,15 +220,7 @@ public static class RuntimeEnvironment
     /// Adds the runtime library directory to the path environment variable if required.
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
-    public static void AddRuntimeLibraryDirectory(EnvironmentVariableTarget target)
-    {
-        if (GetRuntimeLibraryDirectory() is string libraryDirectory
-            && Directory.Exists(libraryDirectory)
-            && !IsAlreadyInAppContext(libraryDirectory, AppPaths))
-        {
-            AddDirectoryToPath(libraryDirectory, target);
-        }
-    }
+    public static void AddRuntimeLibraryDirectory(EnvironmentVariableTarget target) => AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths, target);
 
     /// <summary>
     /// Adds the runtime directories to the path variable if required.
@@ -343,12 +319,7 @@ public static class RuntimeEnvironment
     /// </summary>
     public static void AddRuntimeNativeDirectory()
     {
-        if (GetRuntimeNativeDirectory() is string nativeDirectory
-            && Directory.Exists(nativeDirectory)
-            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
-        {
-            AddDirectoryToPath(nativeDirectory);
-        }
+        AddRuntimeDirectory(GetRuntimeNativeDirectory(), NativeDllSearchDirectories);
     }
 
     /// <summary>
@@ -357,12 +328,7 @@ public static class RuntimeEnvironment
     /// <param name="moduleName">The module name.</param>
     public static void AddRuntimeNativeDirectory(string moduleName)
     {
-        if (GetRuntimeNativeDirectory(moduleName) is string nativeDirectory
-            && Directory.Exists(nativeDirectory)
-            && !IsAlreadyInAppContext(nativeDirectory, NativeDllSearchDirectories))
-        {
-            AddDirectoryToPath(nativeDirectory);
-        }
+        AddRuntimeDirectory(GetRuntimeNativeDirectory(moduleName), NativeDllSearchDirectories);
     }
 
     /// <summary>
@@ -370,12 +336,7 @@ public static class RuntimeEnvironment
     /// </summary>
     public static void AddRuntimeLibraryDirectory()
     {
-        if (GetRuntimeLibraryDirectory() is string libraryDirectory
-            && Directory.Exists(libraryDirectory)
-            && !IsAlreadyInAppContext(libraryDirectory, AppPaths))
-        {
-            AddDirectoryToPath(libraryDirectory);
-        }
+        AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths);
     }
 
     /// <summary>
@@ -462,6 +423,26 @@ public static class RuntimeEnvironment
     /// </summary>
     /// <returns>The runtime config.</returns>
     internal static RuntimeConfig? GetRuntimeConfig() => GetRuntimeConfigFileName() is { } path ? RuntimeConfig.FromFile(path) : default;
+
+#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+    private static void AddRuntimeDirectory(string? directory, string variable, EnvironmentVariableTarget target)
+    {
+        if (DirectoryExists(directory) && !IsAlreadyInAppContext(directory, variable))
+        {
+            AddDirectoryToPath(directory, target);
+        }
+    }
+#else
+    private static void AddRuntimeDirectory(string? directory, string variable)
+    {
+        if (DirectoryExists(directory) && !IsAlreadyInAppContext(directory, variable))
+        {
+            AddDirectoryToPath(directory);
+        }
+    }
+#endif
+
+    private static bool DirectoryExists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? directory) => Directory.Exists(directory);
 
 #if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
     private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data
