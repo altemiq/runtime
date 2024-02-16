@@ -38,7 +38,7 @@ public partial class ArgumentOutOfRangeExceptionEx
         const sbyte Zero = 0;
         if (value is Zero)
         {
-            ThrowNegative(value, paramName);
+            ThrowZero(value, paramName);
         }
     }
 
@@ -53,7 +53,7 @@ public partial class ArgumentOutOfRangeExceptionEx
         const short Zero = 0;
         if (value is Zero)
         {
-            ThrowNegative(value, paramName);
+            ThrowZero(value, paramName);
         }
     }
 
@@ -67,7 +67,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     {
         if (value is 0)
         {
-            ThrowNegative(value, paramName);
+            ThrowZero(value, paramName);
         }
     }
 
@@ -81,7 +81,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     {
         if (value is 0L)
         {
-            ThrowNegative(value, paramName);
+            ThrowZero(value, paramName);
         }
     }
 
@@ -95,7 +95,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     {
         if (value is 0F)
         {
-            ThrowNegative(value, paramName);
+            ThrowZero(value, paramName);
         }
     }
 
@@ -109,7 +109,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     {
         if (value is 0D)
         {
-            ThrowNegative(value, paramName);
+            ThrowZero(value, paramName);
         }
     }
 
@@ -123,7 +123,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     {
         if (value is 0M)
         {
-            ThrowNegative(value, paramName);
+            ThrowZero(value, paramName);
         }
     }
 #endif
