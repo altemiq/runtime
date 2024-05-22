@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -46,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Runtime", "Core.Runtim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Runtime.Tests", "Tests\Core.Runtime.Tests\Core.Runtime.Tests.csproj", "{22B5CC1C-4BAA-4364-8C89-73C8C467C178}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dummy", "Tests\Dummy\Dummy.csproj", "{1575918B-9118-4EAE-81C0-0DF4BCBE8B7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dummy", "Tests\Dummy\Dummy.csproj", "{1575918B-9118-4EAE-81C0-0DF4BCBE8B7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
