@@ -49,10 +49,6 @@ public delegate bool TryParse<T>(ReadOnlySpan<char> input, [System.Diagnostics.C
 /// </summary>
 public static partial class MemoryExtensions
 {
-#if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP2_1_OR_GREATER
-    private static readonly char[] QuoteCharArray = ['\"'];
-#endif
-
     /// <summary>
     /// Returns a new span in which all occurrences of a specified span in the current instance are replaced with another specified span.
     /// </summary>
@@ -161,11 +157,7 @@ public static partial class MemoryExtensions
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator, StringSplitOptions options) => new(
         span,
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-        separator ?? string.Empty,
-#else
-        new ReadOnlySpan<char>(separator.ToCharArray()),
-#endif
+        separator.AsSpan(),
         options);
 
     /// <summary>
@@ -180,7 +172,7 @@ public static partial class MemoryExtensions
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
-    /// using the provided separator string.
+    /// using the provided separator strings.
     /// </summary>
     /// <param name="span">The source span to be enumerated.</param>
     /// <param name="first">The first separator string to be used to split the provided span.</param>
@@ -189,13 +181,8 @@ public static partial class MemoryExtensions
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string first, string second, StringSplitOptions options) => new(
         span,
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-        first ?? string.Empty,
-        second ?? string.Empty,
-#else
-        new ReadOnlySpan<char>(first.ToCharArray()),
-        new ReadOnlySpan<char>(second.ToCharArray()),
-#endif
+        first.AsSpan(),
+        second.AsSpan(),
         options);
 
     /// <summary>
@@ -232,13 +219,8 @@ public static partial class MemoryExtensions
     /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
     public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, string separator, StringSplitOptions options) => new(
         s,
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-        separator,
-        "\"",
-#else
-        new ReadOnlySpan<char>(separator.ToCharArray()),
-        new ReadOnlySpan<char>(QuoteCharArray),
-#endif
+        separator.AsSpan(),
+        "\"".AsSpan(),
         options);
 
     /// <summary>

@@ -11,7 +11,7 @@ public class MemoryExtensionsTests
     [Theory]
     [InlineData("This is an old string", "an old", "a new", "This is a new string")]
     [InlineData("This is an old string", "a new", "blah", "This is an old string")]
-    public void Replace(string input, string old, string @new, string expected) => new ReadOnlySpan<char>(input.ToCharArray()).Replace(new ReadOnlySpan<char>(old.ToCharArray()), new ReadOnlySpan<char>(@new.ToCharArray())).ToString().Should().Be(expected);
+    public void Replace(string input, string old, string @new, string expected) => input.AsSpan().Replace(old.AsSpan(), @new.AsSpan()).ToString().Should().Be(expected);
 
     [Fact]
     public void IndexOfAny()
@@ -21,7 +21,7 @@ public class MemoryExtensionsTests
 
         static ReadOnlySpan<char> Create(string input)
         {
-            return new(input.ToCharArray());
+            return input.AsSpan();
         }
     }
 
