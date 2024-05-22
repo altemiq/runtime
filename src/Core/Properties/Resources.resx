@@ -162,4 +162,10 @@
   <data name="RankMultiDimNotSupported" xml:space="preserve">
     <value>Only single dimensional arrays are supported for the requested action.</value>
   </data>
+  <data name="EmptyOrWhiteSpaceString" xml:space="preserve">
+    <value>The value cannot be an empty string or composed entirely of whitespace.</value>
+  </data>
+  <data name="EmptyString" xml:space="preserve">
+    <value>The value cannot be an empty string.</value>
+  </data>
 </root>

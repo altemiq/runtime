@@ -54,10 +54,9 @@
     </When>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">
       <ItemGroup>
-        <Compile Remove="ArgumentExceptionThrower.cs" />
         <Compile Remove="ArgumentNullExceptionThrower.cs" />
 
-        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
         <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />

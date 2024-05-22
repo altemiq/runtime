@@ -2,7 +2,7 @@
 <Project>
 
   <Choose>
-    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '8.0')) ">
+    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0')) ">
       <ItemGroup>
         <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
@@ -10,15 +10,15 @@
         <Using Include="System.ObjectDisposedException" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
-    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '7.0')) ">
+    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))  ">
       <ItemGroup>
-        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
+        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
         <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
         <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
-    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '6.0')) ">
+    <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))  ">
       <ItemGroup>
         <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
         <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />

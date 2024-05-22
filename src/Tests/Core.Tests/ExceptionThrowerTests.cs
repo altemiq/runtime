@@ -29,6 +29,9 @@ public class ExceptionThrowerTests
         public void ThrowIfEmpty() => Do<System.ArgumentException>(() => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty));
 
         [Fact]
+        public void ThrowIfEmptyOrWhiteSpace() => Do<System.ArgumentException>(() => ArgumentExceptionThrower.ThrowIfNullOrWhiteSpace("    "));
+
+        [Fact]
         public void NotThrow() => Do<System.ArgumentException>(() => ArgumentExceptionThrower.ThrowIfNullOrEmpty(nameof(string.Empty)), false);
     }
 

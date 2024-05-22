@@ -80,6 +80,24 @@ namespace Altemiq.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The value cannot be an empty string or composed entirely of whitespace..
+        /// </summary>
+        internal static string EmptyOrWhiteSpaceString {
+            get {
+                return ResourceManager.GetString("EmptyOrWhiteSpaceString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value cannot be an empty string..
+        /// </summary>
+        internal static string EmptyString {
+            get {
+                return ResourceManager.GetString("EmptyString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input string was not in a correct format..
         /// </summary>
         internal static string IncorrectInputString {
