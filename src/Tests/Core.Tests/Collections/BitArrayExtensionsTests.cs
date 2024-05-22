@@ -15,6 +15,13 @@ public class BitArrayExtensionsTests
     }
 
     [Fact]
+    public void GetBytes()
+    {
+        var bitConverter = new System.Collections.BitArray(new byte[] { 0x03, 0x05 });
+        bitConverter.GetBytes().Should().BeEquivalentTo([0x03, 0x05]);
+    }
+
+    [Fact]
     public void GetByteWithLength()
     {
         var bitConverter = new System.Collections.BitArray(new byte[] { 0x00, 0x03, 0x00, 0x00 });
@@ -38,5 +45,19 @@ public class BitArrayExtensionsTests
             : null;
 
         _ = BitArrayExtensions.Equals(firstBitArray!, secondBitArray!).Should().Be(result);
+    }
+
+    [Theory]
+    [InlineData(0, "0")]
+    [InlineData(128, "80")]
+    [InlineData(254, "fe")]
+    [InlineData(1065357908, "3f 80 12 54")]
+    public void HexString(int bits, string expected)
+    {
+        var bytes = bits <= byte.MaxValue
+            ? [(byte)bits]
+            : BitConverter.GetBytes(bits);
+        var bitArray = new System.Collections.BitArray(bytes);
+        bitArray.ToHexString(default).Should().Be(expected);
     }
 }

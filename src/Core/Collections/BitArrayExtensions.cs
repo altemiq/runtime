@@ -47,6 +47,22 @@ public static partial class BitArrayExtensions
     }
 
     /// <summary>
+    /// Gets the bytes from the array of bits.
+    /// </summary>
+    /// <param name="bits">The bit array.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="byte"/> values.</returns>
+    public static IEnumerable<byte> GetBytes(this System.Collections.BitArray bits)
+    {
+        const int BitsPerByte = 8;
+        var totalLength = bits.Length;
+        for (var current = 0; totalLength > 0; current++)
+        {
+            yield return bits.GetByte(current * BitsPerByte, totalLength > BitsPerByte ? BitsPerByte : totalLength);
+            totalLength -= BitsPerByte;
+        }
+    }
+
+    /// <summary>
     /// Gets the hexadecimal string for the bit array.
     /// </summary>
     /// <param name="bits">The bit array.</param>
@@ -54,8 +70,20 @@ public static partial class BitArrayExtensions
     /// <returns>The hexadecimal string for <paramref name="bits"/>.</returns>
     public static string ToHexString(this System.Collections.BitArray bits, IFormatProvider? provider)
     {
-        var byteValue = bits.GetByte();
-        return byteValue == 0 ? byteValue.ToString(provider) : byteValue.ToString("x2", provider);
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+        const char Space = ' ';
+#else
+        const string Space = " ";
+#endif
+        return string.Join(Space, GetHexStringParts(GetBytes(bits).Reverse(), provider));
+
+        static IEnumerable<string> GetHexStringParts(IEnumerable<byte> bytes, IFormatProvider? provider = default)
+        {
+            foreach (var byteValue in bytes)
+            {
+                yield return byteValue is 0 ? byteValue.ToString(provider) : byteValue.ToString("x2", provider);
+            }
+        }
     }
 
     /// <summary>
