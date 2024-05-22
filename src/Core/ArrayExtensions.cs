@@ -19,7 +19,7 @@ public static class ArrayExtensions
     /// <param name="totalWidth">The number of values in the resulting array, equal to the number of original values plus any additional padding values.</param>
     /// <returns>A new array that is equivalent to <paramref name="array"/>, but right-aligned and padded on the left with as many <see langword="default"/> values as needed to create a length of <paramref name="totalWidth"/>.
     /// However, if <paramref name="totalWidth"/> is less than the length of <paramref name="array"/>, this method returns a new array with only <paramref name="totalWidth"/> values.</returns>
-    public static T[] PadLeft<T>(this T[] array, int totalWidth)
+    public static T[] PadLeft<T>(this T[]? array, int totalWidth)
     {
         var newArray = new T[totalWidth];
         if (array is null)
@@ -41,7 +41,7 @@ public static class ArrayExtensions
     /// <param name="totalWidth">The number of values in the resulting array, equal to the number of original values plus any additional padding values.</param>
     /// <returns>A new array that is equivalent to <paramref name="array"/>, but left-aligned and padded on the right with as many <see langword="default"/> values as needed to create a length of <paramref name="totalWidth"/>.
     /// However, if <paramref name="totalWidth"/> is less than the length of <paramref name="array"/>, this method returns a new array with only <paramref name="totalWidth"/> values.</returns>
-    public static T[] PadRight<T>(this T[] array, int totalWidth)
+    public static T[] PadRight<T>(this T[]? array, int totalWidth)
     {
         var newArray = new T[totalWidth];
         if (array is null)
