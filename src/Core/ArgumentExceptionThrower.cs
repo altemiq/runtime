@@ -66,7 +66,7 @@ public class ArgumentExceptionEx
     private static void ThrowNullOrEmptyException(string? argument, string? paramName)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(argument, paramName);
-        throw new ArgumentException(Altavec.Properties.Resources.EmptyString, paramName);
+        throw new ArgumentException(Altemiq.Properties.Resources.EmptyString, paramName);
     }
 #endif
 
@@ -74,7 +74,7 @@ public class ArgumentExceptionEx
     private static void ThrowNullOrWhiteSpaceException(string? argument, string? paramName)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(argument, paramName);
-        throw new ArgumentException(Altavec.Properties.Resources.EmptyOrWhiteSpaceString, paramName);
+        throw new ArgumentException(Altemiq.Properties.Resources.EmptyOrWhiteSpaceString, paramName);
     }
 }
 #pragma warning restore CS8777, SA1402, SA1403, SA1638, SA1649, S3236

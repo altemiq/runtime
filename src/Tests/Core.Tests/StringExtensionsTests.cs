@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 namespace Altemiq;
+
 public class StringExtensionsTests
 {
     public const string SingleLineSimple = "1,2,3,4,5";
@@ -48,7 +49,9 @@ public class StringExtensionsTests
         ,",4,5
         """;
 
+#if NET5_0_OR_GREATER
     private static readonly string[] expectation = ["This", "is", "a"];
+#endif
 
     [Fact]
     public void NullString() => new Func<string[]>(() => default(string)!.SplitQuoted()).Should().ThrowExactly<ArgumentNullException>();
@@ -109,6 +112,33 @@ public class StringExtensionsTests
 
     [Fact]
     public void QuoteNull() => default(string).Quote().Should().Be(string.Empty);
+
+    [Theory]
+    [MemberData(nameof(GetCharArrays))]
+    public void SplitQuotedWithEmptyDelimeter(char[]? chars)
+    {
+        const string Value = "This is a string";
+        _ = Value.SplitQuoted(chars, options: StringSplitOptions.None).Should().HaveCount(4);
+    }
+
+    public static TheoryData<char[]?> GetCharArrays() => new()
+    {
+        { default },
+        { [] },
+    };
+
+    [Fact]
+    public void Format()
+    {
+        const int Formattable = 123;
+        _ = Format(Formattable).Should().Be(Formattable.ToString(default(IFormatProvider)));
+
+        static string? Format<T>(T value)
+            where T : IFormattable
+        {
+            return value.ToString(default);
+        }
+    }
 
 #if NET5_0_OR_GREATER
     [Fact]

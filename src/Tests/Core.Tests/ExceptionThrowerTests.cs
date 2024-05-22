@@ -46,137 +46,187 @@ public class ExceptionThrowerTests
 #endif
 
         [Theory]
-        [InlineData((sbyte)-1, true)]
-        [InlineData(default(sbyte), false)]
-        [InlineData((short)-1, true)]
-        [InlineData(default(short), false)]
-        [InlineData(-1, true)]
-        [InlineData(default(int), false)]
-        [InlineData(-1L, true)]
-        [InlineData(default(long), false)]
-        [InlineData(-1F, true)]
-        [InlineData(default(float), false)]
-        [InlineData(-1D, true)]
-        [InlineData(default(double), false)]
+        [MemberData(nameof(NegativeData))]
         public void OnNegative<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegative), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
+        public static TheoryData<object, bool> NegativeData() => new()
+        {
+            { (sbyte)-1, true },
+            { default(sbyte), false },
+            { (short)-1, true },
+            { default(short), false },
+            { -1, true },
+            { default(int), false },
+            { -1L, true },
+            { default(long), false },
+            { -1F, true },
+            { default(float), false },
+            { -1D, true },
+            { default(double), false },
+            { -1M, true },
+            { default(decimal), false },
+        };
+
         [Theory]
-        [InlineData((sbyte)0, true)]
-        [InlineData((sbyte)-1, true)]
-        [InlineData((sbyte)1, false)]
-        [InlineData((short)0, true)]
-        [InlineData((short)-1, true)]
-        [InlineData((short)1, false)]
-        [InlineData(0, true)]
-        [InlineData(-1, true)]
-        [InlineData(1, false)]
-        [InlineData((long)0L, true)]
-        [InlineData((long)-1L, true)]
-        [InlineData((long)1L, false)]
-        [InlineData((float)0F, true)]
-        [InlineData((float)-1F, true)]
-        [InlineData((float)1F, false)]
-        [InlineData((double)0D, true)]
-        [InlineData((double)-1D, true)]
-        [InlineData((double)1D, false)]
+        [MemberData(nameof(NegativeOrZeroData))]
         public void OnNegativeOrZero<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegativeOrZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
+        public static TheoryData<object, bool> NegativeOrZeroData() => new()
+        {
+            { (sbyte)0, true },
+            { (sbyte)-1, true },
+            { (sbyte)1, false },
+            { (short)0, true },
+            { (short)-1, true },
+            { (short)1, false },
+            { 0, true },
+            { -1, true },
+            { 1, false },
+            { 0L, true },
+            { -1L, true },
+            { 1L, false },
+            { 0F, true },
+            { -1F, true },
+            { 1F, false },
+            { 0D, true },
+            { -1D, true },
+            { 1D, false },
+            { 0M, true },
+            { -1M, true },
+            { 1M, false },
+        };
+
         [Theory]
-        [InlineData((sbyte)0, true)]
-        [InlineData((sbyte)-1, false)]
-        [InlineData((sbyte)1, false)]
-        [InlineData((short)0, true)]
-        [InlineData((short)-1, false)]
-        [InlineData((short)1, false)]
-        [InlineData(0, true)]
-        [InlineData(-1, false)]
-        [InlineData(1, false)]
-        [InlineData((long)0L, true)]
-        [InlineData((long)-1L, false)]
-        [InlineData((long)1L, false)]
-        [InlineData((float)0F, true)]
-        [InlineData((float)-1F, false)]
-        [InlineData((float)1F, false)]
-        [InlineData((double)0D, true)]
-        [InlineData((double)-1D, false)]
-        [InlineData((double)1D, false)]
+        [MemberData(nameof(ZeroData))]
         public void OnZero<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
-        [Theory]
-        [InlineData((sbyte)-1, true)]
-        [InlineData((sbyte)1, false)]
-        [InlineData((short)-1, true)]
-        [InlineData((short)1, false)]
-        [InlineData(-1, true)]
-        [InlineData(1, false)]
-        [InlineData(-1L, true)]
-        [InlineData(1L, false)]
-        [InlineData(-1F, true)]
-        [InlineData(1F, false)]
-        [InlineData(-1D, true)]
-        [InlineData(1D, false)]
-        public void OnLessThan<T>(T value, bool @throw)
-            where T : struct => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        public static TheoryData<object, bool> ZeroData() => new()
+        {
+            { (sbyte)0, true },
+            { (sbyte)-1, false },
+            { (sbyte)1, false },
+            { (short)0, true },
+            { (short)-1, false },
+            { (short)1, false },
+            { 0, true },
+            { -1, false },
+            { 1, false },
+            { 0L, true },
+            { -1L, false },
+            { 1L, false },
+            { 0F, true },
+            { -1F, false },
+            { 1F, false },
+            { 0D, true },
+            { -1D, false },
+            { 1D, false },
+            { 0M, true },
+            { -1M, false },
+            { 1M, false },
+        };
 
         [Theory]
-        [InlineData((sbyte)-1, true)]
-        [InlineData((sbyte)0, true)]
-        [InlineData((sbyte)1, false)]
-        [InlineData((short)-1, true)]
-        [InlineData((short)0, true)]
-        [InlineData((short)1, false)]
-        [InlineData(-1, true)]
-        [InlineData(0, true)]
-        [InlineData(1, false)]
-        [InlineData(-1L, true)]
-        [InlineData(0L, true)]
-        [InlineData(1L, false)]
-        [InlineData(-1F, true)]
-        [InlineData(0F, true)]
-        [InlineData(1F, false)]
-        [InlineData(-1D, true)]
-        [InlineData(0D, true)]
-        [InlineData(1D, false)]
-        public void OnLessThanOrEqual<T>(T value, bool @throw)
-            where T : struct => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        [MemberData(nameof(LessThanData))]
+        public void OnLessThan<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+
+        public static TheoryData<object, bool> LessThanData() => new()
+{
+            { (sbyte)-1, true },
+            { (sbyte)1, false },
+            { (short)-1, true },
+            { (short)1, false },
+            { -1, true },
+            { 1, false },
+            { -1L, true },
+            { 1L, false },
+            { -1F, true },
+            { 1F, false },
+            { -1D, true },
+            { 1D, false },
+            { -1M, true },
+            { 1M, false },
+        };
 
         [Theory]
-        [InlineData((sbyte)-1, false)]
-        [InlineData((sbyte)1, true)]
-        [InlineData((short)-1, false)]
-        [InlineData((short)1, true)]
-        [InlineData(-1, false)]
-        [InlineData(1, true)]
-        [InlineData(-1L, false)]
-        [InlineData(1L, true)]
-        [InlineData(-1F, false)]
-        [InlineData(1F, true)]
-        [InlineData(-1D, false)]
-        [InlineData(1D, true)]
-        public void OnGreaterThan<T>(T value, bool @throw)
-            where T : struct => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        [MemberData(nameof(LessThanOrEqualData))]
+        public void OnLessThanOrEqual<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+
+        public static TheoryData<object, bool> LessThanOrEqualData() => new()
+        {
+            { (sbyte)-1, true },
+            { (sbyte)0, true },
+            { (sbyte)1, false },
+            { (short)-1, true },
+            { (short)0, true },
+            { (short)1, false },
+            { -1, true },
+            { 0, true },
+            { 1, false },
+            { -1L, true },
+            { 0L, true },
+            { 1L, false },
+            { -1F, true },
+            { 0F, true },
+            { 1F, false },
+            { -1D, true },
+            { 0D, true },
+            { 1D, false },
+            { -1M, true },
+            { 0M, true },
+            { 1M, false },
+        };
 
         [Theory]
-        [InlineData((sbyte)-1, false)]
-        [InlineData((sbyte)0, true)]
-        [InlineData((sbyte)1, true)]
-        [InlineData((short)-1, false)]
-        [InlineData((short)0, true)]
-        [InlineData((short)1, true)]
-        [InlineData(-1, false)]
-        [InlineData(0, true)]
-        [InlineData(1, true)]
-        [InlineData(-1L, false)]
-        [InlineData(0L, true)]
-        [InlineData(1L, true)]
-        [InlineData(-1F, false)]
-        [InlineData(0F, true)]
-        [InlineData(1F, true)]
-        [InlineData(-1D, false)]
-        [InlineData(0D, true)]
-        [InlineData(1D, true)]
-        public void OnGreaterThanOrEqual<T>(T value, bool @throw)
-            where T : struct => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        [MemberData(nameof(GreaterThanData))]
+
+        public void OnGreaterThan<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+
+        public static TheoryData<object, bool> GreaterThanData() => new()
+        {
+            { (sbyte)-1, false },
+            { (sbyte)1, true },
+            { (short)-1, false },
+            { (short)1, true },
+            { -1, false },
+            { 1, true },
+            { -1L, false },
+            { 1L, true },
+            { -1F, false },
+            { 1F, true },
+            { -1D, false },
+            { 1D, true },
+            { -1M, false },
+            { 1M, true },
+        };
+
+        [Theory]
+        [MemberData(nameof(GreaterThanOrEqualData))]
+        public void OnGreaterThanOrEqual<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+
+        public static TheoryData<object, bool> GreaterThanOrEqualData() => new()
+        {
+            { (sbyte)-1, false },
+            { (sbyte)0, true },
+            { (sbyte)1, true },
+            { (short)-1, false },
+            { (short)0, true },
+            { (short)1, true },
+            { -1, false },
+            { 0, true },
+            { 1, true },
+            { -1L, false },
+            { 0L, true },
+            { 1L, true },
+            { -1F, false },
+            { 0F, true },
+            { 1F, true },
+            { -1D, false },
+            { 0D, true },
+            { 1D, true },
+            { -1M, false },
+            { 0M, true },
+            { 1M, true },
+        };
 
         [Fact]
         public void OnValid() => Do<System.ArgumentOutOfRangeException>(
@@ -236,6 +286,30 @@ public class ExceptionThrowerTests
             });
 
         [Fact]
+        public void ThrowOnNullWithType() => Do<System.ObjectDisposedException>(
+            () =>
+            {
+                string? @null = default;
+                ObjectDisposedExceptionThrower.ThrowIf(@null is null, typeof(string));
+            });
+
+        [Fact]
+        public void ThrowOnNotNull() => Do<System.ObjectDisposedException>(
+            () =>
+            {
+                var @null = new object();
+                ObjectDisposedExceptionThrower.ThrowIf(@null is not null, @null!);
+            });
+
+        [Fact]
+        public void ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(
+            () =>
+            {
+                var @null = string.Empty;
+                ObjectDisposedExceptionThrower.ThrowIf(@null is not null, default!);
+            });
+
+        [Fact]
         public void NotThrowNotNull() => Do<System.ObjectDisposedException>(
             () =>
             {
@@ -243,10 +317,19 @@ public class ExceptionThrowerTests
                 ObjectDisposedExceptionThrower.ThrowIf(notNull is null, notNull);
             },
             false);
+
+        [Fact]
+        public void NotThrowNotNullWithType() => Do<System.ObjectDisposedException>(
+            () =>
+            {
+                var notNull = string.Empty;
+                ObjectDisposedExceptionThrower.ThrowIf(notNull is null, typeof(string));
+            },
+            false);
     }
 
     private static void Do<T>(Action act, bool @throw = true)
-        where T : System.Exception
+        where T : Exception
     {
         var should = act.Should();
         if (@throw)

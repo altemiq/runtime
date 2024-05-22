@@ -77,6 +77,24 @@ public class MemoryExtensionsTests
     }
 
     [Fact]
+    public void SplitOnMultipleString()
+    {
+        const string First = "This,is";
+        const string Second = "a";
+        const string Third = "split";
+        const string Forth = "string";
+        const string Space = " ";
+        const string Pipe = "|";
+        const string Value = $"{First}{Pipe}{Second}{Space}{Third}{Pipe}{Forth}";
+        var span = Value.AsSpan();
+        var enumerator = span.Split(Space, Pipe);
+        span.GetNextString(ref enumerator).Should().Be(First);
+        span.GetNextString(ref enumerator).Should().Be(Second);
+        span.GetNextString(ref enumerator).Should().Be(Third);
+        span.GetNextString(ref enumerator).Should().Be(Forth);
+    }
+
+    [Fact]
     public void SplitEmptyValuesOnString()
     {
         const string EmptyValues = ",,,,";
@@ -112,18 +130,34 @@ public class MemoryExtensionsTests
     }
 
 #if NETCOREAPP2_1_OR_GREATER
-    [Theory]
-    [MemberData(nameof(GetValuesData))]
-    public void GetValues(Func<Random, int, double> creator, GetValuesDelegate<double> getValues)
+    public class GetValues
     {
-        var random = new Random();
-        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
-        var span = string.Join("|", randomValues).AsSpan();
-        var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
-        _ = parsedValues.Should().BeEquivalentTo(randomValues);
-    }
+        [Theory]
+        [MemberData(nameof(GetCharValuesData))]
+        public void CharSeparated(Func<Random, int, double> creator, GetValuesDelegate<char, double> getValues)
+        {
+            var random = new Random();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var span = string.Join("|", randomValues).AsSpan();
+            var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
+            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+        }
 
-    public static TheoryData<Func<Random, int, double>, GetValuesDelegate<double>> GetValuesData() => new() { { (Random random, int _) => random.NextDouble(), new GetValuesDelegate<double>(MemoryExtensions.GetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<char, double>> GetCharValuesData() => new() { { (Random random, int _) => random.NextDouble(), new GetValuesDelegate<char, double>(MemoryExtensions.GetDoubleValues) } };
+
+        [Theory]
+        [MemberData(nameof(GetStringValuesData))]
+        public void StringSeparated(Func<Random, int, double> creator, GetValuesDelegate<string, double> getValues)
+        {
+            var random = new Random();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var span = string.Join("|", randomValues).AsSpan();
+            var parsedValues = getValues(span, "|", 10, System.Globalization.CultureInfo.CurrentCulture);
+            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+        }
+
+        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<string, double>> GetStringValuesData() => new() { { (Random random, int _) => random.NextDouble(), new GetValuesDelegate<string, double>(MemoryExtensions.GetDoubleValues) } };
+    }
 
     [Theory]
     [MemberData(nameof(GetData))]
@@ -173,18 +207,34 @@ public class MemoryExtensionsTests
         }
     }
 
-    [Theory]
-    [MemberData(nameof(TryGetValuesData))]
-    public void TryGetValues(Func<Random, int, double> creator, TryGetValuesDelegate<double> getValues)
+    public class TryGetValues
     {
-        var random = new Random();
-        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
-        var span = string.Join("|", randomValues).AsSpan();
-        _ = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
-        _ = parsedValues.Should().BeEquivalentTo(randomValues);
-    }
+        [Theory]
+        [MemberData(nameof(TryGetValuesCharData))]
+        public void CharSeparated(Func<Random, int, double> creator, TryGetValuesDelegate<char, double> getValues)
+        {
+            var random = new Random();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var span = string.Join("|", randomValues).AsSpan();
+            _ = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
+            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+        }
 
-    public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<double>> TryGetValuesData() => new() { { (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<char, double>> TryGetValuesCharData() => new() { { (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<char, double>(MemoryExtensions.TryGetDoubleValues) } };
+
+        [Theory]
+        [MemberData(nameof(TryGetValuesStringData))]
+        public void StringSeparated(Func<Random, int, double> creator, TryGetValuesDelegate<string, double> getValues)
+        {
+            var random = new Random();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var span = string.Join("|", randomValues).AsSpan();
+            _ = getValues(span, "|", 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
+            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+        }
+
+        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<string, double>> TryGetValuesStringData() => new() { { (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<string, double>(MemoryExtensions.TryGetDoubleValues) } };
+    }
 
     [Theory]
     [MemberData(nameof(TryGetData))]
@@ -222,11 +272,11 @@ public class MemoryExtensionsTests
         }
     }
 
-    public delegate bool TryGetValuesDelegate<T>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider, out T[]? output);
+    public delegate bool TryGetValuesDelegate<TSeparator, TResult>(ReadOnlySpan<char> input, TSeparator separator, int count, IFormatProvider? provider, out TResult[]? output);
 
     public delegate bool TryGetDelegate<T>(ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out T value);
 
-    public delegate T[] GetValuesDelegate<T>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider);
+    public delegate TResult[] GetValuesDelegate<TSeparator, TResult>(ReadOnlySpan<char> input, TSeparator separator, int count, IFormatProvider? provider);
 
     public delegate T GetDelegate<T>(ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider);
 #endif
