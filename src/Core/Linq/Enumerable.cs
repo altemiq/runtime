@@ -21,9 +21,15 @@ public static class Enumerable
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
         where T : class
     {
-        foreach (var item in source.Where(item => item is not null))
+        ArgumentNullExceptionThrower.ThrowIfNull(source);
+        return WhereNotNullCore(source);
+
+        static IEnumerable<T> WhereNotNullCore(IEnumerable<T?> source)
         {
-            yield return item!;
+            foreach (var item in source.Where(x => x is not null))
+            {
+                yield return item!;
+            }
         }
     }
 
@@ -37,11 +43,17 @@ public static class Enumerable
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
         where T : struct
     {
-        foreach (var item in source)
+        ArgumentNullExceptionThrower.ThrowIfNull(source);
+        return WhereNotNullCore(source);
+
+        static IEnumerable<T> WhereNotNullCore(IEnumerable<T?> source)
         {
-            if (item.HasValue)
+            foreach (var item in source)
             {
-                yield return item.Value;
+                if (item.HasValue)
+                {
+                    yield return item.Value;
+                }
             }
         }
     }
