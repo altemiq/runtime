@@ -14,7 +14,7 @@
 
     <PackageTags>Core</PackageTags>
     <NeutralLanguage>en-AU</NeutralLanguage>
-    <Copyright>Copyright © $(Company) Pty Ltd 2023</Copyright>
+    <Copyright>Copyright © $(Company) Pty Ltd 2024</Copyright>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -39,8 +39,8 @@
 
   <ItemGroup>
     <AdditionalFiles Include="$([MSBuild]::GetPathOfFileAbove(stylecop.json))" />
-    <None Include="$([MSBuild]::GetPathOfFileAbove(.editorconfig))" />
-    <None Include="$([MSBuild]::GetPathOfFileAbove(.globalconfig))" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove('.editorconfig'))" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove('.globalconfig'))" />
   </ItemGroup>
 
   <PropertyGroup>
