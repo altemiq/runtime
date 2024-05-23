@@ -2,6 +2,9 @@
 
 This is the code library for base classes, extension methods, etc for runtime operations.
 
+This uses runtime graphs from
+https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms
+
 ## Reflection
 
 These are designed to the classes in `System.Reflection`

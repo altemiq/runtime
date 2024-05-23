@@ -538,7 +538,7 @@ public static class RuntimeEnvironment
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                         .First(n => n.Contains(name, StringComparison.Ordinal)))!;
 #else
-                            .First(n => n.Contains(name)))!;
+                        .First(n => n.Contains(name)))!;
 #endif
                 }
             }

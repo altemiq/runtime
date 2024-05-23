@@ -7,20 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Runtime\*.json" Generator="" />
-    <None Include="**\*.gz" DependentUpon="$([System.String]::Copy('%(Filename)'))" />
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup Condition=" !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')))" >
+  <ItemGroup Condition=" !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')))">
     <Compile Remove="Runtime\Resolve.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Condition=" !($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '5.0'))) " />
+    <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net5.0')) " />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" />
     <PackageReference Include="NuGet.Frameworks" VersionOverride="4.0.0" />
-    <PackageReference Update="NuGet.Frameworks" VersionOverride="5.6.0" Condition=" ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '5.0'))) OR ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')))" />
+    <PackageReference Update="NuGet.Frameworks" VersionOverride="5.6.0" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net5.0')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) " />
   </ItemGroup>
 
   <ItemGroup>
@@ -71,6 +69,7 @@ if (Files.Length > 0)
         }
 
         var destinationItem = new TaskItem(destinationItemSpec);
+        item.CopyMetadataTo(destinationItem);
 
         Log.LogMessage(MessageImportance.Normal, "EmbeddedResource GZip: " + destinationItem.ItemSpec);
 
@@ -82,13 +81,34 @@ if (Files.Length > 0)
     </Task>
   </UsingTask>
 
-  <Target Name="ZipResources" BeforeTargets="BeforeBuild">
+  <Target Name="_DownloadRuntimeJson" BeforeTargets="_ZipResources">
+    <PropertyGroup>
+      <_BaseSourceUrl>https://raw.githubusercontent.com/dotnet/runtime/main/src/libraries/Microsoft.NETCore.Platforms/src</_BaseSourceUrl>
+    </PropertyGroup>
+    <DownloadFile SourceUrl="$(_BaseSourceUrl)/runtime.json" DestinationFolder="$(IntermediateOutputPath)" SkipUnchangedFiles="True">
+      <Output TaskParameter="DownloadedFile" ItemName="_RuntimeEmbeddedResource" />
+    </DownloadFile>
+    <DownloadFile SourceUrl="$(_BaseSourceUrl)/PortableRuntimeIdentifierGraph.json" DestinationFolder="$(IntermediateOutputPath)" SkipUnchangedFiles="True">
+      <Output TaskParameter="DownloadedFile" ItemName="_RuntimeEmbeddedResource" />
+    </DownloadFile>
+    <ItemGroup>
+      <_RuntimeEmbeddedResource>
+        <LogicalName>$(RootNamespace).Runtime.%(Filename)%(Extension)</LogicalName>
+      </_RuntimeEmbeddedResource>
+      <EmbeddedResource Include="@(_RuntimeEmbeddedResource)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_ZipResources" BeforeTargets="BeforeBuild">
     <GZip Files="@(EmbeddedResource)">
       <Output ItemName="GZipEmbeddedResource" TaskParameter="Result" />
     </GZip>
     <Message Text="Source EmbeddedResources: @(EmbeddedResource)" />
     <Message Text="GZipped EmbeddedResources: @(GZipEmbeddedResource)" />
     <ItemGroup>
+      <GZipEmbeddedResource>
+        <LogicalName>%(LogicalName).gz</LogicalName>
+      </GZipEmbeddedResource>
       <EmbeddedResource Remove="@(EmbeddedResource)" />
       <EmbeddedResource Include="@(GZipEmbeddedResource)" />
     </ItemGroup>
