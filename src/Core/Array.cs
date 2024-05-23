@@ -21,6 +21,11 @@ public static class Array
     public static void PadLeft<T>(ref T[] array, int totalWidth)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(array);
+        if (array.Length == totalWidth)
+        {
+            return;
+        }
+
         if (totalWidth < array.Length)
         {
             System.Array.Resize(ref array, totalWidth);
@@ -44,6 +49,11 @@ public static class Array
     public static void PadRight<T>(ref T[] array, int totalWidth)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(array);
+        if (array.Length == totalWidth)
+        {
+            return;
+        }
+
         System.Array.Resize(ref array, totalWidth);
     }
 }
