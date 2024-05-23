@@ -6,15 +6,15 @@
 
   <ItemGroup>
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" />
-    <PackageVersion Include="xunit" Version="2.6.6" />
+    <PackageVersion Include="xunit" Version="2.8.0" />
   </ItemGroup>
 
   <Choose>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
       <ItemGroup>
-        <PackageVersion Include="System.Text.Json" Version="8.0.2" />
+        <PackageVersion Include="System.Text.Json" Version="8.0.3" />
       </ItemGroup>
     </When>
     <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">
@@ -35,9 +35,9 @@
   </ItemGroup>
 
   <ItemGroup Label="Analyzers">
-    <GlobalPackageReference Include="coverlet.collector" Version="6.0.0" />
-    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.30.0" />
-    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.5.6" />
+    <GlobalPackageReference Include="coverlet.collector" Version="6.0.2" />
+    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.31.0" />
+    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.8.0" />
     <GlobalPackageReference Include="GitHubActionsTestLogger" Version="2.3.3" />
   </ItemGroup>
 

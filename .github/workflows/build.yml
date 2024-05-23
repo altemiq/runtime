@@ -45,13 +45,15 @@ jobs:
       run: >
         dotnet test
         --results-directory ${{ github.workspace }}/coverage/results
+        --collect "XPlat code coverage"
         --logger GitHubActions
         -- RunConfiguration.CollectSourceInformation=true
+           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute="Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute"
 
     - name: Report Generator
       uses: danielpalme/ReportGenerator-GitHub-Action@5
       with:
-        reports: '${{ github.workspace }}/coverage/results/*/coverage.cobertura.xml'
+        reports: '${{ github.workspace }}/coverage/results/*/coverage.*.xml'
         targetdir: '${{ github.workspace }}/coverage/reports'
         reporttypes: 'HtmlInline;Cobertura;MarkdownSummaryGithub'
         verbosity: 'Verbose'

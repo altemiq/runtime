@@ -10,7 +10,6 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RunSettingsFilePath>$([MSBuild]::GetPathOfFileAbove(coverlet.runsettings))</RunSettingsFilePath>
     <IsNetOnCore>false</IsNetOnCore>
     <IsNetOnCore Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' And '$(MSBuildRuntimeType)' == 'Core' ">true</IsNetOnCore>
 

@@ -5,7 +5,7 @@ if (Test-Path -Path $results -Type Container) {
 }
 
 # Run dotnet test
-dotnet test $PSScriptRoot\src --no-build --results-directory $results
+dotnet test $PSScriptRoot\src --no-build --results-directory $results --collect 'XPlat code coverage' -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute='Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute'
 
 # install the report generator
 if ((Get-Command 'reportGenerator' -errorAction SilentlyContinue) -eq $null) {
@@ -18,4 +18,4 @@ if (Test-Path -Path $reports -Type Container) {
 }
 
 # run the report generator
-reportGenerator -reports:"$results/*/coverage.cobertura.xml" -targetdir:$reports -reporttypes:"HtmlInline;Cobertura;MarkdownSummary" -verbosity:Verbose
+reportGenerator -reports:"$results/*/coverage.*.xml" -targetdir:$reports -reporttypes:'Html_Dark;Cobertura;MarkdownSummary' -verbosity:Verbose
