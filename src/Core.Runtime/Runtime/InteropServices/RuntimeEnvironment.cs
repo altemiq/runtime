@@ -90,7 +90,7 @@ public static class RuntimeEnvironment
 
         static Dictionary<string, int> GetCandidateAssets(string name)
         {
-            if (GetDependencyContext() is { } dependencyContext && dependencyContext.RuntimeLibraries is { Count: > 0 } runtimeLibraries)
+            if (GetDependencyContext() is { RuntimeLibraries: { Count: > 0 } runtimeLibraries })
             {
                 var candidateAssets = new Dictionary<string, int>(StringComparer.Ordinal);
                 var rids = GetRuntimeRids().ToList();
@@ -148,41 +148,40 @@ public static class RuntimeEnvironment
             var frameworkNameProvider = NuGet.Frameworks.DefaultFrameworkNameProvider.Instance;
 
             // get all the available TFMs
-            var availableFramework = Directory.GetDirectories(runtimesLibraryDirectory)
+            if (Directory.GetDirectories(runtimesLibraryDirectory)
                 .Select(Path.GetFileName)
                 .Select(folder => NuGet.Frameworks.NuGetFramework.ParseFolder(folder, frameworkNameProvider))
-                .ToList();
-            if (availableFramework.Count is 0)
+                .ToList() is { Count: not 0 } availableFrameworks)
             {
-                yield return runtimesLibraryDirectory;
-                yield break;
+                // get the current TFM
+                var currentFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, frameworkNameProvider);
+                var currentFrameworkWithProfile = RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
+                    ? new NuGet.Frameworks.NuGetFramework(currentFramework.Framework, currentFramework.Version, targetPlatform)
+                    : default;
+
+                var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
+                while (true)
+                {
+                    if (currentFrameworkWithProfile is not null && frameworkReducer.GetNearest(currentFrameworkWithProfile, availableFrameworks) is { } nearestFrameworkWithProfile)
+                    {
+                        yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
+                        availableFrameworks.Remove(nearestFrameworkWithProfile);
+                    }
+                    else if (frameworkReducer.GetNearest(currentFramework, availableFrameworks) is { } nearestFramework)
+                    {
+                        yield return Path.Combine(runtimesLibraryDirectory, nearestFramework.GetShortFolderName());
+                        availableFrameworks.Remove(nearestFramework);
+                        currentFrameworkWithProfile = default;
+                    }
+                    else
+                    {
+                        yield break;
+                    }
+                }
             }
 
-            // get the current TFM
-            var currentFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, frameworkNameProvider);
-            var currentFrameworkWithProfile = RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
-                ? new NuGet.Frameworks.NuGetFramework(currentFramework.Framework, currentFramework.Version, targetPlatform)
-                : default;
-
-            var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
-            while (true)
-            {
-                if (currentFrameworkWithProfile is not null && frameworkReducer.GetNearest(currentFrameworkWithProfile, availableFramework) is { } nearestFrameworkWithProfile)
-                {
-                    yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
-                    availableFramework.Remove(nearestFrameworkWithProfile);
-                }
-                else if (frameworkReducer.GetNearest(currentFramework, availableFramework) is { } nearestFramework)
-                {
-                    yield return Path.Combine(runtimesLibraryDirectory, nearestFramework.GetShortFolderName());
-                    availableFramework.Remove(nearestFramework);
-                    currentFrameworkWithProfile = default;
-                }
-                else
-                {
-                    yield break;
-                }
-            }
+            yield return runtimesLibraryDirectory;
+            yield break;
         }
     }
 
@@ -265,23 +264,23 @@ public static class RuntimeEnvironment
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     public static void AddDirectory(string directory, string variable, EnvironmentVariableTarget target)
     {
-        var path = Environment.GetEnvironmentVariable(variable, target);
-        if (path is null)
+        if (Environment.GetEnvironmentVariable(variable, target) is { } path)
         {
-            Environment.SetEnvironmentVariable(variable, directory);
-            return;
-        }
-
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        if (path.Contains(directory, StringComparison.Ordinal))
+            if (path.Contains(directory, StringComparison.Ordinal))
 #else
-        if (path.Contains(directory))
+            if (path.Contains(directory))
 #endif
-        {
-            return;
-        }
+            {
+                return;
+            }
 
-        Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path, target);
+            Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path, target);
+        }
+        else
+        {
+            Environment.SetEnvironmentVariable(variable, directory, target);
+        }
     }
 
     /// <summary>
@@ -352,19 +351,19 @@ public static class RuntimeEnvironment
     /// <param name="variable">The name of an environment variable.</param>
     public static void AddDirectory(string directory, string variable)
     {
-        var path = Environment.GetEnvironmentVariable(variable);
-        if (path is null)
+        if (Environment.GetEnvironmentVariable(variable) is { } path)
+        {
+            if (path.Contains(directory))
+            {
+                return;
+            }
+
+            Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path);
+        }
+        else
         {
             Environment.SetEnvironmentVariable(variable, directory);
-            return;
         }
-
-        if (path.Contains(directory))
-        {
-            return;
-        }
-
-        Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path);
     }
 
     /// <summary>
@@ -397,8 +396,7 @@ public static class RuntimeEnvironment
     {
         const string RuntimeConfigJson = "runtimeconfig.json";
 
-        if (Reflection.Assembly.GetEntryAssembly() is { } assembly
-            && assembly.FullName is { } fullName)
+        if (Reflection.Assembly.GetEntryAssembly() is { FullName: { } fullName })
         {
             var name = new AssemblyName(fullName);
             var fileName = $"{name.Name}.{RuntimeConfigJson}";
@@ -453,34 +451,34 @@ public static class RuntimeEnvironment
         if (RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is { } runtimesDirectory)
         {
             // get the rids
-            var availableRids = Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).Where(fileName => fileName is not null).Cast<string>().ToList();
-            if (availableRids is { Count: 0 })
+            if (Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).Where(fileName => fileName is not null).Cast<string>().ToList() is { Count: not 0 } availableRids)
             {
-                yield return runtimesDirectory;
-                yield break;
-            }
-
-            if (GetRuntimeRids().Intersect(availableRids, GetComparer()).ToList() is { Capacity: > 0 } rids)
-            {
-                foreach (var rid in rids)
+                if (GetRuntimeRids().Intersect(availableRids, GetComparer()).ToList() is { Capacity: not 0 } rids)
                 {
-                    yield return Path.Combine(runtimesDirectory, rid, name);
+                    foreach (var rid in rids)
+                    {
+                        yield return Path.Combine(runtimesDirectory, rid, name);
+                    }
+
+                    yield break;
                 }
 
-                yield break;
-            }
+                yield return Path.Combine(runtimesDirectory, name);
 
-            yield return Path.Combine(runtimesDirectory, name);
-
-            static IEqualityComparer<string?> GetComparer()
-            {
+                static IEqualityComparer<string?> GetComparer()
+                {
 #if NET5_0_OR_GREATER
-                return OperatingSystem.IsWindows()
+                    return OperatingSystem.IsWindows()
 #else
-                return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+                    return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
 #endif
-                    ? StringComparer.OrdinalIgnoreCase
-                    : StringComparer.Ordinal;
+                        ? StringComparer.OrdinalIgnoreCase
+                        : StringComparer.Ordinal;
+                }
+            }
+            else
+            {
+                yield return runtimesDirectory;
             }
         }
     }
@@ -500,7 +498,7 @@ public static class RuntimeEnvironment
 
         static IReadOnlyList<RuntimeFallbacks> GetRuntimeGraph()
         {
-            if (GetDependencyContext() is { } dependencyContext && dependencyContext.RuntimeGraph is IReadOnlyList<RuntimeFallbacks> runtimeFallbacks && runtimeFallbacks.Count != 0)
+            if (GetDependencyContext() is { RuntimeGraph: { Count: not 0 } runtimeFallbacks })
             {
                 return runtimeFallbacks;
             }

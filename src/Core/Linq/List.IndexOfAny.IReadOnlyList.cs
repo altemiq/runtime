@@ -52,7 +52,7 @@ public static partial class List
             return -1;
         }
 
-        if (anyOf is null || anyOf.Length == 0)
+        if (anyOf is not { Length: not 0 })
         {
             return startIndex;
         }

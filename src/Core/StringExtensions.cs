@@ -91,7 +91,7 @@ public static class StringExtensions
             return options.HasFlag(StringSplitOptions.RemoveEmptyEntries) ? [] : [s];
         }
 
-        var splitOnWhiteSpace = separator is null || separator.Count == 0;
+        var splitOnWhiteSpace = separator is not { Count: not 0 };
 #if NET5_0_OR_GREATER
         if (splitOnWhiteSpace)
         {

@@ -95,7 +95,7 @@ public static partial class MemoryExtensions
 
         void Initialise(ref Span<char> span, int length)
         {
-            if (span.Length is 0)
+            if (span is { Length: 0 })
             {
                 span = new Span<char>(new char[length - (oldLength - newLength)]);
             }

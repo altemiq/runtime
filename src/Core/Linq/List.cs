@@ -72,7 +72,7 @@ public static partial class List
 
             static IList<TResult>? CreateListCore(IList<TSource> source, Type sourceType)
             {
-                return GetGenericTypeDefinition(sourceType) is Type type
+                return GetGenericTypeDefinition(sourceType) is { } type
                     ? CreateList(source, sourceType, type.MakeGenericType(typeof(TResult)))
                     : default;
 

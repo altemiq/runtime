@@ -51,7 +51,7 @@ public static partial class List
         }
 
         // If we've got no values to test with
-        if (value is null || value.Count == 0)
+        if (value is not { Count: not 0 })
         {
             return startIndex;
         }

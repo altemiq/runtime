@@ -87,27 +87,25 @@ internal static class JsonRuntimeFormat
                 fallbacks.Add(0, import);
 
                 // see if this has any other imports
-                foreach (var other in GetImports(import, runtimes, 1))
+                foreach (var runtimeImport in GetImports(import, runtimes, 1))
                 {
-                    fallbacks.Add(other.Key, other.Value);
+                    fallbacks.Add(runtimeImport.Key, runtimeImport.Value);
                 }
             }
 
             yield return new RuntimeFallbacks(runtime.Name, fallbacks.Values.Distinct(StringComparer.Ordinal));
 
-            IEnumerable<KeyValuePair<int, string>> GetImports(string import, List<Runtime> runtimes, int depth)
+            static IEnumerable<KeyValuePair<int, string>> GetImports(string import, List<Runtime> runtimes, int depth)
             {
-                if (runtimes.Find(runtime => string.Equals(runtime.Name, import, StringComparison.Ordinal)) is not Runtime runtime)
+                if (runtimes.Find(runtime => string.Equals(runtime.Name, import, StringComparison.Ordinal)) is { } runtime)
                 {
-                    yield break;
-                }
-
-                foreach (var i in runtime.Imports)
-                {
-                    yield return new KeyValuePair<int, string>(depth, i);
-                    foreach (var other in GetImports(i, runtimes, depth + 1))
+                    foreach (var runtimeImport in runtime.Imports)
                     {
-                        yield return other;
+                        yield return new KeyValuePair<int, string>(depth, runtimeImport);
+                        foreach (var other in GetImports(runtimeImport, runtimes, depth + 1))
+                        {
+                            yield return other;
+                        }
                     }
                 }
             }

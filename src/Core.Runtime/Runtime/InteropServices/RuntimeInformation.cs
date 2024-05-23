@@ -46,29 +46,37 @@ public static class RuntimeInformation
 
             static string? GetFrameworkName()
             {
-                var frameworkName = GetFrameworkNameFromAssembly(Reflection.Assembly.GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
-
 #if NETCOREAPP3_0_OR_GREATER || NET20_OR_GREATER
-                frameworkName ??= AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
+                return GetFrameworkNameCore() ?? AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
 #elif NETSTANDARD2_0_OR_GREATER
-                if (frameworkName is null)
+                return GetFrameworkNameCore() ?? GetFrameworkNameFromSetupInformation();
+#else
+                return GetFrameworkNameCore();
+#endif
+
+                static string? GetFrameworkNameCore()
+                {
+                    return GetFrameworkNameFromAssembly(Reflection.Assembly.GetEntryAssembly()) ?? GetFrameworkNameFromAssembly(typeof(object).GetTypeInfo().Assembly);
+
+                    static string? GetFrameworkNameFromAssembly(Assembly? assembly)
+                    {
+                        return assembly?.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetFrameworkAttribute)) is System.Runtime.Versioning.TargetFrameworkAttribute attribute
+                            ? attribute.FrameworkName
+                            : default;
+                    }
+                }
+
+#if NETSTANDARD2_0_OR_GREATER
+                static string? GetFrameworkNameFromSetupInformation()
                 {
                     var setupInformationProperty = typeof(AppDomain).GetProperty("SetupInformation") ?? throw new InvalidOperationException();
                     var setupInformation = setupInformationProperty.GetValue(AppDomain.CurrentDomain, index: null);
-                    frameworkName = setupInformation?
+                    return setupInformation?
                         .GetType()
                         .GetProperty("TargetFrameworkName")?
                         .GetValue(setupInformation, index: null) as string;
                 }
 #endif
-                return frameworkName;
-
-                static string? GetFrameworkNameFromAssembly(Assembly? assembly)
-                {
-                    return assembly?.GetCustomAttribute(typeof(System.Runtime.Versioning.TargetFrameworkAttribute)) is System.Runtime.Versioning.TargetFrameworkAttribute attribute
-                        ? attribute.FrameworkName
-                        : default;
-                }
             }
         }
     }

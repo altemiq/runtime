@@ -44,17 +44,17 @@ internal sealed class RuntimeConfig(string path)
             var document = System.Text.Json.JsonDocument.Parse(File.ReadAllText(path));
             var root = document.RootElement;
             var runtimeOptions = root.GetProperty("runtimeOptions");
-            TryGetFromProperty(runtimeOptions, "tfm", tfm =>
+            TryGetFromProperty(runtimeOptions, "tfm", tfmElement =>
             {
-                if (tfm.GetString() is { } v)
+                if (tfmElement.GetString() is { } tfm)
                 {
-                    runtimeConfig.WithTfm(v);
+                    runtimeConfig.WithTfm(tfm);
                 }
             });
-            TryGetFromProperty(runtimeOptions, "framework", framework => runtimeConfig.WithFramework(Framework.FromJson(framework)));
-            TryGetFromProperty(runtimeOptions, "frameworks", frameworks => ForEach(frameworks.EnumerateArray(), framework => runtimeConfig.WithFramework(Framework.FromJson(framework))));
-            TryGetFromProperty(runtimeOptions, "includedFrameworks", includedFrameworks => ForEach(includedFrameworks.EnumerateArray(), includedFramework => runtimeConfig.WithIncludedFramework(Framework.FromJson(includedFramework))));
-            TryGetFromProperty(runtimeOptions, "configProperties", configProperties => ForEach(configProperties.EnumerateObject(), property =>
+            TryGetFromProperty(runtimeOptions, "framework", frameworkElement => runtimeConfig.WithFramework(Framework.FromJson(frameworkElement)));
+            TryGetFromProperty(runtimeOptions, "frameworks", frameworksElement => ForEach(frameworksElement.EnumerateArray(), framework => runtimeConfig.WithFramework(Framework.FromJson(framework))));
+            TryGetFromProperty(runtimeOptions, "includedFrameworks", includedFrameworksElement => ForEach(includedFrameworksElement.EnumerateArray(), includedFramework => runtimeConfig.WithIncludedFramework(Framework.FromJson(includedFramework))));
+            TryGetFromProperty(runtimeOptions, "configProperties", configPropertiesElement => ForEach(configPropertiesElement.EnumerateObject(), property =>
             {
                 var value = property.Value switch
                 {
@@ -65,9 +65,9 @@ internal sealed class RuntimeConfig(string path)
 
                 _ = runtimeConfig.WithProperty(property.Name, value);
             }));
-            TryGetFromProperty(runtimeOptions, Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward => runtimeConfig.rollForward = rollForward.GetString());
-            TryGetFromProperty(runtimeOptions, Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx => runtimeConfig.rollForwardOnNoCandidateFx = rollForwardOnNoCandidateFx.GetInt32());
-            TryGetFromProperty(runtimeOptions, Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches => runtimeConfig.applyPatches = applyPatches.GetBoolean());
+            TryGetFromProperty(runtimeOptions, Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForwardElement => runtimeConfig.rollForward = rollForwardElement.GetString());
+            TryGetFromProperty(runtimeOptions, Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFxElement => runtimeConfig.rollForwardOnNoCandidateFx = rollForwardOnNoCandidateFxElement.GetInt32());
+            TryGetFromProperty(runtimeOptions, Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatchesElement => runtimeConfig.applyPatches = applyPatchesElement.GetBoolean());
 
             static void TryGetFromProperty(System.Text.Json.JsonElement element, string name, Action<System.Text.Json.JsonElement> action)
             {
@@ -353,7 +353,7 @@ internal sealed class RuntimeConfig(string path)
             static void WriteNull<T>(System.Text.Json.Utf8JsonWriter writer, T? value, Action<System.Text.Json.Utf8JsonWriter, T> write)
                 where T : class
             {
-                if (value is T v)
+                if (value is { } v)
                 {
                     write(writer, v);
                 }
@@ -425,7 +425,7 @@ internal sealed class RuntimeConfig(string path)
         static void WriteNull<T>(T? value, Action<T> write)
             where T : class
         {
-            if (value is T t)
+            if (value is { } t)
             {
                 write(t);
             }
@@ -555,7 +555,7 @@ internal sealed class RuntimeConfig(string path)
             static void WriteNull<T>(T? value, Action<T> write)
                 where T : class
             {
-                if (value is T v)
+                if (value is { } v)
                 {
                     write(v);
                 }
@@ -602,7 +602,7 @@ internal sealed class RuntimeConfig(string path)
             static void WriteNull<T>(T? value, Action<T> write)
                 where T : class
             {
-                if (value is T t)
+                if (value is { } t)
                 {
                     write(t);
                 }
