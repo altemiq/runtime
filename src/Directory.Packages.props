@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageVersion Include="Humanizer.Core" Version="2.14.1" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.2" />
     <PackageVersion Include="Microsoft.DotNet.PlatformAbstractions" Version="3.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
     <PackageVersion Include="System.Diagnostics.Contracts" Version="4.3.0" />
