@@ -4,9 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable IDE0130, SA1649
 namespace System;
-#pragma warning restore IDE0130
 
 /// <summary>
 /// <see cref="ArgumentOutOfRangeException"/> helper.
@@ -55,4 +53,3 @@ public partial class ArgumentOutOfRangeExceptionEx
     [Diagnostics.CodeAnalysis.DoesNotReturn]
     private static void ThrowOutOfRange(string? paramName, int value, int minimum, int maximum) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeBetween, paramName, value, minimum, maximum));
 }
-#pragma warning restore SA1649

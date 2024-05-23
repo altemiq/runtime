@@ -55,10 +55,9 @@ public static partial class BitArrayExtensions
     {
         const int BitsPerByte = 8;
         var totalLength = bits.Length;
-        for (var current = 0; totalLength > 0; current++)
+        for (var current = 0; totalLength > 0; totalLength -= BitsPerByte, current++)
         {
             yield return bits.GetByte(current * BitsPerByte, totalLength > BitsPerByte ? BitsPerByte : totalLength);
-            totalLength -= BitsPerByte;
         }
     }
 

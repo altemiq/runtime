@@ -51,12 +51,7 @@ public static partial class List
         }
 
         // If we've got no values to test with
-        if (value is not { Count: not 0 })
-        {
-            return startIndex;
-        }
-
-        return IndexOfCore(buffer, value, startIndex, count);
+        return value is not { Count: not 0 } ? startIndex : IndexOfCore(buffer, value, startIndex, count);
 
         static int IndexOfCore(IList<T> buffer, IList<T> value, int startIndex, int count)
         {

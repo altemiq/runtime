@@ -52,12 +52,7 @@ public static partial class List
             return -1;
         }
 
-        if (anyOf is not { Length: not 0 })
-        {
-            return startIndex;
-        }
-
-        return IndexOfAnyCore(buffer, startIndex, count, anyOf);
+        return anyOf is not { Length: not 0 } ? startIndex : IndexOfAnyCore(buffer, startIndex, count, anyOf);
 
         static int IndexOfAnyCore(IList<T> buffer, int startIndex, int count, IList<T>[] anyOf)
         {

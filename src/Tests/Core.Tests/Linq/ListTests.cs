@@ -16,6 +16,13 @@ public partial class ListTests
         cast.Should().BeEquivalentTo(list);
     }
 
+    [Fact]
+    public void CastWithNull()
+    {
+        IList<ISecond>? list = default;
+        List.Cast<ISecond, IFirst>(list!).Should().BeNull();
+    }
+
     public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
 
     public static TheoryData<System.Collections.IEnumerable?, System.Collections.IEnumerable?> CreateNulls() => new() { { null, null } };

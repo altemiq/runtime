@@ -64,7 +64,7 @@ public class ArrayTests
             int[]? array = default;
             Array.PadRight(ref array!, default);
         };
-        
+
         action.Should().Throw<ArgumentNullException>();
     }
 

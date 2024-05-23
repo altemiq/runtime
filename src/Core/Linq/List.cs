@@ -171,7 +171,7 @@ public static partial class List
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
 
-        if (values.Count <= 1)
+        if (values is { Count: <= 1 })
         {
             return;
         }
@@ -191,7 +191,7 @@ public static partial class List
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
 
-        if (values.Count <= 1)
+        if (values is { Count: <= 1 })
         {
             return;
         }
@@ -222,7 +222,7 @@ public static partial class List
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
 
-        if (values.Count <= 1 || length <= 1)
+        if (values is { Count: <= 1 } || length <= 1)
         {
             return;
         }
@@ -410,15 +410,14 @@ public static partial class List
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
         ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(index);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(length);
 
-        if (length is int.MinValue)
+        if (length is 0)
         {
-            length = int.MinValue + 1;
+            return;
         }
 
-        var end = Math.Min(index + length, values.Count) - 1;
-
-        QuickSortCore(values, index, end);
+        QuickSortCore(values, index, Math.Min(index + length, values.Count) - 1);
 
         static void QuickSortCore(IList<T> values, int left, int right)
         {
