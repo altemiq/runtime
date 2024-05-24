@@ -47,6 +47,7 @@ public class ExceptionThrowerTests
 
         [Theory]
         [MemberData(nameof(NegativeData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
         public void OnNegative<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegative), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
         public static TheoryData<object, bool> NegativeData() => new()
@@ -69,6 +70,7 @@ public class ExceptionThrowerTests
 
         [Theory]
         [MemberData(nameof(NegativeOrZeroData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
         public void OnNegativeOrZero<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegativeOrZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
         public static TheoryData<object, bool> NegativeOrZeroData() => new()
@@ -98,6 +100,7 @@ public class ExceptionThrowerTests
 
         [Theory]
         [MemberData(nameof(ZeroData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
         public void OnZero<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
         public static TheoryData<object, bool> ZeroData() => new()
@@ -127,6 +130,7 @@ public class ExceptionThrowerTests
 
         [Theory]
         [MemberData(nameof(LessThanData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
         public void OnLessThan<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
 
         public static TheoryData<object, bool> LessThanData() => new()
@@ -149,6 +153,7 @@ public class ExceptionThrowerTests
 
         [Theory]
         [MemberData(nameof(LessThanOrEqualData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
         public void OnLessThanOrEqual<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
 
         public static TheoryData<object, bool> LessThanOrEqualData() => new()
@@ -178,7 +183,7 @@ public class ExceptionThrowerTests
 
         [Theory]
         [MemberData(nameof(GreaterThanData))]
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
         public void OnGreaterThan<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
 
         public static TheoryData<object, bool> GreaterThanData() => new()
@@ -201,6 +206,7 @@ public class ExceptionThrowerTests
 
         [Theory]
         [MemberData(nameof(GreaterThanOrEqualData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
         public void OnGreaterThanOrEqual<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
 
         public static TheoryData<object, bool> GreaterThanOrEqualData() => new()

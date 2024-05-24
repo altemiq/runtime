@@ -6,6 +6,7 @@
 
 namespace Altemiq.Linq;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
 public partial class ListTests
 {
     [Fact]
@@ -84,16 +85,13 @@ public partial class ListTests
         yield return new System.Collections.ObjectModel.Collection<T>(new List<T>(a));
     }
 
-    private interface IFirst
-    {
-    }
+    private interface IFirst;
 
-    private interface ISecond : IFirst
-    {
-    }
+    private interface ISecond : IFirst;
 
-    private readonly struct Third : ISecond
-    {
+    private readonly struct Third : ISecond;
 
-    }
+    private static TResult? TestListList<T, TResult>(object first, object second, Func<IList<T>, IList<T>, TResult> func, TResult? defaultResult = default) => first is IList<T> f && second is IList<T> s ? func(f, s) : defaultResult;
+
+    private static TResult? TestReadOnlyListReadOnlyList<T, TResult>(object first, object second, Func<IReadOnlyList<T>, IReadOnlyList<T>, TResult> func, TResult? defaultResult = default) => first is IReadOnlyList<T> f && second is IReadOnlyList<T> s ? func(f, s) : defaultResult;
 }

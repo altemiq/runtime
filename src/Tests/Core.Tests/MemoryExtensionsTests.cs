@@ -134,6 +134,7 @@ public class MemoryExtensionsTests
     {
         [Theory]
         [MemberData(nameof(GetCharValuesData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
         public void CharSeparated(Func<Random, int, double> creator, GetValuesDelegate<char, double> getValues)
         {
             var random = new Random();
@@ -147,6 +148,7 @@ public class MemoryExtensionsTests
 
         [Theory]
         [MemberData(nameof(GetStringValuesData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
         public void StringSeparated(Func<Random, int, double> creator, GetValuesDelegate<string, double> getValues)
         {
             var random = new Random();
@@ -211,6 +213,7 @@ public class MemoryExtensionsTests
     {
         [Theory]
         [MemberData(nameof(TryGetValuesCharData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
         public void CharSeparated(Func<Random, int, double> creator, TryGetValuesDelegate<char, double> getValues)
         {
             var random = new Random();
@@ -224,6 +227,7 @@ public class MemoryExtensionsTests
 
         [Theory]
         [MemberData(nameof(TryGetValuesStringData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
         public void StringSeparated(Func<Random, int, double> creator, TryGetValuesDelegate<string, double> getValues)
         {
             var random = new Random();
