@@ -47,8 +47,7 @@ jobs:
         --results-directory ${{ github.workspace }}/coverage/results
         --collect "XPlat code coverage"
         --logger GitHubActions
-        -- RunConfiguration.CollectSourceInformation=true
-           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute="Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute"
+        -- RunConfiguration.CollectSourceInformation=true DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByAttribute="Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute"
 
     - name: Report Generator
       uses: danielpalme/ReportGenerator-GitHub-Action@5
