@@ -260,7 +260,7 @@ public partial class SourceGenerator
 
                             for (var i = 0; i < count; i++)
                             {
-                                var example = count == 1
+                                var example = count is 1
                                     ? "The type parameter."
                                     : $"The {(i + 1).ToOrdinalWords()} type parameter.";
 
@@ -616,7 +616,7 @@ public partial class SourceGenerator
                                     TriviaList())));
                         for (var i = 0; i < count; i++)
                         {
-                            var example = count == 1
+                            var example = count is 1
                                 ? "The type in the "
                                 : $"The {(i + 1).ToOrdinalWords()} type in the ";
 

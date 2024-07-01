@@ -219,9 +219,9 @@ public static class RuntimeInformation
 #else
             return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
             {
-                System.Runtime.InteropServices.Architecture.Arm or System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size == 4 => Arm,
+                System.Runtime.InteropServices.Architecture.Arm or System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size is 4 => Arm,
                 System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
-                System.Runtime.InteropServices.Architecture.X86 or System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size == 4 => X86,
+                System.Runtime.InteropServices.Architecture.X86 or System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size is 4 => X86,
                 System.Runtime.InteropServices.Architecture.X64 => X64,
                 _ => throw new InvalidOperationException(),
             };

@@ -85,7 +85,7 @@ public static partial class MemoryExtensions
         where T : IEquatable<T>
     {
         // Check to see if the buffer is applicable
-        if (buffer.Length == 0)
+        if (buffer.Length is 0)
         {
             return -1;
         }

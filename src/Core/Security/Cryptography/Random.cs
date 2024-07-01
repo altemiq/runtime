@@ -52,8 +52,7 @@ public class Random : System.Random
             return minValue;
         }
 
-        var range = (long)maxValue - minValue;
-        return (int)((long)Math.Floor(this.NextDouble() * range) + minValue);
+        return (int)Math.Floor(this.NextDouble() * (maxValue - minValue)) + minValue;
     }
 
     /// <inheritdoc />

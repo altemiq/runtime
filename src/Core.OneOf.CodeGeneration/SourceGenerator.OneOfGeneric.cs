@@ -88,7 +88,7 @@ public partial class SourceGenerator
 
             static IEnumerable<XmlNodeSyntax> GetXmlNodes(IList<string> typeParameterNames)
             {
-                var example = typeParameterNames.Count == 1
+                var example = typeParameterNames.Count is 1
                     ? " Represents an option type with a single type."
                     : $" Represents an option type with {typeParameterNames.Count.ToWords()} types.";
 
@@ -146,7 +146,7 @@ public partial class SourceGenerator
                             TriviaList())));
                 for (var i = 0; i < typeParameterNames.Count; i++)
                 {
-                    var typeParameterExample = typeParameterNames.Count == 1
+                    var typeParameterExample = typeParameterNames.Count is 1
                         ? "The option type."
                         : $"The {(i + 1).ToOrdinalWords()} option type.";
 

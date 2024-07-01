@@ -86,7 +86,7 @@ public static class StringExtensions
     private static string[] SplitQuotedInternal(string s, IList<char>? separator, StringSplitOptions options)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(s);
-        if (s.Length == 0)
+        if (s.Length is 0)
         {
             return options.HasFlag(StringSplitOptions.RemoveEmptyEntries) ? [] : [s];
         }
@@ -117,7 +117,7 @@ public static class StringExtensions
                         splits.Add(i);
                     }
                 }
-                else if (s[i] == QuoteChar)
+                else if (s[i] is QuoteChar)
                 {
                     combining = !combining;
                 }
@@ -162,13 +162,13 @@ public static class StringExtensions
                 }
 
                 var startIndex = lastIndex;
-                if (s[startIndex] == QuoteChar)
+                if (s[startIndex] is QuoteChar)
                 {
                     startIndex++;
                 }
 
                 var endIndex = index;
-                if (s[endIndex - 1] == QuoteChar)
+                if (s[endIndex - 1] is QuoteChar)
                 {
                     endIndex--;
                 }
@@ -185,7 +185,7 @@ public static class StringExtensions
                 returnIndex++;
             }
 
-            if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || s.Length - lastIndex != 0)
+            if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || (s.Length - lastIndex) is not 0)
             {
                 var startIndex = lastIndex;
                 var endIndex = s.Length;

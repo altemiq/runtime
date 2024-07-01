@@ -181,7 +181,6 @@ public static class RuntimeEnvironment
             }
 
             yield return runtimesLibraryDirectory;
-            yield break;
         }
     }
 
@@ -510,7 +509,8 @@ public static class RuntimeEnvironment
             {
                 if (GetRuntimeConfig() is { } runtimeConfig)
                 {
-                    if (runtimeConfig.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value && bool.TryParse(value, out var result))
+                    if (runtimeConfig.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value
+                        && bool.TryParse(value, out var result))
                     {
                         return result;
                     }

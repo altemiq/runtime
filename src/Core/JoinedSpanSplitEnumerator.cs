@@ -54,8 +54,8 @@ public ref struct JoinedSpanSplitEnumerator<T>
         this.joiner = default!;
         this.joiners = joiners;
         this.joinOnSingleToken = false;
-        this.separatorLength = this.separators.Length != 0 ? this.separators.Length : 1;
-        this.joinerLength = this.joiners.Length != 0 ? this.joiners.Length : 1;
+        this.separatorLength = this.separators.Length is not 0 ? this.separators.Length : 1;
+        this.joinerLength = this.joiners.Length is not 0 ? this.joiners.Length : 1;
         this.options = options;
         this.startCurrent = 0;
         this.endCurrent = 0;
@@ -138,7 +138,7 @@ public ref struct JoinedSpanSplitEnumerator<T>
                 var joinCount = this.joinOnSingleToken
                     ? GetJoinCountSingle(testSlice, this.joiner, this.joinerLength)
                     : GetJoinCountMultiple(testSlice, this.joiners, this.joinerLength);
-                if (joinCount % 2 != 0)
+                if (joinCount % 2 is not 0)
                 {
                     combining = !combining;
                 }
@@ -153,12 +153,12 @@ public ref struct JoinedSpanSplitEnumerator<T>
 
             this.startCurrent = this.startNext;
 
-            elementLength = separatorIndex != -1 ? separatorIndex : slice.Length;
+            elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
 
             this.endCurrent = this.startCurrent + elementLength;
             this.startNext = this.endCurrent + this.separatorLength;
 
-            currentValid = !removeEmpty || elementLength != 0;
+            currentValid = !removeEmpty || elementLength is not 0;
         }
         while (!currentValid);
 

@@ -48,7 +48,7 @@ public ref struct SpanSplitEnumerator<T>
         this.separator = default!;
         this.splitOnSingleToken = false;
         this.multipleTokens = false;
-        this.separatorLength = this.firstSpanSeparator.Length != 0 ? this.firstSpanSeparator.Length : 1;
+        this.separatorLength = this.firstSpanSeparator.Length is not 0 ? this.firstSpanSeparator.Length : 1;
         this.options = options;
         this.startCurrent = 0;
         this.endCurrent = 0;
@@ -117,7 +117,7 @@ public ref struct SpanSplitEnumerator<T>
     /// <returns><see langword="true"/> if the enumerator was successfully advanced to the next element; <see langword="false"/> if the enumerator has passed the end of the enumeration.</returns>
     public bool MoveNext()
     {
-        if (!this.isInitialized || this.startNext > this.buffer.Length || this.buffer.Length == 0)
+        if (!this.isInitialized || this.startNext > this.buffer.Length || this.buffer.Length is 0)
         {
             return false;
         }
@@ -157,13 +157,13 @@ public ref struct SpanSplitEnumerator<T>
             else
             {
                 var separatorIndex = this.splitOnSingleToken ? slice.IndexOf(this.separator) : slice.IndexOf(this.firstSpanSeparator);
-                elementLength = separatorIndex != -1 ? separatorIndex : slice.Length;
+                elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
 
                 this.endCurrent = this.startCurrent + elementLength;
                 this.startNext = this.endCurrent + this.separatorLength;
             }
 
-            currentValid = !removeEmpty || elementLength != 0;
+            currentValid = !removeEmpty || elementLength is not 0;
         }
         while (!currentValid);
 
