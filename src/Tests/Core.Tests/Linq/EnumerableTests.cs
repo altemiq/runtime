@@ -33,7 +33,6 @@ public class EnumerableTests
         };
     }
 
-
     [Theory]
     [MemberData(nameof(GetClassSequences))]
     public void WhereNull(string?[] sequence, int count) => sequence.WhereNull().Should().HaveCount(count);
