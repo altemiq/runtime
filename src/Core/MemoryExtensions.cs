@@ -363,6 +363,7 @@ public static partial class MemoryExtensions
     /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="span"/>.</param>
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <returns>The next value from the span as a <see cref="ushort"/> value.</returns>
+    [CLSCompliant(false)]
     public static ushort GetNextUInt16(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => ushort.Parse(v, style, provider));
 
     /// <summary>
@@ -383,6 +384,7 @@ public static partial class MemoryExtensions
     /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="span"/>.</param>
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <returns>The next value from the span as a <see cref="uint"/> value.</returns>
+    [CLSCompliant(false)]
     public static uint GetNextUInt32(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => uint.Parse(v, style, provider));
 
     /// <summary>
@@ -403,6 +405,7 @@ public static partial class MemoryExtensions
     /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="span"/>.</param>
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <returns>The next value from the span as a <see cref="ulong"/> value.</returns>
+    [CLSCompliant(false)]
     public static ulong GetNextUInt64(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => ulong.Parse(v, style, provider));
 
     /// <summary>
@@ -611,6 +614,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="ushort"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
+    [CLSCompliant(false)]
     public static bool TryGetNextUInt16(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out ushort value) => span.TryGetNextUInt16(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
     /// <summary>
@@ -622,6 +626,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="ushort"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
+    [CLSCompliant(false)]
     public static bool TryGetNextUInt16(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out ushort value)
     {
         return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -669,6 +674,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="uint"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
+    [CLSCompliant(false)]
     public static bool TryGetNextUInt32(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out uint value) => span.TryGetNextUInt32(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
     /// <summary>
@@ -680,6 +686,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="uint"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
+    [CLSCompliant(false)]
     public static bool TryGetNextUInt32(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out uint value)
     {
         return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -727,6 +734,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="ulong"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
+    [CLSCompliant(false)]
     public static bool TryGetNextUInt64(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out ulong value) => span.TryGetNextUInt64(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
     /// <summary>
@@ -738,6 +746,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="ulong"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
+    [CLSCompliant(false)]
     public static bool TryGetNextUInt64(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out ulong value)
     {
         return span.TryGetNextValue(ref enumerator, TryParse, out value);

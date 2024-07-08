@@ -33,6 +33,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     /// <param name="value">The argument to validate as non-negative.</param>
     /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
+    [CLSCompliant(false)]
     public static void ThrowIfZero(sbyte value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
     {
         const sbyte Zero = 0;
