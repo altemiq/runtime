@@ -147,7 +147,7 @@ public static class NanoId
         // See https://github.com/ai/nanoid/blob/master/format.js for an
         // explanation as to why masking with `random % alphabet` is a common mistake security-wise.
 #if USE_GENERIC_MATH
-        var mask = (2 << (31 - int.LeadingZeroCount(alphabet.Length - 1 | 1))) - 1;
+        var mask = (2 << (31 - int.LeadingZeroCount((alphabet.Length - 1) | 1))) - 1;
 #else
         var mask = (2 << (31 - LeadingZeroCount((alphabet.Length - 1) | 1))) - 1;
 #endif
@@ -169,7 +169,7 @@ public static class NanoId
         var bytes = new byte[step];
 #endif
 
-        int cnt = 0;
+        var cnt = 0;
 
         while (true)
         {

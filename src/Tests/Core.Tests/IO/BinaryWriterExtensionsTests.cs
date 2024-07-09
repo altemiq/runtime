@@ -62,6 +62,11 @@ public class BinaryWriterExtensionsTests
     public void WriteInt64(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), value);
 
     [Theory]
+    [InlineData(-80, ByteOrder.LittleEndian)]
+    [InlineData(-80, ByteOrder.BigEndian)]
+    public void WriteSByte(sbyte value, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, [(byte)value], value);
+
+    [Theory]
     [InlineData(ushort.MaxValue, byte.MaxValue, byte.MaxValue, ByteOrder.LittleEndian)]
     [InlineData(ushort.MaxValue / 2, PositiveByte, byte.MaxValue, ByteOrder.LittleEndian)]
     [InlineData(ushort.MaxValue, byte.MaxValue, byte.MaxValue, ByteOrder.BigEndian)]

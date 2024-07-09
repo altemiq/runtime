@@ -165,12 +165,12 @@ public static class RuntimeEnvironment
                     if (currentFrameworkWithProfile is not null && frameworkReducer.GetNearest(currentFrameworkWithProfile, availableFrameworks) is { } nearestFrameworkWithProfile)
                     {
                         yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
-                        availableFrameworks.Remove(nearestFrameworkWithProfile);
+                        _ = availableFrameworks.Remove(nearestFrameworkWithProfile);
                     }
                     else if (frameworkReducer.GetNearest(currentFramework, availableFrameworks) is { } nearestFramework)
                     {
                         yield return Path.Combine(runtimesLibraryDirectory, nearestFramework.GetShortFolderName());
-                        availableFrameworks.Remove(nearestFramework);
+                        _ = availableFrameworks.Remove(nearestFramework);
                         currentFrameworkWithProfile = default;
                     }
                     else

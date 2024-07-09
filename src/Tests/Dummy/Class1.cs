@@ -1,6 +1,9 @@
-﻿namespace Dummy;
+﻿// -----------------------------------------------------------------------
+// <copyright file="Class1.cs" company="Altavec">
+// Copyright (c) Altavec. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
 
-public class Class1
-{
+namespace Altavec.Dummy;
 
-}
+public class Class1;

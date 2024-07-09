@@ -44,14 +44,12 @@ public static partial class List
     public static int IndexOf<T>(this IList<T> buffer, IList<T> value, int startIndex, int count)
         where T : IEquatable<T>
     {
-        // Check to see if the buffer is applicable
-        if (buffer is null)
+        return (buffer, value) switch
         {
-            return -1;
-        }
-
-        // If we've got no values to test with
-        return value is not { Count: not 0 } ? startIndex : IndexOfCore(buffer, value, startIndex, count);
+            (null, _) => -1,
+            (_, null or { Count: 0 }) => startIndex,
+            _ => IndexOfCore(buffer, value, startIndex, count),
+        };
 
         static int IndexOfCore(IList<T> buffer, IList<T> value, int startIndex, int count)
         {

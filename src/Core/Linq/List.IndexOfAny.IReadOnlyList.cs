@@ -46,18 +46,13 @@ public static partial class List
     public static int IndexOfAny<T>(this IReadOnlyList<T> buffer, int startIndex, int count, params IReadOnlyList<T>[] anyOf)
         where T : IEquatable<T>
     {
-        // Check to see if the buffer is applicable
-        if (buffer is null || buffer.Count <= startIndex)
+        return (buffer, anyOf) switch
         {
-            return -1;
-        }
-
-        if (anyOf is not { Length: not 0 })
-        {
-            return startIndex;
-        }
-
-        return IndexOfAnyCore(buffer, startIndex, count, anyOf);
+            (null, _) => -1,
+            ({ } b, _) when b.Count <= startIndex => -1,
+            (_, null or { Length: 0 }) => startIndex,
+            _ => IndexOfAnyCore(buffer, startIndex, count, anyOf),
+        };
 
         static int IndexOfAnyCore(IReadOnlyList<T> buffer, int startIndex, int count, IReadOnlyList<T>[] anyOf)
         {
