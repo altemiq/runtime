@@ -21,6 +21,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\app.config = Tests\app.config
+		Tests\coverage.runsettings = Tests\coverage.runsettings
 		Tests\Directory.Build.props = Tests\Directory.Build.props
 		Tests\Directory.Build.targets = Tests\Directory.Build.targets
 		Tests\Directory.Packages.props = Tests\Directory.Packages.props

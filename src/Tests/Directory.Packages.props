@@ -30,7 +30,6 @@
   </Choose>
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <GlobalPackageReference Include="coverlet.collector" Version="6.0.2" />
     <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.8.1" />
     <GlobalPackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
   </ItemGroup>
