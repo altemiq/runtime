@@ -147,6 +147,34 @@ public static class StringExtensions
 
             foreach (var index in splits)
             {
+                ProcessSplit(values, s, index, options, ref lastIndex, ref returnIndex);
+            }
+
+            if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || (s.Length - lastIndex) is not 0)
+            {
+                var startIndex = lastIndex;
+                var endIndex = s.Length;
+#if NET5_0_OR_GREATER
+                if (options.HasFlag(StringSplitOptions.TrimEntries))
+                {
+                    TrimStartEnd(s, ref startIndex, ref endIndex);
+                }
+#endif
+
+                values[returnIndex] = s[startIndex..endIndex];
+                returnIndex++;
+            }
+
+            // resize the array
+            if (values.Length != returnIndex)
+            {
+                System.Array.Resize(ref values, returnIndex);
+            }
+
+            return values;
+
+            static void ProcessSplit(string[] values, string s, int index, StringSplitOptions options, ref int lastIndex, ref int returnIndex)
+            {
                 if (index == lastIndex)
                 {
                     if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries))
@@ -158,7 +186,7 @@ public static class StringExtensions
                         returnIndex++;
                     }
 
-                    continue;
+                    return;
                 }
 
                 var startIndex = lastIndex;
@@ -184,29 +212,6 @@ public static class StringExtensions
                 lastIndex = index + 1;
                 returnIndex++;
             }
-
-            if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || (s.Length - lastIndex) is not 0)
-            {
-                var startIndex = lastIndex;
-                var endIndex = s.Length;
-#if NET5_0_OR_GREATER
-                if (options.HasFlag(StringSplitOptions.TrimEntries))
-                {
-                    TrimStartEnd(s, ref startIndex, ref endIndex);
-                }
-#endif
-
-                values[returnIndex] = s[startIndex..endIndex];
-                returnIndex++;
-            }
-
-            // resize the array
-            if (values.Length != returnIndex)
-            {
-                System.Array.Resize(ref values, returnIndex);
-            }
-
-            return values;
 
 #if NET5_0_OR_GREATER
             static void TrimStartEnd(string s, ref int startIndex, ref int endIndex)
