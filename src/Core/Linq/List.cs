@@ -24,56 +24,48 @@ public static partial class List
         where TSource : class, TResult
         where TResult : class
     {
-        if (source is null)
+        return source switch
         {
-            return null;
+            TSource[] array => CreateArray(array),
+            { } list => CreateList(list),
+            _ => null,
+        };
+
+        static TResult[]? CreateArray(TSource[] source)
+        {
+            return [.. source];
         }
 
-        // Get the type of the input list
-        var sourceType = source.GetType();
-
-        return CreateArray(source, sourceType) ?? CreateList(source, sourceType);
-
-        static IList<TResult>? CreateArray(IList<TSource> source, Type sourceType)
+        static IList<TResult> CreateList(IList<TSource> source)
         {
-            if (sourceType.IsArray)
-            {
-                // get the array type here
-                var destination = new TResult[source.Count];
+            var destination = CreateListCore(source) ?? throw new InvalidOperationException($"Failed to create instance of {source.GetType().Name}");
 
-                for (var i = 0; i < source.Count; i++)
+            if (destination.IsReadOnly || destination.Count == source.Count)
+            {
+                // it is read-only or we have already filled it
+                return destination;
+            }
+
+            if (destination is List<TResult> list)
+            {
+                list.AddRange(source);
+            }
+            else
+            {
+                // Go through each item
+                foreach (var item in source)
                 {
-                    destination[i] = source[i];
+                    // Cast the list item
+                    destination.Add(item);
                 }
-
-                return destination;
-            }
-
-            return default;
-        }
-
-        static IList<TResult> CreateList(IList<TSource> source, Type sourceType)
-        {
-            var destination = CreateListCore(source, sourceType) ?? [];
-
-            if (destination.IsReadOnly)
-            {
-                return destination;
-            }
-
-            // Go through each item
-            foreach (var item in source)
-            {
-                // Cast the list item
-                destination.Add(item);
             }
 
             return destination;
 
-            static IList<TResult>? CreateListCore(IList<TSource> source, Type sourceType)
+            static IList<TResult>? CreateListCore(IList<TSource> source)
             {
-                return GetGenericTypeDefinition(sourceType) is { } type
-                    ? CreateList(source, sourceType, type.MakeGenericType(typeof(TResult)))
+                return GetGenericTypeDefinition(source.GetType()) is { } type
+                    ? CreateList(source, type.MakeGenericType(typeof(TResult)))
                     : default;
 
                 static Type? GetGenericTypeDefinition(Type type)
@@ -91,7 +83,7 @@ public static partial class List
                         // If this is a generic type, then return the generic type definition for it.
                         if (typeInfo.IsGenericType)
                         {
-                            return type.GetGenericTypeDefinition();
+                            return typeInfo.GetGenericTypeDefinition();
                         }
 
                         // If this has no base type, then return null.
@@ -104,7 +96,7 @@ public static partial class List
                     }
                 }
 
-                static IList<TResult> CreateList(IList<TSource> source, Type sourceType, Type genericType)
+                static IList<TResult> CreateList(IList<TSource> source, Type genericType)
                 {
                     // Get the constructor info
                     var constructors =
@@ -114,48 +106,20 @@ public static partial class List
                         genericType.GetTypeInfo().DeclaredConstructors;
 #endif
 
-                    object[] parameterObjects = [];
-                    foreach (var parameters in constructors.Select(constructor => constructor.GetParameters()))
-                    {
-                        if (parameters.Length >= parameterObjects.Length)
-                        {
-                            continue;
-                        }
-
-                        parameterObjects = new object[parameters.Length];
-
-                        // Use the first one
-                        foreach (var parameter in parameters)
-                        {
-                            if (parameter.Name is null)
-                            {
-                                continue;
-                            }
-
-                            // See if there's a parameter on the original list with the same name.
-                            var listField =
-#if NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
-#pragma warning disable S3011
-                                sourceType.GetField(parameter.Name, BindingFlags.Instance | BindingFlags.NonPublic);
-#pragma warning restore S3011
-#else
-                                sourceType.GetTypeInfo().GetDeclaredField(parameter.Name);
-#endif
-
-                            if (listField?.GetValue(source) is { } field)
-                            {
-                                if (source.IsReadOnly && field is IList<TSource> internalList)
-                                {
-                                    field = internalList.Cast<TResult>();
-                                }
-
-                                parameterObjects[parameter.Position] = field;
-                            }
-                        }
-                    }
+                    var parameterObjects = GetParameters(constructors, source);
 
                     // Create the type
                     return Activator.CreateInstance(genericType, parameterObjects) as IList<TResult> ?? throw new InvalidOperationException($"Failed to create instance of {genericType}");
+
+                    static object?[] GetParameters(IEnumerable<ConstructorInfo> constructors, IEnumerable<TSource> source)
+                    {
+                        // Get the best constructor
+                        return constructors
+                            .Select(constructor => constructor.GetParameters())
+                            .SingleOrDefault(parameters => parameters.Length is 1 && typeof(IEnumerable<TResult>).GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType.GetTypeInfo())) is not null
+                            ? [source.Cast<TResult>()]
+                            : [];
+                    }
                 }
             }
         }

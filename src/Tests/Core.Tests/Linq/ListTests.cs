@@ -18,10 +18,57 @@ public partial class ListTests
     }
 
     [Fact]
+    public void CastList()
+    {
+        List<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
+        var cast = List.Cast<ISecond, IFirst>(list);
+        cast.Should().BeOfType<List<IFirst>>().And.BeEquivalentTo(list);
+    }
+
+    [Fact]
+    public void CastListWithNoConstructors()
+    {
+        ListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
+        var cast = List.Cast<ISecond, IFirst>(list);
+        cast.Should().BeOfType<ListWithNoConstructors<IFirst>>().And.BeEquivalentTo(list);
+    }
+
+    [Fact]
+    public void CastNonListWithNoConstructors()
+    {
+        NonListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
+        var cast = List.Cast<ISecond, IFirst>(list);
+        cast.Should().BeOfType<NonListWithNoConstructors<IFirst>>().And.BeEquivalentTo(list);
+    }
+
+    [Fact]
+    public void CastNested()
+    {
+        NestedNonGenericList list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
+        var cast = List.Cast<ISecond, IFirst>(list);
+        cast.Should().BeOfType<List<IFirst>>().And.BeEquivalentTo(list);
+    }
+
+    [Fact]
+    public void CastArray()
+    {
+        ISecond[] array = [default(Third), default(Third), default(Third), default(Third), default(Third)];
+        var cast = List.Cast<ISecond, IFirst>(array);
+        cast.Should().BeOfType<IFirst[]>().And.BeEquivalentTo(array);
+    }
+
+    [Fact]
     public void CastWithNull()
     {
         IList<ISecond>? list = default;
         List.Cast<ISecond, IFirst>(list!).Should().BeNull();
+    }
+
+    [Fact]
+    public void CastWithNonGeneric()
+    {
+        NoBaseClass list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
+        list.Invoking(l => l.Cast<ISecond, IFirst>()).Should().Throw<InvalidOperationException>();
     }
 
     public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
@@ -94,4 +141,29 @@ public partial class ListTests
     private static TResult? TestListList<T, TResult>(object first, object second, Func<IList<T>, IList<T>, TResult> func, TResult? defaultResult = default) => first is IList<T> f && second is IList<T> s ? func(f, s) : defaultResult;
 
     private static TResult? TestReadOnlyListReadOnlyList<T, TResult>(object first, object second, Func<IReadOnlyList<T>, IReadOnlyList<T>, TResult> func, TResult? defaultResult = default) => first is IReadOnlyList<T> f && second is IReadOnlyList<T> s ? func(f, s) : defaultResult;
+
+    private sealed class ListWithNoConstructors<T> : List<T>;
+
+    private sealed class NonListWithNoConstructors<T> : System.Collections.ObjectModel.Collection<T>;
+
+    private sealed class NestedNonGenericList : List<ISecond>;
+
+    private sealed class NoBaseClass : IList<ISecond>
+    {
+        ISecond IList<ISecond>.this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        int ICollection<ISecond>.Count { get; }
+        bool ICollection<ISecond>.IsReadOnly { get; }
+
+        public void Add(ISecond item) { }
+        void ICollection<ISecond>.Clear() => throw new NotImplementedException();
+        bool ICollection<ISecond>.Contains(ISecond item) => throw new NotImplementedException();
+        void ICollection<ISecond>.CopyTo(ISecond[] array, int arrayIndex) => throw new NotImplementedException();
+        IEnumerator<ISecond> IEnumerable<ISecond>.GetEnumerator() => throw new NotImplementedException();
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => throw new NotImplementedException();
+        int IList<ISecond>.IndexOf(ISecond item) => throw new NotImplementedException();
+        void IList<ISecond>.Insert(int index, ISecond item) => throw new NotImplementedException();
+        bool ICollection<ISecond>.Remove(ISecond item) => throw new NotImplementedException();
+        void IList<ISecond>.RemoveAt(int index) => throw new NotImplementedException();
+    }
 }
