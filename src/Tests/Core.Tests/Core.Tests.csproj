@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.Text.Json" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' " />
   </ItemGroup>
 
   <ItemGroup>
