@@ -16,8 +16,8 @@ public class MemoryExtensionsTests
     [Fact]
     public void IndexOfAny()
     {
-        Create("This is an old string").IndexOfAny(Create("is"), Create("an"), Create("old"), Create("string")).Should().Be(2);
-        default(ReadOnlySpan<char>).IndexOfAny(default, default).Should().Be(-1);
+        _ = Create("This is an old string").IndexOfAny(Create("is"), Create("an"), Create("old"), Create("string")).Should().Be(2);
+        _ = default(ReadOnlySpan<char>).IndexOfAny(default, default).Should().Be(-1);
 
         static ReadOnlySpan<char> Create(string input)
         {
@@ -88,10 +88,10 @@ public class MemoryExtensionsTests
         const string Value = $"{First}{Pipe}{Second}{Space}{Third}{Pipe}{Forth}";
         var span = Value.AsSpan();
         var enumerator = span.Split(Space, Pipe);
-        span.GetNextString(ref enumerator).Should().Be(First);
-        span.GetNextString(ref enumerator).Should().Be(Second);
-        span.GetNextString(ref enumerator).Should().Be(Third);
-        span.GetNextString(ref enumerator).Should().Be(Forth);
+        _ = span.GetNextString(ref enumerator).Should().Be(First);
+        _ = span.GetNextString(ref enumerator).Should().Be(Second);
+        _ = span.GetNextString(ref enumerator).Should().Be(Third);
+        _ = span.GetNextString(ref enumerator).Should().Be(Forth);
     }
 
     [Fact]
@@ -100,6 +100,88 @@ public class MemoryExtensionsTests
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
         var enumerator = span.Split(",", StringSplitOptions.RemoveEmptyEntries);
+        _ = enumerator.MoveNext().Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(' ')]
+    [InlineData(',')]
+    [InlineData('|')]
+    public void SplitQuotedOnChar(char separator)
+    {
+        var stringSeparator = new string(separator, 1);
+        var values = new[] { "This", "\"is", "a\"", "split", "string" };
+        var value = string.Join(stringSeparator, values);
+        var span = value.AsSpan();
+        var enumerator = span.SplitQuoted(separator);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(string.Join(stringSeparator, values[1], values[2]));
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[3]);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
+        _ = enumerator.MoveNext().Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(' ')]
+    [InlineData(',')]
+    [InlineData('|')]
+    public void SplitQuotedOnCharWithMultiple(char separator)
+    {
+        var stringSeparator = new string(separator, 1);
+        var values = new[] { "This", "\"is", "a", "split\"", "string" };
+        var value = string.Join(stringSeparator, values);
+        var span = value.AsSpan();
+        var enumerator = span.SplitQuoted(separator);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(string.Join(stringSeparator, values[1], values[2], values[3]));
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
+        _ = enumerator.MoveNext().Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(" ")]
+    [InlineData(",")]
+    [InlineData("||")]
+    public void SplitQuotedOnString(string separator)
+    {
+        var values = new[] { "This", "\"is", "a\"", "split", "string" };
+        var value = string.Join(separator, values);
+        var span = value.AsSpan();
+        var enumerator = span.SplitQuoted(separator);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(string.Join(separator, values[1], values[2]));
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[3]);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
+        _ = enumerator.MoveNext().Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(" ")]
+    [InlineData(",")]
+    [InlineData("||")]
+    public void SplitQuotedOnStringWithMultiple(string separator)
+    {
+        var values = new[] { "This", "\"is", "a", "split\"", "string" };
+        var value = string.Join(separator, values);
+        var span = value.AsSpan();
+        var enumerator = span.SplitQuoted(separator);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(string.Join(separator, values[1], values[2], values[3]));
+        _ = enumerator.MoveNext().Should().BeTrue();
+        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
         _ = enumerator.MoveNext().Should().BeFalse();
     }
 

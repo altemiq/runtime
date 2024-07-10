@@ -124,7 +124,6 @@ public ref struct JoinedSpanSplitEnumerator<T>
 
             // go through the slice to get the next value
             var separatorIndex = -1;
-            var combining = false;
             var currentStart = 0;
             while (true)
             {
@@ -136,19 +135,15 @@ public ref struct JoinedSpanSplitEnumerator<T>
                 }
 
                 var joinCount = this.joinOnSingleToken
-                    ? GetJoinCountSingle(testSlice, this.joiner, this.joinerLength)
-                    : GetJoinCountMultiple(testSlice, this.joiners, this.joinerLength);
-                if (joinCount % 2 is not 0)
-                {
-                    combining = !combining;
-                }
-
-                if (!combining)
+                    ? GetJoinCountSingle(testSlice[tempSeparatorIndex..], this.joiner, this.joinerLength)
+                    : GetJoinCountMultiple(testSlice[tempSeparatorIndex..], this.joiners, this.joinerLength);
+                if (joinCount % 2 is 0)
                 {
                     separatorIndex = currentStart + tempSeparatorIndex;
+                    break;
                 }
 
-                currentStart = tempSeparatorIndex + this.separatorLength;
+                currentStart += tempSeparatorIndex + this.separatorLength;
             }
 
             this.startCurrent = this.startNext;
