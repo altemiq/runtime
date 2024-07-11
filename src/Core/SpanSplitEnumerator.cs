@@ -135,38 +135,47 @@ public ref struct SpanSplitEnumerator<T>
             var slice = this.buffer[this.startNext..];
             this.startCurrent = this.startNext;
 
-            if (this.multipleTokens)
-            {
-                var firstSeparatorIndex = slice.IndexOf(this.firstSpanSeparator);
-                var secondSeparatorIndex = slice.IndexOf(this.secondSpanSeparator);
-
-#pragma warning disable SA1008 // Opening parenthesis should be spaced correctly
-                (elementLength, var length) = (firstSeparatorIndex, secondSeparatorIndex) switch
-                {
-                    ( < 0, >= 0) => (secondSeparatorIndex, this.secondSpanSeparator.Length),
-                    ( >= 0, >= 0) when secondSeparatorIndex < firstSeparatorIndex => (secondSeparatorIndex, this.secondSpanSeparator.Length),
-                    ( >= 0, < 0) => (firstSeparatorIndex, this.firstSpanSeparator.Length),
-                    ( >= 0, >= 0) when firstSeparatorIndex < secondSeparatorIndex => (firstSeparatorIndex, this.firstSpanSeparator.Length),
-                    _ => (slice.Length, 1),
-                };
-#pragma warning restore SA1008 // Opening parenthesis should be spaced correctly
-
-                this.endCurrent = this.startCurrent + elementLength;
-                this.startNext = this.endCurrent + length;
-            }
-            else
-            {
-                var separatorIndex = this.splitOnSingleToken ? slice.IndexOf(this.separator) : slice.IndexOf(this.firstSpanSeparator);
-                elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
-
-                this.endCurrent = this.startCurrent + elementLength;
-                this.startNext = this.endCurrent + this.separatorLength;
-            }
+            elementLength = this.multipleTokens
+                ? this.MoveNextMultipleTokens(slice)
+                : this.MoveNextSingleToken(slice);
 
             currentValid = !removeEmpty || elementLength is not 0;
         }
         while (!currentValid);
 
         return currentValid;
+    }
+
+    private int MoveNextMultipleTokens(ReadOnlySpan<T> slice)
+    {
+        int elementLength;
+        var firstSeparatorIndex = slice.IndexOf(this.firstSpanSeparator);
+        var secondSeparatorIndex = slice.IndexOf(this.secondSpanSeparator);
+
+#pragma warning disable SA1008 // Opening parenthesis should be spaced correctly
+        (elementLength, var length) = (firstSeparatorIndex, secondSeparatorIndex) switch
+        {
+            ( < 0, >= 0) => (secondSeparatorIndex, this.secondSpanSeparator.Length),
+            ( >= 0, >= 0) when secondSeparatorIndex < firstSeparatorIndex => (secondSeparatorIndex, this.secondSpanSeparator.Length),
+            ( >= 0, < 0) => (firstSeparatorIndex, this.firstSpanSeparator.Length),
+            ( >= 0, >= 0) when firstSeparatorIndex < secondSeparatorIndex => (firstSeparatorIndex, this.firstSpanSeparator.Length),
+            _ => (slice.Length, 1),
+        };
+#pragma warning restore SA1008 // Opening parenthesis should be spaced correctly
+
+        this.endCurrent = this.startCurrent + elementLength;
+        this.startNext = this.endCurrent + length;
+        return elementLength;
+    }
+
+    private int MoveNextSingleToken(ReadOnlySpan<T> slice)
+    {
+        int elementLength;
+        var separatorIndex = this.splitOnSingleToken ? slice.IndexOf(this.separator) : slice.IndexOf(this.firstSpanSeparator);
+        elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
+
+        this.endCurrent = this.startCurrent + elementLength;
+        this.startNext = this.endCurrent + this.separatorLength;
+        return elementLength;
     }
 }

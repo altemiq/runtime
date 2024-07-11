@@ -153,6 +153,9 @@ public static class RuntimeInformation
     /// </summary>
     /// <returns>The naïve RID.</returns>
     /// <exception cref="InvalidOperationException">Invalid operating system.</exception>
+#if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
     internal static string GetNaïveRid()
     {
         return $"{GetRidFront()}-{GetRidBack()}";
@@ -229,6 +232,9 @@ public static class RuntimeInformation
         }
     }
 
+#if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
     private static string GetPathVariable()
     {
 #if NET5_0_OR_GREATER
@@ -266,6 +272,9 @@ public static class RuntimeInformation
         throw new InvalidOperationException();
     }
 
+#if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
     private static string GetSharedLibraryExtension()
     {
 #if NET5_0_OR_GREATER
@@ -303,6 +312,9 @@ public static class RuntimeInformation
         throw new InvalidOperationException();
     }
 
+#if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
     private static string GetSharedLibraryPrefix()
     {
 #if NET5_0_OR_GREATER

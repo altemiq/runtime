@@ -250,27 +250,50 @@ public static class StringExtensions
         bool IsQuotableAt(int i)
         {
             var character = value[i];
-            return (quoteDelimiter && delimiter[0] == character && CheckDelimiter(value, i, delimiter))
-                || (quoteNewLine && character is '\r' or '\n')
-                || (quoteQuotes && character is QuoteChar)
-                || (quoteNonAscii && character >= 128);
+            return (quoteDelimiter && IsDelimiter(character, value, i, delimiter))
+                || (quoteNewLine && IsNewLine(character))
+                || (quoteQuotes && IsQuote(character))
+                || (quoteNonAscii && IsNonAscii(character));
 
-            static bool CheckDelimiter(string s, int index, IList<char> delimiter)
+            static bool IsDelimiter(char character, string s, int index, IList<char> delimiter)
             {
-                if (delimiter.Count > s.Length - index)
-                {
-                    return false;
-                }
+                return delimiter[0] == character && CheckDelimiter(s, index, delimiter);
 
-                for (var i = 0; i < delimiter.Count; i++)
+                static bool CheckDelimiter(string s, int index, IList<char> delimiter)
                 {
-                    if (s[index + i] != delimiter[i])
+                    if (delimiter.Count > s.Length - index)
                     {
                         return false;
                     }
-                }
 
-                return true;
+                    for (var i = 0; i < delimiter.Count; i++)
+                    {
+                        if (s[index + i] != delimiter[i])
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static bool IsNewLine(char character)
+            {
+                return character is '\r' or '\n';
+            }
+
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static bool IsQuote(char character)
+            {
+                return character is QuoteChar;
+            }
+
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static bool IsNonAscii(char character)
+            {
+                return character >= 128;
             }
         }
 
