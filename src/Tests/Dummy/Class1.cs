@@ -1,9 +1,9 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="Class1.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="Class1.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec.Dummy;
+namespace Altemiq.Dummy;
 
 public class Class1;

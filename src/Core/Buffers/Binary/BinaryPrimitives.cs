@@ -145,4 +145,202 @@ public static class BinaryPrimitives
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static long ReverseEndianness(long value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
+
+#if !NETSTANDARD1_0
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian" />
+    public static void WriteInt16BigEndian(Span<byte> destination, short value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian" />
+    public static void WriteInt16LittleEndian(Span<byte> destination, short value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian" />
+    public static void WriteInt32BigEndian(Span<byte> destination, int value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian" />
+    public static void WriteInt32LittleEndian(Span<byte> destination, int value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteInt64BigEndian" />
+    public static void WriteInt64BigEndian(Span<byte> destination, long value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteInt64LittleEndian" />
+    public static void WriteInt64LittleEndian(Span<byte> destination, long value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteUInt16BigEndian" />
+    [CLSCompliant(false)]
+    public static void WriteUInt16BigEndian(Span<byte> destination, ushort value) => System.Buffers.Binary.BinaryPrimitives.WriteUInt16BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteUInt16LittleEndian" />
+    [CLSCompliant(false)]
+    public static void WriteUInt16LittleEndian(Span<byte> destination, ushort value) => System.Buffers.Binary.BinaryPrimitives.WriteUInt16LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian" />
+    [CLSCompliant(false)]
+    public static void WriteUInt32BigEndian(Span<byte> destination, uint value) => System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteUInt32LittleEndian" />
+    [CLSCompliant(false)]
+    public static void WriteUInt32LittleEndian(Span<byte> destination, uint value) => System.Buffers.Binary.BinaryPrimitives.WriteUInt32LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteUInt64BigEndian" />
+    [CLSCompliant(false)]
+    public static void WriteUInt64BigEndian(Span<byte> destination, ulong value) => System.Buffers.Binary.BinaryPrimitives.WriteUInt64BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteUInt64LittleEndian" />
+    [CLSCompliant(false)]
+    public static void WriteUInt64LittleEndian(Span<byte> destination, ulong value) => System.Buffers.Binary.BinaryPrimitives.WriteUInt64LittleEndian(destination, value);
+
+#if NET5_0_OR_GREATER
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteHalfBigEndian" />
+    public static void WriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteHalfBigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteHalfLittleEndian" />
+    public static void WriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteHalfLittleEndian(destination, value);
+#endif
+
+#if NET5_0_OR_GREATER
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteSingleBigEndian" />
+    public static void WriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteSingleBigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteSingleLittleEndian" />
+    public static void WriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteSingleLittleEndian(destination, value);
+#else
+    /// <summary>
+    /// Writes a <see cref="float"/> into a span of bytes, as big endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="float"/>.</exception>
+    public static void WriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(destination, BitConverter.SingleToInt32Bits(value));
+
+    /// <summary>
+    /// Writes a <see cref="float"/> into a span of bytes, as little endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="float"/>.</exception>
+    public static void WriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(destination, BitConverter.SingleToInt32Bits(value));
+#endif
+
+#if NET5_0_OR_GREATER
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteDoubleBigEndian" />
+    public static void WriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteDoubleBigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteDoubleLittleEndian" />
+    public static void WriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteDoubleLittleEndian(destination, value);
+#else
+    /// <summary>
+    /// Writes a <see cref="double"/> into a span of bytes, as big endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="double"/>.</exception>
+    public static void WriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64BigEndian(destination, BitConverter.DoubleToInt64Bits(value));
+
+    /// <summary>
+    /// Writes a <see cref="double"/> into a span of bytes, as little endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="double"/>.</exception>
+    public static void WriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64LittleEndian(destination, BitConverter.DoubleToInt64Bits(value));
+#endif
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian" />
+    public static bool TryWriteInt16BigEndian(Span<byte> destination, short value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteInt16LittleEndian" />
+    public static bool TryWriteInt16LittleEndian(Span<byte> destination, short value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteInt32BigEndian" />
+    public static bool TryWriteInt32BigEndian(Span<byte> destination, int value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteInt32LittleEndian" />
+    public static bool TryWriteInt32LittleEndian(Span<byte> destination, int value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteInt64BigEndian" />
+    public static bool TryWriteInt64BigEndian(Span<byte> destination, long value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteInt64LittleEndian" />
+    public static bool TryWriteInt64LittleEndian(Span<byte> destination, long value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16BigEndian" />
+    [CLSCompliant(false)]
+    public static bool TryWriteUInt16BigEndian(Span<byte> destination, ushort value) => System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16LittleEndian" />
+    [CLSCompliant(false)]
+    public static bool TryWriteUInt16LittleEndian(Span<byte> destination, ushort value) => System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32BigEndian" />
+    [CLSCompliant(false)]
+    public static bool TryWriteUInt32BigEndian(Span<byte> destination, uint value) => System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32LittleEndian" />
+    [CLSCompliant(false)]
+    public static bool TryWriteUInt32LittleEndian(Span<byte> destination, uint value) => System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32LittleEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64BigEndian" />
+    [CLSCompliant(false)]
+    public static bool TryWriteUInt64BigEndian(Span<byte> destination, ulong value) => System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64BigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64LittleEndian" />
+    [CLSCompliant(false)]
+    public static bool TryWriteUInt64LittleEndian(Span<byte> destination, ulong value) => System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64LittleEndian(destination, value);
+
+#if NET5_0_OR_GREATER
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteHalfBigEndian" />
+    public static bool TryWriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteHalfBigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteHalfLittleEndian" />
+    public static bool TryWriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteHalfLittleEndian(destination, value);
+#endif
+
+#if NET5_0_OR_GREATER
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteSingleBigEndian" />
+    public static bool TryWriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteSingleBigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteSingleLittleEndian" />
+    public static bool TryWriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteSingleLittleEndian(destination, value);
+#else
+    /// <summary>
+    /// Writes a <see cref="float"/> into a span of bytes, as big endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="float"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool TryWriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32BigEndian(destination, BitConverter.SingleToInt32Bits(value));
+
+    /// <summary>
+    /// Writes a <see cref="float"/> into a span of bytes, as little endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="float"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool TryWriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32LittleEndian(destination, BitConverter.SingleToInt32Bits(value));
+#endif
+
+#if NET5_0_OR_GREATER
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteDoubleBigEndian" />
+    public static bool TryWriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteDoubleBigEndian(destination, value);
+
+    /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteDoubleLittleEndian" />
+    public static bool TryWriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteDoubleLittleEndian(destination, value);
+#else
+    /// <summary>
+    /// Writes a <see cref="double"/> into a span of bytes, as big endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="double"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool TryWriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64BigEndian(destination, BitConverter.DoubleToInt64Bits(value));
+
+    /// <summary>
+    /// Writes a <see cref="double"/> into a span of bytes, as little endian.
+    /// </summary>
+    /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
+    /// <param name="value">The value to write into the span of bytes.</param>
+    /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="double"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool TryWriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64LittleEndian(destination, BitConverter.DoubleToInt64Bits(value));
+#endif
+#endif
 }
