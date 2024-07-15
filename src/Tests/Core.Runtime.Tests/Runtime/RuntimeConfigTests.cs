@@ -16,7 +16,12 @@ public class RuntimeConfigTests
     [Fact]
     public void SaveRuntimeConfig()
     {
-        var runtimeConfigRaw = File.ReadAllText(RuntimeEnvironment.GetRuntimeConfigFileName()!);
-        RuntimeEnvironment.GetRuntimeConfig()!.ToString().Should().Be(runtimeConfigRaw);
+        var runtimeConfigRaw = NormalizeLineEndings(File.ReadAllText(RuntimeEnvironment.GetRuntimeConfigFileName()!));
+        NormalizeLineEndings(RuntimeEnvironment.GetRuntimeConfig()!.ToString()).Should().Be(runtimeConfigRaw);
+
+        static string NormalizeLineEndings(string input)
+        {
+            return input.Replace("\r\n", Environment.NewLine);
+        }
     }
 }
