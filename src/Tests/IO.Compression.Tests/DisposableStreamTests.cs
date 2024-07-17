@@ -6,11 +6,8 @@ public class DisposableStreamTests
     public void ShouldDisposeTheEntry()
     {
         var archive = ZipArchiveHelpers.CreateArchiveShim();
-
-        using (var stream = new DisposableStream(archive.Entries[0]))
-        {
-        }
-
+        var stream = new DisposableStream(archive.Entries[0]);
+        stream.Dispose();
         _ = archive.IsDisposed.Should().BeTrue();
     }
 
@@ -18,11 +15,8 @@ public class DisposableStreamTests
     public void ShouldNotDisposeTheEntry()
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
-
-        using (var stream = new DisposableStream(archive.Entries[0], true))
-        {
-        }
-
+        var stream = new DisposableStream(archive.Entries[0], true);
+        stream.Dispose();
         _ = archive.IsDisposed.Should().BeFalse();
     }
 }

@@ -50,6 +50,7 @@ public class SeekableStream : IO.SeekableStream
     /// <inheritdoc/>
     public override long Length => this.length;
 
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <inheritdoc/>
     public override void Close()
     {
@@ -59,17 +60,28 @@ public class SeekableStream : IO.SeekableStream
             this.archive.Dispose();
         }
     }
+#endif
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_0_OR_GREATER
     /// <inheritdoc/>
     public override async ValueTask DisposeAsync()
     {
         await base.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
-        GC.SuppressFinalize(this);
-        if (this.closeArchive && this.archive is not null)
+        if (this.closeArchive)
         {
-            this.archive.Dispose();
+            if (this.archive is IAsyncDisposable asyncDisposable)
+            {
+                await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+            }
+            else if (this.archive is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
+
+#pragma warning disable S3971 // "GC.SuppressFinalize" should not be called
+        GC.SuppressFinalize(this);
+#pragma warning restore S3971 // "GC.SuppressFinalize" should not be called
     }
 #endif
 

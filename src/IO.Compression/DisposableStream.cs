@@ -64,11 +64,12 @@ public class DisposableStream : Stream
     /// <inheritdoc/>
     public override int WriteTimeout { get => this.stream.WriteTimeout; set => this.stream.WriteTimeout = value; }
 
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <inheritdoc/>
-    public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object? state) => this.stream.BeginRead(buffer, offset, count, callback, state);
+    public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback? callback, object? state) => this.stream.BeginRead(buffer, offset, count, callback, state);
 
     /// <inheritdoc/>
-    public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object? state) => this.stream.BeginWrite(buffer, offset, count, callback, state);
+    public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback? callback, object? state) => this.stream.BeginWrite(buffer, offset, count, callback, state);
 
     /// <inheritdoc/>
     public override int EndRead(IAsyncResult asyncResult) => this.stream.EndRead(asyncResult);
@@ -84,6 +85,7 @@ public class DisposableStream : Stream
             this.archive.Dispose();
         }
     }
+#endif
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP1_0_OR_GREATER
     /// <inheritdoc/>
@@ -105,8 +107,16 @@ public class DisposableStream : Stream
     /// <inheritdoc/>
     public override int GetHashCode() => this.stream.GetHashCode();
 
+#if NET5_0_OR_GREATER
+#pragma warning disable S1133 // Deprecated code should be removed
+    /// <inheritdoc/>
+    [Obsolete($"This Remoting API is not supported and throws {nameof(PlatformNotSupportedException)}.")]
+    public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();
+#pragma warning restore S1133 // Deprecated code should be removed
+#elif NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <inheritdoc/>
     public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();
+#endif
 
     /// <inheritdoc/>
     public override int Read(byte[] buffer, int offset, int count) => this.stream.Read(buffer, offset, count);
