@@ -186,7 +186,7 @@ public partial class ListTests
             return source;
         }
 
-        private static  IList<T> WithComparer<T>(IList<T> source)
+        private static IList<T> WithComparer<T>(IList<T> source)
             where T : IComparable<T>
         {
             source.QuickSort(Comparer<T>.Default);
