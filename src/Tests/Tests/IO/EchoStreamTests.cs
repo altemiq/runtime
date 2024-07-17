@@ -1,10 +1,10 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="EchoStreamTests.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="EchoStreamTests.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec.IO;
+namespace Altemiq.IO;
 
 using System.Text;
 using System.Threading.Tasks;

@@ -1,10 +1,10 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="MultipleMemoryStreamTests.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="MultipleMemoryStreamTests.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec.IO;
+namespace Altemiq.IO;
 
 public class MultipleMemoryStreamTests
 {

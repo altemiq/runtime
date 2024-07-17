@@ -1,10 +1,10 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="MultipleStream.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="MultipleStream.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec.IO;
+namespace Altemiq.IO;
 
 /// <summary>
 /// A stream that is backed by multiple <see cref="Stream"/> instances.

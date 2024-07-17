@@ -1,10 +1,10 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SeekableStream.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="SeekableStream.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec.IO;
+namespace Altemiq.IO;
 
 /// <summary>
 /// A wrapper that makes a <see cref="Stream"/> seekable, when <see cref="Stream.CanSeek"/> is <see langword="false"/>.
