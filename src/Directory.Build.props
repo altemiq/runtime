@@ -58,7 +58,7 @@
 
   <PropertyGroup>
     <UseSpanParsing>false</UseSpanParsing>
-    <UseSpanParsing Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.1')) ">true</UseSpanParsing>
+    <UseSpanParsing Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.3')) ">true</UseSpanParsing>
     <DefineConstants Condition=" '$(UseSpanParsing)' == 'true' ">$(DefineConstants);USE_SPAN_PARSING</DefineConstants>
 
     <UseGenericMath>false</UseGenericMath>

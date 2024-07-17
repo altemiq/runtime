@@ -168,4 +168,8 @@
   <data name="EmptyString" xml:space="preserve">
     <value>The value cannot be an empty string.</value>
   </data>
+  <data name="ForwardOnlySeekingAllowed" xml:space="preserve">
+    <value>Forward only seeking allowed.</value>
+    <comment>Error messing for forward only seeking</comment>
+  </data>
 </root>

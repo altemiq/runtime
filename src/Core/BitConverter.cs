@@ -124,7 +124,6 @@ public static class BitConverter
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool ToBoolean(byte[] value, int startIndex, ByteOrder byteOrder) => ToBoolean(value, startIndex);
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToBoolean(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -135,7 +134,7 @@ public static class BitConverter
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool ToBoolean(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ToBoolean(value);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte span into a Boolean value.
     /// </summary>
@@ -157,7 +156,6 @@ public static class BitConverter
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool ToBoolean(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ToBoolean(value);
 #endif
-#endif
 
     /// <inheritdoc cref="System.BitConverter.ToChar(byte[], int)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -167,7 +165,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static char ToChar(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToChar(value, startIndex), byteOrder, ReverseEndianness);
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToChar(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -176,7 +173,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.ToChar(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static char ToChar(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToChar(value), byteOrder, ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte span into a character.
     /// </summary>
@@ -194,7 +191,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static char ToChar(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToChar(value), byteOrder, ReverseEndianness);
 #endif
-#endif
 
     /// <inheritdoc cref="System.BitConverter.ToDouble(byte[], int)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -204,7 +200,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static double ToDouble(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToDouble(value, startIndex), byteOrder, ReverseEndianness);
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToDouble(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -213,7 +208,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.ToDouble(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static double ToDouble(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToDouble(value), byteOrder, ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte span into a double-precision floating-point value.
     /// </summary>
@@ -230,7 +225,6 @@ public static class BitConverter
     /// <returns>A double-precision floating-point value that represents the converted bytes.</returns>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static double ToDouble(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToDouble(value), byteOrder, ReverseEndianness);
-#endif
 #endif
 
 #if NET5_0_OR_GREATER
@@ -259,7 +253,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static short ToInt16(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt16(value, startIndex), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToInt16(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -268,7 +261,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.ToInt16(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static short ToInt16(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt16(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte span into a 16-bit signed integer.
     /// </summary>
@@ -286,7 +279,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static short ToInt16(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt16(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 #endif
-#endif
 
     /// <inheritdoc cref="System.BitConverter.ToInt32(byte[], int)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -296,8 +288,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static int ToInt32(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt32(value, startIndex), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 
-#if !NETSTANDARD1_0
-
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToInt32(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -306,7 +296,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.ToInt32(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static int ToInt32(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt32(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte span into a 32-bit signed integer.
     /// </summary>
@@ -324,7 +314,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static int ToInt32(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt32(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 #endif
-#endif
 
     /// <inheritdoc cref="System.BitConverter.ToInt64(byte[], int)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -334,7 +323,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static long ToInt64(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt64(value, startIndex), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToInt64(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -343,7 +331,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.ToInt64(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static long ToInt64(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt64(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte span into a 64-bit signed integer.
     /// </summary>
@@ -361,7 +349,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static long ToInt64(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToInt64(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 #endif
-#endif
 
     /// <inheritdoc cref="System.BitConverter.ToSingle(byte[], int)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -371,8 +358,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static float ToSingle(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToSingle(value, startIndex), byteOrder, ReverseEndianness);
 
-#if !NETSTANDARD1_0
-
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToSingle(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -381,7 +366,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.ToSingle(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static float ToSingle(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToSingle(value), byteOrder, ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte span into a single-precision floating-point value.
     /// </summary>
@@ -398,7 +383,6 @@ public static class BitConverter
     /// <returns>A single-precision floating-point representing the converted bytes.</returns>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static float ToSingle(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToSingle(value), byteOrder, ReverseEndianness);
-#endif
 #endif
 
     /// <inheritdoc cref="System.BitConverter.ToString(byte[])" />
@@ -423,7 +407,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static ushort ToUInt16(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt16(value, startIndex), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToUInt16(ReadOnlySpan{byte})" />
     [CLSCompliant(false)]
@@ -434,7 +417,7 @@ public static class BitConverter
     [CLSCompliant(false)]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static ushort ToUInt16(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt16(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte-span into a 16-bit unsigned integer.
     /// </summary>
@@ -454,7 +437,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static ushort ToUInt16(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt16(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 #endif
-#endif
 
     /// <inheritdoc cref="System.BitConverter.ToUInt32(byte[], int)" />
     [CLSCompliant(false)]
@@ -466,8 +448,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static uint ToUInt32(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt32(value, startIndex), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 
-#if !NETSTANDARD1_0
-
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToUInt32(ReadOnlySpan{byte})" />
     [CLSCompliant(false)]
@@ -478,7 +458,7 @@ public static class BitConverter
     [CLSCompliant(false)]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static uint ToUInt32(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt32(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte-span into a 32-bit unsigned integer.
     /// </summary>
@@ -498,7 +478,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static uint ToUInt32(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt32(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 #endif
-#endif
 
     /// <inheritdoc cref="System.BitConverter.ToUInt64(byte[], int)" />
     [CLSCompliant(false)]
@@ -510,7 +489,6 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static ulong ToUInt64(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt64(value, startIndex), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToUInt64(ReadOnlySpan{byte})" />
     [CLSCompliant(false)]
@@ -521,7 +499,7 @@ public static class BitConverter
     [CLSCompliant(false)]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static ulong ToUInt64(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt64(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a read-only byte-span into a 64-bit unsigned integer.
     /// </summary>
@@ -541,9 +519,7 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static ulong ToUInt64(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToUInt64(value), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 #endif
-#endif
 
-#if !NETSTANDARD1_0
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, bool)" />
     public static bool TryWriteBytes(Span<byte> destination, bool value) => System.BitConverter.TryWriteBytes(destination, value);
@@ -552,7 +528,7 @@ public static class BitConverter
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool TryWriteBytes(Span<byte> destination, bool value, ByteOrder byteOrder) => TryWriteBytes(destination, value);
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a Boolean into a span of bytes.
     /// </summary>
@@ -588,7 +564,7 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, char)" />
     public static bool TryWriteBytes(Span<byte> destination, char value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a character into a span of bytes.
     /// </summary>
@@ -613,7 +589,7 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, double)" />
     public static bool TryWriteBytes(Span<byte> destination, double value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a double-precision floating-point into a span of bytes.
     /// </summary>
@@ -648,7 +624,7 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, short)" />
     public static bool TryWriteBytes(Span<byte> destination, short value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a 16-bit signed integer into a span of bytes.
     /// </summary>
@@ -675,7 +651,7 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, int)" />
     public static bool TryWriteBytes(Span<byte> destination, int value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a 32-bit signed integer into a span of bytes.
     /// </summary>
@@ -702,7 +678,7 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, long)" />
     public static bool TryWriteBytes(Span<byte> destination, long value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a 64-bit signed integer into a span of bytes.
     /// </summary>
@@ -729,7 +705,7 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, float)" />
     public static bool TryWriteBytes(Span<byte> destination, float value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a single-precision floating-point into a span of bytes.
     /// </summary>
@@ -758,7 +734,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, ushort)" />
     [CLSCompliant(false)]
     public static bool TryWriteBytes(Span<byte> destination, ushort value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a 16-bit unsigned integer into a span of bytes.
     /// </summary>
@@ -789,7 +765,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, uint)" />
     [CLSCompliant(false)]
     public static bool TryWriteBytes(Span<byte> destination, uint value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a 32-bit unsigned integer into a span of bytes.
     /// </summary>
@@ -820,7 +796,7 @@ public static class BitConverter
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, ulong)" />
     [CLSCompliant(false)]
     public static bool TryWriteBytes(Span<byte> destination, ulong value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
-#else
+#elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <summary>
     /// Converts a 64-bit unsigned integer into a span of bytes.
     /// </summary>
@@ -841,7 +817,6 @@ public static class BitConverter
     /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
     [CLSCompliant(false)]
     public static bool TryWriteBytes(Span<byte> destination, ulong value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
-#endif
 #endif
 
 #if NET5_0_OR_GREATER

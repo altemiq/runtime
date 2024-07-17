@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.1;netstandard1.0</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
     <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -30,6 +30,10 @@
     <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
 
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) and $([MSBuild]::VersionGreaterThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.0')) ">
+    <PackageReference Include="System.Collections.Concurrent" />
+  </ItemGroup>
+
   <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' or ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0'))) ">
     <PackageReference Include="System.Memory" />
   </ItemGroup>
@@ -41,6 +45,10 @@
   <ItemGroup Condition=" '$(UseSpanParsing)' != 'true' ">
     <Compile Remove="**\*Span*.cs" />
     <Compile Remove="**\MemoryExtensions*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.1')) ">
+    <Compile Remove="IO\EchoStream.cs" />
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0')) or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20')) or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">

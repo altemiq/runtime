@@ -11,7 +11,7 @@ namespace Altemiq.Buffers.Binary;
 /// </summary>
 public static class BinaryPrimitives
 {
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="ulong" /> value.
     /// </summary>
@@ -36,7 +36,7 @@ public static class BinaryPrimitives
         => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="uint" /> value.
     /// </summary>
@@ -55,7 +55,7 @@ public static class BinaryPrimitives
     public static uint ReverseEndianness(uint value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="ushort" /> value.
     /// </summary>
@@ -72,7 +72,7 @@ public static class BinaryPrimitives
     public static ushort ReverseEndianness(ushort value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="sbyte"/> value, which effectively does nothing for a <see cref="sbyte"/>.
     /// </summary>
@@ -89,7 +89,7 @@ public static class BinaryPrimitives
     public static sbyte ReverseEndianness(sbyte value) => value;
 #endif
 
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="short" /> value.
     /// </summary>
@@ -103,7 +103,7 @@ public static class BinaryPrimitives
     public static short ReverseEndianness(short value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="int" /> value.
     /// </summary>
@@ -117,7 +117,7 @@ public static class BinaryPrimitives
     public static int ReverseEndianness(int value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="byte"/> value, which effectively does nothing for a <see cref="byte"/>.
     /// </summary>
@@ -132,7 +132,7 @@ public static class BinaryPrimitives
     public static byte ReverseEndianness(byte value) => value;
 #endif
 
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="long" /> value.
     /// </summary>
@@ -146,7 +146,7 @@ public static class BinaryPrimitives
     public static long ReverseEndianness(long value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
-#if !NETSTANDARD1_0
+#if NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
     /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian" />
     public static void WriteInt16BigEndian(Span<byte> destination, short value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(destination, value);
 
