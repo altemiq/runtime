@@ -90,6 +90,15 @@ public static class BinaryReaderExtensions
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static ulong ReadUInt64(this BinaryReader reader, ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadUInt64(), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
 
+#if NET5_0
+    /// <summary>
+    /// Reads a 2-byte floating point value from the current stream and advances the current position of the stream by two bytes.
+    /// </summary>
+    /// <param name="reader">The reader.</param>
+    /// <returns>A 2-byte floating point value read from the current stream.</returns>
+    public static Half ReadHalf(this BinaryReader reader) => BitConverter.Int16BitsToHalf(reader.ReadInt16());
+#endif
+
 #if NET5_0_OR_GREATER
     /// <summary>
     /// Reads an 2-byte floating point value from the current stream and advances the current position of the stream by two bytes.

@@ -15,6 +15,15 @@ public static class BinaryWriterExtensions
 {
     private static readonly FieldInfo EncodingFieldInfo = typeof(BinaryWriter).GetTypeInfo().DeclaredFields.Single(f => f.FieldType == typeof(System.Text.Encoding));
 
+#if NET5_0
+    /// <summary>
+    /// Writes a two-byte floating-point value to the current stream and advances the stream position by two bytes.
+    /// </summary>
+    /// <param name="writer">The writer.</param>
+    /// <param name="value">The two-byte floating-point value to write.</param>
+    public static void Write(this BinaryWriter writer, Half value) => writer.Write(BitConverter.HalfToInt16Bits(value));
+#endif
+
     /// <inheritdoc cref="BinaryWriter.Write(byte)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
@@ -198,7 +207,7 @@ public static class BinaryWriterExtensions
         => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
 #endif
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="BinaryWriter.Write(Half)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static void Write(this BinaryWriter writer, Half value, ByteOrder byteOrder)
@@ -207,6 +216,21 @@ public static class BinaryWriterExtensions
         {
             Span<byte> buffer = stackalloc byte[sizeof(short)];
             System.Buffers.Binary.BinaryPrimitives.WriteHalfBigEndian(buffer, value);
+            writer.BaseStream.Write(buffer);
+            return;
+        }
+
+        writer.Write(value);
+    }
+#elif NET5_0_OR_GREATER
+    /// <inheritdoc cref="Write(BinaryWriter, Half)" />
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static void Write(this BinaryWriter writer, Half value, ByteOrder byteOrder)
+    {
+        if (IsBigEndian(byteOrder))
+        {
+            Span<byte> buffer = stackalloc byte[sizeof(short)];
+            System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(buffer, BitConverter.HalfToInt16Bits(value));
             writer.BaseStream.Write(buffer);
             return;
         }

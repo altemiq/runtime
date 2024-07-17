@@ -42,12 +42,24 @@ public static class BitConverter
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytes(double value, ByteOrder byteOrder) => GetBytes(ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.GetBytes(Half)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytes(Half value) => System.BitConverter.GetBytes(value);
 
     /// <inheritdoc cref="System.BitConverter.GetBytes(Half)" />
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static byte[] GetBytes(Half value, ByteOrder byteOrder) => GetBytes(ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
+#elif NET5_0_OR_GREATER
+    /// <summary>
+    /// Returns the specified half-precision floating-point value as an array of bytes.
+    /// </summary>
+    /// <param name="value">The number to convert.</param>
+    /// <returns>An array of bytes with length 2.</returns>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static byte[] GetBytes(Half value) => System.BitConverter.GetBytes(HalfToUInt16Bits(value));
+
+    /// <inheritdoc cref="GetBytes(Half)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytes(Half value, ByteOrder byteOrder) => GetBytes(ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
 #endif
@@ -227,7 +239,7 @@ public static class BitConverter
     public static double ToDouble(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToDouble(value), byteOrder, ReverseEndianness);
 #endif
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.ToHalf(byte[], int)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static Half ToHalf(byte[] value, int startIndex) => System.BitConverter.ToHalf(value, startIndex);
@@ -241,6 +253,31 @@ public static class BitConverter
     public static Half ToHalf(ReadOnlySpan<byte> value) => System.BitConverter.ToHalf(value);
 
     /// <inheritdoc cref="System.BitConverter.ToHalf(ReadOnlySpan{byte})" />
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static Half ToHalf(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToHalf(value), byteOrder, ReverseEndianness);
+#elif NET5_0_OR_GREATER
+    /// <summary>
+    /// Returns a half-precision floating point number converted from two bytes at a specified position in a byte array.
+    /// </summary>
+    /// <param name="value">An array of bytes that includes the two bytes to convert.</param>
+    /// <param name="startIndex">The starting position within <paramref name="value"/>.</param>
+    /// <returns>A half-precision floating point number formed by two bytes beginning at <paramref name="startIndex"/>.</returns>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static Half ToHalf(byte[] value, int startIndex) => UInt16BitsToHalf(System.BitConverter.ToUInt16(value, startIndex));
+
+    /// <inheritdoc cref="ToHalf(byte[], int)" />
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static Half ToHalf(byte[] value, int startIndex, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToHalf(value, startIndex), byteOrder, ReverseEndianness);
+
+    /// <summary>
+    /// Converts a read-only byte span into a half-precision floating-point value.
+    /// </summary>
+    /// <param name="value">A read-only span containing the bytes to convert.</param>
+    /// <returns>A half-precision floating-point value that represents the converted bytes.</returns>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static Half ToHalf(ReadOnlySpan<byte> value) => UInt16BitsToHalf(System.BitConverter.ToUInt16(value));
+
+    /// <inheritdoc cref="ToHalf(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static Half ToHalf(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ReverseEndiannessIfRequired(ToHalf(value), byteOrder, ReverseEndianness);
 #endif
@@ -610,11 +647,22 @@ public static class BitConverter
     public static bool TryWriteBytes(Span<byte> destination, double value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
 #endif
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, Half)" />
     public static bool TryWriteBytes(Span<byte> destination, Half value) => System.BitConverter.TryWriteBytes(destination, value);
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, Half)" />
+    public static bool TryWriteBytes(Span<byte> destination, Half value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
+#elif NET5_0_OR_GREATER
+    /// <summary>
+    /// Converts a half-precision floating-point value into a span of bytes.
+    /// </summary>
+    /// <param name="destination">When this method returns, the bytes representing the converted half-precision floating-point value.</param>
+    /// <param name="value">The half-precision floating-point value to convert.</param>
+    /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
+    public static bool TryWriteBytes(Span<byte> destination, Half value) => System.BitConverter.TryWriteBytes(destination, HalfToUInt16Bits(value));
+
+    /// <inheritdoc cref="TryWriteBytes(Span{byte}, Half)" />
     public static bool TryWriteBytes(Span<byte> destination, Half value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
 #endif
 
@@ -819,13 +867,42 @@ public static class BitConverter
     public static bool TryWriteBytes(Span<byte> destination, ulong value, ByteOrder byteOrder) => TryWriteBytes(destination, ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
 #endif
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.HalfToInt16Bits(Half)" />
     public static short HalfToInt16Bits(Half value) => System.BitConverter.HalfToInt16Bits(value);
+#elif NET5_0_OR_GREATER
+    /// <summary>
+    /// Converts a half-precision floating-point value into a 16-bit integer.
+    /// </summary>
+    /// <param name="value">The half-precision floating-point value to convert.</param>
+    /// <returns>A 16-bit integer representing the converted half-precision floating-point value.</returns>
+    public static short HalfToInt16Bits(Half value)
+    {
+        unsafe
+        {
+            return *(short*)&value;
+        }
+    }
+#endif
 
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.HalfToUInt16Bits(Half)" />
     [CLSCompliant(false)]
     public static ushort HalfToUInt16Bits(Half value) => System.BitConverter.HalfToUInt16Bits(value);
+#elif NET5_0_OR_GREATER
+    /// <summary>
+    /// Converts a half-precision floating-point value into a 16-bit unsigned integer.
+    /// </summary>
+    /// <param name="value">The half-precision floating-point value to convert.</param>
+    /// <returns>A 16-bit unsigned integer representing the converted half-precision floating-point value.</returns>
+    [CLSCompliant(false)]
+    public static ushort HalfToUInt16Bits(Half value)
+    {
+        unsafe
+        {
+            return *(ushort*)&value;
+        }
+    }
 #endif
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
@@ -889,13 +966,42 @@ public static class BitConverter
     }
 #endif
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.Int16BitsToHalf" />
     public static Half Int16BitsToHalf(short value) => System.BitConverter.Int16BitsToHalf(value);
+#elif NET5_0_OR_GREATER
+    /// <summary>
+    /// Reinterprets the specified 16-bit signed integer value as a half-precision floating-point value.
+    /// </summary>
+    /// <param name="value">The 16-bit signed integer value to convert.</param>
+    /// <returns>A half-precision floating-point value that represents the converted integer.</returns>
+    public static Half Int16BitsToHalf(short value)
+    {
+        unsafe
+        {
+            return *(Half*)&value;
+        }
+    }
+#endif
 
+#if NET6_0_OR_GREATER
     /// <inheritdoc cref="System.BitConverter.UInt16BitsToHalf" />
     [CLSCompliant(false)]
     public static Half UInt16BitsToHalf(ushort value) => System.BitConverter.UInt16BitsToHalf(value);
+#elif NET5_0_OR_GREATER
+    /// <summary>
+    /// Reinterprets the specified 16-bit unsigned integer value as a half-precision floating-point value.
+    /// </summary>
+    /// <param name="value">The 16-bit unsigned integer value to convert.</param>
+    /// <returns>A half-precision floating-point value that represents the converted integer.</returns>
+    [CLSCompliant(false)]
+    public static Half UInt16BitsToHalf(ushort value)
+    {
+        unsafe
+        {
+            return *(Half*)&value;
+        }
+    }
 #endif
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER

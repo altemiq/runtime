@@ -14,9 +14,21 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <GlobalPackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
   </ItemGroup>
+
+  <Choose>
+    <When Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462')) ">
+      <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
+        <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+      </ItemGroup>
+    </When>
+    <When Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.1')) ">
+      <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
+        <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+      </ItemGroup>
+    </When>
+  </Choose>
 
   <ItemGroup Label="Analyzers" Condition=" '$(IsTestProject)' == 'true' ">
     <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.32.0" />
