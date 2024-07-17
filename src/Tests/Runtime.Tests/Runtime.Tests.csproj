@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core.Runtime\Core.Runtime.csproj" />
+    <ProjectReference Include="..\..\Runtime\Runtime.csproj" />
     <ProjectReference Include="..\Dummy\Dummy.csproj">
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
     </ProjectReference>

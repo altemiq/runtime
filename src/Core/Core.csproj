@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.0</TargetFrameworks>
+    <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
+    <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PolySharpUsePublicAccessibilityForGeneratedTypes>true</PolySharpUsePublicAccessibilityForGeneratedTypes>
   </PropertyGroup>
@@ -87,12 +89,11 @@
   </Choose>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj"
+    <ProjectReference Include="..\OneOf.CodeGeneration\OneOf.CodeGeneration.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false"
-                      SkipGetTargetFrameworkProperties="true">
-      <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
-    </ProjectReference>
+                      SkipGetTargetFrameworkProperties="true"
+                      SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
   <ItemGroup>

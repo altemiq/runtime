@@ -3,10 +3,8 @@
   <PropertyGroup>
     <Company>Altemiq</Company>
     <RootNamespace>$(Company).$(MSBuildProjectName)</RootNamespace>
-    <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
     <RootNamespace Condition="$(RootNamespace.Contains('.Tests'))">$(RootNamespace.Replace('.Tests', ''))</RootNamespace>
     <AssemblyName>$(Company).$(MSBuildProjectName)</AssemblyName>
-    <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

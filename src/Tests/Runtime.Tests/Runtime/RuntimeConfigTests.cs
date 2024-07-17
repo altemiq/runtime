@@ -21,7 +21,11 @@ public class RuntimeConfigTests
 
         static string NormalizeLineEndings(string input)
         {
+#if NET6_0_OR_GREATER
+            return input.ReplaceLineEndings();
+#else
             return input.Replace("\r\n", Environment.NewLine);
+#endif
         }
     }
 }

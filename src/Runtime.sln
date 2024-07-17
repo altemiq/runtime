@@ -29,9 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02FBFB2A
 		Tests\xunit.runner.net.json = Tests\xunit.runner.net.json
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "Tests\Core.Tests\Core.Tests.csproj", "{5546F610-BF8A-4E45-9E56-7BE8A44F479F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests\Tests.csproj", "{5546F610-BF8A-4E45-9E56-7BE8A44F479F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.OneOf.CodeGeneration", "Core.OneOf.CodeGeneration\Core.OneOf.CodeGeneration.csproj", "{0BAE6FF3-3EC4-47A9-BDA7-BF4187BF51D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneOf.CodeGeneration", "OneOf.CodeGeneration\OneOf.CodeGeneration.csproj", "{0BAE6FF3-3EC4-47A9-BDA7-BF4187BF51D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{4C61AF75-C30B-490B-AA21-C27F3DDA543F}"
 EndProject
@@ -41,9 +41,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		..\.github\workflows\docs.yml = ..\.github\workflows\docs.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Runtime", "Core.Runtime\Core.Runtime.csproj", "{BA1D383B-96DD-4C84-9BAC-3354469EAD04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runtime", "Runtime\Runtime.csproj", "{BA1D383B-96DD-4C84-9BAC-3354469EAD04}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Runtime.Tests", "Tests\Core.Runtime.Tests\Core.Runtime.Tests.csproj", "{22B5CC1C-4BAA-4364-8C89-73C8C467C178}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runtime.Tests", "Tests\Runtime.Tests\Runtime.Tests.csproj", "{22B5CC1C-4BAA-4364-8C89-73C8C467C178}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dummy", "Tests\Dummy\Dummy.csproj", "{1575918B-9118-4EAE-81C0-0DF4BCBE8B7F}"
 EndProject
