@@ -79,6 +79,8 @@ public class SeekableStream : Stream
         {
             this.stream.Close();
         }
+
+        base.Close();
     }
 
     /// <inheritdoc/>

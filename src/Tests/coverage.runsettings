@@ -8,8 +8,9 @@
             <!-- Match assembly file paths: -->
             <ModulePaths>
               <Exclude>
-                <ModulePath>xunit.*</ModulePath>
                 <ModulePath>\.Tests\.</ModulePath>
+                <ModulePath>GitHubActionsTestLogger.*</ModulePath>
+                <ModulePath>xunit.*</ModulePath>
               </Exclude>
               <Include></Include>
             </ModulePaths>

@@ -80,9 +80,10 @@ public class DisposableStream : Stream
     /// <inheritdoc/>
     public override void Close()
     {
-        if (this.closeArchive && this.archive is not null)
+        base.Close();
+        if (this.closeArchive && this.archive is IDisposable disposable)
         {
-            this.archive.Dispose();
+            disposable.Dispose();
         }
     }
 #endif
@@ -169,22 +170,31 @@ public class DisposableStream : Stream
     /// <inheritdoc/>
     public override async ValueTask DisposeAsync()
     {
-        if (this.closeArchive && this.archive is not null)
+        if (this.closeArchive)
         {
-            this.archive.Dispose();
+            if (this.archive is IAsyncDisposable asyncDisposable)
+            {
+                await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+            }
+            else if (this.archive is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
 
-        await base.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
+        await base.DisposeAsync().ConfigureAwait(false);
+#pragma warning disable S3971 // "GC.SuppressFinalize" should not be called
         GC.SuppressFinalize(this);
+#pragma warning restore S3971 // "GC.SuppressFinalize" should not be called
     }
 #endif
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        if (disposing && this.closeArchive && this.archive is not null)
+        if (disposing && this.closeArchive && this.archive is IDisposable disposable)
         {
-            this.archive.Dispose();
+            disposable.Dispose();
         }
 
         base.Dispose(disposing);

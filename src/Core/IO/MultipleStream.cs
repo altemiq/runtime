@@ -89,6 +89,8 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
             stream.Flush();
             stream.Close();
         }
+
+        base.Close();
     }
 #endif
 

@@ -91,6 +91,10 @@ public class EchoStream : Stream
 
         // release any waiting writes
         this.buffers.CompleteAdding();
+
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
+        base.Close();
+#endif
     }
 
     /// <inheritdoc/>

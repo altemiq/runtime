@@ -55,9 +55,9 @@ public class SeekableStream : IO.SeekableStream
     public override void Close()
     {
         base.Close();
-        if (this.closeArchive && this.archive is not null)
+        if (this.closeArchive && this.archive is IDisposable disposable)
         {
-            this.archive.Dispose();
+            disposable.Dispose();
         }
     }
 #endif
