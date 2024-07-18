@@ -53,6 +53,6 @@ public static class AssemblyExtensions
 
         private readonly T value = value;
 
-        public bool To(T? value) => value is not null && check(this.value, value);
+        public bool To(T? value) => value is { } t && check(this.value, t);
     }
 }

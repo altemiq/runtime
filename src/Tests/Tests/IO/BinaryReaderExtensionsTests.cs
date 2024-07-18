@@ -107,8 +107,8 @@ public class BinaryReaderExtensionsTests
         using var stream = new MemoryStream(buffer);
         stream.Position = 0;
 
-        var reader = encoding is not null
-            ? new BinaryReader(stream, System.Text.Encoding.GetEncoding(encoding))
+        var reader = encoding is { } e
+            ? new BinaryReader(stream, System.Text.Encoding.GetEncoding(e))
             : new BinaryReader(stream);
         using (reader)
         {

@@ -63,8 +63,8 @@ public static class Resolve
 
             static string? FindPath(string? basePath, string? file)
             {
-                return basePath is not null && file is not null
-                    ? Extensions.Select(extension => Path.Combine(basePath, file + extension)).FirstOrDefault(File.Exists)
+                return basePath is { } bp && file is { } f
+                    ? Extensions.Select(extension => Path.Combine(bp, f + extension)).FirstOrDefault(File.Exists)
                     : default;
             }
         }

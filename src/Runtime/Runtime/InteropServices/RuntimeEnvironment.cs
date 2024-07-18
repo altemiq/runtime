@@ -162,7 +162,7 @@ public static class RuntimeEnvironment
                 var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
                 while (true)
                 {
-                    if (currentFrameworkWithProfile is not null && frameworkReducer.GetNearest(currentFrameworkWithProfile, availableFrameworks) is { } nearestFrameworkWithProfile)
+                    if (currentFrameworkWithProfile is { } framework && frameworkReducer.GetNearest(framework, availableFrameworks) is { } nearestFrameworkWithProfile)
                     {
                         yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
                         _ = availableFrameworks.Remove(nearestFrameworkWithProfile);
@@ -295,7 +295,7 @@ public static class RuntimeEnvironment
     /// <param name="path">The path to check.</param>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
-    public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is not null && !IsAlreadyInAppContext(path, NativeDllSearchDirectories) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, path);
+    public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is { } p && !IsAlreadyInAppContext(p, NativeDllSearchDirectories) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, p);
 
     /// <summary>
     /// Returns whether the specified path should be added.
@@ -310,7 +310,7 @@ public static class RuntimeEnvironment
     /// <param name="path">The path to check.</param>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
-    public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is not null && !IsAlreadyInAppContext(path, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, path);
+    public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is { } p && !IsAlreadyInAppContext(p, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, p);
 #else
     /// <summary>
     /// Adds the runtime native directory to the path variable if required.
@@ -370,14 +370,14 @@ public static class RuntimeEnvironment
     /// </summary>
     /// <param name="path">The path to check.</param>
     /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
-    public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is not null && !IsAlreadyInAppContext(path, NativeDllSearchDirectories) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, path);
+    public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is { } p && !IsAlreadyInAppContext(p, NativeDllSearchDirectories) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, p);
 
     /// <summary>
     /// Returns whether the specified path should be added.
     /// </summary>
     /// <param name="path">The path to check.</param>
     /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
-    public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is not null && !IsAlreadyInAppContext(path, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, path);
+    public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is { } p && !IsAlreadyInAppContext(p, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, p);
 #endif
 
     /// <summary>
@@ -450,7 +450,11 @@ public static class RuntimeEnvironment
         if (RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is { } runtimesDirectory)
         {
             // get the rids
-            if (Directory.GetDirectories(runtimesDirectory).Select(Path.GetFileName).Where(fileName => fileName is not null).Cast<string>().ToList() is { Count: not 0 } availableRids)
+            if (Directory.GetDirectories(runtimesDirectory)
+                .Select(Path.GetFileName)
+                .Where(fileName => fileName is not null)
+                .Cast<string>()
+                .ToList() is { Count: not 0 } availableRids)
             {
                 if (GetRuntimeRids().Intersect(availableRids, GetComparer()).ToList() is { Capacity: not 0 } rids)
                 {

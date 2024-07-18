@@ -90,9 +90,9 @@ public class SeekableStream : IO.SeekableStream
     {
         base.Dispose(disposing);
 
-        if (disposing && this.closeArchive && this.archive is not null)
+        if (disposing && this.closeArchive && this.archive is IDisposable disposable)
         {
-            this.archive.Dispose();
+            disposable.Dispose();
         }
     }
 }

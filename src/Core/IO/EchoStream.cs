@@ -168,10 +168,10 @@ public class EchoStream : Stream
                     return -1;
                 }
 
-                if (this.buffers.TryTake(out this.currentBuffer, this.ReadTimeout) && this.currentBuffer is not null)
+                if (this.buffers.TryTake(out this.currentBuffer, this.ReadTimeout) && this.currentBuffer is { } b)
                 {
                     this.offset = 0;
-                    this.count = this.currentBuffer.Length;
+                    this.count = b.Length;
                 }
                 else
                 {
@@ -195,10 +195,10 @@ public class EchoStream : Stream
             {
                 if (this.count is 0)
                 {
-                    if (this.buffers.TryTake(out this.currentBuffer, this.ReadTimeout) && this.currentBuffer is not null)
+                    if (this.buffers.TryTake(out this.currentBuffer, this.ReadTimeout) && this.currentBuffer is { } cb)
                     {
                         this.offset = 0;
-                        this.count = this.currentBuffer.Length;
+                        this.count = cb.Length;
                     }
                     else
                     {
@@ -207,9 +207,9 @@ public class EchoStream : Stream
                 }
 
                 var bytesToCopy = Math.Min(count, this.count);
-                if (this.currentBuffer is not null)
+                if (this.currentBuffer is { } b)
                 {
-                    Buffer.BlockCopy(this.currentBuffer, this.offset, buffer, offset, bytesToCopy);
+                    Buffer.BlockCopy(b, this.offset, buffer, offset, bytesToCopy);
                 }
 
                 this.offset += bytesToCopy;
