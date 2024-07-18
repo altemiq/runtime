@@ -35,7 +35,6 @@
   <ItemGroup>
     <AdditionalFiles Include="$([MSBuild]::GetPathOfFileAbove(stylecop.json))" />
     <None Include="$([MSBuild]::GetPathOfFileAbove('.editorconfig'))" />
-    <None Include="$([MSBuild]::GetPathOfFileAbove('.globalconfig'))" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -7,7 +7,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B6EEB70-F0EC-418F-92E4-67849BFBDD46}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		.globalconfig = .globalconfig
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
@@ -49,7 +48,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dummy", "Tests\Dummy\Dummy.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IO.Compression", "IO.Compression\IO.Compression.csproj", "{F1841F2B-63C5-4E1A-B99F-67B67DA4E306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO.Compression.Tests", "Tests\IO.Compression.Tests\IO.Compression.Tests.csproj", "{D40E0AE1-0EE6-4138-BDD3-EDF77E7E58E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IO.Compression.Tests", "Tests\IO.Compression.Tests\IO.Compression.Tests.csproj", "{D40E0AE1-0EE6-4138-BDD3-EDF77E7E58E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

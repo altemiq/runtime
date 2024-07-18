@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup Label="Coding Standards">
-    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.4" />
+    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.5" />
   </ItemGroup>
 
   <ItemGroup Label="Build">
-    <GlobalPackageReference Include="$(Company).SemanticVersioning.MSBuild" Version="2.1.6" />
+    <GlobalPackageReference Include="Altemiq.SemanticVersioning.MSBuild" Version="2.1.6" />
     <GlobalPackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.4" />
     <GlobalPackageReference Include="DotNet.ReproducibleBuilds.Isolated" Version="1.2.4" />
     <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' " />
