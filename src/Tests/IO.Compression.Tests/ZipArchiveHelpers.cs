@@ -2,7 +2,7 @@
 
 internal class ZipArchiveHelpers
 {
-    public class ZipArchiveShim(Stream stream) : System.IO.Compression.ZipArchive(stream)
+    public class ZipArchiveShim(Stream stream, System.IO.Compression.ZipArchiveMode mode) : System.IO.Compression.ZipArchive(stream, mode)
     {
         public bool IsDisposed { get; private set; }
 
@@ -13,7 +13,7 @@ internal class ZipArchiveHelpers
         }
     }
 
-    public static ZipArchiveShim CreateArchiveShim(bool fillData = false)
+    public static ZipArchiveShim CreateArchiveShim(System.IO.Compression.ZipArchiveMode mode = System.IO.Compression.ZipArchiveMode.Read, bool fillData = false)
     {
         var memoryStream = new MemoryStream();
 
@@ -32,6 +32,6 @@ internal class ZipArchiveHelpers
 
         memoryStream.Position = 0;
 
-        return new ZipArchiveShim(memoryStream);
+        return new ZipArchiveShim(memoryStream, mode);
     }
 }
