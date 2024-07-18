@@ -1,9 +1,6 @@
 <Project>
 
   <PropertyGroup>
-    <Company>Altemiq</Company>
-    <RootNamespace>$(Company).$(MSBuildProjectName)</RootNamespace>
-    <AssemblyName>$(Company).$(MSBuildProjectName)</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <VersionPrefix Condition="'$(VersionPrefix)' == ''">1.0</VersionPrefix>
     
@@ -16,9 +13,9 @@
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ProduceReferenceAssembly Condition=" '$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))' == '.NETStandard' or '$([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework)))' == '.NETFramework' ">true</ProduceReferenceAssembly>
 
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <NoWarn>$(NoWarn);NU1902;NU1903;NU1904</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="Signing" Condition=" '$(Configuration)' != '' AND '$(Configuration)' != 'Debug' ">
@@ -33,17 +30,6 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
     <AnalysisMode>Recommended</AnalysisMode>
-  </PropertyGroup>
-
-  <PropertyGroup Label="Build">
-    <!-- Enable Build Acceleration in Visual Studio. -->
-    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
-
-    <!--
-      If you target a framework earlier than .NET 5 (including .NET Framework and .NET Standard), you should set `ProduceReferenceAssembly` to true in order to speed incremental builds.
-      If you multi-target and any target is before .NET 5, you need this. Even if you target .NET 5 or later, having this property is fine.
-    -->
-    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <ItemGroup>

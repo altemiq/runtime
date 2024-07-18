@@ -21,11 +21,8 @@
     <GlobalPackageReference Include="PolySharp" Version="1.14.1" />
   </ItemGroup>
 
-  <ItemGroup Label="Analyzers">
-    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.160" />
-    <GlobalPackageReference Include="Roslynator.Analyzers" Version="4.12.4" />
-    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="9.28.0.94264" />
-    <GlobalPackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.556" />
+  <ItemGroup Label="Coding Standards">
+    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.4" />
   </ItemGroup>
 
   <ItemGroup Label="Build">

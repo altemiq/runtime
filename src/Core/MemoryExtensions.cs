@@ -487,9 +487,9 @@ public static partial class MemoryExtensions
         static bool TryParse(ReadOnlySpan<char> span, out T value)
         {
 #if NET6_0_OR_GREATER
-            return Enum.TryParse(span, out value);
+            return Enum.TryParse(span, ignoreCase: false, out value);
 #else
-            return Enum.TryParse(span.ToString(), out value);
+            return Enum.TryParse(span.ToString(), ignoreCase: false, out value);
 #endif
         }
     }

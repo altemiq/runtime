@@ -37,7 +37,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     [CLSCompliant(false)]
     public static void ThrowIfNegativeOrZero(sbyte value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
     {
-        const short Zero = (sbyte)0;
+        const short Zero = 0;
         if (value <= Zero)
         {
             ThrowNegativeOrZero(value, paramName);
@@ -52,7 +52,7 @@ public partial class ArgumentOutOfRangeExceptionEx
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
     public static void ThrowIfNegativeOrZero(short value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
     {
-        const short Zero = (short)0;
+        const short Zero = 0;
         if (value <= Zero)
         {
             ThrowNegativeOrZero(value, paramName);

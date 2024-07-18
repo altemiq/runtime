@@ -11,6 +11,7 @@ namespace Altemiq.IO.Compression;
 /// </summary>
 public class DisposableStream : Stream
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = $"This is disposed by {nameof(archive)}")]
     private readonly Stream stream;
 
     private readonly System.IO.Compression.ZipArchive archive;

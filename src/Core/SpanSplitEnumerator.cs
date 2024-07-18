@@ -7,8 +7,7 @@
 namespace Altemiq;
 
 /// <summary>
-/// <see cref="SpanSplitEnumerator{T}"/> allows for enumeration of each element within a <see cref="ReadOnlySpan{T}"/>
-/// that has been split using a provided separator.
+/// <see cref="SpanSplitEnumerator{T}"/> allows for enumeration of each element within a <see cref="ReadOnlySpan{T}"/> that has been split using a provided separator.
 /// </summary>
 /// <typeparam name="T">The type of element in the span.</typeparam>
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Auto)]

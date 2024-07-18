@@ -13,6 +13,7 @@ namespace Altemiq.Runtime;
 /// <remarks>
 /// Creates new runtime config - overwrites existing file on Save if any.
 /// </remarks>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("ApiDesign", "RS0030:Do not use banned APIs", Justification = "This is an implementation detail, and needs to be cross framework")]
 internal sealed class RuntimeConfig(string path)
 {
     private readonly List<Framework> frameworks = [];

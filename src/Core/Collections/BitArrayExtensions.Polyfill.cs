@@ -36,24 +36,24 @@ public static partial class BitArrayExtensions
 
         if (array is int[] intArray)
         {
-            Div32Rem(bitArray.Length, out var extraBits);
+            _ = Div32Rem(bitArray.Length, out var extraBits);
 
-            var m_array = (int[])ArrayFieldInfo.GetValue(bitArray);
+            var arrayFromBitArray = (int[])ArrayFieldInfo.GetValue(bitArray);
 
-            if (extraBits == 0)
+            if (extraBits is 0)
             {
                 // we have perfect bit alignment, no need to sanitize, just copy
-                System.Array.Copy(m_array, 0, intArray, index, m_array.Length);
+                System.Array.Copy(arrayFromBitArray, 0, intArray, index, arrayFromBitArray.Length);
             }
             else
             {
-                int last = (bitArray.Length - 1) >> BitShiftPerInt32;
+                var last = (bitArray.Length - 1) >> BitShiftPerInt32;
 
                 // do not copy the last int, as it is not completely used
-                System.Array.Copy(m_array, 0, intArray, index, last);
+                System.Array.Copy(arrayFromBitArray, 0, intArray, index, last);
 
                 // the last int needs to be masked
-                intArray[index + last] = m_array[last] & unchecked((1 << extraBits) - 1);
+                intArray[index + last] = arrayFromBitArray[last] & unchecked((1 << extraBits) - 1);
             }
         }
         else if (array is byte[] byteArray)
@@ -84,17 +84,17 @@ public static partial class BitArrayExtensions
         }
         else if (array is bool[] boolArray)
         {
-            if (array.Length - index < bitArray.Length)
+            if (boolArray.Length - index < bitArray.Length)
             {
                 throw new ArgumentException(Properties.Resources.InvalidOffLen, nameof(index));
             }
 
-            var m_array = (int[])ArrayFieldInfo.GetValue(bitArray);
+            var arrayFromBitArray = (int[])ArrayFieldInfo.GetValue(bitArray);
 
             for (var i = 0U; i < (uint)bitArray.Length; i++)
             {
-                var elementIndex = Div32Rem((int)i, out int extraBits);
-                boolArray[(uint)index + i] = ((m_array[elementIndex] >> extraBits) & 0x00000001) is not 0;
+                var elementIndex = Div32Rem((int)i, out var extraBits);
+                boolArray[(uint)index + i] = ((arrayFromBitArray[elementIndex] >> extraBits) & 0x00000001) is not 0;
             }
         }
         else

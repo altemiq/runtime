@@ -10,7 +10,7 @@
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
     <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" />
     <PackageVersion Include="System.Text.Json" Version="6.0.9" />
-    <PackageVersion Include="xunit" Version="2.8.0" />
+    <PackageVersion Include="xunit" Version="2.9.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
@@ -31,7 +31,7 @@
   </Choose>
 
   <ItemGroup Label="Analyzers" Condition=" '$(IsTestProject)' == 'true' ">
-    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.32.0" />
+    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.33.0" />
   </ItemGroup>
 
   <ItemGroup Label="Reference Assemblies" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">

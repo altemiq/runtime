@@ -248,7 +248,10 @@ public class EchoStream : Stream
     {
         if (disposing && !this.buffers.IsCompleted)
         {
-            this.buffers.CompleteAdding();
+            using (this.buffers)
+            {
+                this.buffers.CompleteAdding();
+            }
         }
 
         base.Dispose(disposing);
