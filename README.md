@@ -81,7 +81,7 @@ var color = backgroundColor.Match(
 this.window.BackgroundColor = color;
 ```
 
-There is also a .Switch method, for when you aren't returning a value:
+There is also a `.Switch` method, for when you aren't returning a value:
 
 ``` csharp
 OneOf<string, DateTime> dateValue = ...;
@@ -161,9 +161,9 @@ list.IndexOfClosest(7D);
 ```
 
 ## `QuickSort`
-This performs a quick sort of a list with an `IComparable` implementation or a `Comparer`.
+This performs a quick sort of a list with an [`IComparable`](https://learn.microsoft.com/en-us/dotnet/api/system.icomparable) implementation or a [`Comparison`](https://learn.microsoft.com/en-us/dotnet/api/system.comparison-1).
 
-```
+``` csharp
 var first = new SimpleStruct(0, 0D);
 var second = new SimpleStruct(1, 1D);
 var third = new SimpleStruct(2, 2D);
@@ -178,3 +178,80 @@ var list = new List<SimpleStruct>
 
 list.QuickSort();
 ```
+
+# Streams
+
+## `EchoStream`
+
+This class echos the data written in to be able to be read. This can be useful for reading data that only writes to a stream.
+
+``` csharp
+var stream = new EchoStream();
+
+Task.Run(() =>
+{
+    stream.Write(/* data to write */);
+});
+
+Task.Run(() =>
+{
+    stream.Read(/* data read */);
+});
+```
+
+## `MultipleStream`
+
+This class have multiple backing streams, represented as a single stream. This can be useful to attempt to allow writing to streams in a backward sense when we can only seek forwards.
+
+This is highlighted by data formats that have a header than contains information about the data in the file, such as the number of records.
+Generally these are written at the end of the process, once the number of records is known. For forwards only streams, this is not possible.
+
+``` csharp
+var stream = new MultipleStream();
+stream.SwitchTo("header");
+// write uninitialized header.
+
+stream.SwitchTo("data");
+// write data
+
+stream.SwitchTo("header");
+// write updated header
+
+stream.CopyTo(/* output stream */);
+```
+
+### `MultipleMemoryStream`
+
+Implementation of `MultipleStream` backed by `MemoryStream` instances.
+
+## `SeekableStream`
+
+This class allows forwards only seeking through a stream that does not allow seeking.
+This is done by reading the data until the required position is reached.
+
+``` csharp
+var stream = new SeekableStream(/* stream that is not seekable */);
+
+// seek should not throw
+stream.Seek(123);
+```
+
+# Bit Manipulation
+
+## `BitConverter`
+
+Replica of [`System.BitConverter`](https://learn.microsoft.com/en-us/dotnet/api/system.bitconverter) with all types allowed for, and the ability to specify the byte ordering.
+
+## `BinaryPrimitives`
+
+Replica of [`System.Buffers.Binary.BinaryPrimitives`](https://learn.microsoft.com/en-us/dotnet/api/system.buffers.binary.binaryprimitives) with all types allow for.
+
+# NanoId
+
+Implementation of [nanoid](https://github.com/ai/nanoid).
+
+# Security
+
+## Random
+
+Implementation of [`System.Random`](https://learn.microsoft.com/en-us/dotnet/api/system.random) using [`System.Security.Cryptography.RandomNumberGenerator`](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator) as the generator.

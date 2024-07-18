@@ -7,11 +7,11 @@ https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Plat
 
 ## Reflection
 
-These are designed to the classes in `System.Reflection`
+These are designed to the classes in [`System.Reflection`](https://learn.microsoft.com/en-us/dotnet/api/system.reflection)
 
 ### Assembly Extensions
 
-These provide extensions to `System.Reflection.Assembly` and `System.Reflrection.AssemblyName`
+These provide extensions to [`System.Reflection.Assembly`](https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assembly) and [`System.Reflrection.AssemblyName`](https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assemblyname)
 
 #### IsCompatible
 
@@ -28,7 +28,7 @@ var isCompatible = assembly.ToCompatible(requiredAssemblyName);
 
 ### Interop Services
 
-These are designed to augment the classes in `System.Runtime.InteropServices`
+These are designed to augment the classes in [`System.Runtime.InteropServices`](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.interopservices)
 
 #### Runtime Information
 

@@ -9,7 +9,7 @@ namespace Altemiq.IO;
 /// <summary>
 /// A <see cref="MultipleStream"/> backed by <see cref="MemoryStream"/> instances.
 /// </summary>
-[System.Runtime.CompilerServices.TypeForwardedFrom("Altavec.IO")]
+[System.Runtime.CompilerServices.TypeForwardedFrom("Altemiq.IO")]
 public class MultipleMemoryStream : MultipleStream
 {
     /// <summary>

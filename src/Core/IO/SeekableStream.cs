@@ -9,7 +9,7 @@ namespace Altemiq.IO;
 /// <summary>
 /// A wrapper that makes a <see cref="Stream"/> seekable, when <see cref="Stream.CanSeek"/> is <see langword="false"/>.
 /// </summary>
-[System.Runtime.CompilerServices.TypeForwardedFrom("Altavec.IO")]
+[System.Runtime.CompilerServices.TypeForwardedFrom("Altemiq.IO")]
 public class SeekableStream : Stream
 {
     private readonly Stream stream;
