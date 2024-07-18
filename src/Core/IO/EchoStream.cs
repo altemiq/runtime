@@ -159,13 +159,7 @@ public class EchoStream : Stream
             {
                 if (this.closed)
                 {
-                    if (!this.finalZero)
-                    {
-                        this.finalZero = true;
-                        return 0;
-                    }
-
-                    return -1;
+                    return SetFinalZero();
                 }
 
                 if (this.buffers.TryTake(out this.currentBuffer, this.ReadTimeout) && this.currentBuffer is { } b)
@@ -177,13 +171,7 @@ public class EchoStream : Stream
                 {
                     if (this.closed)
                     {
-                        if (!this.finalZero)
-                        {
-                            this.finalZero = true;
-                            return 0;
-                        }
-
-                        return -1;
+                        return SetFinalZero();
                     }
 
                     return 0;
@@ -222,6 +210,17 @@ public class EchoStream : Stream
 
             this.position += returnBytes;
             return returnBytes;
+        }
+
+        int SetFinalZero()
+        {
+            if (!this.finalZero)
+            {
+                this.finalZero = true;
+                return 0;
+            }
+
+            return -1;
         }
     }
 
