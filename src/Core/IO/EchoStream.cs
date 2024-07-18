@@ -9,6 +9,7 @@ namespace Altemiq.IO;
 /// <summary>
 /// A stream that echos writes back to read.
 /// </summary>
+[System.Runtime.CompilerServices.TypeForwardedFrom("Altavec.IO")]
 public class EchoStream : Stream
 {
     private readonly object lockObject = new();
