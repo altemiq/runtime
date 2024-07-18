@@ -183,7 +183,7 @@ public class SeekableStream : Stream
         {
             SeekOrigin.Begin => offset,
             SeekOrigin.Current => this.position + offset,
-            SeekOrigin.End => this.Length - offset,
+            SeekOrigin.End => this.Length + offset,
             _ => throw new ArgumentOutOfRangeException(nameof(origin)),
         };
 
