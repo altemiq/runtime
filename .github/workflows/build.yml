@@ -50,22 +50,16 @@ jobs:
         --logger GitHubActions
 
     - name: Report Generator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5
+      uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
         reports: '${{ github.workspace }}/coverage/results/*/*.cobertura.xml'
         targetdir: '${{ github.workspace }}/coverage/reports'
         reporttypes: 'HtmlInline;Cobertura;MarkdownSummaryGithub'
         verbosity: 'Verbose'
 
-    - name: Test Results - Windows
-      if: runner.os == 'Windows'
-      run: |
-        Get-Content '${{ github.workspace }}/coverage/reports/SummaryGithub.md' >> $env:GITHUB_STEP_SUMMARY
-
-    - name: Test Results - Linux
-      if: runner.os != 'Windows'
-      run: |
-        cat '${{ github.workspace }}/coverage/reports/SummaryGithub.md' >> $GITHUB_STEP_SUMMARY
+    - name: Test Results
+      shell: pwsh
+      run: Get-Content '${{ github.workspace }}/coverage/reports/SummaryGithub.md' >> $env:GITHUB_STEP_SUMMARY
 
     - name: Upload Coverage Reports
       uses: actions/upload-artifact@v4
