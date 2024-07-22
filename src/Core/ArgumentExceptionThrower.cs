@@ -11,11 +11,11 @@ namespace System;
 /// <summary>
 /// <see cref="ArgumentException"/> helper.
 /// </summary>
+[Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "This is part of the API now")]
 #pragma warning disable IDE0079
 [Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "Checked")]
 #pragma warning restore IDE0079
 #if NET7_0
-[Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1032:Implement standard exception constructors", Justification = "Checked")]
 [Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1194:Implement exception constructors", Justification = "Checked")]
 [Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3376:Attribute, EventArgs, and Exception type names should end with the type being extended", Justification = "Checked")]
 [Diagnostics.CodeAnalysis.SuppressMessage("Naming", "MA0058:Class name should end with 'Exception'", Justification = "Checked")]

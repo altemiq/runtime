@@ -9,6 +9,7 @@ namespace System;
 /// <summary>
 /// <see cref="ArgumentOutOfRangeException"/> helper.
 /// </summary>
+[Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "This is part of the API now")]
 [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1863:Use 'CompositeFormat'", Justification = "This is for exceptions, taken from resources")]
 #pragma warning disable IDE0079
 [Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "Checked")]

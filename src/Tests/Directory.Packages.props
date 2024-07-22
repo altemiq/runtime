@@ -34,8 +34,4 @@
     <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.33.0" />
   </ItemGroup>
 
-  <ItemGroup Label="Reference Assemblies" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">
-    <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" VersionOverride="1.0.3" />
-  </ItemGroup>
-
 </Project>
