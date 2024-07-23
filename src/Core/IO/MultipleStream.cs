@@ -20,7 +20,6 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
 
     private string currentName = string.Empty;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = $"This is disposed through the {nameof(streams)} field")]
     private Stream currentStream = Null;
 
     private long offset;

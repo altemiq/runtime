@@ -170,12 +170,7 @@ public class EchoStream : Stream
                 }
                 else
                 {
-                    if (this.closed)
-                    {
-                        return SetFinalZero();
-                    }
-
-                    return 0;
+                    return this.closed ? SetFinalZero() : 0;
                 }
             }
 

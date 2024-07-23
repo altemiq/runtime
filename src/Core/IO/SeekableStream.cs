@@ -104,9 +104,6 @@ public class SeekableStream : Stream
     public override void Flush() => this.stream.Flush();
 
     /// <inheritdoc/>
-    public override Task FlushAsync(CancellationToken cancellationToken) => base.FlushAsync(cancellationToken);
-
-    /// <inheritdoc/>
     public override int Read(byte[] buffer, int offset, int count)
     {
         var value = this.stream.Read(buffer, offset, count);
@@ -229,9 +226,6 @@ public class SeekableStream : Stream
     /// <inheritdoc/>
     public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();
 #endif
-
-    /// <inheritdoc/>
-    public override string? ToString() => base.ToString();
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)

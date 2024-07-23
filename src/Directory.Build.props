@@ -1,7 +1,6 @@
 <Project>
 
   <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <VersionPrefix Condition="'$(VersionPrefix)' == ''">1.0</VersionPrefix>
     
     <Authors>Ross King</Authors>
@@ -9,7 +8,6 @@
 
     <PackageTags>Core</PackageTags>
     <NeutralLanguage>en-AU</NeutralLanguage>
-    <Copyright>Copyright © $(Company) Pty Ltd 2024</Copyright>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -26,11 +24,6 @@
   <PropertyGroup Label="Analyzers">
     <AnalysisLevel>preview</AnalysisLevel>
   </PropertyGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="$([MSBuild]::GetPathOfFileAbove(stylecop.json))" />
-    <None Include="$([MSBuild]::GetPathOfFileAbove('.editorconfig'))" />
-  </ItemGroup>
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);SA1642;SA1643</NoWarn>

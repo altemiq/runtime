@@ -142,7 +142,6 @@ public static class NanoId
         ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual(size, 0);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "This is replaced where possible")]
     private static string GenerateImpl(System.Random random, string alphabet = Alphabets.Default, int size = 21)
     {
         // See https://github.com/ai/nanoid/blob/master/format.js for an
@@ -199,7 +198,6 @@ public static class NanoId
     /// Taken from https://github.com/CyberAP/nanoid-dictionary
     /// and https://github.com/SasLuca/zig-nanoid/blob/91e0a9a8890984f3dcdd98c99002a05a83d0ee89/src/nanoid.zig#L4.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "This is by design.")]
     public static class Alphabets
     {
         /// <summary>
@@ -268,7 +266,6 @@ public static class NanoId
         /// Used for composition and documentation in building proper <see cref="Alphabets"/>.
         /// Not recommended to be used on their own as alphabets for NanoId.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "This is by design.")]
         public static class SubAlphabets
         {
             /// <summary>
