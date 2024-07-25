@@ -13,6 +13,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
 
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+	
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Label="Signing" Condition=" '$(Configuration)' != '' AND '$(Configuration)' != 'Debug' ">
