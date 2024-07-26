@@ -1,5 +1,10 @@
 <Project>
 
+  <PropertyGroup>
+	<!-- do not error when we can't find a release version -->
+	<MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SV0001</MSBuildWarningsNotAsErrors>
+  </PropertyGroup>
+
   <ItemGroup Label="Designers">
     <Compile Update="**\*.Designer.cs" AutoGen="True" />
   </ItemGroup>
