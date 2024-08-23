@@ -382,11 +382,7 @@ internal sealed class RuntimeConfig(string path)
         WriteNullable(this.rollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => runtimeOptions.Add(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
         WriteNullable(this.applyPatches, applyPatches => runtimeOptions.Add(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
         WriteArray(runtimeOptions, Constants.AdditionalProbingPath.RuntimeConfigPropertyName, this.additionalProbingPaths, additionalProbingPath => new Newtonsoft.Json.Linq.JValue(additionalProbingPath));
-        WriteObject(runtimeOptions, "configProperties", this.properties, property =>
-        {
-            Newtonsoft.Json.Linq.JToken tokenValue = bool.TryParse(property, out var result) ? result : property;
-            return tokenValue;
-        });
+        WriteObject(runtimeOptions, "configProperties", this.properties, property => bool.TryParse(property, out var result) ? result : property);
 
         var json = new Newtonsoft.Json.Linq.JObject
         {
@@ -458,6 +454,9 @@ internal sealed class RuntimeConfig(string path)
     /// <param name="version">The version.</param>
     public sealed class Framework(string name, string version)
     {
+        private const string NamePropertyName = nameof(name);
+        private const string VersionPropertyName = nameof(version);
+
         /// <summary>
         /// Gets the name.
         /// </summary>
@@ -524,7 +523,7 @@ internal sealed class RuntimeConfig(string path)
         /// <returns>The framework.</returns>
         internal static Framework FromJson(System.Text.Json.JsonElement element)
         {
-            var framework = new Framework(element.GetProperty("name").GetString()!, element.GetProperty("version").GetString()!);
+            var framework = new Framework(element.GetProperty(NamePropertyName).GetString()!, element.GetProperty(VersionPropertyName).GetString()!);
             TryGetFromProperty(element, Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward => framework.RollForward = rollForward.GetString());
             TryGetFromProperty(element, Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx => framework.RollForwardOnNoCandidateFx = rollForwardOnNoCandidateFx.GetInt32());
             TryGetFromProperty(element, Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches => framework.ApplyPatches = applyPatches.GetBoolean());
@@ -546,8 +545,8 @@ internal sealed class RuntimeConfig(string path)
         internal void Save(System.Text.Json.Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-            WriteNull(this.Name, name => writer.WriteString("name", name));
-            WriteNull(this.Version, version => writer.WriteString("version", version));
+            WriteNull(this.Name, name => writer.WriteString(NamePropertyName, name));
+            WriteNull(this.Version, version => writer.WriteString(VersionPropertyName, version));
             WriteNull(this.RollForward, rollForward => writer.WriteString(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
             WriteNullable(this.RollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => writer.WriteNumber(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
             WriteNullable(this.ApplyPatches, applyPatches => writer.WriteBoolean(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
@@ -577,7 +576,7 @@ internal sealed class RuntimeConfig(string path)
         /// </summary>
         /// <param name="json">The object.</param>
         /// <returns>The framework.</returns>
-        internal static Framework FromJson(Newtonsoft.Json.Linq.JObject json) => new((string)json["name"], (string)json["version"])
+        internal static Framework FromJson(Newtonsoft.Json.Linq.JObject json) => new((string)json[NamePropertyName], (string)json[VersionPropertyName])
         {
             RollForward = (string)json[Constants.RollForwardSetting.RuntimeConfigPropertyName],
             RollForwardOnNoCandidateFx = (int?)json[Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName],
@@ -592,8 +591,8 @@ internal sealed class RuntimeConfig(string path)
         {
             Newtonsoft.Json.Linq.JObject frameworkReference = [];
 
-            WriteNull(this.Name, name => frameworkReference.Add("name", name));
-            WriteNull(this.Version, versionToWrite => frameworkReference.Add("version", versionToWrite));
+            WriteNull(this.Name, name => frameworkReference.Add(NamePropertyName, name));
+            WriteNull(this.Version, versionToWrite => frameworkReference.Add(VersionPropertyName, versionToWrite));
             WriteNull(this.RollForward, rollForward => frameworkReference.Add(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
             WriteNullable(this.RollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => frameworkReference.Add(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
             WriteNullable(this.ApplyPatches, applyPatches => frameworkReference.Add(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
