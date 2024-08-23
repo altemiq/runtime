@@ -15,7 +15,7 @@ public class AssemblyExtensionsTests
     [InlineData("Altemiq, Version=1.0.0.0, Culture=neutral", "Altemiq", true)]
     [InlineData("Altemiq, Version=1.0.0.0", "Altemiq, Version=1.0.0.0, Culture=neutral", false)]
     [InlineData("Altemiq", "Altemiq, Version=1.0.0.0, Culture=neutral", false)]
-    [InlineData("Altemiq, Version=1.0.0.0", "Altemiq, Version=1.0.0.0", false)]
+    [InlineData("Altemiq, Version=1.0.0.0", "Altemiq, Version=1.0.0.0", true)]
     [InlineData("Altemiq", "Altemiq, Version=1.0.0.0", false)]
     [InlineData("Altemiq", "Altemiq, Culture=neutral", false)]
     [InlineData("Altemiq, Version=2.0.0.0, Culture=neutral", "Altemiq, Version=1.0.0.0, Culture=neutral", true)]
