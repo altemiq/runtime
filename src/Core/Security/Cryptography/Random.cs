@@ -47,7 +47,9 @@ public class Random : System.Random
     public override int Next(int minValue, int maxValue)
     {
         ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(minValue, maxValue);
-        return minValue == maxValue ? minValue : (int)Math.Floor(this.NextDouble() * (maxValue - minValue)) + minValue;
+        return minValue == maxValue
+            ? minValue
+            : (int)Math.Floor(this.NextDouble() * (maxValue - minValue)) + minValue;
     }
 
     /// <inheritdoc />

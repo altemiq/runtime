@@ -12,18 +12,13 @@ public class EnumerableTests
     {
         [Theory]
         [MemberData(nameof(GetClassSequences))]
-        public void Class(string?[] sequence, int count) => sequence.WhereNotNull().Should().HaveCount(count);
+        public void Class(string?[] sequence, int count) => sequence.WhereNotNull().Should().HaveCount(sequence.Length - count);
 
         [Theory]
         [MemberData(nameof(GetStructSequences))]
         public void Struct(int?[] sequence, int count) => sequence.WhereNotNull().Should().HaveCount(count);
 
-        public static TheoryData<string?[], int> GetClassSequences() => new()
-        {
-            { System.Linq.Enumerable.Repeat(string.Empty, 10).ToArray(), 10 },
-            { System.Linq.Enumerable.Repeat(default(string), 10).ToArray(), 0 },
-            { [string.Empty, default, string.Empty, default, string.Empty, default, string.Empty, default, string.Empty, default], 5 },
-        };
+        public static TheoryData<string?[], int> GetClassSequences() => EnumerableTests.GetClassSequences();
 
         public static TheoryData<int?[], int> GetStructSequences() => new()
         {

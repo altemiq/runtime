@@ -4,7 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+#pragma warning disable IDE0130
 namespace System.Globalization;
+#pragma warning restore IDE0130
 
 /// <summary>
 /// The <see cref="TextInfo"/> helper.
