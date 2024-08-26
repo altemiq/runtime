@@ -49,7 +49,7 @@ public static class RuntimeEnvironment
 
         return candidateAssets
             .OrderBy(p => p.Value)
-            .Select(p => p.Key.Replace('/', Path.DirectorySeparatorChar))
+            .Select(p => p.Key.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar))
             .SelectMany(assetPath => probingDirectories.Select(directory => Path.Combine(directory, assetPath)))
             .Where(File.Exists)
             .Select(Path.GetDirectoryName)
@@ -58,7 +58,7 @@ public static class RuntimeEnvironment
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         static string CreateAssetPath(string rid, string name)
         {
-            return $"runtimes/{rid}/native/{name}";
+            return $"runtimes{Path.AltDirectorySeparatorChar}{rid}{Path.AltDirectorySeparatorChar}native{Path.AltDirectorySeparatorChar}{name}";
         }
 
 #if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
@@ -109,7 +109,7 @@ public static class RuntimeEnvironment
                             var fallbacks = rids.IndexOf(group.Runtime);
                             if (fallbacks is not -1)
                             {
-                                TryAdd(candidateAssets, library.Path + "/" + path, fallbacks);
+                                TryAdd(candidateAssets, $"{library.Path}{Path.AltDirectorySeparatorChar}{path}", fallbacks);
                             }
                         }
                     }
@@ -535,7 +535,7 @@ public static class RuntimeEnvironment
 
                 static Stream GetManifestStream(string name)
                 {
-                    var assembly = typeof(RuntimeInformation).GetTypeInfo().Assembly;
+                    var assembly = typeof(RuntimeEnvironment).GetTypeInfo().Assembly;
                     return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                         .First(n => n.Contains(name, StringComparison.Ordinal)))!;
