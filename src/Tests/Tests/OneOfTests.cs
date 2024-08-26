@@ -52,21 +52,39 @@ public class OneOfTests
     public void CallingToStringOnANestedNonRecursiveTypeWorks() => OneOf.From<OneOf<string, bool>, OneOf<bool, string>>(OneOf.From<string, bool>(true)).ToString().Should().Be($"{nameof(Altemiq)}.{nameof(OneOf)}`2[[System.String, {typeof(string).Assembly.FullName}],[System.Boolean, {typeof(bool).Assembly.FullName}]]: System.Boolean: True");
 
     [Theory]
-    [InlineData("en-NZ", "System.DateTime: 2/01/2019 1:02:03 am")]
-    [InlineData("en-US", "System.DateTime: 1/2/2019 1:02:03 AM")]
-    public void LeftSideFormatsWithCurrentCulture(string cultureName, string expectedResult) => RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<DateTime, string>(new DateTime(2019, 1, 2, 1, 2, 3)).ToString).Should().Be(expectedResult);
+    [MemberData(nameof(DateData))]
+    public void LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString).Should().Be(expectedResult);
 
     [Theory]
-    [InlineData("en-NZ", "System.DateTime: 2/01/2019 1:02:03 am")]
-    [InlineData("en-US", "System.DateTime: 1/2/2019 1:02:03 AM")]
-    public void RightSideFormatsWithCurrentCulture(string cultureName, string expectedResult) => RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(new DateTime(2019, 1, 2, 1, 2, 3)).ToString).Should().Be(expectedResult);
+    [MemberData(nameof(DateData))]
+    public void RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString).Should().Be(expectedResult);
 
     [Theory]
-    [InlineData("en-NZ", "System.DateTime: 2/01/2019 1:02:03 am")]
-    [InlineData("en-US", "System.DateTime: 1/2/2019 1:02:03 AM")]
-    public void SpecifyCulture(string cultureName, string expectedResult) => OneOf.From<string, DateTime>(new DateTime(2019, 1, 2, 1, 2, 3)).ToString(new System.Globalization.CultureInfo(cultureName, false)).Should().Be(expectedResult);
+    [MemberData(nameof(DateData))]
+    public void SpecifyCulture(string cultureName, DateTime dateTime, string expectedResult) => OneOf.From<string, DateTime>(dateTime).ToString(new System.Globalization.CultureInfo(cultureName, false)).Should().Be(expectedResult);
 
-    private static string? RunInCulture(System.Globalization.CultureInfo culture, Func<string?> action)
+    public static TheoryData<string, DateTime, string> DateData()
+    {
+        var theoryData = new TheoryData<string, DateTime, string>();
+
+        Add(theoryData, new System.Globalization.CultureInfo("en-NZ"), new DateTime(2019, 1, 2, 1, 2, 3));
+        Add(theoryData, new System.Globalization.CultureInfo("en-US"), new DateTime(2019, 1, 2, 1, 2, 3));
+
+        return theoryData;
+
+        static void Add(TheoryData<string, DateTime, string> data, System.Globalization.CultureInfo culture, DateTime dateTime)
+        {
+            data.Add(culture.Name, dateTime, $"System.DateTime: {DateTime(dateTime, culture)}");
+
+            // get date time
+            static string DateTime(DateTime dateTime, IFormatProvider provider)
+            {
+                return dateTime.ToString(provider);
+            }
+        }
+    }
+
+    private static T RunInCulture<T>(System.Globalization.CultureInfo culture, Func<T> action)
     {
         var originalCulture = Thread.CurrentThread.CurrentCulture;
         Thread.CurrentThread.CurrentCulture = culture;
