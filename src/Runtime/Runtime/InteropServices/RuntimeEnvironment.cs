@@ -492,12 +492,15 @@ public static class RuntimeEnvironment
         if (runtimeGraph.Count > 0)
         {
             var rid = RuntimeInformation.RuntimeIdentifier;
-            var rids = runtimeGraph.First(g => string.Equals(g.Runtime, rid, StringComparison.Ordinal)).Fallbacks.ToList();
-            rids.Insert(0, rid);
-            return rids;
+            if (runtimeGraph.FirstOrDefault(g => string.Equals(g.Runtime, rid, StringComparison.Ordinal)) is { } runtimeFallbacks)
+            {
+                var rids = runtimeFallbacks.Fallbacks.ToList();
+                rids.Insert(0, rid);
+                return rids;
+            }
         }
 
-        return [];
+        return [RuntimeInformation.RuntimeIdentifier, RuntimeInformation.GetNaïveRid()];
 
         static IReadOnlyList<RuntimeFallbacks> GetRuntimeGraph()
         {

@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" GeneratePathProperty="true" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +40,14 @@
     </ItemGroup>
 
     <Copy SourceFiles="@(_ItemsToCopy)" DestinationFolder="$(OutputPath)runtimes\%(_Runtimes.Identity)\lib\$(_ItemTargetFramework)\" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="_CopyAllSqliteToOutput" BeforeTargets="PrepareForRun">
+    <ItemGroup>
+      <_CopyAllSqliteToOutput Include="$(PkgSQLitePCLRaw_lib_e_sqlite3)\runtimes\**" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_CopyAllSqliteToOutput)" DestinationFolder="$(OutputPath)runtimes\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>

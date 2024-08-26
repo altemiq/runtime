@@ -8,7 +8,7 @@
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
-    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.8" />
+    <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.8" />
     <PackageVersion Include="System.Text.Json" Version="6.0.9" />
     <PackageVersion Include="xunit" Version="2.9.0" />
   </ItemGroup>
