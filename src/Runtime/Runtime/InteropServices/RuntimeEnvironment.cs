@@ -458,9 +458,9 @@ public static class RuntimeEnvironment
             {
                 if (GetRuntimeRids().Intersect(availableRids, GetComparer()).ToList() is { Capacity: not 0 } rids)
                 {
-                    foreach (var rid in rids)
+                    foreach (var path in rids.Select(rid => Path.Combine(runtimesDirectory, rid, name)).Where(Directory.Exists))
                     {
-                        yield return Path.Combine(runtimesDirectory, rid, name);
+                        yield return path;
                     }
 
                     yield break;
