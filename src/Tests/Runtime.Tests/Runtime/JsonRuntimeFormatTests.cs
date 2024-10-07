@@ -27,7 +27,7 @@ public class JsonRuntimeFormatTests
         var json = JsonRuntimeFormat.ReadRuntimeGraph(stream!);
         json.Should().NotBeNull().And.HaveCountGreaterThan(10);
 
-        json.Select(x => x.Runtime).Should().Contain("linux");
+        json.Select(static x => x.Runtime).Should().Contain("linux");
     }
 
     private static Stream GetManifestStreamFromAssembly(string name) => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();

@@ -9,10 +9,10 @@ namespace Altemiq;
 public class OneOfTests
 {
     [Fact]
-    public void DefaultConstructorSetsValueToDefaultValueOfT0() => new OneOf<int, bool>().Match(n => n == default, n => false).Should().BeTrue();
+    public void DefaultConstructorSetsValueToDefaultValueOfT0() => new OneOf<int, bool>().Match(static n => n == default, static n => false).Should().BeTrue();
 
     [Fact]
-    public void DefaultSetsValueToDefaultValueOfT0() => default(OneOf<int, bool>).Match(n => n == default, n => false).Should().BeTrue();
+    public void DefaultSetsValueToDefaultValueOfT0() => default(OneOf<int, bool>).Match(static n => n == default, static n => false).Should().BeTrue();
 
     [Fact]
     public void AreEqual()
@@ -34,9 +34,9 @@ public class OneOfTests
         static string? ResolveString(OneOf<double, int, string> input)
         {
             return input
-                .MapT0(d => d.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                .MapT1(i => i.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                .Match(t1 => t1, t2 => t2, t3 => t3);
+                .MapT0(static d => d.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                .MapT1(static i => i.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                .Match(static t1 => t1, static t2 => t2, static t3 => t3);
         }
     }
 

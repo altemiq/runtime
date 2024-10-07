@@ -425,7 +425,7 @@ public static partial class MemoryExtensions
     /// <param name="span">The span.</param>
     /// <param name="enumerator">The span enumerator.</param>
     /// <returns>The next value from the span as a <see cref="string"/> value.</returns>
-    public static string GetNextString(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator) => span.GetNextValue(ref enumerator, v => v.ToString());
+    public static string GetNextString(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator) => span.GetNextValue(ref enumerator, static v => v.ToString());
 
     /// <summary>
     /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.

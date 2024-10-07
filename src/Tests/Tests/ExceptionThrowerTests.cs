@@ -14,25 +14,25 @@ public class ExceptionThrowerTests
 #if !NET7_0_OR_GREATER
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "This is required for .NET 7.0")]
 #endif
-        public void ThrowOnNull() => Do<System.ArgumentNullException>(() => ArgumentNullExceptionThrower.ThrowIfNull(default(object)));
+        public void ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(default(object)));
 
         [Fact]
-        public void NotThrowOnNotNull() => Do<System.ArgumentNullException>(() => ArgumentNullExceptionThrower.ThrowIfNull(string.Empty), false);
+        public void NotThrowOnNotNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(string.Empty), false);
     }
 
     public class ArgumentException
     {
         [Fact]
-        public void ThrowOnNull() => Do<System.ArgumentException>(() => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default));
+        public void ThrowOnNull() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default));
 
         [Fact]
-        public void ThrowIfEmpty() => Do<System.ArgumentException>(() => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty));
+        public void ThrowIfEmpty() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty));
 
         [Fact]
-        public void ThrowIfEmptyOrWhiteSpace() => Do<System.ArgumentException>(() => ArgumentExceptionThrower.ThrowIfNullOrWhiteSpace("    "));
+        public void ThrowIfEmptyOrWhiteSpace() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrWhiteSpace("    "));
 
         [Fact]
-        public void NotThrow() => Do<System.ArgumentException>(() => ArgumentExceptionThrower.ThrowIfNullOrEmpty(nameof(string.Empty)), false);
+        public void NotThrow() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(nameof(string.Empty)), false);
     }
 
     public class ArgumentOutOfRangeException
@@ -236,7 +236,7 @@ public class ExceptionThrowerTests
 
         [Fact]
         public void OnValid() => Do<System.ArgumentOutOfRangeException>(
-            () =>
+            static () =>
             {
                 ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan(1, 0);
                 ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(1, 2);
@@ -285,7 +285,7 @@ public class ExceptionThrowerTests
     {
         [Fact]
         public void ThrowOnNull() => Do<System.ObjectDisposedException>(
-            () =>
+            static () =>
             {
                 object? @null = default;
                 ObjectDisposedExceptionThrower.ThrowIf(@null is null, @null);
@@ -293,7 +293,7 @@ public class ExceptionThrowerTests
 
         [Fact]
         public void ThrowOnNullWithType() => Do<System.ObjectDisposedException>(
-            () =>
+            static () =>
             {
                 string? @null = default;
                 ObjectDisposedExceptionThrower.ThrowIf(@null is null, typeof(string));
@@ -301,7 +301,7 @@ public class ExceptionThrowerTests
 
         [Fact]
         public void ThrowOnNotNull() => Do<System.ObjectDisposedException>(
-            () =>
+            static () =>
             {
                 var @null = new object();
                 ObjectDisposedExceptionThrower.ThrowIf(@null is not null, @null!);
@@ -309,7 +309,7 @@ public class ExceptionThrowerTests
 
         [Fact]
         public void ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(
-            () =>
+            static () =>
             {
                 var @null = string.Empty;
                 ObjectDisposedExceptionThrower.ThrowIf(@null is not null, default!);
@@ -317,7 +317,7 @@ public class ExceptionThrowerTests
 
         [Fact]
         public void NotThrowNotNull() => Do<System.ObjectDisposedException>(
-            () =>
+            static () =>
             {
                 var notNull = new object();
                 ObjectDisposedExceptionThrower.ThrowIf(notNull is null, notNull);
@@ -326,7 +326,7 @@ public class ExceptionThrowerTests
 
         [Fact]
         public void NotThrowNotNullWithType() => Do<System.ObjectDisposedException>(
-            () =>
+            static () =>
             {
                 var notNull = string.Empty;
                 ObjectDisposedExceptionThrower.ThrowIf(notNull is null, typeof(string));

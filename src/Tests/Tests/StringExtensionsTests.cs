@@ -54,7 +54,7 @@ public class StringExtensionsTests
 #endif
 
     [Fact]
-    public void NullString() => new Func<string[]>(() => default(string)!.SplitQuoted()).Should().ThrowExactly<ArgumentNullException>();
+    public void NullString() => new Func<string[]>(static () => default(string)!.SplitQuoted()).Should().ThrowExactly<ArgumentNullException>();
 
     [Fact]
     public void EmptyString() => string.Empty.SplitQuoted().Should().ContainSingle().And.HaveElementAt(0, string.Empty);

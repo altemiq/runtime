@@ -13,8 +13,8 @@ public class MultipleMemoryStreamTests
     {
         var dictionary = new Dictionary<string, Stream>();
         var stream = new MultipleMemoryStream(dictionary);
-        stream.Invoking(s => s.SwitchTo("first")).Should().NotThrow();
-        stream.Invoking(s => s.SwitchTo("second")).Should().NotThrow();
+        stream.Invoking(static s => s.SwitchTo("first")).Should().NotThrow();
+        stream.Invoking(static s => s.SwitchTo("second")).Should().NotThrow();
 
         dictionary.Values.Should()
             .HaveCount(2)

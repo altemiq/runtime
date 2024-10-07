@@ -126,8 +126,8 @@ public class MultipleStreamTests
     public void TryAddTwice()
     {
         var multipleStream = Substitute.ForPartsOf<MultipleStream>();
-        multipleStream.TryAdd(nameof(multipleStream), () => default!).Should().BeTrue();
-        multipleStream.TryAdd(nameof(multipleStream), () => default!).Should().BeFalse();
+        multipleStream.TryAdd(nameof(multipleStream), static () => default!).Should().BeTrue();
+        multipleStream.TryAdd(nameof(multipleStream), static () => default!).Should().BeFalse();
     }
 
     [Fact]
@@ -322,7 +322,7 @@ public class MultipleStreamTests
     }
 #endif
 
-    private sealed class BasicMultipleStream(params Stream[] streams) : MultipleStream(streams.Select((s, i) => (s, i)).ToDictionary(x => x.i.ToString(), x => x.s))
+    private sealed class BasicMultipleStream(params Stream[] streams) : MultipleStream(streams.Select(static (s, i) => (s, i)).ToDictionary(static x => x.i.ToString(), static x => x.s))
     {
         protected override Stream CreateStream(string name) => throw new NotImplementedException();
     }

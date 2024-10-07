@@ -286,14 +286,14 @@ internal sealed class RuntimeConfig(string path)
             writer.WriteStartObject();
             writer.WritePropertyName("runtimeOptions");
             writer.WriteStartObject();
-            WriteNull(writer, this.Tfm, (writer, tfm) => writer.WriteString("tfm", tfm));
-            WriteArray(writer, "framework", this.frameworks, (writer, framework) => framework.Save(writer));
-            WriteArray(writer, "includedFramework", this.includedFrameworks, (writer, framework) => framework.Save(writer));
-            WriteNull(writer, this.rollForward, (writer, rollForward) => writer.WriteString(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
-            WriteNullable(writer, this.rollForwardOnNoCandidateFx, (writer, rollForwardOnNoCandidateFx) => writer.WriteNumber(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
-            WriteNullable(writer, this.applyPatches, (writer, applyPatches) => writer.WriteBoolean(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
-            WriteArray(writer, Constants.AdditionalProbingPath.RuntimeConfigPropertyName, this.additionalProbingPaths, (writer, additionalProbingPath) => writer.WriteStringValue(additionalProbingPath));
-            WriteObject(writer, "configProperties", this.properties, (writer, value) =>
+            WriteNull(writer, this.Tfm, static (writer, tfm) => writer.WriteString("tfm", tfm));
+            WriteArray(writer, "framework", this.frameworks, static (writer, framework) => framework.Save(writer));
+            WriteArray(writer, "includedFramework", this.includedFrameworks, static (writer, framework) => framework.Save(writer));
+            WriteNull(writer, this.rollForward, static (writer, rollForward) => writer.WriteString(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
+            WriteNullable(writer, this.rollForwardOnNoCandidateFx, static (writer, rollForwardOnNoCandidateFx) => writer.WriteNumber(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
+            WriteNullable(writer, this.applyPatches, static (writer, applyPatches) => writer.WriteBoolean(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
+            WriteArray(writer, Constants.AdditionalProbingPath.RuntimeConfigPropertyName, this.additionalProbingPaths, static (writer, additionalProbingPath) => writer.WriteStringValue(additionalProbingPath));
+            WriteObject(writer, "configProperties", this.properties, static (writer, value) =>
             {
                 if (bool.TryParse(value, out var result))
                 {

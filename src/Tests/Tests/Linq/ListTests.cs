@@ -68,7 +68,7 @@ public partial class ListTests
     public void CastWithNonGeneric()
     {
         NoBaseClass list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        list.Invoking(l => l.Cast<ISecond, IFirst>()).Should().Throw<InvalidOperationException>();
+        list.Invoking(static l => l.Cast<ISecond, IFirst>()).Should().Throw<InvalidOperationException>();
     }
 
     public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));

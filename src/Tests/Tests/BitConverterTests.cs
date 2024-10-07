@@ -82,7 +82,7 @@ public class BitConverterTests
     [Fact]
     public void ToBooleanSpanWithSmallSpan()
     {
-        Action act = () => BitConverter.ToBoolean(default);
+        Action act = static () => BitConverter.ToBoolean(default);
         act.Should().ThrowExactly<ArgumentOutOfRangeException>();
     }
 

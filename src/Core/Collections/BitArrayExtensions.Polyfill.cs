@@ -13,7 +13,7 @@ using System.Reflection;
 /// </content>
 public static partial class BitArrayExtensions
 {
-    private static readonly FieldInfo ArrayFieldInfo = typeof(System.Collections.BitArray).GetTypeInfo().DeclaredFields.FirstOrDefault(field => field.FieldType == typeof(int[])) ?? throw new InvalidOperationException();
+    private static readonly FieldInfo ArrayFieldInfo = typeof(System.Collections.BitArray).GetTypeInfo().DeclaredFields.FirstOrDefault(static field => field.FieldType == typeof(int[])) ?? throw new InvalidOperationException();
 
     /// <summary>
     /// Copies the entire <see cref="System.Collections.BitArray"/> to a compatible one-dimensional <see cref="Array"/>, starting at the specified index of the target array.

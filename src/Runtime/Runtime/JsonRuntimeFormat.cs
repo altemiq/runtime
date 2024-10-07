@@ -46,7 +46,7 @@ internal static class JsonRuntimeFormat
             {
                 yield return new Runtime(
                     json.Name,
-                    json.Value.GetProperty("#import").EnumerateArray().Select(p => p.GetString()!).ToArray());
+                    json.Value.GetProperty("#import").EnumerateArray().Select(static p => p.GetString()!).ToArray());
             }
 #else
             var loadSettings = new JsonLoadSettings()
@@ -62,7 +62,7 @@ internal static class JsonRuntimeFormat
             foreach (var json in EachProperty(token["runtimes"]))
             {
                 var imports = json.Value["#import"] is JArray import
-                    ? import.Select(s => s.Value<string>()).ToArray()
+                    ? import.Select(static s => s.Value<string>()).ToArray()
                     : [];
                 yield return new Runtime(json.Key, imports);
             }

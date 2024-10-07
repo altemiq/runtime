@@ -26,7 +26,7 @@ public static class Enumerable
 
         static IEnumerable<T> WhereNotNullCore(IEnumerable<T?> source)
         {
-            foreach (var item in source.Where(x => x is not null))
+            foreach (var item in source.Where(static x => x is not null))
             {
                 yield return item!;
             }
@@ -66,5 +66,5 @@ public static class Enumerable
     /// <returns>An <see cref="IEnumerable{T}"/> that contains elements from the input sequence that are <see langword="null"/>.</returns>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T?> WhereNull<T>(this IEnumerable<T?> source)
-        where T : class => source.Where(item => item is null);
+        where T : class => source.Where(static item => item is null);
 }

@@ -20,7 +20,7 @@ public class ArrayTests
     [Fact]
     public void ThrowOnNullLeft()
     {
-        var action = () =>
+        var action = static () =>
         {
             int[]? array = default;
             Array.PadLeft(ref array!, default);
@@ -59,7 +59,7 @@ public class ArrayTests
     [Fact]
     public void ThrowOnNullRight()
     {
-        var action = () =>
+        var action = static () =>
         {
             int[]? array = default;
             Array.PadRight(ref array!, default);

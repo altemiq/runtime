@@ -54,7 +54,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override bool CanWrite => this.currentStream.CanWrite;
 
     /// <inheritdoc/>
-    public override long Length => this.streams.Sum(kvp => kvp.Value.Length);
+    public override long Length => this.streams.Sum(static kvp => kvp.Value.Length);
 
     /// <inheritdoc/>
     public override int ReadTimeout { get => this.currentStream.ReadTimeout; set => this.currentStream.ReadTimeout = value; }
@@ -130,7 +130,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
 #if NETSTANDARD1_3_OR_GREATER || NET46_OR_GREATER
                 return Task.FromCanceled(cancellationToken);
 #else
-                return Task.Run(() => { }, cancellationToken);
+                return Task.Run(static () => { }, cancellationToken);
 #endif
             }
 

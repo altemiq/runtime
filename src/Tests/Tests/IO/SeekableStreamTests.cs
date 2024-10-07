@@ -22,7 +22,7 @@ public class SeekableStreamTests
         using var stream = new SeekableStream(new ForwardOnlyStream());
         _ = stream.Length.Should().Be(1024);
         _ = stream.Seek(-512, SeekOrigin.End).Should().Be(512);
-        stream.Invoking(s => s.Seek(-10, SeekOrigin.Current)).Should().Throw<InvalidOperationException>();
+        stream.Invoking(static s => s.Seek(-10, SeekOrigin.Current)).Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class SeekableStreamTests
     public void SeekWithInvalidEnum()
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
-        stream.Invoking(s => s.Seek(0, (SeekOrigin)(-1))).Should().Throw<ArgumentOutOfRangeException>();
+        stream.Invoking(static s => s.Seek(0, (SeekOrigin)(-1))).Should().Throw<ArgumentOutOfRangeException>();
     }
 
     private class ForwardOnlyStream : MemoryStream

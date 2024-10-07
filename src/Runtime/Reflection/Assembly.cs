@@ -62,7 +62,7 @@ internal sealed class Assembly
 
             static System.Reflection.Assembly? GetTestAssembly()
             {
-                return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) is true);
+                return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), static a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) is true);
             }
         }
     }

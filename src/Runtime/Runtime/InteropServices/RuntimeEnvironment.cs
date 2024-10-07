@@ -447,12 +447,12 @@ public static class RuntimeEnvironment
 
     private static IEnumerable<string> GetRuntimeDirectories(string name)
     {
-        if (RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is { } runtimesDirectory)
+        if (RuntimeInformation.GetBaseDirectories().Select(static baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is { } runtimesDirectory)
         {
             // get the rids
             if (Directory.GetDirectories(runtimesDirectory)
                 .Select(Path.GetFileName)
-                .Where(fileName => fileName is not null)
+                .Where(static fileName => fileName is not null)
                 .Cast<string>()
                 .ToList() is { Count: not 0 } availableRids)
             {

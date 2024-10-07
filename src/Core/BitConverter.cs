@@ -19,8 +19,6 @@ public static class BitConverter
     public static byte[] GetBytes(bool value) => System.BitConverter.GetBytes(value);
 
     /// <inheritdoc cref="System.BitConverter.GetBytes(bool)" />
-    /// <param name="value">A Boolean value.</param>
-    /// <param name="byteOrder">This parameter is not used.</param>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]

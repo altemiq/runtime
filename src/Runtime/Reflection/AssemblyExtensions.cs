@@ -33,12 +33,12 @@ public static class AssemblyExtensions
 
         static CheckValue<Version> IsNullOrLessThanOrEqual(Version? value)
         {
-            return IsNullOr(value, (v, o) => o is not null && v <= o);
+            return IsNullOr(value, static (v, o) => o is not null && v <= o);
         }
 
         static CheckValue<string> IsNullOrEqual(string? value)
         {
-            return IsNullOr(value, (v, o) => o is not null && string.Equals(v, o, StringComparison.OrdinalIgnoreCase));
+            return IsNullOr(value, static (v, o) => o is not null && string.Equals(v, o, StringComparison.OrdinalIgnoreCase));
         }
 
         static CheckValue<T> IsNullOr<T>(T? value, Func<T, T?, bool> check)
@@ -49,7 +49,7 @@ public static class AssemblyExtensions
 
     private readonly struct CheckValue<T>(T value, Func<T, T?, bool> check)
     {
-        public static readonly CheckValue<T> True = new(default!, (_, _) => true);
+        public static readonly CheckValue<T> True = new(default!, static (_, _) => true);
 
         private readonly T value = value;
 

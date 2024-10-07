@@ -18,8 +18,8 @@ public partial class ListTests
         [MemberData(nameof(GetLists))]
         public void Int32(IEnumerable<int> first, IEnumerable<int> second)
         {
-            _ = TestListList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
-            _ = TestReadOnlyListReadOnlyList<int, int>(first, second, (f, s) => f.IndexOf(s), 1).Should().Be(1);
+            _ = TestListList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1).Should().Be(1);
+            _ = TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1).Should().Be(1);
         }
 
         [Theory]
@@ -38,8 +38,8 @@ public partial class ListTests
         [MemberData(nameof(GetLists))]
         public void Any(IEnumerable<int> first, IEnumerable<int> second)
         {
-            _ = TestListList<int, int>(first, second, (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
-            _ = TestReadOnlyListReadOnlyList<int, int>(first, second, (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
+            _ = TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
+            _ = TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
         }
 
         [Theory]

@@ -29,7 +29,7 @@ public class MemoryExtensionsTests
     public void MoveNextOnEmptyString() => string.Empty.AsSpan().Split().MoveNext().Should().BeFalse();
 
     [Fact]
-    public void MoveNextOrThrowOnEmptyString() => string.Empty.Invoking(s =>
+    public void MoveNextOrThrowOnEmptyString() => string.Empty.Invoking(static s =>
     {
         var enumerator = s.AsSpan().Split();
         enumerator.MoveNextOrThrow();
@@ -226,7 +226,7 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<char, double>> GetCharValuesData() => new() { { (Random random, int _) => random.NextDouble(), new GetValuesDelegate<char, double>(MemoryExtensions.GetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<char, double>> GetCharValuesData() => new() { { static (Random random, int _) => random.NextDouble(), new GetValuesDelegate<char, double>(MemoryExtensions.GetDoubleValues) } };
 
         [Theory]
         [MemberData(nameof(GetStringValuesData))]
@@ -240,7 +240,7 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<string, double>> GetStringValuesData() => new() { { (Random random, int _) => random.NextDouble(), new GetValuesDelegate<string, double>(MemoryExtensions.GetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<string, double>> GetStringValuesData() => new() { { static (Random random, int _) => random.NextDouble(), new GetValuesDelegate<string, double>(MemoryExtensions.GetDoubleValues) } };
     }
 
     [Theory]
@@ -279,15 +279,15 @@ public class MemoryExtensionsTests
     {
         get
         {
-            yield return new object[] { (Random random, int _) => random.NextDouble(), new GetDelegate<double>(MemoryExtensions.GetNextDouble), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float };
-            yield return new object[] { (Random random, int _) => (float)random.NextDouble(), new GetDelegate<float>(MemoryExtensions.GetNextSingle), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float };
-            yield return new object[] { (Random random, int _) => (byte)random.Next(byte.MaxValue), new GetDelegate<byte>(MemoryExtensions.GetNextByte), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { (Random random, int _) => (short)random.Next(short.MaxValue), new GetDelegate<short>(MemoryExtensions.GetNextInt16), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { (Random random, int _) => (ushort)random.Next(ushort.MaxValue), new GetDelegate<ushort>(MemoryExtensions.GetNextUInt16), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { (Random random, int _) => random.Next(), new GetDelegate<int>(MemoryExtensions.GetNextInt32), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { (Random random, int _) => (uint)random.Next(), new GetDelegate<uint>(MemoryExtensions.GetNextUInt32), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { (Random random, int _) => (long)random.Next() + int.MaxValue, new GetDelegate<long>(MemoryExtensions.GetNextInt64), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { (Random random, int _) => (ulong)random.Next() + uint.MaxValue, new GetDelegate<ulong>(MemoryExtensions.GetNextUInt64), System.Globalization.NumberStyles.Integer };
+            yield return new object[] { static (Random random, int _) => random.NextDouble(), new GetDelegate<double>(MemoryExtensions.GetNextDouble), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float };
+            yield return new object[] { static (Random random, int _) => (float)random.NextDouble(), new GetDelegate<float>(MemoryExtensions.GetNextSingle), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float };
+            yield return new object[] { static (Random random, int _) => (byte)random.Next(byte.MaxValue), new GetDelegate<byte>(MemoryExtensions.GetNextByte), System.Globalization.NumberStyles.Integer };
+            yield return new object[] { static (Random random, int _) => (short)random.Next(short.MaxValue), new GetDelegate<short>(MemoryExtensions.GetNextInt16), System.Globalization.NumberStyles.Integer };
+            yield return new object[] { static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), new GetDelegate<ushort>(MemoryExtensions.GetNextUInt16), System.Globalization.NumberStyles.Integer };
+            yield return new object[] { static (Random random, int _) => random.Next(), new GetDelegate<int>(MemoryExtensions.GetNextInt32), System.Globalization.NumberStyles.Integer };
+            yield return new object[] { static (Random random, int _) => (uint)random.Next(), new GetDelegate<uint>(MemoryExtensions.GetNextUInt32), System.Globalization.NumberStyles.Integer };
+            yield return new object[] { static (Random random, int _) => (long)random.Next() + int.MaxValue, new GetDelegate<long>(MemoryExtensions.GetNextInt64), System.Globalization.NumberStyles.Integer };
+            yield return new object[] { static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, new GetDelegate<ulong>(MemoryExtensions.GetNextUInt64), System.Globalization.NumberStyles.Integer };
         }
     }
 
@@ -305,7 +305,7 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<char, double>> TryGetValuesCharData() => new() { { (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<char, double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<char, double>> TryGetValuesCharData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<char, double>(MemoryExtensions.TryGetDoubleValues) } };
 
         [Theory]
         [MemberData(nameof(TryGetValuesStringData))]
@@ -319,7 +319,7 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<string, double>> TryGetValuesStringData() => new() { { (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<string, double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<string, double>> TryGetValuesStringData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<string, double>(MemoryExtensions.TryGetDoubleValues) } };
     }
 
     [Theory]
@@ -346,15 +346,15 @@ public class MemoryExtensionsTests
     {
         get
         {
-            yield return new object[] { (Random random, int _) => random.NextDouble(), new TryGetDelegate<double>(MemoryExtensions.TryGetNextDouble) };
-            yield return new object[] { (Random random, int _) => (float)random.NextDouble(), new TryGetDelegate<float>(MemoryExtensions.TryGetNextSingle) };
-            yield return new object[] { (Random random, int _) => (byte)random.Next(byte.MaxValue), new TryGetDelegate<byte>(MemoryExtensions.TryGetNextByte) };
-            yield return new object[] { (Random random, int _) => (short)random.Next(short.MaxValue), new TryGetDelegate<short>(MemoryExtensions.TryGetNextInt16) };
-            yield return new object[] { (Random random, int _) => (ushort)random.Next(ushort.MaxValue), new TryGetDelegate<ushort>(MemoryExtensions.TryGetNextUInt16) };
-            yield return new object[] { (Random random, int _) => random.Next(), new TryGetDelegate<int>(MemoryExtensions.TryGetNextInt32) };
-            yield return new object[] { (Random random, int _) => (uint)random.Next(), new TryGetDelegate<uint>(MemoryExtensions.TryGetNextUInt32) };
-            yield return new object[] { (Random random, int _) => (long)random.Next() + int.MaxValue, new TryGetDelegate<long>(MemoryExtensions.TryGetNextInt64) };
-            yield return new object[] { (Random random, int _) => (ulong)random.Next() + uint.MaxValue, new TryGetDelegate<ulong>(MemoryExtensions.TryGetNextUInt64) };
+            yield return new object[] { static (Random random, int _) => random.NextDouble(), new TryGetDelegate<double>(MemoryExtensions.TryGetNextDouble) };
+            yield return new object[] { static (Random random, int _) => (float)random.NextDouble(), new TryGetDelegate<float>(MemoryExtensions.TryGetNextSingle) };
+            yield return new object[] { static (Random random, int _) => (byte)random.Next(byte.MaxValue), new TryGetDelegate<byte>(MemoryExtensions.TryGetNextByte) };
+            yield return new object[] { static (Random random, int _) => (short)random.Next(short.MaxValue), new TryGetDelegate<short>(MemoryExtensions.TryGetNextInt16) };
+            yield return new object[] { static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), new TryGetDelegate<ushort>(MemoryExtensions.TryGetNextUInt16) };
+            yield return new object[] { static (Random random, int _) => random.Next(), new TryGetDelegate<int>(MemoryExtensions.TryGetNextInt32) };
+            yield return new object[] { static (Random random, int _) => (uint)random.Next(), new TryGetDelegate<uint>(MemoryExtensions.TryGetNextUInt32) };
+            yield return new object[] { static (Random random, int _) => (long)random.Next() + int.MaxValue, new TryGetDelegate<long>(MemoryExtensions.TryGetNextInt64) };
+            yield return new object[] { static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, new TryGetDelegate<ulong>(MemoryExtensions.TryGetNextUInt64) };
         }
     }
 

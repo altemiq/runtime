@@ -115,8 +115,8 @@ public static partial class List
                     {
                         // Get the best constructor
                         return constructors
-                            .Select(constructor => constructor.GetParameters())
-                            .SingleOrDefault(parameters => parameters.Length is 1 && typeof(IEnumerable<TResult>).GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType.GetTypeInfo())) is not null
+                            .Select(static constructor => constructor.GetParameters())
+                            .SingleOrDefault(static parameters => parameters.Length is 1 && typeof(IEnumerable<TResult>).GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType.GetTypeInfo())) is not null
                             ? [source.Cast<TResult>()]
                             : [];
                     }

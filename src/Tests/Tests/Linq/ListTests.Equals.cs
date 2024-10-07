@@ -16,20 +16,20 @@ public partial class ListTests
         [MemberData(nameof(GetLists))]
         public void DoesEqual(IEnumerable<int> first, IEnumerable<int> second)
         {
-            _ = TestListList<int, bool>(first, second, (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
-            _ = TestListReadOnlyList<int, bool>(first, second, (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
-            _ = TestReadOnlyListList<int, bool>(first, second, (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
-            _ = TestReadOnlyListReadOnlyList<int, bool>(first, second, (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
+            _ = TestListList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
+            _ = TestListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
+            _ = TestReadOnlyListList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
+            _ = TestReadOnlyListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true).Should().BeTrue();
         }
 
         [Theory]
         [MemberData(nameof(GetLists))]
         public void DoesNotEqual(IEnumerable<int> first, IEnumerable<int> second)
         {
-            _ = TestListList<int, bool>(first, second, (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
-            _ = TestListReadOnlyList<int, bool>(first, second, (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
-            _ = TestReadOnlyListList<int, bool>(first, second, (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
-            _ = TestReadOnlyListReadOnlyList<int, bool>(first, second, (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
+            _ = TestListList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
+            _ = TestListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
+            _ = TestReadOnlyListList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
+            _ = TestReadOnlyListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false).Should().BeFalse();
         }
 
         private static TResult? TestListReadOnlyList<T, TResult>(object first, object second, Func<IList<T>, IReadOnlyList<T>, TResult> func, TResult? defaultResult = default) => first is IList<T> f && second is IReadOnlyList<T> s ? func(f, s) : defaultResult;

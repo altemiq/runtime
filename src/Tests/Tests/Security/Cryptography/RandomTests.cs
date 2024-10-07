@@ -56,7 +56,7 @@ public class RandomTests
     {
         const int Max = -1;
         var random = new Random();
-        random.Invoking(r => r.Next(Max)).Should().Throw<ArgumentOutOfRangeException>();
+        random.Invoking(static r => r.Next(Max)).Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class RandomTests
         const int Max = 100;
         const int Min = 1000;
         var random = new Random();
-        random.Invoking(r => r.Next(Min, Max)).Should().Throw<ArgumentOutOfRangeException>();
+        random.Invoking(static r => r.Next(Min, Max)).Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [Fact]
