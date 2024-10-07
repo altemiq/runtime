@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix Condition="'$(VersionPrefix)' == ''">1.0</VersionPrefix>
-    
+
     <Authors>Ross King</Authors>
     <Description>A collection of base classes.</Description>
 
@@ -13,8 +13,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
 
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-	
+
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) ">
+    <NoWarn>$(NoWarn);NETSDK1215</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Label="Signing" Condition=" '$(Configuration)' != '' AND '$(Configuration)' != 'Debug' ">

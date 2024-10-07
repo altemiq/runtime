@@ -30,6 +30,14 @@
     <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
 
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) ">
+    <PackageReference Include="System.Text.RegularExpressions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) and $([MSBuild]::VersionGreaterThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.0')) ">
+    <PackageReference Include="System.Net.Http" />
+  </ItemGroup>
+
   <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) and $([MSBuild]::VersionGreaterThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.0')) ">
     <PackageReference Include="System.Collections.Concurrent" />
   </ItemGroup>
