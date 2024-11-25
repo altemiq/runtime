@@ -26,13 +26,11 @@ public static class BinaryWriterExtensions
 
     /// <inheritdoc cref="BinaryWriter.Write(byte)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static void Write(this BinaryWriter writer, byte value, ByteOrder byteOrder) => writer.Write(value);
 
     /// <inheritdoc cref="BinaryWriter.Write(byte[])" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static void Write(this BinaryWriter writer, byte[] buffer, ByteOrder byteOrder) => writer.Write(buffer);
 
@@ -143,7 +141,6 @@ public static class BinaryWriterExtensions
     /// <inheritdoc cref="BinaryWriter.Write(sbyte)" />
     [CLSCompliant(false)]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static void Write(this BinaryWriter writer, sbyte value, ByteOrder byteOrder) => writer.Write(value);
 

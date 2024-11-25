@@ -9,7 +9,6 @@ namespace Altemiq.Reflection;
 /// <summary>
 /// Extension methods for <see cref="System.Reflection.Assembly"/>.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "This follows the `System.Assembly` class")]
 internal sealed class Assembly
 {
     private static System.Reflection.Assembly? entryAssembly;

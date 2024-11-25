@@ -100,7 +100,6 @@ public class EchoStream : Stream
 
     /// <inheritdoc/>
     /// <remarks>We override the xxxxAsync functions because the default base class shares state between ReadAsync and WriteAsync, which causes a hang if both are called at once.</remarks>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0042:Do not use blocking calls in an async method", Justification = "This would cause recursion")]
     public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => Task.Run(() => this.Write(buffer, offset, count), cancellationToken);
 
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER

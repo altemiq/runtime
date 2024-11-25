@@ -20,18 +20,18 @@ public static class NanoId
     /// </summary>
     public const int DefaultIdSize = 21;
 
-    [ThreadStatic]
-    private static Random? globalRandom;
-
     /// <summary>
     /// Gets the global <see cref="Random"/> instance used to conveniently generate <see cref="NanoId"/>.
     /// </summary>
     /// <remarks>Lazily initialized in order to account for the <see cref="ThreadStaticAttribute"/> (learn more here: https://stackoverflow.com/a/18086509).</remarks>
-    public static Random GlobalRandom => globalRandom ??=
+    [field: ThreadStatic]
+    [field: System.Diagnostics.CodeAnalysis.MaybeNull]
+    public static Random GlobalRandom
+        => field ??=
 #if NETSTANDARD1_3_OR_GREATER || NET || NETFRAMEWORK
-        new Random();
+            new Random();
 #else
-        new Random((int)DateTime.UtcNow.Ticks);
+            new Random((int)DateTime.UtcNow.Ticks);
 #endif
 
     /// <summary>

@@ -33,22 +33,15 @@ public static class RuntimeInformation
     /// </summary>
     public static readonly string SharedLibraryPrefix = GetSharedLibraryPrefix();
 
-#pragma warning disable IDE0032 // Use auto property
-    private static string? targetFramework;
-    private static string? targetPlatform;
-#if !NET5_0_OR_GREATER
-    private static string? runtimeIdentifier;
-#endif
-#pragma warning restore IDE0032 // Use auto property
-
     /// <summary>
     /// Gets the target framework.
     /// </summary>
+    [field: System.Diagnostics.CodeAnalysis.MaybeNull]
     public static string TargetFramework
     {
         get
         {
-            return targetFramework ??= GetFrameworkName() ?? throw new InvalidOperationException();
+            return field ??= GetFrameworkName() ?? throw new InvalidOperationException();
 
             static string? GetFrameworkName()
             {
@@ -90,11 +83,12 @@ public static class RuntimeInformation
     /// <summary>
     /// Gets the target platform, or an empty string.
     /// </summary>
+    [field: System.Diagnostics.CodeAnalysis.MaybeNull]
     public static string TargetPlatform
     {
         get
         {
-            return targetPlatform ??= GetPlatformName() ?? string.Empty;
+            return field ??= GetPlatformName() ?? string.Empty;
 
             static string? GetPlatformName()
             {
@@ -119,6 +113,9 @@ public static class RuntimeInformation
     /// <summary>
     /// Gets the platform for which the runtime was built (or on which an app is running).
     /// </summary>
+#if !NET5_0_OR_GREATER
+    [field: System.Diagnostics.CodeAnalysis.MaybeNull]
+#endif
     public static string RuntimeIdentifier
 #if NET5_0_OR_GREATER
         => System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier;
@@ -127,9 +124,9 @@ public static class RuntimeInformation
         get
         {
 #if NETSTANDARD2_0_OR_GREATER || NET47_OR_GREATER
-            return runtimeIdentifier ??= AppContext.GetData("RUNTIME_IDENTIFIER") as string ?? GetRidCore();
+            return field ??= AppContext.GetData("RUNTIME_IDENTIFIER") as string ?? GetRidCore();
 #else
-            return runtimeIdentifier ??= GetRidCore();
+            return field ??= GetRidCore();
 #endif
 
             static string GetRidCore()

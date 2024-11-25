@@ -22,13 +22,11 @@ public static class BinaryReaderExtensions
 
     /// <inheritdoc cref="BinaryReader.ReadByte" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static short ReadByte(this BinaryReader reader, ByteOrder byteOrder) => reader.ReadByte();
 
     /// <inheritdoc cref="BinaryReader.ReadBytes" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static byte[] ReadBytes(this BinaryReader reader, int count, ByteOrder byteOrder) => reader.ReadBytes(count);
 
@@ -71,7 +69,6 @@ public static class BinaryReaderExtensions
     /// <inheritdoc cref="BinaryReader.ReadSByte" />
     [CLSCompliant(false)]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static sbyte ReadSByte(this BinaryReader reader, ByteOrder byteOrder) => reader.ReadSByte();
 

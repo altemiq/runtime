@@ -20,7 +20,6 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.GetBytes(bool)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static byte[] GetBytes(bool value, ByteOrder byteOrder) => System.BitConverter.GetBytes(value);
 
@@ -130,7 +129,6 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.ToBoolean(byte[], int)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool ToBoolean(byte[] value, int startIndex, ByteOrder byteOrder) => ToBoolean(value, startIndex);
 
@@ -141,7 +139,6 @@ public static class BitConverter
 
     /// <inheritdoc cref="System.BitConverter.ToBoolean(ReadOnlySpan{byte})" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool ToBoolean(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ToBoolean(value);
 #elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
@@ -560,7 +557,6 @@ public static class BitConverter
     public static bool TryWriteBytes(Span<byte> destination, bool value) => System.BitConverter.TryWriteBytes(destination, value);
 
     /// <inheritdoc cref="System.BitConverter.TryWriteBytes(Span{byte}, bool)" />
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool TryWriteBytes(Span<byte> destination, bool value, ByteOrder byteOrder) => TryWriteBytes(destination, value);
 #elif NETSTANDARD1_3_OR_GREATER || NETFRAMEWORK || NETCOREAPP
