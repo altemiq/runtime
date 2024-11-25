@@ -37,11 +37,11 @@ public class BitArrayExtensionsTests
     public void EqualsExtension(byte? first, byte? second, bool result)
     {
         var firstBitArray = first.HasValue
-            ? new System.Collections.BitArray(new byte[] { first.Value })
+            ? new System.Collections.BitArray([first.Value])
             : null;
 
         var secondBitArray = second.HasValue
-            ? new System.Collections.BitArray(new byte[] { second.Value })
+            ? new System.Collections.BitArray([second.Value])
             : null;
 
         _ = BitArrayExtensions.Equals(firstBitArray!, secondBitArray!).Should().Be(result);
