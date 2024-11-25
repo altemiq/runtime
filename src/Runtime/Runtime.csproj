@@ -12,15 +12,15 @@
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-8g4q-xg66-9fp4" />
   </ItemGroup>
 
-  <ItemGroup Condition=" !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')))">
-    <Compile Remove="Runtime\Resolve.cs" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net5.0')) " />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" />
     <PackageReference Include="NuGet.Frameworks" VersionOverride="4.0.0" />
     <PackageReference Update="NuGet.Frameworks" VersionOverride="5.6.0" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net5.0')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) " />
+    <PackageReference Include="PolySharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">

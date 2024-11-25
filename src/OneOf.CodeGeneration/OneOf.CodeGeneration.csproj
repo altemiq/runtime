@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

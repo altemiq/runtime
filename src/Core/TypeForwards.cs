@@ -4,6 +4,10 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+#if NET9_0_OR_GREATER
+[assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute))]
+#endif
+
 #if NET8_0_OR_GREATER
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.CodeAnalysis.ExperimentalAttribute))]
 
@@ -12,6 +16,7 @@
 #endif
 
 #if NET7_0_OR_GREATER
+[assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.CodeAnalysis.ConstantExpectedAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.CodeAnalysis.StringSyntaxAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.CodeAnalysis.UnscopedRefAttribute))]

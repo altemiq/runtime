@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.1;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.1;netstandard1.0</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
     <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -20,6 +20,13 @@
     <Compile Update="**\List.*.cs" DependentUpon="List.cs" />
     <Compile Update="**\MemoryExtensions.*.cs" DependentUpon="MemoryExtensions.cs" />
     <None Include="$([MSBuild]::GetPathOfFileAbove(README.md))" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PolySharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) ">

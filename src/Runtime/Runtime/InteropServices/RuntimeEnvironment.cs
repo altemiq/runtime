@@ -496,7 +496,6 @@ public static class RuntimeEnvironment
         && data.Contains(value);
 #endif
 #else
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter.", Justification = "This is required for a common API")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for a common API")]
     private static bool IsAlreadyInAppContext(string value, string variable) => false;
 #endif
