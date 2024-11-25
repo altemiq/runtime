@@ -26,6 +26,16 @@ public static class Resolve
     public static void Remove() => AppDomain.CurrentDomain.AssemblyResolve -= ResolveRuntimeAssembliesHandler;
 
     /// <summary>
+    /// Resolves the specified executable tool.
+    /// </summary>
+    /// <param name="executable">The executable.</param>
+    /// <returns>The tool path if found; otherwise <see langword="null"/>.</returns>
+    public static string? Tool(string executable) =>
+        InteropServices.RuntimeEnvironment.GetToolDirectory(executable) is { } path
+            ? Path.Combine(path, executable)
+            : default;
+
+    /// <summary>
     /// Resolves the runtime assembly.
     /// </summary>
     /// <param name="requiredAssemblyName">The required assembly name.</param>

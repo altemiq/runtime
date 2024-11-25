@@ -24,16 +24,22 @@ public static class RuntimeInformation
     public static readonly string SharedLibraryExtension = GetSharedLibraryExtension();
 
     /// <summary>
+    /// The executable extension.
+    /// </summary>
+    public static readonly string ExecutableExtension = GetExecutableExtension();
+
+    /// <summary>
     /// The shared library prefix.
     /// </summary>
     public static readonly string SharedLibraryPrefix = GetSharedLibraryPrefix();
 
+#pragma warning disable IDE0032 // Use auto property
+    private static string? targetFramework;
+    private static string? targetPlatform;
 #if !NET5_0_OR_GREATER
     private static string? runtimeIdentifier;
 #endif
-
-    private static string? targetFramework;
-    private static string? targetPlatform;
+#pragma warning restore IDE0032 // Use auto property
 
     /// <summary>
     /// Gets the target framework.
@@ -306,6 +312,46 @@ public static class RuntimeInformation
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
         {
             return ".dylib";
+        }
+#endif
+
+        throw new InvalidOperationException();
+    }
+
+#if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
+    private static string GetExecutableExtension()
+    {
+#if NET5_0_OR_GREATER
+        if (OperatingSystem.IsWindows())
+        {
+            return ".exe";
+        }
+
+        if (OperatingSystem.IsLinux())
+        {
+            return string.Empty;
+        }
+
+        if (OperatingSystem.IsMacOS())
+        {
+            return string.Empty;
+        }
+#else
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            return ".exe";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            return string.Empty;
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+        {
+            return string.Empty;
         }
 #endif
 

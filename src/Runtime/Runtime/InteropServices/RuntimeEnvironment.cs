@@ -19,6 +19,7 @@ public static class RuntimeEnvironment
     private const string RuntimesDirectory = "runtimes";
     private const string NativeDirectory = "native";
     private const string LibraryDirectory = "lib";
+    private const string ToolsDirectory = "tools";
 
     private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
 
@@ -58,21 +59,8 @@ public static class RuntimeEnvironment
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         static string CreateAssetPath(string rid, string name)
         {
-            return $"runtimes{Path.AltDirectorySeparatorChar}{rid}{Path.AltDirectorySeparatorChar}native{Path.AltDirectorySeparatorChar}{name}";
+            return $"runtimes{Path.AltDirectorySeparatorChar}{rid}{Path.AltDirectorySeparatorChar}{NativeDirectory}{Path.AltDirectorySeparatorChar}{name}";
         }
-
-#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
-        static void ReplaceEmpty(IList<string> list, string value)
-        {
-            for (var i = 0; i < list.Count; i++)
-            {
-                if (string.IsNullOrEmpty(list[i]))
-                {
-                    list[i] = value;
-                }
-            }
-        }
-#endif
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         static void TryAdd<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
@@ -138,49 +126,66 @@ public static class RuntimeEnvironment
     /// Gets all possible runtime library directories.
     /// </summary>
     /// <returns>The runtime library directories.</returns>
-    public static IEnumerable<string> GetRuntimeLibraryDirectories()
+    public static IEnumerable<string> GetRuntimeLibraryDirectories() => GetRuntimeDirectories(LibraryDirectory).SelectMany(GetFrameworkDirectories);
+
+    /// <summary>
+    /// Gets the tools directory that contains the specified tool name.
+    /// </summary>
+    /// <param name="name">The tool name.</param>
+    /// <returns>The directory containing <paramref name="name"/> if found; otherwise <see langword="null"/>.</returns>
+    public static string? GetToolDirectory(string name) => GetToolsDirectories().FirstOrDefault(p => File.Exists(Path.Combine(p, name)));
+
+    /// <summary>
+    /// Gets the tools directory.
+    /// </summary>
+    /// <returns>The tools directory.</returns>
+    public static string? GetToolsDirectory() => GetToolsDirectories().FirstOrDefault();
+
+    /// <summary>
+    /// Gets all possible tool directories.
+    /// </summary>
+    /// <returns>The tool directories.</returns>
+    public static IEnumerable<string> GetToolsDirectories()
     {
-        return GetRuntimeDirectories(LibraryDirectory)
-            .SelectMany(GetRuntimeLibraryDirectoriesCore);
+#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
+        var probingDirectories = ((string?)AppDomain.CurrentDomain.GetData("PROBING_DIRECTORIES"))?.Split(Path.PathSeparator) ?? RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
+        ReplaceEmpty(probingDirectories, AppDomain.CurrentDomain.BaseDirectory);
+#else
+        var probingDirectories = RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
+#endif
 
-        static IEnumerable<string> GetRuntimeLibraryDirectoriesCore(string runtimesLibraryDirectory)
+        return probingDirectories
+            .Select(static probingDirectory => Path.Combine(probingDirectory, ToolsDirectory))
+            .Where(Directory.Exists)
+            .SelectMany(GetFrameworkDirectories)
+            .SelectMany(GetRidDirectories);
+
+        static IEnumerable<string> GetRidDirectories(string directory)
         {
-            var frameworkNameProvider = NuGet.Frameworks.DefaultFrameworkNameProvider.Instance;
-
-            // get all the available TFMs
-            if (Directory.GetDirectories(runtimesLibraryDirectory)
+            if (Directory.GetDirectories(directory)
                 .Select(Path.GetFileName)
-                .Select(folder => NuGet.Frameworks.NuGetFramework.ParseFolder(folder, frameworkNameProvider))
-                .ToList() is { Count: not 0 } availableFrameworks)
+                .Where(static fileName => fileName is not null)
+                .Cast<string>()
+                .ToList() is { Count: not 0 } availableRids)
             {
-                // get the current TFM
-                var currentFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, frameworkNameProvider);
-                var currentFrameworkWithProfile = RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
-                    ? new NuGet.Frameworks.NuGetFramework(currentFramework.Framework, currentFramework.Version, targetPlatform)
-                    : default;
+                return GetRuntimeRids()
+                    .Intersect(availableRids, GetComparer())
+                    .Select(rid => Path.Combine(directory, rid))
+                    .Where(Directory.Exists);
 
-                var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
-                while (true)
+                static IEqualityComparer<string?> GetComparer()
                 {
-                    if (currentFrameworkWithProfile is { } framework && frameworkReducer.GetNearest(framework, availableFrameworks) is { } nearestFrameworkWithProfile)
-                    {
-                        yield return Path.Combine(runtimesLibraryDirectory, nearestFrameworkWithProfile.GetShortFolderName());
-                        _ = availableFrameworks.Remove(nearestFrameworkWithProfile);
-                    }
-                    else if (frameworkReducer.GetNearest(currentFramework, availableFrameworks) is { } nearestFramework)
-                    {
-                        yield return Path.Combine(runtimesLibraryDirectory, nearestFramework.GetShortFolderName());
-                        _ = availableFrameworks.Remove(nearestFramework);
-                        currentFrameworkWithProfile = default;
-                    }
-                    else
-                    {
-                        yield break;
-                    }
+#if NET5_0_OR_GREATER
+                    return OperatingSystem.IsWindows()
+#else
+                    return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+#endif
+                        ? StringComparer.OrdinalIgnoreCase
+                        : StringComparer.Ordinal;
                 }
             }
 
-            yield return runtimesLibraryDirectory;
+            return [];
         }
     }
 
@@ -219,6 +224,17 @@ public static class RuntimeEnvironment
     /// </summary>
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     public static void AddRuntimeLibraryDirectory(EnvironmentVariableTarget target) => AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths, target);
+
+    /// <summary>
+    /// Adds the tools directory to the path environment variable if required.
+    /// </summary>
+    public static void AddToolsDirectory() => AddToolsDirectory(EnvironmentVariableTarget.Process);
+
+    /// <summary>
+    /// Adds the tools directory to the path environment variable if required.
+    /// </summary>
+    /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+    public static void AddToolsDirectory(EnvironmentVariableTarget target) => AddRuntimeDirectory(GetToolsDirectory(), AppPaths, target);
 
     /// <summary>
     /// Adds the runtime directories to the path variable if required.
@@ -311,6 +327,21 @@ public static class RuntimeEnvironment
     /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
     /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
     public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is { } p && !IsAlreadyInAppContext(p, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, p);
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => ShouldAddToolsDirectory(path, EnvironmentVariableTarget.Process);
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is { } p && !EnvironmentVariableContains(RuntimeInformation.PathVariable, target, p);
 #else
     /// <summary>
     /// Adds the runtime native directory to the path variable if required.
@@ -327,6 +358,17 @@ public static class RuntimeEnvironment
     /// Adds the runtime library directory to the path variable if required.
     /// </summary>
     public static void AddRuntimeLibraryDirectory() => AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths);
+
+    /// <summary>
+    /// Adds the tool directory to the path variable if required.
+    /// </summary>
+    public static void AddToolsDirectory()
+    {
+        if (GetToolsDirectory() is { } toolsDirectory)
+        {
+            AddDirectoryToPath(toolsDirectory);
+        }
+    }
 
     /// <summary>
     /// Adds the runtime directories to the path variable if required.
@@ -378,6 +420,13 @@ public static class RuntimeEnvironment
     /// <param name="path">The path to check.</param>
     /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
     public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is { } p && !IsAlreadyInAppContext(p, AppPaths) && !EnvironmentVariableContains(RuntimeInformation.PathVariable, p);
+
+    /// <summary>
+    /// Returns whether the specified path should be added.
+    /// </summary>
+    /// <param name="path">The path to check.</param>
+    /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+    public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is { } p && !EnvironmentVariableContains(RuntimeInformation.PathVariable, p);
 #endif
 
     /// <summary>
@@ -386,6 +435,13 @@ public static class RuntimeEnvironment
     /// <param name="name">The name.</param>
     /// <returns>The module name.</returns>
     public static string CreateModuleName(string name) => $"{RuntimeInformation.SharedLibraryPrefix}{name}{RuntimeInformation.SharedLibraryExtension}";
+
+    /// <summary>
+    /// Creates the executable name.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <returns>The executable name.</returns>
+    public static string CreateExecutableName(string name) => $"{name}{RuntimeInformation.ExecutableExtension}";
 
     /// <summary>
     /// Gets the runtime config file name.
@@ -574,5 +630,58 @@ public static class RuntimeEnvironment
 #endif
 #else
     private static bool EnvironmentVariableContains(string variable, string value) => Environment.GetEnvironmentVariable(variable) is { } variableValue && variableValue.Contains(value);
+#endif
+
+    private static IEnumerable<string> GetFrameworkDirectories(string directory)
+    {
+        var frameworkNameProvider = NuGet.Frameworks.DefaultFrameworkNameProvider.Instance;
+
+        // get all the available TFMs
+        if (Directory.GetDirectories(directory)
+            .Select(Path.GetFileName)
+            .Select(folder => NuGet.Frameworks.NuGetFramework.ParseFolder(folder, frameworkNameProvider))
+            .ToList() is { Count: not 0 } availableFrameworks)
+        {
+            // get the current TFM
+            var targetFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(RuntimeInformation.TargetFramework, frameworkNameProvider);
+            var targetFrameworkWithProfile = RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
+                ? new NuGet.Frameworks.NuGetFramework(targetFramework.Framework, targetFramework.Version, targetPlatform)
+                : default;
+
+            var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
+            while (true)
+            {
+                if (targetFrameworkWithProfile is { } framework && frameworkReducer.GetNearest(framework, availableFrameworks) is { } nearestFrameworkWithProfile)
+                {
+                    yield return Path.Combine(directory, nearestFrameworkWithProfile.GetShortFolderName());
+                    _ = availableFrameworks.Remove(nearestFrameworkWithProfile);
+                }
+                else if (frameworkReducer.GetNearest(targetFramework, availableFrameworks) is { } nearestFramework)
+                {
+                    yield return Path.Combine(directory, nearestFramework.GetShortFolderName());
+                    _ = availableFrameworks.Remove(nearestFramework);
+                    targetFrameworkWithProfile = default;
+                }
+                else
+                {
+                    yield break;
+                }
+            }
+        }
+
+        yield return directory;
+    }
+
+#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
+    private static void ReplaceEmpty(string[] list, string value)
+    {
+        for (var i = 0; i < list.Length; i++)
+        {
+            if (string.IsNullOrEmpty(list[i]))
+            {
+                list[i] = value;
+            }
+        }
+    }
 #endif
 }

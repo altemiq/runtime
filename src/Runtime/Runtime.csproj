@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-5crp-9r3c-p9vr" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-8g4q-xg66-9fp4" />
   </ItemGroup>
 
   <ItemGroup Condition=" !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20'))) AND !($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')))">
