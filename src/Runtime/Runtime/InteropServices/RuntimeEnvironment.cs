@@ -41,12 +41,7 @@ public static class RuntimeEnvironment
         TryAdd(candidateAssets, CreateAssetPath(RuntimeInformation.RuntimeIdentifier, name), 10001);
         TryAdd(candidateAssets, CreateAssetPath(RuntimeInformation.GetNaïveRid(), name), 10001);
 
-#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
-        var probingDirectories = ((string?)AppDomain.CurrentDomain.GetData("PROBING_DIRECTORIES"))?.Split(Path.PathSeparator) ?? RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
-        ReplaceEmpty(probingDirectories, AppDomain.CurrentDomain.BaseDirectory);
-#else
-        var probingDirectories = RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
-#endif
+        var probingDirectories = GetProbingDirectories();
 
         return candidateAssets
             .OrderBy(p => p.Value)
@@ -147,14 +142,7 @@ public static class RuntimeEnvironment
     /// <returns>The tool directories.</returns>
     public static IEnumerable<string> GetToolsDirectories()
     {
-#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
-        var probingDirectories = ((string?)AppDomain.CurrentDomain.GetData("PROBING_DIRECTORIES"))?.Split(Path.PathSeparator) ?? RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
-        ReplaceEmpty(probingDirectories, AppDomain.CurrentDomain.BaseDirectory);
-#else
-        var probingDirectories = RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
-#endif
-
-        return probingDirectories
+        return FilterProbingPaths(GetProbingDirectoriesCore())
             .Select(static probingDirectory => Path.Combine(probingDirectory, ToolsDirectory))
             .Where(Directory.Exists)
             .SelectMany(GetFrameworkDirectories)
@@ -186,6 +174,61 @@ public static class RuntimeEnvironment
             }
 
             return [];
+        }
+
+        static IEnumerable<string> GetProbingDirectoriesCore()
+        {
+            var probingDirectories = GetProbingDirectories();
+            foreach (var probingDirectory in probingDirectories)
+            {
+                yield return probingDirectory;
+            }
+
+            if (TryGetPackages(probingDirectories, "NUGET_PACKAGES", out var path))
+            {
+                yield return path;
+            }
+
+            if (TryGetPackages(probingDirectories, "NUGET_FALLBACK_PACKAGES", out path))
+            {
+                yield return path;
+            }
+
+            static bool TryGetPackages(IList<string> paths, string variable, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? path)
+            {
+                if (Environment.GetEnvironmentVariable(variable) is { } variableValue
+                    && !paths.Contains(variableValue, GetPathComparer()))
+                {
+                    path = variableValue;
+                    return true;
+                }
+
+                path = default;
+                return false;
+            }
+        }
+
+        static IEnumerable<string> FilterProbingPaths(IEnumerable<string> probingPaths)
+        {
+            var libraryPaths = GetDependencyContext()?.RuntimeLibraries?
+                .Where(library => library.Type is "package")
+                .Select(library => library.Path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar))
+                .ToArray() ?? [];
+
+            foreach (var probingPath in probingPaths)
+            {
+                // return any probing path that has a tools directory
+                yield return probingPath;
+
+                foreach (var libraryPath in libraryPaths)
+                {
+                    var path = Path.Combine(probingPath, libraryPath);
+                    if (Directory.Exists(path))
+                    {
+                        yield return path;
+                    }
+                }
+            }
         }
     }
 
@@ -511,7 +554,7 @@ public static class RuntimeEnvironment
                 .Cast<string>()
                 .ToList() is { Count: not 0 } availableRids)
             {
-                if (GetRuntimeRids().Intersect(availableRids, GetComparer()).ToList() is { Capacity: not 0 } rids)
+                if (GetRuntimeRids().Intersect(availableRids, GetPathComparer()).ToList() is { Capacity: not 0 } rids)
                 {
                     foreach (var path in rids.Select(rid => Path.Combine(runtimesDirectory, rid, name)).Where(Directory.Exists))
                     {
@@ -522,23 +565,23 @@ public static class RuntimeEnvironment
                 }
 
                 yield return Path.Combine(runtimesDirectory, name);
-
-                static IEqualityComparer<string?> GetComparer()
-                {
-#if NET5_0_OR_GREATER
-                    return OperatingSystem.IsWindows()
-#else
-                    return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
-#endif
-                        ? StringComparer.OrdinalIgnoreCase
-                        : StringComparer.Ordinal;
-                }
             }
             else
             {
                 yield return runtimesDirectory;
             }
         }
+    }
+
+    private static StringComparer GetPathComparer()
+    {
+#if NET5_0_OR_GREATER
+        return OperatingSystem.IsWindows()
+#else
+        return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+#endif
+            ? StringComparer.OrdinalIgnoreCase
+            : StringComparer.Ordinal;
     }
 
     private static List<string> GetRuntimeRids()
@@ -671,16 +714,16 @@ public static class RuntimeEnvironment
         yield return directory;
     }
 
-#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
-    private static void ReplaceEmpty(string[] list, string value)
+    private static string[] GetProbingDirectories()
     {
-        for (var i = 0; i < list.Length; i++)
+#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
+        if (AppDomain.CurrentDomain.GetData("PROBING_DIRECTORIES") is string probingDirectories
+            && !string.IsNullOrEmpty(probingDirectories))
         {
-            if (string.IsNullOrEmpty(list[i]))
-            {
-                list[i] = value;
-            }
+            return probingDirectories.Split(Path.PathSeparator);
         }
-    }
 #endif
+
+        return RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
+    }
 }
