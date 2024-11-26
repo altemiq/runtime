@@ -110,8 +110,7 @@ public partial class SourceGenerator : ISourceGenerator
                 .WithArgumentList(
                     AttributeArgumentList(
                         SeparatedList(
-                            new[]
-                            {
+                            [
                                 AttributeArgument(
                                     LiteralExpression(
                                         SyntaxKind.StringLiteralExpression,
@@ -120,7 +119,7 @@ public partial class SourceGenerator : ISourceGenerator
                                     LiteralExpression(
                                         SyntaxKind.StringLiteralExpression,
                                         Literal(assembly.Version.ToString()))),
-                            })));
+                            ])));
         }
     }
 
