@@ -6,7 +6,7 @@
 
 namespace Altemiq;
 
-public class BitConverterTests
+public partial class BitConverterTests
 {
     private const byte PositiveByte = 0x7F;
 

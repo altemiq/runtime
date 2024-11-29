@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="BitConverterTests.*.cs" DependentUpon="BitConverterTests.cs" />
     <Compile Update="Linq\ListTests.*.cs" DependentUpon="ListTests.cs" />
   </ItemGroup>
 

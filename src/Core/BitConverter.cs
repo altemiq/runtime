@@ -9,7 +9,7 @@ namespace Altemiq;
 /// <summary>
 /// Extended <see cref="System.BitConverter"/>.
 /// </summary>
-public static class BitConverter
+public static partial class BitConverter
 {
     /// <inheritdoc cref="System.BitConverter.IsLittleEndian" />
     public static readonly bool IsLittleEndian = System.BitConverter.IsLittleEndian;

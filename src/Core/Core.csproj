@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Update="**\BitConverter.*.cs" DependentUpon="BitConverter.cs" />
     <Compile Update="**\List.*.cs" DependentUpon="List.cs" />
     <Compile Update="**\MemoryExtensions.*.cs" DependentUpon="MemoryExtensions.cs" />
     <None Include="$([MSBuild]::GetPathOfFileAbove(README.md))" Pack="true" PackagePath="\" />
@@ -45,11 +46,8 @@
     <PackageReference Include="System.Net.Http" />
   </ItemGroup>
 
-  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) and $([MSBuild]::VersionGreaterThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.0')) ">
-    <PackageReference Include="System.Collections.Concurrent" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' or ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionGreaterThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '1.3')) and $([MSBuild]::VersionLessThanOrEquals($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0'))) ">
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.1')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1')) ">
+    <PackageReference Include="System.Collections.Concurrent" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework' " />
     <PackageReference Include="System.Memory" />
   </ItemGroup>
 
