@@ -1,4 +1,4 @@
-﻿namespace Altavec;
+﻿namespace Altemiq;
 
 public partial class BitConverterTests
 {
@@ -79,7 +79,7 @@ public partial class BitConverterTests
                 bytesRead.Should().Be(length);
             }
 
-            private void EncodeAndDecode<T>(
+            private static void EncodeAndDecode<T>(
                 T number,
                 GetVarBytes<T> encode,
                 ToValue<T> decode)

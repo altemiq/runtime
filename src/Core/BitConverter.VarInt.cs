@@ -1,10 +1,10 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="BitConverter.VarInt.cs" company="Altavec">
-// Copyright (c) Altavec. All rights reserved.
+// <copyright file="BitConverter.VarInt.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altavec;
+namespace Altemiq;
 
 /// <content>
 /// The <see cref="BitConverter"/> for variable integers.
