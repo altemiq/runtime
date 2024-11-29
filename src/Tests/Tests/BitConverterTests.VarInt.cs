@@ -58,6 +58,16 @@ public partial class BitConverterTests
             [InlineData(ulong.MaxValue / 2)]
             public void EncodeAndDecodeUInt64(ulong number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt64);
 
+#if NET7_0_OR_GREATER
+            [Theory]
+            [MemberData(nameof(GetInt128Data), MemberType = typeof(VarInt))]
+            public void EncodeAndDecodeInt128(Int128 number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt128);
+
+            [Theory]
+            [MemberData(nameof(GetUInt128Data), MemberType = typeof(VarInt))]
+            public void EncodeAndDecodeUInt128(UInt128 number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt128);
+#endif
+
             [Fact]
             public void ToSmall()
             {
@@ -149,6 +159,16 @@ public partial class BitConverterTests
             [InlineData(ulong.MaxValue / 2)]
             public void EncodeAndDecodeUInt64(ulong number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt64);
 
+#if NET7_0_OR_GREATER
+            [Theory]
+            [MemberData(nameof(GetInt128Data), MemberType = typeof(VarInt))]
+            public void EncodeAndDecodeInt128(Int128 number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt128);
+
+            [Theory]
+            [MemberData(nameof(GetUInt128Data), MemberType = typeof(VarInt))]
+            public void EncodeAndDecodeUInt128(UInt128 number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt128);
+#endif
+
             [Fact]
             public void ToSmall()
             {
@@ -173,7 +193,7 @@ public partial class BitConverterTests
                 TryWriteBytes<T> encode,
                 ToValue<T> decode)
             {
-                Span<byte> encoded = stackalloc byte[10];
+                Span<byte> encoded = stackalloc byte[20];
                 encode(encoded, number, out var bytesWritten).Should().BeTrue();
                 var decoded = decode(encoded[..bytesWritten], out var bytesRead);
                 decoded.Should().Be(number);
@@ -184,5 +204,22 @@ public partial class BitConverterTests
 
             private delegate T ToValue<T>(ReadOnlySpan<byte> source, out int bytesRead);
         }
+
+#if NET7_0_OR_GREATER
+        public static TheoryData<Int128> GetInt128Data() =>
+        [
+            Int128.MinValue,
+            Int128.MaxValue,
+            default,
+            Int128.MaxValue / 2,
+        ];
+
+        public static TheoryData<UInt128> GetUInt128Data() =>
+        [
+            UInt128.MinValue,
+            UInt128.MaxValue,
+            UInt128.MaxValue / 2,
+        ];
+#endif
     }
 }

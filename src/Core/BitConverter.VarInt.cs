@@ -104,6 +104,23 @@ public static partial class BitConverter
     [CLSCompliant(false)]
     public static byte[] GetVarBytes(ulong value) => GetVarBytesCore(value);
 
+#if NET7_0_OR_GREATER
+    /// <summary>
+    /// Returns the specified 64-bit signed value as <c>varint</c> encoded array of bytes.
+    /// </summary>
+    /// <param name="value">64-bit signed value.</param>
+    /// <returns><c>varint</c> array of bytes.</returns>
+    public static byte[] GetVarBytes(Int128 value) => GetVarBytesCore(EncodeZigZag<Int128, UInt128>(value, 128));
+
+    /// <summary>
+    /// Returns the specified 64-bit unsigned value as <c>varint</c> encoded array of bytes.
+    /// </summary>
+    /// <param name="value">64-bit unsigned value.</param>
+    /// <returns><c>varint</c> array of bytes.</returns>
+    [CLSCompliant(false)]
+    public static byte[] GetVarBytes(UInt128 value) => GetVarBytesCore(value);
+#endif
+
     /// <summary>
     /// Returns signed byte value from <c>varint</c> encoded array of bytes.
     /// </summary>
@@ -346,6 +363,45 @@ public static partial class BitConverter
 #endif
 #endif
 
+#if NET7_0_OR_GREATER
+    /// <summary>
+    /// Returns 64-bit signed value from <c>varint</c> encoded array of bytes.
+    /// </summary>
+    /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+    /// <param name="startIndex">The start index.</param>
+    /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
+    /// <returns>64-bit signed value.</returns>
+    public static Int128 ToInt128(byte[] bytes, int startIndex, out int bytesRead) => DecodeZigZag<UInt128, Int128>(ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead));
+
+    /// <summary>
+    /// Returns 64-bit signed value from <c>varint</c> encoded array of bytes.
+    /// </summary>
+    /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+    /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
+    /// <returns>64-bit signed value.</returns>
+    [CLSCompliant(false)]
+    public static Int128 ToInt128(ReadOnlySpan<byte> bytes, out int bytesRead) => DecodeZigZag<UInt128, Int128>(ToTarget<UInt128>(bytes, 128, out bytesRead));
+
+    /// <summary>
+    /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
+    /// </summary>
+    /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+    /// <param name="startIndex">The start index.</param>
+    /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
+    /// <returns>64-bit unsigned value.</returns>
+    [CLSCompliant(false)]
+    public static UInt128 ToUInt128(byte[] bytes, int startIndex, out int bytesRead) => ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead);
+
+    /// <summary>
+    /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
+    /// </summary>
+    /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+    /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
+    /// <returns>64-bit unsigned value.</returns>
+    [CLSCompliant(false)]
+    public static UInt128 ToUInt128(ReadOnlySpan<byte> bytes, out int bytesRead) => ToTarget<UInt128>(bytes, 128, out bytesRead);
+#endif
+
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
     /// <summary>
     /// Converts a 8-bit signed integer into a span of bytes.
@@ -444,6 +500,25 @@ public static partial class BitConverter
     public static bool TryWriteBytes(Span<byte> destination, ulong value, out int bytesWritten) => TryWriteBytesCore(destination, value, out bytesWritten);
 
 #if NET7_0_OR_GREATER
+    /// <summary>
+    /// Converts a 64-bit signed integer into a span of bytes.
+    /// </summary>
+    /// <param name="destination">When this method returns, the bytes representing the converted 64-bit signed integer.</param>
+    /// <param name="value">The 64-bit signed integer to convert.</param>
+    /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
+    /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
+    public static bool TryWriteBytes(Span<byte> destination, Int128 value, out int bytesWritten) => TryWriteBytesCore(destination, EncodeZigZag<Int128, UInt128>(value, 128), out bytesWritten);
+
+    /// <summary>
+    /// Converts a 64-bit unsigned integer into a span of bytes.
+    /// </summary>
+    /// <param name="destination">When this method returns, the bytes representing the converted 64-bit unsigned integer.</param>
+    /// <param name="value">The 64-bit unsigned integer to convert.</param>
+    /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
+    /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
+    [CLSCompliant(false)]
+    public static bool TryWriteBytes(Span<byte> destination, UInt128 value, out int bytesWritten) => TryWriteBytesCore(destination, value, out bytesWritten);
+
     private static bool TryWriteBytesCore<T>(Span<byte> destination, T value, out int bytesWritten)
         where T : System.Numerics.IBinaryInteger<T>
     {
@@ -507,7 +582,7 @@ public static partial class BitConverter
         where T : System.Numerics.IBinaryInteger<T>
     {
         var valueMask = T.CreateChecked(ValueMask);
-        Span<byte> buffer = stackalloc byte[10];
+        Span<byte> buffer = stackalloc byte[20];
 
         var pos = 0;
         do
