@@ -1,10 +1,10 @@
-dotnet tool install altemiq.semanticversioning --global --add-source https://nuget.pkg.github.com/altemiq/index.json^
-  & dotnet tool update altemiq.semanticversioning --global --add-source https://nuget.pkg.github.com/altemiq/index.json
+dotnet tool install altavec.semanticversioning --global
+  & dotnet tool update altavec.semanticversioning --global
 dotnet build src
 dotnet semver diff solution src^
   --output BreakingChanges^
-  --source https://nuget.pkg.github.com/altemiq/index.json ^
+  --source https://nuget.pkg.github.com/altavec/index.json ^
   --direct-download^
   --version-suffix personal^
-  --package-id-regex Altemiq^
+  --package-id-regex Altavec^
   --package-id-replace Mondo
