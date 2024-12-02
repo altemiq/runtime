@@ -25,13 +25,26 @@ public class MemoryExtensionsTests
         }
     }
 
+#if !NET9_0_OR_GREATER
     [Fact]
-    public void MoveNextOnEmptyString() => string.Empty.AsSpan().Split().MoveNext().Should().BeFalse();
+    public void MoveNextOnEmptyString()
+    {
+        var enumerator = string.Empty.AsSpan().Split();
+        enumerator.MoveNext().Should().BeTrue();
+        enumerator.MoveNext().Should().BeFalse();
+    }
+#endif
 
     [Fact]
     public void MoveNextOrThrowOnEmptyString() => string.Empty.Invoking(static s =>
     {
-        var enumerator = s.AsSpan().Split();
+        var enumerator =
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(s.AsSpan(), ' ');
+#else
+            s.AsSpan().Split();
+#endif
+        enumerator.MoveNextOrThrow();
         enumerator.MoveNextOrThrow();
     }).Should().ThrowExactly<InvalidOperationException>();
 
@@ -40,7 +53,12 @@ public class MemoryExtensionsTests
     {
         const string Value = "This is a split string";
         var span = Value.AsSpan();
-        var enumerator = span.Split();
+        var enumerator =
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(span, ' ');
+#else
+            span.Split();
+#endif
         _ = span.GetNextString(ref enumerator).Should().Be("This");
         _ = span.GetNextString(ref enumerator).Should().Be("is");
         _ = span.GetNextString(ref enumerator).Should().Be("a");
@@ -67,7 +85,12 @@ public class MemoryExtensionsTests
         var values = new[] { "This", "is", "a", "split", "string" };
         var value = string.Join(separator, values);
         var span = value.AsSpan();
-        var enumerator = span.Split(separator);
+        var enumerator =
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(span, separator.AsSpan());
+#else
+            span.Split(separator.AsSpan());
+#endif
         _ = span.GetNextString(ref enumerator).Should().Be(values[0]);
         _ = span.GetNextString(ref enumerator).Should().Be(values[1]);
         _ = span.GetNextString(ref enumerator).Should().Be(values[2]);
@@ -99,7 +122,7 @@ public class MemoryExtensionsTests
     {
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
-        var enumerator = span.Split(",", StringSplitOptions.RemoveEmptyEntries);
+        var enumerator = span.Split(",".AsSpan(), StringSplitOptions.RemoveEmptyEntries);
         _ = enumerator.MoveNext().Should().BeFalse();
     }
 
@@ -154,7 +177,7 @@ public class MemoryExtensionsTests
         var values = new[] { "This", "\"is", "a\"", "split", "string" };
         var value = string.Join(separator, values);
         var span = value.AsSpan();
-        var enumerator = span.SplitQuoted(separator);
+        var enumerator = span.SplitQuoted(separator.AsSpan());
         _ = enumerator.MoveNext().Should().BeTrue();
         _ = span[enumerator.Current].ToString().Should().Be(values[0]);
         _ = enumerator.MoveNext().Should().BeTrue();
@@ -175,7 +198,7 @@ public class MemoryExtensionsTests
         var values = new[] { "This", "\"is", "a", "split\"", "string" };
         var value = string.Join(separator, values);
         var span = value.AsSpan();
-        var enumerator = span.SplitQuoted(separator);
+        var enumerator = span.SplitQuoted(separator.AsSpan());
         _ = enumerator.MoveNext().Should().BeTrue();
         _ = span[enumerator.Current].ToString().Should().Be(values[0]);
         _ = enumerator.MoveNext().Should().BeTrue();
@@ -190,7 +213,12 @@ public class MemoryExtensionsTests
     {
         var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
         var span = value.AsSpan();
-        var enumerator = span.Split('|');
+        var enumerator =
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(span, '|');
+#else
+            span.Split('|');
+#endif
         _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.First);
         _ = span.GetNextEnum<EnumValue>(ref enumerator).Should().Be(EnumValue.Second);
         _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.Third);
@@ -201,7 +229,12 @@ public class MemoryExtensionsTests
     {
         var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
         var span = value.AsSpan();
-        var enumerator = span.Split('|');
+        var enumerator =
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(span, '|');
+#else
+            span.Split('|');
+#endif
         _ = span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var enumValue).Should().BeTrue();
         _ = enumValue.Should().Be(EnumValue.First);
         _ = span.TryGetNextEnum(ref enumerator, out enumValue).Should().BeTrue();
@@ -217,7 +250,7 @@ public class MemoryExtensionsTests
         [Theory]
         [MemberData(nameof(GetCharValuesData))]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void CharSeparated(Func<Random, int, double> creator, GetValuesDelegate<char, double> getValues)
+        public void CharSeparated(Func<Random, int, double> creator, GetValuesCharDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
@@ -226,12 +259,12 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<char, double>> GetCharValuesData() => new() { { static (Random random, int _) => random.NextDouble(), new GetValuesDelegate<char, double>(MemoryExtensions.GetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, GetValuesCharDelegate<double>> GetCharValuesData() => new() { { static (Random random, int _) => random.NextDouble(), new GetValuesCharDelegate<double>(MemoryExtensions.GetDoubleValues) } };
 
         [Theory]
         [MemberData(nameof(GetStringValuesData))]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void StringSeparated(Func<Random, int, double> creator, GetValuesDelegate<string, double> getValues)
+        public void StringSeparated(Func<Random, int, double> creator, GetValuesSpanDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
@@ -240,7 +273,10 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, GetValuesDelegate<string, double>> GetStringValuesData() => new() { { static (Random random, int _) => random.NextDouble(), new GetValuesDelegate<string, double>(MemoryExtensions.GetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, GetValuesSpanDelegate<double>> GetStringValuesData() => new()
+        {
+            { static (Random random, int _) => random.NextDouble(), new GetValuesSpanDelegate<double>(MemoryExtensions.GetDoubleValues) }
+        };
     }
 
     [Theory]
@@ -251,7 +287,12 @@ public class MemoryExtensionsTests
         var random = new Random();
         var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
-        var enumerator = span.Split("|");
+        var enumerator =
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(span, '|');
+#else
+            span.Split('|');
+#endif
         var count = 0;
         for (var i = 0; i < 10; i++)
         {
@@ -296,7 +337,7 @@ public class MemoryExtensionsTests
         [Theory]
         [MemberData(nameof(TryGetValuesCharData))]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void CharSeparated(Func<Random, int, double> creator, TryGetValuesDelegate<char, double> getValues)
+        public void CharSeparated(Func<Random, int, double> creator, TryGetValuesCharDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
@@ -305,21 +346,21 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<char, double>> TryGetValuesCharData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<char, double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, TryGetValuesCharDelegate<double>> TryGetValuesCharData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesCharDelegate< double>(MemoryExtensions.TryGetDoubleValues) } };
 
         [Theory]
-        [MemberData(nameof(TryGetValuesStringData))]
+        [MemberData(nameof(TryGetValuesSpanData))]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void StringSeparated(Func<Random, int, double> creator, TryGetValuesDelegate<string, double> getValues)
+        public void StringSeparated(Func<Random, int, double> creator, TryGetValuesSpanDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
-            _ = getValues(span, "|", 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
+            _ = getValues(span, "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, TryGetValuesDelegate<string, double>> TryGetValuesStringData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesDelegate<string, double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, TryGetValuesSpanDelegate<double>> TryGetValuesSpanData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesSpanDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
     }
 
     [Theory]
@@ -330,7 +371,12 @@ public class MemoryExtensionsTests
         var random = new Random();
         var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
-        var enumerator = span.Split("|");
+        var enumerator =
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(span, '|');
+#else
+            span.Split('|');
+#endif
         var count = 0;
         while (parser(span, ref enumerator, System.Globalization.CultureInfo.CurrentCulture, out var value))
         {
@@ -358,13 +404,33 @@ public class MemoryExtensionsTests
         }
     }
 
-    public delegate bool TryGetValuesDelegate<TSeparator, TResult>(ReadOnlySpan<char> input, TSeparator separator, int count, IFormatProvider? provider, out TResult[]? output);
+    public delegate bool TryGetValuesSpanDelegate<TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider, out TResult[]? output);
 
-    public delegate bool TryGetDelegate<T>(ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out T value);
+    public delegate bool TryGetValuesCharDelegate<TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider, out TResult[]? output);
 
-    public delegate TResult[] GetValuesDelegate<TSeparator, TResult>(ReadOnlySpan<char> input, TSeparator separator, int count, IFormatProvider? provider);
+    public delegate bool TryGetDelegate<T>(
+        ReadOnlySpan<char> span,
+#if NET9_0_OR_GREATER
+        ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,
+#else
+        ref SpanSplitEnumerator<char> enumerator,
+#endif
+        IFormatProvider? provider,
+        out T value);
 
-    public delegate T GetDelegate<T>(ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider);
+    public delegate TResult[] GetValuesSpanDelegate<TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider);
+
+    public delegate TResult[] GetValuesCharDelegate<TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider);
+
+    public delegate T GetDelegate<T>(
+        ReadOnlySpan<char> span,
+#if NET9_0_OR_GREATER
+        ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,
+#else
+        ref SpanSplitEnumerator<char> enumerator,
+#endif
+        System.Globalization.NumberStyles style,
+        IFormatProvider? provider);
 #endif
 
     private enum EnumValue

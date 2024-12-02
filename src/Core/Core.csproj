@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <Choose>
-    <When Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net.0')) ">
+    <When Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net2.0')) ">
       <ItemGroup>
         <!-- this is to update the vunerable version -->
         <PackageReference Include="System.Text.RegularExpressions" />
@@ -74,6 +74,10 @@
 
   <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0')) or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net20')) or $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">
     <Compile Remove="Collections\BitArrayExtensions.Polyfill.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0')) ">
+    <Compile Remove="**\*.NET9.cs" />
   </ItemGroup>
 
   <Choose>
