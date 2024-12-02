@@ -612,20 +612,18 @@ public static class RuntimeEnvironment
 
             static bool ShouldUseRidGraph()
             {
-                if (GetRuntimeConfig() is { } runtimeConfig)
+                return GetRuntimeConfig() switch
                 {
-                    if (runtimeConfig.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value
-                        && bool.TryParse(value, out var result))
-                    {
-                        return result;
-                    }
+                    { } runtimeConfig => UseRidGraph(runtimeConfig),
+                    _ => true,
+                };
 
-                    // if we have a runtime config, then return false
-                    return false;
+                static bool UseRidGraph(RuntimeConfig runtimeConfig)
+                {
+                    return runtimeConfig.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value
+                        && bool.TryParse(value, out var result)
+                        && result;
                 }
-
-                // no runtime config to read, then return true
-                return true;
             }
 
             static Stream GetManifestStream(bool portable = true)
