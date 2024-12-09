@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;netcoreapp3.1;netstandard2.1;netstandard2.0;netstandard1.1;net461;net45</TargetFrameworks>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" VersionOverride="3.15.0" />
+    <PackageReference Include="Grpc.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Choose>
+    <When Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.0')) ">
+      <ItemGroup>
+        <PackageReference Include="System.Text.Json" VersionOverride="4.6.0" />
+      </ItemGroup>
+    </When>
+    <When Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">
+      <ItemGroup>
+        <Compile Remove="Converters\StructConverter.cs" />
+      </ItemGroup>      
+    </When>
+  </Choose>
+
+  <ItemGroup>
+    <Protobuf Include="../Grpc.Tools/**/*.proto" GrpcServices="None"  />
+  </ItemGroup>
+
+</Project>

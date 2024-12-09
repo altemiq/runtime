@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+package altemiq.protobuf.tests;
+option csharp_namespace = "Altemiq.Protobuf.WellKnownTypes.Tests";
+
+// global imports
+import "altemiq/protobuf/uuid.proto";
+
+message Test {
+	string id = 1;
+    altemiq.protobuf.Uuid uuid = 2;
+}

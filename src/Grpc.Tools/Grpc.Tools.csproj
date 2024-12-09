@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>$(NoWarn);NU5128;NETSDK1215</NoWarn>
+    <ImplicitUsings>false</ImplicitUsings>
+    <DevelopmentDependency>true</DevelopmentDependency>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="**\*.proto" Pack="true" PackagePath="\build\" />
+    <None Include="build.*" Pack="true" PackagePath="\build\$(PackageId)%(Extension)" />
+  </ItemGroup>
+
+  <Target Name="_RemovePackageFiles" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <_PackageFiles Remove="@(_PackageFiles)" />
+      <_TargetFrameworks Remove="@(_TargetFrameworks)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

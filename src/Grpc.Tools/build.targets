@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <!-- Name of this file (Altemiq.Grpc.Tools.targets) must match package ID (Altemiq.Grpc.Tools). -->
+
+  <Target Name="_Protobuf_SetStandardImportsPath" BeforeTargets="Protobuf_PrepareCompileOptions">
+    <PropertyGroup>
+      <!-- Altemiq protocol buffers Well Known Types -->
+      <Protobuf_StandardImportsPath>$(Protobuf_StandardImportsPath);$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)native/include))</Protobuf_StandardImportsPath>
+    </PropertyGroup>
+  </Target>
+</Project>
