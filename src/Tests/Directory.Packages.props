@@ -35,6 +35,7 @@
 
   <ItemGroup Label="Analyzers" Condition=" '$(IsTestProject)' == 'true' ">
     <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.34.1" />
+    <GlobalPackageReference Include="xunit.analyzers" Version="1.17.0" />
   </ItemGroup>
 
 </Project>

@@ -346,7 +346,7 @@ public class MemoryExtensionsTests
             _ = parsedValues.Should().BeEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, TryGetValuesCharDelegate<double>> TryGetValuesCharData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesCharDelegate< double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static TheoryData<Func<Random, int, double>, TryGetValuesCharDelegate<double>> TryGetValuesCharData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesCharDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
 
         [Theory]
         [MemberData(nameof(TryGetValuesSpanData))]

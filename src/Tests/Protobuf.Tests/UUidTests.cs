@@ -6,8 +6,7 @@ public class UUidTests
     public void FromGuid()
     {
         var guid = Guid.NewGuid();
-        var uuid = WellKnownTypes.Uuid.ForGuid(guid);
-        uuid.ToGuid().Should().Be(guid);
+        WellKnownTypes.Uuid.ForGuid(guid).ToGuid().Should().Be(guid);
     }
 
 #if NET9_0_OR_GREATER
@@ -15,8 +14,10 @@ public class UUidTests
     public void FromGuidVersion7()
     {
         var guid = Guid.CreateVersion7();
-        var uuid = WellKnownTypes.Uuid.ForGuid(guid);
-        uuid.ToGuid().Should().Be(guid);
+        WellKnownTypes.Uuid.ForGuid(guid).ToGuid().Should().Be(guid);
     }
+
+    [Fact]
+    public void CreateVersion7() => WellKnownTypes.Uuid.CreateVersion7().Should().NotBeNull();
 #endif
 }
