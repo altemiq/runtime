@@ -22,7 +22,7 @@ public static class ProtobufExtensions
     public static System.Text.Json.JsonDocument? ToJsonDocument(this Google.Protobuf.WellKnownTypes.Struct? @struct) => Converters.StructConverter.ToJsonDocument(@struct);
 
     /// <inheritdoc cref="Converters.StructConverter.ToJsonElement(Google.Protobuf.WellKnownTypes.Struct?)"/>
-    public static System.Text.Json.JsonElement ToJsonElement(this Google.Protobuf.WellKnownTypes.Struct? @struct) => System.Text.Json.JsonDocument.Parse(@struct?.ToString() ?? "null").RootElement;
+    public static System.Text.Json.JsonElement ToJsonElement(this Google.Protobuf.WellKnownTypes.Struct? @struct) => Converters.StructConverter.ToJsonElement(@struct);
 #endif
 
     /// <inheritdoc cref="WellKnownTypes.Uuid.ForGuid(System.Guid)"/>
