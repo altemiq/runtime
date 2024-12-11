@@ -1,61 +1,55 @@
 ﻿namespace Altemiq.Protobuf.Converters;
 public class ValueConverterTests
 {
+    private const string Json =
+        """
+        {
+          "Number": 1,
+          "Double": 123.456,
+          "False": false,
+          "True": true,
+          "Null": null,
+          "String": "value",
+          "Nested": {
+            "Id": 1
+          },
+          "Array": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+        """;
+
     public class JsonElement
     {
+        private static readonly int[] intArray = [1, 2, 3, 4, 5];
+
         [Fact]
         public void CreateFromJson()
         {
-            string json = """
-            {
-              "Number": 1,
-              "Double": 123.456,
-              "False": false,
-              "True": true,
-              "Null": null,
-              "String": "value",
-              "Nested": {
-                "Id": 1
-              },
-              "Array": [
-                1,
-                2,
-                3,
-                4,
-                5
-              ]
-            }
-            """;
-
-            System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(json);
-            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(document.RootElement);
-            _ = value.Should().NotBeNull();
+            _ = ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse(Json).RootElement).Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromEmpty()
         {
-            string json = "{}";
-            System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(json);
-            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(document.RootElement);
-            _ = value.Should().NotBeNull();
+            _ = ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("{}").RootElement).Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromNull()
         {
-            System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse("null");
-            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(document.RootElement);
-            _ = value.KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            _ = ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("null").RootElement).KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
         }
 
         [Theory]
         [MemberData(nameof(GetElementData))]
         public void CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.JsonElement, object?> getValue, object? expected)
         {
-            Google.Protobuf.WellKnownTypes.Value? v = value;
-            _ = v.Should().NotBeNull();
-            System.Text.Json.JsonElement element = ValueConverter.ToJsonElement(v!);
+            System.Text.Json.JsonElement element = ValueConverter.ToJsonElement(value);
             _ = element.ValueKind.Should().Be(valueKind);
             _ = getValue(element).Should().BeEquivalentTo(expected);
         }
@@ -78,7 +72,7 @@ public class ValueConverterTests
                         Google.Protobuf.WellKnownTypes.Value.ForNumber(5)),
                     System.Text.Json.JsonValueKind.Array,
                     element => element.EnumerateArray().Select(e => e.GetInt32()),
-                    new int[] { 1, 2, 3, 4, 5 }
+                    intArray
                 },
             };
         }
@@ -89,59 +83,33 @@ public class ValueConverterTests
         [Fact]
         public void CreateFromJson()
         {
-            string json = """
-            {
-              "Number": 1,
-              "Double": 123.456,
-              "False": false,
-              "True": true,
-              "Null": null,
-              "String": "value",
-              "Nested": {
-                "Id": 1
-              },
-              "Array": [
-                1,
-                2,
-                3,
-                4,
-                5
-              ]
-            }
-            """;
-
-            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(json));
-            _ = value.Should().NotBeNull();
+            _ = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(Json)).Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromEmpty()
         {
-            string json = "{}";
-            System.Text.Json.Nodes.JsonNode? node = System.Text.Json.Nodes.JsonNode.Parse(json);
-            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(node);
-            _ = value.Should().NotBeNull();
+            _ = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("{}")).Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromNull()
         {
-            System.Text.Json.Nodes.JsonNode? node = System.Text.Json.Nodes.JsonNode.Parse("null");
-            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(node);
-            _ = value.KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            _ = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("null")).KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
         }
 
         [Theory]
         [MemberData(nameof(GetElementData))]
         public void CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.Nodes.JsonNode, object?> getValue, object? expected)
         {
-            System.Text.Json.Nodes.JsonNode? node = ValueConverter.ToJsonNode(value);
-            if (node is not null)
+            if (ValueConverter.ToJsonNode(value) is { } node)
             {
                 _ = node.GetValueKind().Should().Be(valueKind);
                 _ = getValue(node).Should().BeEquivalentTo(expected);
             }
         }
+
+        private static readonly double[] doubleArray = [1D, 2D, 3D, 4D, 5D];
 
         public static TheoryData<Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.Nodes.JsonNode, object?>, object?> GetElementData()
         {
@@ -161,8 +129,8 @@ public class ValueConverterTests
                         Google.Protobuf.WellKnownTypes.Value.ForNumber(4),
                         Google.Protobuf.WellKnownTypes.Value.ForNumber(5)),
                     System.Text.Json.JsonValueKind.Array,
-                    node => node.AsArray().Select(i => i.GetValue<double>()),
-                    new double[] { 1D, 2D, 3D, 4D, 5D }
+                    node => node.AsArray().Select(i => i!.GetValue<double>()),
+                    doubleArray
                 }
             };
         }

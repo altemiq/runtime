@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net8.0;netcoreapp3.1;netstandard2.1;netstandard2.0;netstandard1.1;net461;net45</TargetFrameworks>
+    <TargetFrameworks>net9.0;net8.0;netcoreapp3.1;netstandard2.1;netstandard2.0;netstandard1.1;net462;net461;net45</TargetFrameworks>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
@@ -18,6 +18,10 @@
       <ItemGroup>
         <PackageReference Include="System.Text.Json" VersionOverride="8.0.5" />
       </ItemGroup>
+
+      <PropertyGroup Condition=" ($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.1')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))) or ($([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net461')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462')))">
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+      </PropertyGroup>
     </When>
     <When Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">
       <ItemGroup>

@@ -2,6 +2,28 @@
 
 public class StructConverterTests
 {
+    private const string Json =
+        """
+        {
+          "Number": 1,
+          "Double": 123.456,
+          "False": false,
+          "True": true,
+          "Null": null,
+          "String": "value",
+          "Nested": {
+            "Id": 1
+          },
+          "Array": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+        """;
+
     private static readonly System.Text.Json.JsonSerializerOptions Options = new()
     {
         Converters =
@@ -45,66 +67,46 @@ public class StructConverterTests
         }
     };
 
-    private const string Json =
-        """
-        {
-            "Number": 1,
-            "Double": 123.456,
-            "False": false,
-            "True": true,
-            "Null": null,
-            "String": "value",
-            "Nested": {
-                "Id": 1
-            },
-            "Array": [
-                1,
-                2,
-                3,
-                4,
-                5
-            ]
-        }
-        """;
-
     [Fact]
     public void Deserialize()
     {
-        Google.Protobuf.WellKnownTypes.Struct? @struct = System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options);
-        _ = @struct.Should().BeEquivalentTo(Struct);
+        _ = System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options).Should().BeEquivalentTo(Struct);
+    }
+
+    [Fact]
+    public void DeserializeVsParseJson()
+    {
+        _ = System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options).Should().BeEquivalentTo(Google.Protobuf.WellKnownTypes.Struct.Parser.ParseJson(Json));
     }
 
     [Fact]
     public void Serialize()
     {
-        string json = System.Text.Json.JsonSerializer.Serialize(Struct, Options);
-        _ = NormalizeJson(json).Should().BeEquivalentTo(NormalizeJson(Json));
+        _ = NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)).Should().BeEquivalentTo(NormalizeJson(Json));
+    }
+
+    [Fact]
+    public void SerializeVsToString()
+    {
+        _ = NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)).Should().BeEquivalentTo(NormalizeJson(Struct.ToString()));
     }
 
     [Fact]
     public void CreateStructFromJson()
     {
-        System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(Json);
-        Google.Protobuf.WellKnownTypes.Struct? @struct = StructConverter.ToStruct(document);
-        _ = @struct.Should().NotBeNull();
+        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse(Json)).Should().BeEquivalentTo(Struct);
     }
 
     [Fact]
     public void CreateFromEmptyDocument()
     {
-        string json = "{}";
-        System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(json);
-        Google.Protobuf.WellKnownTypes.Struct? @struct = StructConverter.ToStruct(document);
-        _ = @struct.Should().NotBeNull();
-        _ = @struct!.Fields.Should().BeEmpty();
+        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}"))?.Fields.Should().BeEmpty();
     }
 
     [Fact]
     public void CreateStructFromNull()
     {
-        System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse("null");
-        Google.Protobuf.WellKnownTypes.Struct? @struct = StructConverter.ToStruct(document);
-        _ = @struct.Should().BeNull();
+        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("null")).Should().BeNull();
     }
 
     [Fact]

@@ -1,0 +1,33 @@
+<Project>
+
+  <PropertyGroup>
+    <Company>Altemiq</Company>
+    <RootNamespace>$(Company).$(MSBuildProjectName)</RootNamespace>
+    <RootNamespace Condition="$(RootNamespace.Contains('.Benchmarks'))">$(RootNamespace.Replace('.Benchmarks', ''))</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsNetOnCore>false</IsNetOnCore>
+    <IsNetOnCore Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' And '$(MSBuildRuntimeType)' == 'Core' ">true</IsNetOnCore>
+
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Build">
+    <!-- Enable Build Acceleration in Visual Studio. -->
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+
+    <!--
+      If you target a framework earlier than .NET 5 (including .NET Framework and .NET Standard), you should set `ProduceReferenceAssembly` to true in order to speed incremental builds.
+      If you multi-target and any target is before .NET 5, you need this. Even if you target .NET 5 or later, having this property is fine.
+    -->
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$([MSBuild]::GetPathOfFileAbove('.editorconfig'))" />
+  </ItemGroup>
+
+</Project>
