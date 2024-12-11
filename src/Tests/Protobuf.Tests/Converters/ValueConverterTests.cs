@@ -1,4 +1,5 @@
-﻿namespace Altemiq.Protobuf.Converters;
+namespace Altemiq.Protobuf.Converters;
+
 public class ValueConverterTests
 {
     private const string Json =
@@ -74,6 +75,16 @@ public class ValueConverterTests
                     element => element.EnumerateArray().Select(e => e.GetInt32()),
                     intArray
                 },
+                {
+                    Google.Protobuf.WellKnownTypes.Value.ForStruct(
+                        new Google.Protobuf.WellKnownTypes.Struct
+                        {
+                            Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } }
+                        }),
+                    System.Text.Json.JsonValueKind.Object,
+                    element => element.ToString(),
+                    """{ "Id": 1 }"""
+                }
             };
         }
     }
@@ -131,6 +142,16 @@ public class ValueConverterTests
                     System.Text.Json.JsonValueKind.Array,
                     node => node.AsArray().Select(i => i!.GetValue<double>()),
                     doubleArray
+                },
+                {
+                    Google.Protobuf.WellKnownTypes.Value.ForStruct(
+                        new Google.Protobuf.WellKnownTypes.Struct
+                        {
+                            Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } }
+                        }),
+                    System.Text.Json.JsonValueKind.Object,
+                    node => node.AsObject().ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = false }),
+                    """{"Id":1}"""
                 }
             };
         }
