@@ -12,17 +12,20 @@ namespace Altemiq.Protobuf;
 public static class ProtobufExtensions
 {
 #if NETSTANDARD2_0_OR_GREATER || NET461_OR_GREATER || NETCOREAPP3_0_OR_GREATER
-    /// <inheritdoc cref="Converters.StructConverter.ToStruct(System.Text.Json.JsonDocument?)"/>
-    public static Google.Protobuf.WellKnownTypes.Struct? ToStruct(this System.Text.Json.JsonDocument? document) => Converters.StructConverter.ToStruct(document);
+    /// <inheritdoc cref="Converters.StructConverter.ToStruct(JsonDocument?)"/>
+    public static Struct? ToStruct(this JsonDocument? document) => Converters.StructConverter.ToStruct(document);
 
-    /// <inheritdoc cref="Converters.ValueConverter.ToValue(System.Text.Json.JsonElement)"/>
-    public static Google.Protobuf.WellKnownTypes.Value ToValue(this System.Text.Json.JsonElement element) => Converters.ValueConverter.ToValue(element);
+    /// <inheritdoc cref="Converters.ValueConverter.ToValue(JsonElement)"/>
+    public static Value ToValue(this JsonElement element) => Converters.ValueConverter.ToValue(element);
 
-    /// <inheritdoc cref="Converters.StructConverter.ToJsonDocument(Google.Protobuf.WellKnownTypes.Struct?)"/>
-    public static System.Text.Json.JsonDocument? ToJsonDocument(this Google.Protobuf.WellKnownTypes.Struct? @struct) => Converters.StructConverter.ToJsonDocument(@struct);
+    /// <inheritdoc cref="Converters.StructConverter.ToJsonDocument(Struct?)"/>
+    public static JsonDocument? ToJsonDocument(this Struct? @struct) => Converters.StructConverter.ToJsonDocument(@struct);
 
-    /// <inheritdoc cref="Converters.ValueConverter.ToJsonElement(Google.Protobuf.WellKnownTypes.Value)"/>
-    public static System.Text.Json.JsonElement ToJsonElement(this Google.Protobuf.WellKnownTypes.Value value) => Converters.ValueConverter.ToJsonElement(value);
+    /// <inheritdoc cref="Converters.ValueConverter.ToJsonElement(Value)"/>
+    public static JsonElement ToJsonElement(this Value value) => Converters.ValueConverter.ToJsonElement(value);
+
+    /// <inheritdoc cref="Converters.ValueConverter.ToJsonElement(Value)"/>
+    public static JsonNode? ToJsonNode(this Value value) => Converters.ValueConverter.ToJsonNode(value);
 #endif
 
     /// <inheritdoc cref="WellKnownTypes.Uuid.ForGuid(System.Guid)"/>

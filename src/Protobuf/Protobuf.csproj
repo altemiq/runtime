@@ -23,12 +23,21 @@
       <ItemGroup>
         <Compile Remove="Converters\StructConverter.cs" />
         <Compile Remove="Converters\ValueConverter.cs" />
-      </ItemGroup>      
+      </ItemGroup>
     </When>
   </Choose>
 
   <ItemGroup>
     <Protobuf Include="../Grpc.Tools/**/*.proto" GrpcServices="None"  />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Google.Protobuf.WellKnownTypes" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">
+    <Using Include="System.Text.Json" />
+    <Using Include="System.Text.Json.Nodes" />
   </ItemGroup>
 
 </Project>

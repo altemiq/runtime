@@ -7,142 +7,213 @@
 namespace Altemiq.Protobuf.Converters;
 
 /// <summary>
-/// The <see cref="Google.Protobuf.WellKnownTypes.Value"/> converter.
+/// The <see cref="Value"/> converter.
 /// </summary>
-public static class ValueConverter
+public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value>
 {
     /// <summary>
-    /// Creates a <see cref="Google.Protobuf.WellKnownTypes.Value"/> from a <see cref="System.Text.Json.JsonElement"/> instance.
+    /// Gets the instance.
     /// </summary>
-    /// <param name="element">The <see cref="System.Text.Json.JsonElement"/> instance.</param>
-    /// <returns>The <see cref="Google.Protobuf.WellKnownTypes.Value"/> instance.</returns>
-    public static Google.Protobuf.WellKnownTypes.Value ToValue(this System.Text.Json.JsonElement element)
+    public static readonly ValueConverter Instance = new();
+
+    /// <summary>
+    /// Creates a <see cref="Value"/> from a <see cref="JsonElement"/> instance.
+    /// </summary>
+    /// <param name="element">The <see cref="JsonElement"/> instance.</param>
+    /// <returns>The <see cref="Value"/> instance.</returns>
+    public static Value ToValue(JsonElement element)
     {
         return element switch
         {
-            { ValueKind: System.Text.Json.JsonValueKind.Array } @array => ToList(@array),
-            { ValueKind: System.Text.Json.JsonValueKind.Object } @object => ToStruct(@object),
-            { ValueKind: System.Text.Json.JsonValueKind.String } @string => Google.Protobuf.WellKnownTypes.Value.ForString(@string.GetString()),
-            { ValueKind: System.Text.Json.JsonValueKind.Null } => Google.Protobuf.WellKnownTypes.Value.ForNull(),
-            { ValueKind: System.Text.Json.JsonValueKind.True } => Google.Protobuf.WellKnownTypes.Value.ForBool(value: true),
-            { ValueKind: System.Text.Json.JsonValueKind.False } => Google.Protobuf.WellKnownTypes.Value.ForBool(value: false),
-            { ValueKind: System.Text.Json.JsonValueKind.Number } @number => Google.Protobuf.WellKnownTypes.Value.ForNumber(@number.GetDouble()),
+            { ValueKind: JsonValueKind.Array } @array => ToList(@array),
+            { ValueKind: JsonValueKind.Object } @object => ToStruct(@object),
+            { ValueKind: JsonValueKind.String } @string => Value.ForString(@string.GetString()),
+            { ValueKind: JsonValueKind.Null } => Value.ForNull(),
+            { ValueKind: JsonValueKind.True } => Value.ForBool(value: true),
+            { ValueKind: JsonValueKind.False } => Value.ForBool(value: false),
+            { ValueKind: JsonValueKind.Number } @number => Value.ForNumber(@number.GetDouble()),
             _ => throw new InvalidCastException(),
         };
 
-        static Google.Protobuf.WellKnownTypes.Value ToList(System.Text.Json.JsonElement element)
+        static Value ToList(JsonElement element)
         {
-            var values = new List<Google.Protobuf.WellKnownTypes.Value>();
+            var values = new List<Value>();
             foreach (var item in element.EnumerateArray())
             {
                 values.Add(item.ToValue());
             }
 
-            return Google.Protobuf.WellKnownTypes.Value.ForList([.. values]);
+            return Value.ForList([.. values]);
         }
 
-        static Google.Protobuf.WellKnownTypes.Value ToStruct(System.Text.Json.JsonElement element)
+        static Value ToStruct(JsonElement element)
         {
-            var @struct = new Google.Protobuf.WellKnownTypes.Struct();
+            var @struct = new Struct();
             foreach (var item in element.EnumerateObject())
             {
                 @struct.Fields[item.Name] = item.Value.ToValue();
             }
 
-            return Google.Protobuf.WellKnownTypes.Value.ForStruct(@struct);
+            return Value.ForStruct(@struct);
         }
     }
 
     /// <summary>
-    /// Creates a <see cref="Google.Protobuf.WellKnownTypes.Value"/> from a <see cref="System.Text.Json.Nodes.JsonNode"/> instance.
+    /// Creates a <see cref="Value"/> from a <see cref="JsonNode"/> instance.
     /// </summary>
-    /// <param name="node">The <see cref="System.Text.Json.Nodes.JsonNode"/> instance.</param>
-    /// <returns>The <see cref="Google.Protobuf.WellKnownTypes.Value"/> instance.</returns>
-    public static Google.Protobuf.WellKnownTypes.Value ToValue(this System.Text.Json.Nodes.JsonNode? node)
+    /// <param name="node">The <see cref="JsonNode"/> instance.</param>
+    /// <returns>The <see cref="Value"/> instance.</returns>
+    public static Value ToValue(JsonNode? node)
     {
-        return (node, node?.GetValueKind() ?? System.Text.Json.JsonValueKind.Undefined) switch
+        return (node, node?.GetValueKind() ?? JsonValueKind.Undefined) switch
         {
-            (System.Text.Json.Nodes.JsonArray array, _) => ToList(array),
-            (System.Text.Json.Nodes.JsonObject @object, _) => ToStruct(@object),
-            (null, _) or (_, System.Text.Json.JsonValueKind.Null) => Google.Protobuf.WellKnownTypes.Value.ForNull(),
-            (System.Text.Json.Nodes.JsonValue, System.Text.Json.JsonValueKind.False) => Google.Protobuf.WellKnownTypes.Value.ForBool(value: false),
-            (System.Text.Json.Nodes.JsonValue, System.Text.Json.JsonValueKind.True) => Google.Protobuf.WellKnownTypes.Value.ForBool(value: true),
-            (System.Text.Json.Nodes.JsonValue value, System.Text.Json.JsonValueKind.String) => value.GetValue<string?>() is string stringValue ? Google.Protobuf.WellKnownTypes.Value.ForString(stringValue) : Google.Protobuf.WellKnownTypes.Value.ForNull(),
-            (System.Text.Json.Nodes.JsonValue value, System.Text.Json.JsonValueKind.Number) => Google.Protobuf.WellKnownTypes.Value.ForNumber(value.GetValue<double>()),
+            (JsonArray array, _) => ToList(array),
+            (JsonObject @object, _) => ToStruct(@object),
+            (null, _) or (_, JsonValueKind.Null) => Value.ForNull(),
+            (JsonValue, JsonValueKind.False) => Value.ForBool(value: false),
+            (JsonValue, JsonValueKind.True) => Value.ForBool(value: true),
+            (JsonValue value, JsonValueKind.String) => value.GetValue<string?>() is string stringValue ? Value.ForString(stringValue) : Value.ForNull(),
+            (JsonValue value, JsonValueKind.Number) => Value.ForNumber(value.GetValue<double>()),
             _ => throw new InvalidCastException(),
         };
 
-        static Google.Protobuf.WellKnownTypes.Value ToList(System.Text.Json.Nodes.JsonArray array)
+        static Value ToList(JsonArray array)
         {
-            var values = new List<Google.Protobuf.WellKnownTypes.Value?>();
+            var values = new List<Value?>();
             foreach (var item in array)
             {
-                values.Add(item.ToValue());
+                values.Add(ToValue(item));
             }
 
-            return Google.Protobuf.WellKnownTypes.Value.ForList([.. values]);
+            return Value.ForList([.. values]);
         }
 
-        static Google.Protobuf.WellKnownTypes.Value ToStruct(System.Text.Json.Nodes.JsonObject @object)
+        static Value ToStruct(JsonObject @object)
         {
-            var @struct = new Google.Protobuf.WellKnownTypes.Struct();
+            var @struct = new Struct();
             foreach (var item in @object)
             {
-                @struct.Fields[item.Key] = item.Value.ToValue();
+                @struct.Fields[item.Key] = ToValue(item.Value);
             }
 
-            return Google.Protobuf.WellKnownTypes.Value.ForStruct(@struct);
+            return Value.ForStruct(@struct);
         }
     }
 
     /// <summary>
-    /// Creates a <see cref="System.Text.Json.JsonElement"/> from a <see cref="Google.Protobuf.WellKnownTypes.Value"/> instance.
+    /// Creates a <see cref="JsonElement"/> from a <see cref="Value"/> instance.
     /// </summary>
-    /// <param name="value">The <see cref="Google.Protobuf.WellKnownTypes.Value"/> instance.</param>
-    /// <returns>The <see cref="System.Text.Json.JsonDocument"/> instance.</returns>
-    public static System.Text.Json.JsonElement ToJsonElement(Google.Protobuf.WellKnownTypes.Value value) => System.Text.Json.JsonDocument.Parse(value.ToString()).RootElement;
+    /// <param name="value">The <see cref="Value"/> instance.</param>
+    /// <returns>The <see cref="JsonDocument"/> instance.</returns>
+    public static JsonElement ToJsonElement(Value value) => JsonDocument.Parse(value.ToString()).RootElement;
 
     /// <summary>
-    /// Creates a <see cref="System.Text.Json.Nodes.JsonNode"/> from a <see cref="Google.Protobuf.WellKnownTypes.Value"/> instance.
+    /// Creates a <see cref="JsonNode"/> from a <see cref="Value"/> instance.
     /// </summary>
-    /// <param name="value">The <see cref="Google.Protobuf.WellKnownTypes.Value"/> instance.</param>
-    /// <returns>The <see cref="System.Text.Json.JsonDocument"/> instance.</returns>
-    public static System.Text.Json.Nodes.JsonNode? ToJsonNode(this Google.Protobuf.WellKnownTypes.Value value)
+    /// <param name="value">The <see cref="Value"/> instance.</param>
+    /// <returns>The <see cref="JsonDocument"/> instance.</returns>
+    public static JsonNode? ToJsonNode(Value value)
     {
         return value.KindCase switch
         {
-            Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue => default,
-            Google.Protobuf.WellKnownTypes.Value.KindOneofCase.BoolValue => value.BoolValue,
-            Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NumberValue => value.NumberValue,
-            Google.Protobuf.WellKnownTypes.Value.KindOneofCase.StringValue => value.StringValue,
-            Google.Protobuf.WellKnownTypes.Value.KindOneofCase.StructValue => FromStruct(value.StructValue),
-            Google.Protobuf.WellKnownTypes.Value.KindOneofCase.ListValue => FromList(value.ListValue),
-            Google.Protobuf.WellKnownTypes.Value.KindOneofCase.None => throw new InvalidOperationException(),
+            Value.KindOneofCase.NullValue => default,
+            Value.KindOneofCase.BoolValue => value.BoolValue,
+            Value.KindOneofCase.NumberValue => value.NumberValue,
+            Value.KindOneofCase.StringValue => value.StringValue,
+            Value.KindOneofCase.StructValue => FromStruct(value.StructValue),
+            Value.KindOneofCase.ListValue => FromList(value.ListValue),
+            Value.KindOneofCase.None => throw new InvalidOperationException(),
             _ => throw new InvalidCastException(),
         };
 
-        static System.Text.Json.Nodes.JsonObject FromStruct(Google.Protobuf.WellKnownTypes.Struct @struct)
+        static JsonObject FromStruct(Struct @struct)
         {
-            var node = new System.Text.Json.Nodes.JsonObject();
+            var node = new JsonObject();
 
             foreach (var field in @struct.Fields)
             {
-                node.Add(field.Key, field.Value.ToJsonNode());
+                node.Add(field.Key, ToJsonNode(field.Value));
             }
 
             return node;
         }
 
-        static System.Text.Json.Nodes.JsonArray FromList(Google.Protobuf.WellKnownTypes.ListValue list)
+        static JsonArray FromList(ListValue list)
         {
-            var node = new System.Text.Json.Nodes.JsonArray();
+            var node = new JsonArray();
 
             foreach (var item in list.Values)
             {
-                node.Add(item.ToJsonNode());
+                node.Add(ToJsonNode(item));
             }
 
             return node;
+        }
+    }
+
+    /// <inheritdoc/>
+    public override Value? Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
+    {
+        // read the value
+        return reader.TokenType switch
+        {
+            JsonTokenType.Null => Value.ForNull(),
+            JsonTokenType.True => Value.ForBool(value: true),
+            JsonTokenType.False => Value.ForBool(value: false),
+            JsonTokenType.String => Value.ForString(reader.GetString()),
+            JsonTokenType.Number => Value.ForNumber(reader.GetDouble()),
+            JsonTokenType.StartObject => Value.ForStruct(StructConverter.Instance.Read(ref reader, typeToConvert, options)),
+            JsonTokenType.StartArray => ReadArray(ref reader, typeToConvert, options),
+            _ => throw new InvalidOperationException(),
+        };
+
+        static Value ReadArray(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
+        {
+            var values = new List<Value?>();
+            while (reader.Read() && reader.TokenType is not JsonTokenType.EndArray)
+            {
+                values.Add(Instance.Read(ref reader, typeToConvert, options));
+            }
+
+            return Value.ForList([.. values]);
+        }
+    }
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, Value value, JsonSerializerOptions options)
+    {
+        switch (value.KindCase)
+        {
+            case Value.KindOneofCase.NullValue:
+                writer.WriteNullValue();
+                break;
+
+            case Value.KindOneofCase.BoolValue:
+                writer.WriteBooleanValue(value.BoolValue);
+                break;
+
+            case Value.KindOneofCase.NumberValue:
+                writer.WriteNumberValue(value.NumberValue);
+                break;
+
+            case Value.KindOneofCase.StringValue:
+                writer.WriteStringValue(value.StringValue);
+                break;
+
+            case Value.KindOneofCase.StructValue:
+                StructConverter.Instance.Write(writer, value.StructValue, options);
+                break;
+
+            case Value.KindOneofCase.ListValue:
+                writer.WriteStartArray();
+
+                foreach (var listItem in value.ListValue.Values)
+                {
+                    this.Write(writer, listItem, options);
+                }
+
+                writer.WriteEndArray();
+                break;
         }
     }
 }

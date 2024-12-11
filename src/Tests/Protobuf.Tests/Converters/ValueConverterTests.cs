@@ -1,8 +1,4 @@
 ﻿namespace Altemiq.Protobuf.Converters;
-
-using FluentAssertions.Equivalency;
-using Xunit.Abstractions;
-
 public class ValueConverterTests
 {
     public class JsonElement
@@ -10,7 +6,7 @@ public class ValueConverterTests
         [Fact]
         public void CreateFromJson()
         {
-            var json = """
+            string json = """
             {
               "Number": 1,
               "Double": 123.456,
@@ -31,26 +27,26 @@ public class ValueConverterTests
             }
             """;
 
-            var document = System.Text.Json.JsonDocument.Parse(json);
-            var value = ValueConverter.ToValue(document.RootElement);
-            value.Should().NotBeNull();
+            System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(json);
+            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(document.RootElement);
+            _ = value.Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromEmpty()
         {
-            var json = "{}";
-            var document = System.Text.Json.JsonDocument.Parse(json);
-            var value = ValueConverter.ToValue(document.RootElement);
-            value.Should().NotBeNull();
+            string json = "{}";
+            System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(json);
+            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(document.RootElement);
+            _ = value.Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromNull()
         {
-            var document = System.Text.Json.JsonDocument.Parse("null");
-            var value = ValueConverter.ToValue(document.RootElement);
-            value.KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse("null");
+            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(document.RootElement);
+            _ = value.KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
         }
 
         [Theory]
@@ -58,10 +54,10 @@ public class ValueConverterTests
         public void CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.JsonElement, object?> getValue, object? expected)
         {
             Google.Protobuf.WellKnownTypes.Value? v = value;
-            v.Should().NotBeNull();
-            var element = ValueConverter.ToJsonElement(v!);
-            element.ValueKind.Should().Be(valueKind);
-            getValue(element).Should().BeEquivalentTo(expected);
+            _ = v.Should().NotBeNull();
+            System.Text.Json.JsonElement element = ValueConverter.ToJsonElement(v!);
+            _ = element.ValueKind.Should().Be(valueKind);
+            _ = getValue(element).Should().BeEquivalentTo(expected);
         }
 
         public static TheoryData<Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.JsonElement, object?>, object?> GetElementData()
@@ -93,7 +89,7 @@ public class ValueConverterTests
         [Fact]
         public void CreateFromJson()
         {
-            var json = """
+            string json = """
             {
               "Number": 1,
               "Double": 123.456,
@@ -114,36 +110,36 @@ public class ValueConverterTests
             }
             """;
 
-            var value = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(json));
-            value.Should().NotBeNull();
+            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(json));
+            _ = value.Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromEmpty()
         {
-            var json = "{}";
-            var node = System.Text.Json.Nodes.JsonNode.Parse(json);
-            var value = ValueConverter.ToValue(node);
-            value.Should().NotBeNull();
+            string json = "{}";
+            System.Text.Json.Nodes.JsonNode? node = System.Text.Json.Nodes.JsonNode.Parse(json);
+            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(node);
+            _ = value.Should().NotBeNull();
         }
 
         [Fact]
         public void CreateFromNull()
         {
-            var node = System.Text.Json.Nodes.JsonNode.Parse("null");
-            var value = ValueConverter.ToValue(node);
-            value.KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            System.Text.Json.Nodes.JsonNode? node = System.Text.Json.Nodes.JsonNode.Parse("null");
+            Google.Protobuf.WellKnownTypes.Value value = ValueConverter.ToValue(node);
+            _ = value.KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
         }
 
         [Theory]
         [MemberData(nameof(GetElementData))]
         public void CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.Nodes.JsonNode, object?> getValue, object? expected)
         {
-            var node = ValueConverter.ToJsonNode(value);
+            System.Text.Json.Nodes.JsonNode? node = ValueConverter.ToJsonNode(value);
             if (node is not null)
             {
-                node.GetValueKind().Should().Be(valueKind);
-                getValue(node).Should().BeEquivalentTo(expected);
+                _ = node.GetValueKind().Should().Be(valueKind);
+                _ = getValue(node).Should().BeEquivalentTo(expected);
             }
         }
 
