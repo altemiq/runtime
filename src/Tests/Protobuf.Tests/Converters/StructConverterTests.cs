@@ -1,4 +1,4 @@
-﻿namespace Altavec.Protobuf.Converters;
+﻿namespace Altemiq.Protobuf.Converters;
 
 public class StructConverterTests
 {
@@ -29,6 +29,16 @@ public class StructConverterTests
         var document = System.Text.Json.JsonDocument.Parse(json);
         var @struct = StructConverter.ToStruct(document);
         @struct.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void CreateFromEmptyDocument()
+    {
+        var json = "{}";
+        var document = System.Text.Json.JsonDocument.Parse(json);
+        var @struct = StructConverter.ToStruct(document);
+        @struct.Should().NotBeNull();
+        @struct!.Fields.Should().BeEmpty();
     }
 
     [Fact]

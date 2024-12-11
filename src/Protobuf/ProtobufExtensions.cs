@@ -15,14 +15,14 @@ public static class ProtobufExtensions
     /// <inheritdoc cref="Converters.StructConverter.ToStruct(System.Text.Json.JsonDocument?)"/>
     public static Google.Protobuf.WellKnownTypes.Struct? ToStruct(this System.Text.Json.JsonDocument? document) => Converters.StructConverter.ToStruct(document);
 
-    /// <inheritdoc cref="Converters.StructConverter.ToStruct(System.Text.Json.JsonElement)"/>
-    public static Google.Protobuf.WellKnownTypes.Struct? ToStruct(this System.Text.Json.JsonElement element) => Converters.StructConverter.ToStruct(element);
+    /// <inheritdoc cref="Converters.ValueConverter.ToValue(System.Text.Json.JsonElement)"/>
+    public static Google.Protobuf.WellKnownTypes.Value ToValue(this System.Text.Json.JsonElement element) => Converters.ValueConverter.ToValue(element);
 
     /// <inheritdoc cref="Converters.StructConverter.ToJsonDocument(Google.Protobuf.WellKnownTypes.Struct?)"/>
     public static System.Text.Json.JsonDocument? ToJsonDocument(this Google.Protobuf.WellKnownTypes.Struct? @struct) => Converters.StructConverter.ToJsonDocument(@struct);
 
-    /// <inheritdoc cref="Converters.StructConverter.ToJsonElement(Google.Protobuf.WellKnownTypes.Struct?)"/>
-    public static System.Text.Json.JsonElement ToJsonElement(this Google.Protobuf.WellKnownTypes.Struct? @struct) => Converters.StructConverter.ToJsonElement(@struct);
+    /// <inheritdoc cref="Converters.ValueConverter.ToJsonElement(Google.Protobuf.WellKnownTypes.Value)"/>
+    public static System.Text.Json.JsonElement ToJsonElement(this Google.Protobuf.WellKnownTypes.Value value) => Converters.ValueConverter.ToJsonElement(value);
 #endif
 
     /// <inheritdoc cref="WellKnownTypes.Uuid.ForGuid(System.Guid)"/>

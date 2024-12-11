@@ -1,4 +1,4 @@
-namespace Altavec.Protobuf.WellKnownTypes;
+namespace Altemiq.Protobuf.WellKnownTypes;
 
 public class UUidTests
 {
