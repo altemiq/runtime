@@ -25,7 +25,7 @@ public static class Resolve
             ? Path.Combine(path, executable)
             : default;
 
-#if NET20_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <summary>
     /// Resolves runtime assemblies.
     /// </summary>

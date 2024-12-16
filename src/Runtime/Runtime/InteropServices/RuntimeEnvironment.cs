@@ -178,33 +178,23 @@ public static class RuntimeEnvironment
 
         static IEnumerable<string> GetProbingDirectoriesCore()
         {
-            var probingDirectories = GetProbingDirectories();
-            foreach (var probingDirectory in probingDirectories)
+            foreach (var probingDirectory in GetProbingDirectories())
             {
                 yield return probingDirectory;
             }
 
-            if (TryGetPackages(probingDirectories, "NUGET_PACKAGES", out var path))
+            var context = NuGet.Configuration.NuGetPathContext.Create(string.Empty);
+            if (context.UserPackageFolder is { } userPackageFolder)
             {
-                yield return path;
+                yield return userPackageFolder;
             }
 
-            if (TryGetPackages(probingDirectories, "NUGET_FALLBACK_PACKAGES", out path))
+            if (context.FallbackPackageFolders is { Count: not 0 } fallbackPackageFolders)
             {
-                yield return path;
-            }
-
-            static bool TryGetPackages(IList<string> paths, string variable, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? path)
-            {
-                if (Environment.GetEnvironmentVariable(variable) is { } variableValue
-                    && !paths.Contains(variableValue, GetPathComparer()))
+                foreach (var fallbackPackageFolder in fallbackPackageFolders)
                 {
-                    path = variableValue;
-                    return true;
+                    yield return fallbackPackageFolder;
                 }
-
-                path = default;
-                return false;
             }
         }
 
@@ -663,7 +653,7 @@ public static class RuntimeEnvironment
 #if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
     private static bool EnvironmentVariableContains(string variable, EnvironmentVariableTarget target, string value) =>
         Environment.GetEnvironmentVariable(variable, target) is { } variableValue
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_2_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
             && variableValue.Contains(value, StringComparison.Ordinal);
 #else
             && variableValue.Contains(value);

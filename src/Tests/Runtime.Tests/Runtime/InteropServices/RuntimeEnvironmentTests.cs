@@ -15,6 +15,9 @@ public class RuntimeEnvironmentTests
     public void GetRuntimeLibraryDirectory() => RuntimeEnvironment.GetRuntimeLibraryDirectory().Should().NotBeNull();
 
     [Fact]
+    public void GetToolsDirectories() => RuntimeEnvironment.GetToolsDirectories().Should().NotBeNullOrEmpty();
+
+    [Fact]
     public void GetToolsDirectory() => RuntimeEnvironment.GetToolsDirectory().Should().NotBeNull();
 
     [Fact]
