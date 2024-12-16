@@ -183,7 +183,7 @@ public static class RuntimeEnvironment
                 yield return probingDirectory;
             }
 
-            var context = NuGet.Configuration.NuGetPathContext.Create(string.Empty);
+            var context = NuGet.Configuration.NuGetPathContext.Create(RuntimeInformation.GetBaseDirectories().FirstOrDefault() ?? string.Empty);
             if (context.UserPackageFolder is { } userPackageFolder)
             {
                 yield return userPackageFolder;
