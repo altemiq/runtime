@@ -56,4 +56,28 @@ public static class Array
 
         System.Array.Resize(ref array, totalWidth);
     }
+
+    /// <summary>
+    /// Assigns the given value of type <typeparamref name="T"/> to the elements of the specified <paramref name="array"/> which are within the range of <paramref name="startIndex"/> (inclusive) and the next <paramref name="count"/> number of indices.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the array.</typeparam>
+    /// <param name="array">The <see cref="System.Array"/> to fill.</param>
+    /// <param name="value">The new value for the elements in the specified range.</param>
+    /// <param name="startIndex">A 32-bit integer that represents the index in the <see cref="System.Array"/> at which filling begins.</param>
+    /// <param name="count">The number of elements to copy.</param>
+    public static void Fill<T>(T[] array, T value, int startIndex, int count)
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+        => System.Array.Fill(array, value, startIndex, count);
+#else
+    {
+        ArgumentNullExceptionThrower.ThrowIfNull(array);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(startIndex, array.Length);
+        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(count, array.Length - startIndex);
+
+        for (var i = startIndex; i < startIndex + count; i++)
+        {
+            array[i] = value;
+        }
+    }
+#endif
 }

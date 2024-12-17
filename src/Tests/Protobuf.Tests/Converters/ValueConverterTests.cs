@@ -47,6 +47,8 @@ public class ValueConverterTests
         }
 
         [Theory]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "This can't be serialized")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "This can't be serialized")]
         [MemberData(nameof(GetElementData))]
         public void CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.JsonElement, object?> getValue, object? expected)
         {
@@ -110,6 +112,8 @@ public class ValueConverterTests
         }
 
         [Theory]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "This can't be serialized")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "This can't be serialized")]
         [MemberData(nameof(GetElementData))]
         public void CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.Nodes.JsonNode, object?> getValue, object? expected)
         {

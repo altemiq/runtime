@@ -67,6 +67,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protobuf.Benchmarks", "Benchmarks\Protobuf.Benchmarks\Protobuf.Benchmarks.csproj", "{D9057B64-4304-460F-A8F4-5D524F9B7CCC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Buffers.Compression.Benchmarks", "Benchmarks\Core.Buffers.Compression.Benchmarks\Core.Buffers.Compression.Benchmarks.csproj", "{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,6 +122,10 @@ Global
 		{D9057B64-4304-460F-A8F4-5D524F9B7CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9057B64-4304-460F-A8F4-5D524F9B7CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9057B64-4304-460F-A8F4-5D524F9B7CCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -133,6 +139,7 @@ Global
 		{1129E54F-5EC3-4284-A445-2F7B9802173D} = {02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}
 		{E8314D33-8548-4FC7-9B00-A14381E286DA} = {02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}
 		{D9057B64-4304-460F-A8F4-5D524F9B7CCC} = {764F3240-6E11-45E6-9FC5-091C47C17EE8}
+		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688} = {764F3240-6E11-45E6-9FC5-091C47C17EE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDE5C0E4-46E8-4D62-9B9D-9A718FAF2208}

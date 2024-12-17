@@ -100,7 +100,7 @@ public class StructConverterTests
     [Fact]
     public void CreateFromEmptyDocument()
     {
-        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}"))?.Fields.Should().BeEmpty();
+        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")).Should().BeOfType<Google.Protobuf.WellKnownTypes.Struct>().Which.Fields.Should().BeEmpty();
     }
 
     [Fact]

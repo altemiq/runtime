@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Protobuf\Protobuf.csproj" />
   </ItemGroup>
 

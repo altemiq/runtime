@@ -1,6 +1,5 @@
 ﻿namespace Altemiq.Protobuf.Converters;
 
-using BenchmarkDotNet.Attributes;
 using Google.Protobuf.WellKnownTypes;
 
 public class StructConverterBenchmarks

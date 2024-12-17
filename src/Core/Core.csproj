@@ -59,6 +59,10 @@
     </When>
   </Choose>
 
+  <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.1')) ">
+    <Compile Remove="Buffers\Compression\**\*.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Content Include="build*.*" PackagePath="%(Filename)/$(PackageId)%(Extension)" />
   </ItemGroup>
@@ -131,6 +135,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    <InternalsVisibleTo Include="$(MSBuildProjectName).Buffers.Compression.Benchmarks" />
   </ItemGroup>
 
   <ItemGroup>

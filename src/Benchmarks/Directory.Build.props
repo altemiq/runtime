@@ -15,6 +15,11 @@
     <IsPublishable>false</IsPublishable>
   </PropertyGroup>
 
+  <PropertyGroup Label="Signing" Condition=" '$(Configuration)' != '' AND '$(Configuration)' != 'Debug' ">
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$([MSBuild]::GetPathOfFileAbove(Runtime.snk))</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
   <PropertyGroup Label="Build">
     <!-- Enable Build Acceleration in Visual Studio. -->
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
@@ -28,6 +33,15 @@
 
   <ItemGroup>
     <None Include="$([MSBuild]::GetPathOfFileAbove('.editorconfig'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="BenchmarkDotNet" />
+    <Using Include="BenchmarkDotNet.Attributes" />
   </ItemGroup>
 
 </Project>
