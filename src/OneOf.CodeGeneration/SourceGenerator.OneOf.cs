@@ -33,9 +33,8 @@ public partial class SourceGenerator
             Trivia(
                 DocumentationCommentTrivia(
                     SyntaxKind.SingleLineDocumentationCommentTrivia,
-                    List(
-                        new XmlNodeSyntax[]
-                        {
+                    List<XmlNodeSyntax>(
+                        [
                             XmlText()
                             .WithTextTokens(
                                 TokenList(
@@ -101,7 +100,7 @@ public partial class SourceGenerator
                                         NewLine,
                                         NewLine,
                                         TriviaList()))),
-                        }))));
+                        ]))));
 
         return (OneOf, classDeclaration);
 
@@ -433,9 +432,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -488,7 +486,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
 
             static IEnumerable<MemberDeclarationSyntax> GetMemberDeclarations(int count)
             {

@@ -208,8 +208,7 @@ public partial class SourceGenerator
         {
             return BaseList(
                 SeparatedList<BaseTypeSyntax>(
-                    new SyntaxNodeOrToken[]
-                    {
+                    [
                         SimpleBaseType(
                             IdentifierName($"I{OneOf}")),
                         Token(SyntaxKind.CommaToken),
@@ -223,7 +222,7 @@ public partial class SourceGenerator
                                             Identifier(OneOf))
                                         .WithTypeArgumentList(
                                             GetTypeArgumentList(typeParameterNames)))))),
-                    }));
+                    ]));
 
             static TypeArgumentListSyntax GetTypeArgumentList(IList<string> typeParameterNames)
             {
@@ -326,9 +325,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -347,7 +345,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
 
             static SwitchExpressionSyntax GetSwitchExpression(int count)
             {
@@ -408,9 +406,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -429,7 +426,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
         }
 
         static IEnumerable<PropertyDeclarationSyntax> GetIsPropertyDeclarations(IList<string> typeParameterNames)
@@ -460,9 +457,8 @@ public partial class SourceGenerator
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            List(
-                                new XmlNodeSyntax[]
-                                {
+                            List<XmlNodeSyntax>(
+                                [
                                     XmlText()
                                     .WithTextTokens(
                                         TokenList(
@@ -534,7 +530,7 @@ public partial class SourceGenerator
                                                 NewLine,
                                                 NewLine,
                                                 TriviaList()))),
-                                }))));
+                                ]))));
             }
         }
 
@@ -576,8 +572,7 @@ public partial class SourceGenerator
                                                     .WithArgumentList(
                                                         ArgumentList(
                                                             SeparatedList<ArgumentSyntax>(
-                                                                new SyntaxNodeOrToken[]
-                                                                {
+                                                                [
                                                                     Argument(
                                                                         MemberAccessExpression(
                                                                             SyntaxKind.SimpleMemberAccessExpression,
@@ -616,16 +611,15 @@ public partial class SourceGenerator
                                                                             SyntaxKind.SimpleMemberAccessExpression,
                                                                             ThisExpression(),
                                                                             IdentifierName(IndexPropertyName))),
-                                                                })))))))))))
+                                                                ])))))))))))
                     .WithSemicolonToken(
                     Token(SyntaxKind.SemicolonToken))
                     .WithLeadingTrivia(
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            List(
-                                new XmlNodeSyntax[]
-                                {
+                            List<XmlNodeSyntax>(
+                                [
                                     XmlText()
                                     .WithTextTokens(
                                         TokenList(
@@ -697,7 +691,7 @@ public partial class SourceGenerator
                                                 NewLine,
                                                 NewLine,
                                                 TriviaList()))),
-                                }))));
+                                ]))));
             }
         }
 
@@ -732,8 +726,7 @@ public partial class SourceGenerator
                         .WithArgumentList(
                             ArgumentList(
                                 SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
+                                    [
                                         Argument(
                                             LiteralExpression(
                                                 SyntaxKind.NumericLiteralExpression,
@@ -744,16 +737,15 @@ public partial class SourceGenerator
                                         .WithNameColon(
                                             NameColon(
                                                 IdentifierName(GetValueName(i)))),
-                                    })))))
+                                    ])))))
                     .WithSemicolonToken(
                     Token(SyntaxKind.SemicolonToken))
                     .WithLeadingTrivia(
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            List(
-                                new XmlNodeSyntax[]
-                                {
+                            List<XmlNodeSyntax>(
+                                [
                                     XmlText()
                                     .WithTextTokens(
                                         TokenList(
@@ -893,7 +885,7 @@ public partial class SourceGenerator
                                                 NewLine,
                                                 NewLine,
                                                 TriviaList()))),
-                                }))));
+                                ]))));
             }
 
             // the equals
@@ -908,8 +900,7 @@ public partial class SourceGenerator
                 .WithParameterList(
                 ParameterList(
                     SeparatedList<ParameterSyntax>(
-                        new SyntaxNodeOrToken[]
-                        {
+                        [
                             Parameter(
                                 Identifier(LeftVariableName))
                             .WithType(
@@ -929,7 +920,7 @@ public partial class SourceGenerator
                                     TypeArgumentList(
                                         SeparatedList<TypeSyntax>(
                                             Join(typeParameterNames.Select(IdentifierName)))))),
-                        })))
+                        ])))
                 .WithExpressionBody(
                 ArrowExpressionClause(
                     InvocationExpression(
@@ -948,9 +939,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -1135,7 +1125,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
 
             // the not-equals
             yield return OperatorDeclaration(
@@ -1149,8 +1139,7 @@ public partial class SourceGenerator
                 .WithParameterList(
                 ParameterList(
                     SeparatedList<ParameterSyntax>(
-                        new SyntaxNodeOrToken[]
-                        {
+                        [
                             Parameter(
                                 Identifier(LeftVariableName))
                             .WithType(
@@ -1170,7 +1159,7 @@ public partial class SourceGenerator
                                     TypeArgumentList(
                                         SeparatedList<TypeSyntax>(
                                             Join(typeParameterNames.Select(IdentifierName)))))),
-                        })))
+                        ])))
                 .WithExpressionBody(
                 ArrowExpressionClause(
                     PrefixUnaryExpression(
@@ -1191,9 +1180,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -1378,7 +1366,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
         }
 
         static MethodDeclarationSyntax GetSwitchMethodDeclaration(IList<string> typeParameterNames)
@@ -1760,12 +1748,11 @@ public partial class SourceGenerator
                                         .WithTypeArgumentList(
                                             TypeArgumentList(
                                                 SeparatedList<TypeSyntax>(
-                                                    new SyntaxNodeOrToken[]
-                                                    {
+                                                    [
                                                         IdentifierName(TTypeParameter),
                                                         Token(SyntaxKind.CommaToken),
                                                         IdentifierName(ResultsTypeParameter),
-                                                    }))))))),
+                                                    ]))))))),
                         XmlText()
                         .WithTextTokens(
                             TokenList(
@@ -1879,13 +1866,12 @@ public partial class SourceGenerator
                         .WithTypeArgumentList(
                             TypeArgumentList(
                                 SeparatedList<TypeSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
+                                    [
                                         NullableType(
                                             IdentifierName(typeParameterNames[i])),
                                         Token(SyntaxKind.CommaToken),
                                         IdentifierName(ResultsTypeParameter),
-                                    }))));
+                                    ]))));
                 }
             }
 
@@ -2002,13 +1988,12 @@ public partial class SourceGenerator
                                 .WithTypeArgumentList(
                                     TypeArgumentList(
                                         SeparatedList<TypeSyntax>(
-                                            new SyntaxNodeOrToken[]
-                                            {
+                                            [
                                                 NullableType(
                                                     IdentifierName(typeParameterNames[i])),
                                                 Token(SyntaxKind.CommaToken),
                                                 IdentifierName(ResultsTypeParameter),
-                                            })))))))
+                                            ])))))))
                     .WithBody(
                     Block(
                         GetStatements(i, typeParameterNames)))
@@ -2478,9 +2463,8 @@ public partial class SourceGenerator
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            List(
-                                new XmlNodeSyntax[]
-                                {
+                            List<XmlNodeSyntax>(
+                                [
                                     XmlText()
                                     .WithTextTokens(
                                         TokenList(
@@ -2763,7 +2747,7 @@ public partial class SourceGenerator
                                                 NewLine,
                                                 NewLine,
                                                 TriviaList()))),
-                                }))));
+                                ]))));
 
                 static IEnumerable<ParameterSyntax> GetParameters(int index, IList<string> typeParameterNames)
                 {
@@ -2905,9 +2889,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -2926,7 +2909,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
 
             yield return MethodDeclaration(
                 PredefinedType(
@@ -2976,9 +2959,8 @@ public partial class SourceGenerator
                     Trivia(
                         DocumentationCommentTrivia(
                             SyntaxKind.SingleLineDocumentationCommentTrivia,
-                            List(
-                                new XmlNodeSyntax[]
-                                {
+                            List<XmlNodeSyntax>(
+                                [
                                     XmlText()
                                     .WithTextTokens(
                                         TokenList(
@@ -2997,7 +2979,7 @@ public partial class SourceGenerator
                                                 NewLine,
                                                 NewLine,
                                                 TriviaList()))),
-                                }))));
+                                ]))));
 
             static SwitchExpressionSyntax GetSwitchExpression(IList<string> typeParameterNames)
             {
@@ -3024,8 +3006,7 @@ public partial class SourceGenerator
                             .WithArgumentList(
                                 ArgumentList(
                                     SeparatedList<ArgumentSyntax>(
-                                        new SyntaxNodeOrToken[]
-                                        {
+                                        [
                                             Argument(
                                                 MemberAccessExpression(
                                                     SyntaxKind.SimpleMemberAccessExpression,
@@ -3037,7 +3018,7 @@ public partial class SourceGenerator
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     IdentifierName(OtherVariableName),
                                                     IdentifierName(GetValueName(i)))),
-                                        }))));
+                                        ]))));
                         yield return Token(SyntaxKind.CommaToken);
                     }
 
@@ -3083,9 +3064,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -3104,7 +3084,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
         }
 
         static MethodDeclarationSyntax GetToStringWithProviderMethodDeclaration(IList<string> typeParameterNames)
@@ -3153,8 +3133,7 @@ public partial class SourceGenerator
                     .WithParameterList(
                         ParameterList(
                             SeparatedList<ParameterSyntax>(
-                                new SyntaxNodeOrToken[]
-                                {
+                                [
                                     Parameter(
                                         Identifier(ValueVariableName))
                                     .WithType(
@@ -3165,7 +3144,7 @@ public partial class SourceGenerator
                                     .WithType(
                                         NullableType(
                                             IdentifierName(nameof(IFormatProvider)))),
-                                })))
+                                ])))
                     .WithBody(
                         Block(
                             SingletonList<StatementSyntax>(
@@ -3179,8 +3158,7 @@ public partial class SourceGenerator
                                     .WithArgumentList(
                                         ArgumentList(
                                             SeparatedList<ArgumentSyntax>(
-                                                new SyntaxNodeOrToken[]
-                                                {
+                                                [
                                                     Argument(
                                                         IdentifierName(ProviderParameterName)),
                                                     Token(SyntaxKind.CommaToken),
@@ -3198,14 +3176,13 @@ public partial class SourceGenerator
                                                     Token(SyntaxKind.CommaToken),
                                                     Argument(
                                                         IdentifierName(ValueVariableName)),
-                                                })))))))))
+                                                ])))))))))
                 .WithLeadingTrivia(
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -3284,7 +3261,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
 
             static IEnumerable<SyntaxNodeOrToken> GetSwitchExpressionArms(IList<string> typeParameterNames)
             {
@@ -3300,8 +3277,7 @@ public partial class SourceGenerator
                         .WithArgumentList(
                             ArgumentList(
                                 SeparatedList<ArgumentSyntax>(
-                                    new SyntaxNodeOrToken[]
-                                    {
+                                    [
                                         Argument(
                                             MemberAccessExpression(
                                                 SyntaxKind.SimpleMemberAccessExpression,
@@ -3310,7 +3286,7 @@ public partial class SourceGenerator
                                         Token(SyntaxKind.CommaToken),
                                         Argument(
                                             IdentifierName(ProviderParameterName)),
-                                    }))));
+                                    ]))));
                     yield return Token(SyntaxKind.CommaToken);
                 }
 
@@ -3405,9 +3381,8 @@ public partial class SourceGenerator
                 Trivia(
                     DocumentationCommentTrivia(
                         SyntaxKind.SingleLineDocumentationCommentTrivia,
-                        List(
-                            new XmlNodeSyntax[]
-                            {
+                        List<XmlNodeSyntax>(
+                            [
                                 XmlText()
                                 .WithTextTokens(
                                     TokenList(
@@ -3426,7 +3401,7 @@ public partial class SourceGenerator
                                             NewLine,
                                             NewLine,
                                             TriviaList()))),
-                            }))));
+                            ]))));
 
             static IEnumerable<ParameterSyntax> GetParameters(IList<string> typeParameterNames)
             {
