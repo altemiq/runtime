@@ -5,7 +5,6 @@
     <RootNamespace>$(Company).$(MSBuildProjectName)</RootNamespace>
     <RootNamespace Condition="$(RootNamespace.Contains('.Tests'))">$(RootNamespace.Replace('.Tests', ''))</RootNamespace>
     <AssemblyName>$(Company).$(MSBuildProjectName)</AssemblyName>
-    <OutputType>Exe</OutputType>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
