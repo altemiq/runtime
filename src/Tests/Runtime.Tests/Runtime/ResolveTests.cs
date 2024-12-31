@@ -13,7 +13,7 @@ public class ResolveTests
     {
         var assemblyName = new System.Reflection.AssemblyName
         {
-            Name = "xunit.core",
+            Name = "xunit.v3.core",
             Version = new Version(1, 0),
         };
 

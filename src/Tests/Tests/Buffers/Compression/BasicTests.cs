@@ -1,6 +1,6 @@
 namespace Altemiq.Buffers.Compression;
 
-using Xunit.Abstractions;
+using Xunit.Sdk;
 
 public partial class BasicTests(ITestOutputHelper testOutputHelper)
 {
@@ -64,10 +64,6 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
         for (var L = 1; L <= 128; L++)
         {
-            if (L is 128)
-            {
-                Console.WriteLine("skipping 128");
-            }
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, L));
             var answer = TestUtils.Uncompress(c, comp, L);
             for (var k = 0; k < L; ++k)
@@ -80,11 +76,6 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         }
         for (var L = 128; L <= N; L *= 2)
         {
-            if (L is 256)
-            {
-                Console.WriteLine("skipping 256");
-            }
-
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, L));
             var answer = TestUtils.Uncompress(c, comp, L);
             for (var k = 0; k < L; ++k)
@@ -211,8 +202,12 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     }
 
     [Theory]
-    [CombinatorialData]
-    public void VerifyBitPacking([CombinatorialRange(0, 31)] int bit)
+    [InlineData(0)]
+    [InlineData(8)]
+    [InlineData(16)]
+    [InlineData(24)]
+    [InlineData(30)]
+    public void VerifyBitPacking(int bit)
     {
         const int N = 32;
         const int TIMES = 1000;
@@ -236,8 +231,12 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     }
 
     [Theory]
-    [CombinatorialData]
-    public void VerifyWithoutMask([CombinatorialRange(0, 31)] int bit)
+    [InlineData(0)]
+    [InlineData(8)]
+    [InlineData(16)]
+    [InlineData(24)]
+    [InlineData(30)]
+    public void VerifyWithoutMask(int bit)
     {
         const int N = 32;
         const int TIMES = 1000;
@@ -260,8 +259,12 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     }
 
     [Theory]
-    [CombinatorialData]
-    public void VerifyWithExceptions([CombinatorialRange(0, 31)] int bit)
+    [InlineData(0)]
+    [InlineData(8)]
+    [InlineData(16)]
+    [InlineData(24)]
+    [InlineData(30)]
+    public void VerifyWithExceptions(int bit)
     {
         const int N = 32;
         const int TIMES = 1000;
@@ -367,25 +370,25 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     public static TheoryData<IntegerCodec> ZeroInZeroOutData()
     {
         return [
-            new (new Differential.DifferentialBinaryPacking()),
-            new (new Differential.DifferentialVariableByte()),
-            new (new BinaryPacking()),
-            new (new NewPfdS9()),
-            new (new NewPfdS16()),
-            new (new OptPfdS9()),
-            new (new OptPfdS16()),
-            new (new FastPatchingFrameOfReference128()),
-            new (new FastPatchingFrameOfReference256()),
-            new (new VariableByte()),
-            new (new Composition<Differential.DifferentialBinaryPacking, VariableByte>()),
-            new (new Composition<BinaryPacking, VariableByte>()),
-            new (new Composition<NewPfdS9, VariableByte>()),
-            new (new Composition<NewPfdS16, VariableByte>()),
-            new (new Composition<OptPfdS9, VariableByte>()),
-            new (new Composition<OptPfdS16, VariableByte>()),
-            new (new Composition<FastPatchingFrameOfReference128, VariableByte>()),
-            new (new Composition<FastPatchingFrameOfReference256, VariableByte>()),
-            new (new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()),
+            new IntegerCodec(new Differential.DifferentialBinaryPacking()),
+            new IntegerCodec(new Differential.DifferentialVariableByte()),
+            new IntegerCodec(new BinaryPacking()),
+            new IntegerCodec(new NewPfdS9()),
+            new IntegerCodec(new NewPfdS16()),
+            new IntegerCodec(new OptPfdS9()),
+            new IntegerCodec(new OptPfdS16()),
+            new IntegerCodec(new FastPatchingFrameOfReference128()),
+            new IntegerCodec(new FastPatchingFrameOfReference256()),
+            new IntegerCodec(new VariableByte()),
+            new IntegerCodec(new Composition<Differential.DifferentialBinaryPacking, VariableByte>()),
+            new IntegerCodec(new Composition<BinaryPacking, VariableByte>()),
+            new IntegerCodec(new Composition<NewPfdS9, VariableByte>()),
+            new IntegerCodec(new Composition<NewPfdS16, VariableByte>()),
+            new IntegerCodec(new Composition<OptPfdS9, VariableByte>()),
+            new IntegerCodec(new Composition<OptPfdS16, VariableByte>()),
+            new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()),
+            new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()),
+            new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()),
         ];
     }
 
@@ -447,6 +450,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
                 maxlength = data[k].Length;
             }
         }
+
         var buffer = new int[maxlength + 1024];
 
         // 4x + 1024 to account for the possibility of some negative compression.

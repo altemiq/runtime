@@ -60,13 +60,13 @@ public class MultipleStreamTests
         multipleStream.Add(nameof(second), second);
         multipleStream.Add(nameof(third), third);
 
-        await multipleStream.FlushAsync();
+        await multipleStream.FlushAsync(TestContext.Current.CancellationToken);
 
         Received.InOrder(async () =>
         {
-            await first.FlushAsync();
-            await second.FlushAsync();
-            await third.FlushAsync();
+            await first.FlushAsync(TestContext.Current.CancellationToken);
+            await second.FlushAsync(TestContext.Current.CancellationToken);
+            await third.FlushAsync(TestContext.Current.CancellationToken);
         });
     }
 
@@ -177,7 +177,7 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        _ = (await stream.ReadAsync(third, 0, ReadSize, default)).Should().Be(ReadSize);
+        _ = (await stream.ReadAsync(third, 0, ReadSize, TestContext.Current.CancellationToken)).Should().Be(ReadSize);
 
         _ = new ArraySegment<byte>(third, 0, FirstSize).Should().BeEquivalentTo(first);
         _ = new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize).Should().BeEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
@@ -228,7 +228,7 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        _ = (await stream.ReadAsync(third.AsMemory(), default)).Should().Be(ReadSize);
+        _ = (await stream.ReadAsync(third.AsMemory(), TestContext.Current.CancellationToken)).Should().Be(ReadSize);
 
         _ = new ArraySegment<byte>(third, 0, FirstSize).Should().BeEquivalentTo(first);
         _ = new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize).Should().BeEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
@@ -313,7 +313,7 @@ public class MultipleStreamTests
         var destination = new byte[FirstSize + SecondSize + ThirdSize];
         using (var memoryStream = new MemoryStream(destination))
         {
-            await stream.CopyToAsync(memoryStream, default(CancellationToken));
+            await stream.CopyToAsync(memoryStream, TestContext.Current.CancellationToken);
         }
 
         _ = new ArraySegment<byte>(destination, 0, FirstSize).Should().BeEquivalentTo(first);

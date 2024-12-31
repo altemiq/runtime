@@ -7,7 +7,9 @@
 namespace Altemiq;
 
 #if NET5_0_OR_GREATER
-public class SerializableHalf : Xunit.Abstractions.IXunitSerializable
+using Xunit.Sdk;
+
+public class SerializableHalf : IXunitSerializable
 {
     private Half value;
 
@@ -17,9 +19,9 @@ public class SerializableHalf : Xunit.Abstractions.IXunitSerializable
 
     public SerializableHalf(Half value) => this.value = value;
 
-    public void Deserialize(Xunit.Abstractions.IXunitSerializationInfo info) => this.value = BitConverter.Int16BitsToHalf(info.GetValue<short>($"{nameof(Half)}.{nameof(this.value)}"));
+    public void Deserialize(IXunitSerializationInfo info) => this.value = BitConverter.Int16BitsToHalf(info.GetValue<short>($"{nameof(Half)}.{nameof(this.value)}"));
 
-    public void Serialize(Xunit.Abstractions.IXunitSerializationInfo info) => info.AddValue($"{nameof(Half)}.{nameof(this.value)}", BitConverter.HalfToInt16Bits(this.value), typeof(short));
+    public void Serialize(IXunitSerializationInfo info) => info.AddValue($"{nameof(Half)}.{nameof(this.value)}", BitConverter.HalfToInt16Bits(this.value), typeof(short));
 
     public static implicit operator Half(SerializableHalf value) => value.value;
 

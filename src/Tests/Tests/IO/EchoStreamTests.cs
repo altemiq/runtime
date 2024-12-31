@@ -17,12 +17,14 @@ public class EchoStreamTests
         const string Text = "text to read and write";
         using var stream = new EchoStream();
 
-        var task = Task.Run(() =>
-        {
-            Thread.Sleep(50);
-            var bytes = Encoding.UTF8.GetBytes(Text);
-            stream.Write(bytes, 0, bytes.Length);
-        });
+        var task = Task.Run(
+            () =>
+            {
+                Thread.Sleep(50);
+                var bytes = Encoding.UTF8.GetBytes(Text);
+                stream.Write(bytes, 0, bytes.Length);
+            },
+            TestContext.Current.CancellationToken);
 
         var expectedLength = Encoding.UTF8.GetByteCount(Text);
         var bytes = new byte[expectedLength];
@@ -41,18 +43,20 @@ public class EchoStreamTests
         const string Text = Text1 + Text2 + Text3;
         using var stream = new EchoStream();
 
-        var task = Task.Run(() =>
-        {
-            Write(stream, Text1);
-            Write(stream, Text2);
-            Write(stream, Text3);
-            static void Write(Stream stream, string text)
+        var task = Task.Run(
+            () =>
             {
-                Thread.Sleep(50);
-                var bytes = Encoding.UTF8.GetBytes(text);
-                stream.Write(bytes, 0, bytes.Length);
-            }
-        });
+                Write(stream, Text1);
+                Write(stream, Text2);
+                Write(stream, Text3);
+                static void Write(Stream stream, string text)
+                {
+                    Thread.Sleep(50);
+                    var bytes = Encoding.UTF8.GetBytes(text);
+                    stream.Write(bytes, 0, bytes.Length);
+                }
+            },
+            TestContext.Current.CancellationToken);
 
         var expectedLength = Encoding.UTF8.GetByteCount(Text);
         var bytes = new byte[expectedLength];

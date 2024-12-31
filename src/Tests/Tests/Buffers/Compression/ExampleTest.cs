@@ -1,7 +1,5 @@
 namespace Altemiq.Buffers.Compression;
 
-using Xunit.Abstractions;
-
 public class ExampleTest(ITestOutputHelper testOutputHelper)
 {
     [Fact]

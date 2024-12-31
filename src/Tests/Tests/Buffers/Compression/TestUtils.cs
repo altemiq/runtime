@@ -115,28 +115,14 @@ internal static class TestUtils
         var index = 0;
         while (sourceEnumerator.MoveNext() && expectedEnumerator.MoveNext())
         {
-            _ = Execute.Assertion
-                .ForCondition(sourceEnumerator.Current.Equals(expectedEnumerator.Current))
-                .BecauseOf(string.Empty, [])
-                .FailWith(
-                    "Expected {context:collection} to contain {0} at index {1}{reason}, but found {2}.",
-                    expectedEnumerator.Current, index, source.Subject);
+            sourceEnumerator.Current
+                .Should()
+                .Be(expectedEnumerator.Current, "Expected {context:collection} to contain {0} at index {1}{reason}, but found {2}.", expectedEnumerator.Current, index, source.Subject);
             index++;
         }
 
-        _ = Execute.Assertion
-            .BecauseOf(string.Empty, [])
-            .WithExpectation("Expected {context:collection} to have ")
-            .Given(() => sourceEnumerator)
-            .ForCondition(subject => !subject.MoveNext())
-            .FailWith(" the same number of items as {0}{reason}.", expectedEnumerator);
-
-        _ = Execute.Assertion
-            .BecauseOf(string.Empty, [])
-            .WithExpectation("Expected {context:collection} to have ")
-            .Given(() => expectedEnumerator)
-            .ForCondition(subject => !subject.MoveNext())
-            .FailWith(" the same number of items as {0}{reason}.", sourceEnumerator);
+        sourceEnumerator.MoveNext().Should().BeFalse("Expected {context:collection} to have the same number of items as {0}{reason}.", expectedEnumerator);
+        expectedEnumerator.MoveNext().Should().BeFalse("Expected {context:collection} to have the same number of items as {0}{reason}.", sourceEnumerator);
 
         return new(source);
     }

@@ -1,6 +1,6 @@
 ﻿namespace Altemiq.Buffers.Compression;
 
-using Xunit.Abstractions;
+using Xunit.Sdk;
 
 public class Int32CompressorTests
 {

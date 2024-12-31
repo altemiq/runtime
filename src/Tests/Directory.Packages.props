@@ -6,16 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
-    <PackageVersion Include="Google.Protobuf" Version="3.29.1" />
+    <PackageVersion Include="FluentAssertions" Version="8.0.0-alpha.1" />
+    <PackageVersion Include="Google.Protobuf" Version="3.29.2" />
     <PackageVersion Include="Grpc.Tools" Version="2.68.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.10" />
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="Xunit.Combinatorial" Version="1.6.24" />
+    <PackageVersion Include="xunit.v3" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
@@ -25,7 +24,7 @@
   <Choose>
     <When Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462')) ">
       <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-        <GlobalPackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+        <GlobalPackageReference Include="xunit.runner.visualstudio" Version="3.0.0" />
       </ItemGroup>
     </When>
     <When Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.1')) ">
@@ -37,7 +36,7 @@
 
   <ItemGroup Label="Analyzers" Condition=" '$(IsTestProject)' == 'true' ">
     <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.34.1" />
-    <GlobalPackageReference Include="xunit.analyzers" Version="1.17.0" />
+    <GlobalPackageReference Include="xunit.analyzers" Version="1.18.0" />
   </ItemGroup>
 
 </Project>

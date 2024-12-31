@@ -123,7 +123,7 @@ public class StringExtensionsTests
 
     public static TheoryData<char[]?> GetCharArrays() => new()
     {
-        { default },
+        { default(char[]) },
         { [] },
     };
 

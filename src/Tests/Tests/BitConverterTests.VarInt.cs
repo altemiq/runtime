@@ -210,7 +210,7 @@ public partial class BitConverterTests
         [
             Int128.MinValue,
             Int128.MaxValue,
-            default,
+            default(Int128),
             Int128.MaxValue / 2,
         ];
 

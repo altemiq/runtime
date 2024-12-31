@@ -2,7 +2,11 @@
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
     <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.v3" />
   </ItemGroup>
+
+  <PropertyGroup Condition=" '$(IsTestProject)' == 'true' ">
+    <RuntimeIdentifiers Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">win-x86;win-x64</RuntimeIdentifiers>
+  </PropertyGroup>
 
 </Project>

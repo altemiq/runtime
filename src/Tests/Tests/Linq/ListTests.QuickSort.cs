@@ -6,6 +6,8 @@
 
 namespace Altemiq.Linq;
 
+using Xunit.Sdk;
+
 public partial class ListTests
 {
     public class QuickSort
@@ -212,7 +214,7 @@ public partial class ListTests
             return source;
         }
 
-        public struct SimpleStruct : IComparable<SimpleStruct>, Xunit.Abstractions.IXunitSerializable
+        public struct SimpleStruct : IComparable<SimpleStruct>, IXunitSerializable
         {
             public SimpleStruct(int index, double value) => (this.Index, this.Value) = (index, value);
 
@@ -222,20 +224,20 @@ public partial class ListTests
 
             public readonly int CompareTo(SimpleStruct other) => this.Index.CompareTo(other.Index);
 
-            void Xunit.Abstractions.IXunitSerializable.Deserialize(Xunit.Abstractions.IXunitSerializationInfo info)
+            void IXunitSerializable.Deserialize(IXunitSerializationInfo info)
             {
                 this.Index = info.GetValue<int>(nameof(this.Index));
                 this.Value = info.GetValue<double>(nameof(this.Value));
             }
 
-            readonly void Xunit.Abstractions.IXunitSerializable.Serialize(Xunit.Abstractions.IXunitSerializationInfo info)
+            readonly void IXunitSerializable.Serialize(IXunitSerializationInfo info)
             {
                 info.AddValue(nameof(this.Index), this.Index, typeof(int));
                 info.AddValue(nameof(this.Value), this.Value, typeof(double));
             }
         }
 
-        public class SimpleClass : Xunit.Abstractions.IXunitSerializable
+        public class SimpleClass : IXunitSerializable
         {
             public SimpleClass()
             {
@@ -255,13 +257,13 @@ public partial class ListTests
                 _ => a.Index.CompareTo(b.Index),
             };
 
-            void Xunit.Abstractions.IXunitSerializable.Deserialize(Xunit.Abstractions.IXunitSerializationInfo info)
+            void IXunitSerializable.Deserialize(IXunitSerializationInfo info)
             {
                 this.Index = info.GetValue<int>(nameof(this.Index));
                 this.Value = info.GetValue<double>(nameof(this.Value));
             }
 
-            void Xunit.Abstractions.IXunitSerializable.Serialize(Xunit.Abstractions.IXunitSerializationInfo info)
+            void IXunitSerializable.Serialize(IXunitSerializationInfo info)
             {
                 info.AddValue(nameof(this.Index), this.Index, typeof(int));
                 info.AddValue(nameof(this.Value), this.Value, typeof(double));
