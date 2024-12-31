@@ -2,7 +2,7 @@ namespace Altemiq.Buffers.Compression.Differential;
 
 public class XorBinaryPackingTest
 {
-    private static void CheckCompressAndUncompress(string label, int[] data)
+    private static void CheckCompressAndUncompress(int[] data)
     {
         var codec = new XorBinaryPacking();
         var compBuf = TestUtils.Compress(codec, data);
@@ -14,7 +14,6 @@ public class XorBinaryPackingTest
     public void CompressAndUncompress0()
     {
         CheckCompressAndUncompress(
-            nameof(CompressAndUncompress0),
             System.Linq.Enumerable
             .Range(0, 128)
                 .Select(i => i switch
@@ -31,20 +30,19 @@ public class XorBinaryPackingTest
     [Fact]
     public void CompressAndUncompress1()
     {
-        CheckCompressAndUncompress(nameof(CompressAndUncompress1), System.Linq.Enumerable.Range(0, 128).Select(i => i).ToArray());
+        CheckCompressAndUncompress(System.Linq.Enumerable.Range(0, 128).Select(i => i).ToArray());
     }
 
     [Fact]
     public void CompressAndUncompress2()
     {
-        CheckCompressAndUncompress(nameof(CompressAndUncompress2), System.Linq.Enumerable.Range(0, 128).Select(i => i * (i + 1) / 2).ToArray());
+        CheckCompressAndUncompress(System.Linq.Enumerable.Range(0, 128).Select(i => i * (i + 1) / 2).ToArray());
     }
 
     [Fact]
     public void CompressAndUncompress3()
     {
         CheckCompressAndUncompress(
-            nameof(CompressAndUncompress3),
             System.Linq.Enumerable
                 .Range(0, 256)
                 .Select(i => i switch
@@ -60,7 +58,6 @@ public class XorBinaryPackingTest
     public void CompressAndUncompress4()
     {
         CheckCompressAndUncompress(
-            nameof(CompressAndUncompress4),
             System.Linq.Enumerable
                 .Range(0, 256)
                 .Select(i => i switch
@@ -75,6 +72,6 @@ public class XorBinaryPackingTest
     [Fact]
     public void CompressAndUncompress5()
     {
-        CheckCompressAndUncompress(nameof(CompressAndUncompress5), System.Linq.Enumerable.Range(0, 256).Select(i => i).ToArray());
+        CheckCompressAndUncompress(System.Linq.Enumerable.Range(0, 256).Select(i => i).ToArray());
     }
 }

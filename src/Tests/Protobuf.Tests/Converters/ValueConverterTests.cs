@@ -1,4 +1,4 @@
-namespace Altemiq.Protobuf.Converters;
+﻿namespace Altemiq.Protobuf.Converters;
 
 public class ValueConverterTests
 {

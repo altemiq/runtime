@@ -23,10 +23,12 @@ public class DeltaBenchmarks
 
         [Benchmark]
         [ArgumentsSource(nameof(FowardData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is so it's displayed.")]
         public void AltemiqForward(int[] data, int sparsity) => Delta.Forward(data);
 
         [Benchmark(Baseline = true)]
         [ArgumentsSource(nameof(FowardData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is so it's displayed.")]
         public void GenboxForward(int[] data, int sparsity) => Genbox.CSharpFastPFOR.Differential.Delta.delta(data);
     }
 
@@ -58,10 +60,12 @@ public class DeltaBenchmarks
 
         [Benchmark]
         [ArgumentsSource(nameof(ReverseData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is so it's displayed.")]
         public void AltemiqReverse(int[] data, int sparsity) => Delta.Inverse(data);
 
         [Benchmark(Baseline = true)]
         [ArgumentsSource(nameof(ReverseData))]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is so it's displayed.")]
         public void GenboxReverse(int[] data, int sparsity) => Genbox.CSharpFastPFOR.Differential.Delta.fastinverseDelta(data);
     }
 }
