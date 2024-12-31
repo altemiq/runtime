@@ -69,6 +69,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protobuf.Benchmarks", "Benc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Buffers.Compression.Benchmarks", "Benchmarks\Core.Buffers.Compression.Benchmarks\Core.Buffers.Compression.Benchmarks.csproj", "{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions.Caching.Hybrid", "Extensions.Caching.Hybrid\Extensions.Caching.Hybrid.csproj", "{FC6BC299-ADF3-4979-81E8-441854EA851E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions.Caching.Hybrid.Tests", "Tests\Extensions.Caching.Hybrid.Tests\Extensions.Caching.Hybrid.Tests.csproj", "{7F0EBE34-A4CD-468D-BFAF-50A9D1EC7EB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +130,14 @@ Global
 		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC6BC299-ADF3-4979-81E8-441854EA851E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC6BC299-ADF3-4979-81E8-441854EA851E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC6BC299-ADF3-4979-81E8-441854EA851E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC6BC299-ADF3-4979-81E8-441854EA851E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F0EBE34-A4CD-468D-BFAF-50A9D1EC7EB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F0EBE34-A4CD-468D-BFAF-50A9D1EC7EB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F0EBE34-A4CD-468D-BFAF-50A9D1EC7EB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F0EBE34-A4CD-468D-BFAF-50A9D1EC7EB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +152,7 @@ Global
 		{E8314D33-8548-4FC7-9B00-A14381E286DA} = {02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}
 		{D9057B64-4304-460F-A8F4-5D524F9B7CCC} = {764F3240-6E11-45E6-9FC5-091C47C17EE8}
 		{E224DD61-DDA9-4539-B3E2-5D9FA7A41688} = {764F3240-6E11-45E6-9FC5-091C47C17EE8}
+		{7F0EBE34-A4CD-468D-BFAF-50A9D1EC7EB9} = {02FBFB2A-F7DC-4270-A89A-7D1B0E6DD1B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDE5C0E4-46E8-4D62-9B9D-9A718FAF2208}

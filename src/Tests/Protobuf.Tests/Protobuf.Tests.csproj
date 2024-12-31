@@ -13,8 +13,4 @@
     <ProjectReference Include="..\..\Protobuf\Protobuf.csproj" />
   </ItemGroup>
 
-    <ItemGroup>
-      <Using Include="Xunit" />
-    </ItemGroup>
-
 </Project>

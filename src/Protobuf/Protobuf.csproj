@@ -32,7 +32,7 @@
   </Choose>
 
   <ItemGroup>
-    <Protobuf Include="../Grpc.Tools/**/*.proto" GrpcServices="None"  />
+    <Protobuf Include="../Grpc.Tools/**/*.proto" GrpcServices="None" />
   </ItemGroup>
 
   <ItemGroup>
