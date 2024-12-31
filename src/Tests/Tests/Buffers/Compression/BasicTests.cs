@@ -142,12 +142,10 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     }
 
     [Theory]
-    [InlineData(5, 10)]
-    [InlineData(5, 14)]
-    [InlineData(5, 18)]
-    public void CheckDeltaZigzagVariableByte(int N, int nbr)
+    [MemberData(nameof(Data))]
+    public void CheckDeltaZigzagVariableByte(int[][] data)
     {
-        Test(new DeltaZigzagVariableByte(), new DeltaZigzagVariableByte(), N, nbr);
+        TestCodec(new DeltaZigzagVariableByte(), new DeltaZigzagVariableByte(), data);
     }
 
     [Fact]
@@ -159,16 +157,27 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     }
 
     [Fact]
-    public void CheckDeltaZigzagPackingComposition()
+    public void CheckDeltaZigzagZeroInZeroOut()
+    {
+        IInt32Codec compo = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
+        TestZeroInZeroOut(compo);
+    }
+
+    [Fact]
+    public void CheckDeltaZigzagUnsorted()
+    {
+        IInt32Codec compo = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
+        TestUnsorted(compo);
+    }
+
+    [Theory]
+    [MemberData(nameof(Data))]
+    public void CheckDeltaZigzagPackingComposition(int[][] data)
     {
         IInt32Codec compo = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
         IInt32Codec compo2 = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
 
-        TestZeroInZeroOut(compo);
-        TestUnsorted(compo);
-        Test(compo, compo2, 5, 10);
-        Test(compo, compo2, 5, 14);
-        Test(compo, compo2, 2, 18);
+        TestCodec(compo, compo2, data);
     }
 
     [Fact]
@@ -191,14 +200,38 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     }
 
     [Theory]
-    [InlineData(5, 10)]
-    [InlineData(5, 14)]
-    [InlineData(5, 18)]
-    public void CheckXorBinaryPacking3(int N, int nbr)
+    [MemberData(nameof(Data))]
+    public void CheckXorBinaryPacking3(int[][] data)
     {
         IInt32Codec c = new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte());
         IInt32Codec co = new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte());
-        Test(c, co, N, nbr);
+        TestCodec(c, co, data);
+    }
+
+    public static TheoryData<int[][]> Data()
+    {
+        return new TheoryData<int[][]>(GetAllData());
+
+        static IEnumerable<int[][]> GetAllData()
+        {
+            return GetData(5, 10).Concat(GetData(5, 14)).Concat(GetData(2, 18));
+
+            static IEnumerable<int[][]> GetData(int N, int nbr)
+            {
+                var cdg = new ClusteredDataGenerator();
+                for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
+                {
+                    var data = new int[N][];
+                    var max = 1 << (nbr + 9);
+                    for (var k = 0; k < N; ++k)
+                    {
+                        data[k] = cdg.GenerateClustered(1 << nbr, max);
+                    }
+
+                    yield return data;
+                }
+            }
+        }
     }
 
     [Theory]
@@ -210,7 +243,6 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     public void VerifyBitPacking(int bit)
     {
         const int N = 32;
-        const int TIMES = 1000;
         var r = new Random();
         var data = new int[N];
         for (var k = 0; k < N; ++k)
@@ -220,14 +252,11 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
         var compressed = new int[N];
         var uncompressed = new int[N];
-        for (var t = 0; t < TIMES; ++t)
-        {
 
-            BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
-            BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
+        BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
+        BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-            _ = uncompressed.Should().HaveSameElementsAs(data);
-        }
+        _ = uncompressed.Should().HaveSameElementsAs(data);
     }
 
     [Theory]
@@ -239,7 +268,6 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     public void VerifyWithoutMask(int bit)
     {
         const int N = 32;
-        const int TIMES = 1000;
         var r = new Random();
         var data = new int[N];
         for (var k = 0; k < N; ++k)
@@ -249,13 +277,10 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
         var compressed = new int[N];
         var uncompressed = new int[N];
-        for (var t = 0; t < TIMES; ++t)
-        {
-            BitPacking.PackWithoutMask(data.AsSpan(0), compressed.AsSpan(0), bit);
-            BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
+        BitPacking.PackWithoutMask(data.AsSpan(0), compressed.AsSpan(0), bit);
+        BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-            _ = uncompressed.Should().HaveSameElementsAs(data);
-        }
+        _ = uncompressed.Should().HaveSameElementsAs(data);
     }
 
     [Theory]
@@ -298,49 +323,55 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
     [Theory]
     [MemberData(nameof(BasicTestData))]
-    public void BasicTest(IntegerCodec c, IntegerCodec co, int N, int nbr, int sparsity)
+    public void BasicTest(IntegerCodec c, IntegerCodec co, int[][] data)
     {
-        var cdg = new ClusteredDataGenerator();
-
-        var data = new int[N][];
-        var max = 1 << (nbr + sparsity);
-        for (var k = 0; k < N; ++k)
-        {
-            data[k] = cdg.GenerateClustered(1 << nbr, max);
-        }
-
         TestCodec(c.Codec, co.Codec, data);
     }
 
-    public static TheoryData<IntegerCodec, IntegerCodec, int, int, int> BasicTestData()
+    public static TheoryData<IntegerCodec, IntegerCodec, int[][]> BasicTestData()
     {
-        var data = new TheoryData<IntegerCodec, IntegerCodec, int, int, int>();
+        var data = new TheoryData<IntegerCodec, IntegerCodec, int[][]>();
 
-        _ = AddData(data, 10);
-        _ = AddData(data, 14);
-        _ = AddData(data, 18);
+        _ = AddData(data, 5, 10);
+        _ = AddData(data, 5, 14);
+        _ = AddData(data, 2, 18);
 
         return data;
 
-        static TheoryData<IntegerCodec, IntegerCodec, int, int, int> AddData(TheoryData<IntegerCodec, IntegerCodec, int, int, int> data, int nbr)
+        static TheoryData<IntegerCodec, IntegerCodec, int[][]> AddData(TheoryData<IntegerCodec, IntegerCodec, int[][]> data, int N, int nbr)
         {
             for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
             {
-                data.Add(new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Copy()), new IntegerCodec(new Copy()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new VariableByte()), new IntegerCodec(new VariableByte()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Differential.DifferentialVariableByte()), new IntegerCodec(new Differential.DifferentialVariableByte()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), 5, nbr, sparsity);
-                data.Add(new IntegerCodec(new Simple9()), new IntegerCodec(new Simple9()), 5, nbr, sparsity);
+                var generatedData = GenerateData(N, nbr, sparsity);
+                data.Add(new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Copy()), new IntegerCodec(new Copy()), generatedData);
+                data.Add(new IntegerCodec(new VariableByte()), new IntegerCodec(new VariableByte()), generatedData);
+                data.Add(new IntegerCodec(new Differential.DifferentialVariableByte()), new IntegerCodec(new Differential.DifferentialVariableByte()), generatedData);
+                data.Add(new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), generatedData);
+                data.Add(new IntegerCodec(new Simple9()), new IntegerCodec(new Simple9()), generatedData);
             }
 
             return data;
+
+            static int[][] GenerateData(int N, int nbr, int sparsity)
+            {
+                var cdg = new ClusteredDataGenerator();
+
+                var data = new int[N][];
+                var max = 1 << (nbr + sparsity);
+                for (var k = 0; k < N; ++k)
+                {
+                    data[k] = cdg.GenerateClustered(1 << nbr, max);
+                }
+
+                return data;
+            }
         }
     }
 
@@ -420,21 +451,21 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         _ = outpos.Should().Be(0);
     }
 
-    private static void Test(IInt32Codec c, IInt32Codec co, int N, int nbr)
-    {
-        var cdg = new ClusteredDataGenerator();
-        for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
-        {
-            var data = new int[N][];
-            var max = 1 << (nbr + 9);
-            for (var k = 0; k < N; ++k)
-            {
-                data[k] = cdg.GenerateClustered(1 << nbr, max);
-            }
+    //private static void Test(IInt32Codec c, IInt32Codec co, int N, int nbr)
+    //{
+    //    var cdg = new ClusteredDataGenerator();
+    //    for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
+    //    {
+    //        var data = new int[N][];
+    //        var max = 1 << (nbr + 9);
+    //        for (var k = 0; k < N; ++k)
+    //        {
+    //            data[k] = cdg.GenerateClustered(1 << nbr, max);
+    //        }
 
-            TestCodec(c, co, data);
-        }
-    }
+    //        TestCodec(c, co, data);
+    //    }
+    //}
 
     private static void TestCodec(IInt32Codec? c, IInt32Codec? co, int[][] data)
     {

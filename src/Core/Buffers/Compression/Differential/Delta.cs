@@ -20,7 +20,7 @@ internal static class Delta
         var optimalSize = data.Length / 4 * 4;
         var i = data.Length - 1;
 
-        if (optimalSize > 4)
+        if (optimalSize >= 4)
         {
             for (; i > 3; i -= 4)
             {
@@ -49,7 +49,7 @@ internal static class Delta
         var optimalSize = data.Length / 4 * 4;
         var i = data.Length - 1;
 
-        if (optimalSize > 4)
+        if (optimalSize >= 4)
         {
             for (; i > 3; i -= 4)
             {
@@ -78,7 +78,7 @@ internal static class Delta
     /// <returns>The next initial vale.</returns>
     public static int Forward(ReadOnlySpan<int> source, int initialValue, Span<int> destination)
     {
-        for (var i = source.Length - 1; i > 0; --i)
+        for (var i = source.Length - 1; i > 0; i--)
         {
             destination[i] = source[i] - source[i - 1];
         }
