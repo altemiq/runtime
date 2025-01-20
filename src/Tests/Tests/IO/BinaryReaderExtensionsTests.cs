@@ -20,7 +20,7 @@ public class BinaryReaderExtensionsTests
         stream.Position = 0;
 
         using var reader = new BinaryReader(stream);
-        _ = reader.ReadString(value.Length).Should().Be(value);
+        Assert.Equal(value, reader.ReadString(value.Length));
     }
 
     [Theory]
@@ -85,7 +85,7 @@ public class BinaryReaderExtensionsTests
     [InlineData(-65504D, 0xFB, byte.MaxValue, ByteOrder.LittleEndian)]
     [InlineData(65504D, 0x7B, byte.MaxValue, ByteOrder.BigEndian)]
     [InlineData(-65504D, 0xFB, byte.MaxValue, ByteOrder.BigEndian)]
-    public void ReadHalf(SerializableHalf value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryReaderExtensions.ReadHalf, byteOrder, GetBytes(first, second, byteOrder), (Half)value);
+    public void ReadHalf(Half value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryReaderExtensions.ReadHalf, byteOrder, GetBytes(first, second, byteOrder), (Half)value);
 #endif
 
     [Theory]
@@ -112,7 +112,7 @@ public class BinaryReaderExtensionsTests
             : new BinaryReader(stream);
         using (reader)
         {
-            _ = getValue(reader, byteOrder).Should().Be(expected);
+            Assert.Equal(expected, getValue(reader, byteOrder));
         }
     }
 

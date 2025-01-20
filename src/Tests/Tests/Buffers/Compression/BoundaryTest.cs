@@ -40,7 +40,7 @@ public class BoundaryTest
             var c_inpos = 0;
             var c_outpos = 0;
             c.Compress(source, ref c_inpos, compressed, ref c_outpos, source.Length);
-            _ = c_outpos.Should().BeLessThanOrEqualTo(length);
+            Assert.True(c_outpos <= length);
 
             // Uncompress an array.
             var uncompressed = new int[length];
@@ -50,7 +50,7 @@ public class BoundaryTest
 
             // Compare between uncompressed and original arrays.
             var target = TestUtils.CopyArray(uncompressed, u_outpos);
-            _ = source.Should().HaveSameElementsAs(target); ;
+            Assert.Equal(source, target);
         }
     }
 }

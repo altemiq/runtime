@@ -13,7 +13,7 @@ public class DeltaTests
     {
         var data = new int[] { 1, 2, 3, 4, 5 };
         Delta.Forward(data);
-        data.Should().AllBeEquivalentTo(1);
+        Assert.Equal([1, 1, 1, 1, 1], data);
     }
 
     [Fact]
@@ -21,7 +21,7 @@ public class DeltaTests
     {
         var data = new int[] { 1, 2, 3, 4, 5 };
         Delta.Forward(data, 1);
-        data.Should().BeEquivalentTo([0, 1, 1, 1, 1]);
+        Assert.Equal([0, 1, 1, 1, 1], data);
     }
 
 
@@ -31,7 +31,7 @@ public class DeltaTests
         var data = new int[] { 1, 2, 3, 4, 5 };
         var destination = new int[data.Length];
         Delta.Forward(data, 1, destination);
-        destination.Should().BeEquivalentTo([0, 1, 1, 1, 1]);
+        Assert.Equal([0, 1, 1, 1, 1], destination);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class DeltaTests
     {
         var data = new int[] { 1, 1, 1, 1, 1 };
         Delta.Inverse(data);
-        data.Should().BeEquivalentTo([1, 2, 3, 4, 5]);
+        Assert.Equal([1, 2, 3, 4, 5], data);
     }
 
     [Fact]
@@ -47,6 +47,6 @@ public class DeltaTests
     {
         var data = new int[] { 0, 1, 1, 1, 1 };
         Delta.Inverse(data, 1);
-        data.Should().BeEquivalentTo([1, 2, 3, 4, 5]);
+        Assert.Equal([1, 2, 3, 4, 5], data);
     }
 }

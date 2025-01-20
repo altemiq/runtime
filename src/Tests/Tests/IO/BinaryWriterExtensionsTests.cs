@@ -93,7 +93,7 @@ public class BinaryWriterExtensionsTests
     [InlineData(-65504D, 0xFB, byte.MaxValue, ByteOrder.LittleEndian)]
     [InlineData(65504D, 0x7B, byte.MaxValue, ByteOrder.BigEndian)]
     [InlineData(-65504D, 0xFB, byte.MaxValue, ByteOrder.BigEndian)]
-    public void WriteHalf(SerializableHalf value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, GetBytes(first, second, byteOrder), (Half)value);
+    public void WriteHalf(Half value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, GetBytes(first, second, byteOrder), (Half)value);
 #endif
 
     [Theory]
@@ -130,7 +130,7 @@ public class BinaryWriterExtensionsTests
             System.Array.Resize(ref streamArray, buffer.Length);
         }
 
-        streamArray.ToArray().Should().BeEquivalentTo(buffer);
+        Assert.Equal(buffer, streamArray);
     }
 
     private static byte[] GetBytes(byte first, byte second, ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? [second, first] : [first, second];

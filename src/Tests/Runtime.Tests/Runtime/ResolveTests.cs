@@ -17,13 +17,13 @@ public class ResolveTests
             Version = new Version(1, 0),
         };
 
-        Resolve.ResolveRuntimeAssembly(assemblyName).Should().NotBeNull();
+        Assert.NotNull(Resolve.ResolveRuntimeAssembly(assemblyName));
     }
 
     [Fact]
     public void LoadFromLib()
     {
         var assemblyName = new System.Reflection.AssemblyName { Name = "Altemiq.Dummy" };
-        Resolve.ResolveRuntimeAssembly(assemblyName).Should().NotBeNull();
+        Assert.NotNull(Resolve.ResolveRuntimeAssembly(assemblyName));
     }
 }

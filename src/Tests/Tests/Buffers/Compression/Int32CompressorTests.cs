@@ -32,7 +32,7 @@ public class Int32CompressorTests
             var comp = i.Compress(orig);
             var back = i.Uncompress(comp);
 
-            _ = back.Should().HaveSameElementsAs(orig);
+            Assert.Equal(orig, back);
         }
     }
 

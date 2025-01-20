@@ -7,6 +7,6 @@ public class ProtoTests
     {
         var guid = Guid.NewGuid();
         var testMessage = new Protobuf.WellKnownTypes.Tests.Test { Uuid = Protobuf.WellKnownTypes.Uuid.ForGuid(guid) };
-        testMessage.Uuid.ToGuid().Should().Be(guid);
+        Assert.Equal(guid, testMessage.Uuid.ToGuid());
     }
 }

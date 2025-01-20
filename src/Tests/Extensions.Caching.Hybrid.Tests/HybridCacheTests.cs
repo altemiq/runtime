@@ -10,10 +10,9 @@ public class HybridCacheTests
     {
         var services = new ServiceCollection();
         _ = services.AddHybridCache().AddProtobufSerializerFactory();
-        _ = services.BuildServiceProvider().GetService<IHybridCacheSerializerFactory>()
-            .Should().BeAssignableTo<IHybridCacheSerializerFactory>()
-            .Which.TryCreateSerializer<Tests.SomeProtobufMessage>(out var serializer).Should().BeTrue();
-        serializer.Should().NotBeNull();
+        var factory = Assert.IsType<IHybridCacheSerializerFactory>(services.BuildServiceProvider().GetService<IHybridCacheSerializerFactory>(), false);
+        Assert.True(factory.TryCreateSerializer<Tests.SomeProtobufMessage>(out var serializer));
+        Assert.NotNull(serializer);
     }
 
     [Fact]
@@ -21,6 +20,6 @@ public class HybridCacheTests
     {
         var services = new ServiceCollection();
         _ = services.AddHybridCache().AddProtobufSerializer<Tests.SomeProtobufMessage>();
-        services.BuildServiceProvider().GetService<IHybridCacheSerializer<Tests.SomeProtobufMessage>>().Should().NotBeNull();
+        Assert.NotNull(services.BuildServiceProvider().GetService<IHybridCacheSerializer<Tests.SomeProtobufMessage>>());
     }
 }

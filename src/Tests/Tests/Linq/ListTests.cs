@@ -14,7 +14,7 @@ public partial class ListTests
     {
         IList<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        cast.Should().BeEquivalentTo(list);
+        Assert.Equal(list, cast);
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public partial class ListTests
     {
         List<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        cast.Should().BeOfType<List<IFirst>>().And.BeEquivalentTo(list);
+        Assert.Equal(list, cast);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public partial class ListTests
     {
         ListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        cast.Should().BeOfType<ListWithNoConstructors<IFirst>>().And.BeEquivalentTo(list);
+        Assert.Equal(list, Assert.IsType<ListWithNoConstructors<IFirst>>(cast));
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public partial class ListTests
     {
         NonListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        cast.Should().BeOfType<NonListWithNoConstructors<IFirst>>().And.BeEquivalentTo(list);
+        Assert.Equal(list, Assert.IsType<NonListWithNoConstructors<IFirst>>(cast));
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public partial class ListTests
     {
         NestedNonGenericList list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        cast.Should().BeOfType<List<IFirst>>().And.BeEquivalentTo(list);
+        Assert.Equal(list, Assert.IsType<List<IFirst>>(cast));
     }
 
     [Fact]
@@ -54,21 +54,21 @@ public partial class ListTests
     {
         ISecond[] array = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(array);
-        cast.Should().BeOfType<IFirst[]>().And.BeEquivalentTo(array);
+        Assert.Equal(array, Assert.IsType<IFirst[]>(cast));
     }
 
     [Fact]
     public void CastWithNull()
     {
         IList<ISecond>? list = default;
-        List.Cast<ISecond, IFirst>(list!).Should().BeNull();
+        Assert.Null(List.Cast<ISecond, IFirst>(list!));
     }
 
     [Fact]
     public void CastWithNonGeneric()
     {
         NoBaseClass list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        list.Invoking(static l => l.Cast<ISecond, IFirst>()).Should().Throw<InvalidOperationException>();
+        Assert.Throws<InvalidOperationException>(() => list.Cast<ISecond, IFirst>());
     }
 
     public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));

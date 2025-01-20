@@ -19,10 +19,10 @@ public class DifferentialInt32CompressorTests
         var compressed = iic2.Compress(data);
         var recov = iic2.Uncompress(compressed);
 
-        _ = recov.Should().HaveCount(data.Length);
+        Assert.Equal(data.Length, recov.Length);
         for (var k = 0; k < data.Length; ++k)
         {
-            _ = recov[k].Should().Be(data[k]);
+            Assert.Equal(data[k], recov[k]);
         }
     }
 
@@ -41,7 +41,7 @@ public class DifferentialInt32CompressorTests
             {
                 var comp = i.Compress(orig);
                 var back = i.Uncompress(comp);
-                _ = back.Should().HaveSameElementsAs(orig);
+                Assert.Equal(orig, back);
             }
         }
     }

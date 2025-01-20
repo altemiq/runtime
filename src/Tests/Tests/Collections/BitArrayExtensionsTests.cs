@@ -11,21 +11,21 @@ public class BitArrayExtensionsTests
     public void GetByte()
     {
         var bitConverter = new System.Collections.BitArray(new byte[] { 0x03 });
-        bitConverter.GetByte().Should().Be(0x03);
+        Assert.Equal(0x03, bitConverter.GetByte());
     }
 
     [Fact]
     public void GetBytes()
     {
         var bitConverter = new System.Collections.BitArray(new byte[] { 0x03, 0x05 });
-        bitConverter.GetBytes().Should().BeEquivalentTo([0x03, 0x05]);
+        Assert.Equal([0x03, 0x05], bitConverter.GetBytes());
     }
 
     [Fact]
     public void GetByteWithLength()
     {
         var bitConverter = new System.Collections.BitArray(new byte[] { 0x00, 0x03, 0x00, 0x00 });
-        bitConverter.GetByte(8, 3).Should().Be(0x03);
+        Assert.Equal(0x03, bitConverter.GetByte(8, 3));
     }
 
     [Theory]
@@ -34,7 +34,7 @@ public class BitArrayExtensionsTests
     [InlineData((byte)0x00, null, false)]
     [InlineData(null, (byte)0x00, false)]
     [InlineData((byte)0x01, (byte)0x02, false)]
-    public void EqualsExtension(byte? first, byte? second, bool result)
+    public void EqualsExtension(byte? first, byte? second, bool expected)
     {
         var firstBitArray = first.HasValue
             ? new System.Collections.BitArray([first.Value])
@@ -44,7 +44,7 @@ public class BitArrayExtensionsTests
             ? new System.Collections.BitArray([second.Value])
             : null;
 
-        _ = BitArrayExtensions.Equals(firstBitArray!, secondBitArray!).Should().Be(result);
+        Assert.Equal(expected, BitArrayExtensions.Equals(firstBitArray!, secondBitArray!));
     }
 
     [Theory]
@@ -58,6 +58,6 @@ public class BitArrayExtensionsTests
             ? [(byte)bits]
             : BitConverter.GetBytes(bits);
         var bitArray = new System.Collections.BitArray(bytes);
-        bitArray.ToHexString(default).Should().Be(expected);
+        Assert.Equal(expected, bitArray.ToHexString(default));
     }
 }

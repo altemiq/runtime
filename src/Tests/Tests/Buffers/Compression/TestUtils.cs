@@ -1,7 +1,5 @@
 ﻿namespace Altemiq.Buffers.Compression;
 
-using FluentAssertions.Execution;
-
 internal static class TestUtils
 {
     public static void AssertSymmetry(IInt32Codec codec, params int[] orig)
@@ -20,7 +18,7 @@ internal static class TestUtils
         var c_outpos = 0;
         codec.Compress(orig, ref c_inpos, compressed, ref c_outpos, orig.Length);
 
-        _ = c_outpos.Should().BeLessThanOrEqualTo(orig.Length + EXTEND);
+        Assert.InRange(c_outpos, 0, orig.Length + EXTEND);
 
         // Uncompress an array.
         var uncompressed = new int[orig.Length];
@@ -30,7 +28,7 @@ internal static class TestUtils
 
         // Compare between uncompressed and orig arrays.
         System.Array.Resize(ref uncompressed, u_outpos);
-        _ = uncompressed.Should().HaveSameElementsAs(orig);
+        Assert.Equal(uncompressed, orig);
     }
 
     public static int[] Compress(IInt32Codec codec, int[] data)
@@ -89,7 +87,7 @@ internal static class TestUtils
         var inPos = 0;
         var outPos = 0;
         codec.Decompress(data, ref inPos, outBuf, ref outPos, data.Length, len);
-        _ = outPos.Should().BeGreaterThanOrEqualTo(len);
+        Assert.InRange(outPos, len, int.MaxValue);
         System.Array.Resize(ref outBuf, outPos);
         return outBuf;
     }
@@ -104,26 +102,5 @@ internal static class TestUtils
     public static string ArrayToString<T>(T[] array)
     {
         return string.Join(", ", array);
-    }
-
-    public static AndConstraint<FluentAssertions.Collections.GenericCollectionAssertions<T>> HaveSameElementsAs<T>(this FluentAssertions.Collections.GenericCollectionAssertions<T> source, IEnumerable<T> expected)
-        where T : notnull
-    {
-        var sourceEnumerator = source.Subject.GetEnumerator();
-        var expectedEnumerator = expected.GetEnumerator();
-
-        var index = 0;
-        while (sourceEnumerator.MoveNext() && expectedEnumerator.MoveNext())
-        {
-            sourceEnumerator.Current
-                .Should()
-                .Be(expectedEnumerator.Current, "Expected {context:collection} to contain {0} at index {1}{reason}, but found {2}.", expectedEnumerator.Current, index, source.Subject);
-            index++;
-        }
-
-        sourceEnumerator.MoveNext().Should().BeFalse("Expected {context:collection} to have the same number of items as {0}{reason}.", expectedEnumerator);
-        expectedEnumerator.MoveNext().Should().BeFalse("Expected {context:collection} to have the same number of items as {0}{reason}.", sourceEnumerator);
-
-        return new(source);
     }
 }

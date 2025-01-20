@@ -45,7 +45,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             bOffset = x;
             var cOffset = 0;
             ic.Decompress(b, ref bOffset, c, ref cOffset, len);
-            _ = a.Should().HaveSameElementsAs(c);
+            Assert.Equal(a, c);
         }
     }
 
@@ -256,7 +256,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
         BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-        _ = uncompressed.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, uncompressed);
     }
 
     [Theory]
@@ -280,7 +280,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         BitPacking.PackWithoutMask(data.AsSpan(0), compressed.AsSpan(0), bit);
         BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-        _ = uncompressed.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, uncompressed);
     }
 
     [Theory]
@@ -309,7 +309,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
             // Check assertions.
             MaskArray(data, (1 << bit) - 1);
-            _ = uncompressed.Should().HaveSameElementsAs(data);
+            Assert.Equal(data, uncompressed);
         }
 
         static void MaskArray(int[] array, int mask)
@@ -387,8 +387,8 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     public void SpuriousOut(Type type)
     {
         var codec = Activator.CreateInstance(type) as IInt32Codec;
-        _ = codec.Should().NotBeNull();
-        TestSpurious(codec!);
+        Assert.NotNull(codec);
+        TestSpurious(codec);
     }
 
     [Theory]
@@ -432,7 +432,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         for (var inlength = 0; inlength < 32; ++inlength)
         {
             c.Compress(x, ref i0, y, ref i1, inlength);
-            _ = i1.Should().Be(0);
+            Assert.Equal(0, i1);
         }
     }
 
@@ -443,12 +443,12 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         var i0 = 0;
         var i1 = 0;
         c.Compress(x, ref i0, y, ref i1, 0);
-        _ = i1.Should().Be(0);
+        Assert.Equal(0, i1);
 
         int[] @out = [];
         var outpos = 0;
         c.Decompress(y, ref i1, @out, ref outpos, 0);
-        _ = outpos.Should().Be(0);
+        Assert.Equal(0, outpos);
     }
 
     //private static void Test(IInt32Codec c, IInt32Codec co, int N, int nbr)
@@ -469,8 +469,8 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
     private static void TestCodec(IInt32Codec? c, IInt32Codec? co, int[][] data)
     {
-        _ = c.Should().NotBeNull();
-        _ = co.Should().NotBeNull();
+        Assert.NotNull(c);
+        Assert.NotNull(co);
 
         var N = data.Length;
         var maxlength = 0;
@@ -514,9 +514,9 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             }
 
             // Check assertions.
-            _ = outpos.Should().Be(data[k].Length);
+            Assert.Equal(data[k].Length, outpos);
             var bufferCutout = TestUtils.CopyArray(buffer, outpos);
-            _ = bufferCutout.Should().HaveSameElementsAs(data[k]);
+            Assert.Equal(data[k], bufferCutout);
         }
     }
 
@@ -582,7 +582,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             var recoffset = 0;
             var inpos = 0;
             codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-            _ = recovered.Should().HaveSameElementsAs(data);
+            Assert.Equal(data, recovered);
         }
     }
 
@@ -601,7 +601,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        _ = recovered.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, recovered);
     }
 
     private static void TestUnsorted3(IInt32Codec codec)
@@ -619,7 +619,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        _ = recovered.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, recovered);
     }
 
     [Fact]
@@ -637,7 +637,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        _ = TestUtils.Uncompress(codec2, comp, N).Should().HaveSameElementsAs(data);
+        Assert.Equal(data, TestUtils.Uncompress(codec2, comp, N));
     }
 
     [Fact]
@@ -655,7 +655,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        _ = TestUtils.Uncompress(codec2, comp, N).Should().HaveSameElementsAs(data);
+        Assert.Equal(data, TestUtils.Uncompress(codec2, comp, N));
     }
 
     public class IntegerCodec : IXunitSerializable

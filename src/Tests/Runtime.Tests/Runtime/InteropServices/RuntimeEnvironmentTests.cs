@@ -9,35 +9,40 @@ namespace Altemiq.Runtime.InteropServices;
 public class RuntimeEnvironmentTests
 {
     [Fact]
-    public void GetRuntimeNativeDirectory() => RuntimeEnvironment.GetRuntimeNativeDirectory().Should().NotBeNull();
+    public void GetRuntimeNativeDirectory() => Assert.NotNull(RuntimeEnvironment.GetRuntimeNativeDirectory());
 
     [Fact]
-    public void GetRuntimeLibraryDirectory() => RuntimeEnvironment.GetRuntimeLibraryDirectory().Should().NotBeNull();
+    public void GetRuntimeLibraryDirectory() => Assert.NotNull(RuntimeEnvironment.GetRuntimeLibraryDirectory());
 
     [Fact]
-    public void GetToolsDirectories() => RuntimeEnvironment.GetToolsDirectories().Should().NotBeNullOrEmpty();
+    public void GetToolsDirectories()
+    {
+        var toolsDirectories = RuntimeEnvironment.GetToolsDirectories();
+        Assert.NotNull(toolsDirectories);
+        Assert.NotEmpty(toolsDirectories);
+    }
 
     [Fact]
-    public void GetToolsDirectory() => RuntimeEnvironment.GetToolsDirectory().Should().NotBeNull();
+    public void GetToolsDirectory() => Assert.NotNull(RuntimeEnvironment.GetToolsDirectory());
 
     [Fact]
-    public void GetToolDirectory() => RuntimeEnvironment.GetToolDirectory("_._").Should().NotBeNull();
+    public void GetToolDirectory() => Assert.NotNull(RuntimeEnvironment.GetToolDirectory("_._"));
 
     [Fact]
-    public void GetRuntimeNativeDirectoryWithModule() => RuntimeEnvironment.GetRuntimeNativeDirectory(RuntimeEnvironment.CreateModuleName("e_sqlite3")).Should().NotBeNull();
+    public void GetRuntimeNativeDirectoryWithModule() => Assert.NotNull(RuntimeEnvironment.GetRuntimeNativeDirectory(RuntimeEnvironment.CreateModuleName("e_sqlite3")));
 
     [Fact]
     public void AddRuntimeLibraryDirectory()
     {
         RuntimeEnvironment.AddRuntimeLibraryDirectory();
-        RuntimeEnvironment.ShouldAddLibraryDirectory(RuntimeEnvironment.GetRuntimeLibraryDirectory()).Should().Be(false);
+        Assert.False(RuntimeEnvironment.ShouldAddLibraryDirectory(RuntimeEnvironment.GetRuntimeLibraryDirectory()));
     }
 
     [Fact]
     public void AddRuntimeNativeDirectory()
     {
         RuntimeEnvironment.AddRuntimeNativeDirectory();
-        RuntimeEnvironment.ShouldAddNativeDirectory(RuntimeEnvironment.GetRuntimeNativeDirectory()).Should().Be(false);
+        Assert.False(RuntimeEnvironment.ShouldAddNativeDirectory(RuntimeEnvironment.GetRuntimeNativeDirectory()));
     }
 
     [Fact]
@@ -46,6 +51,6 @@ public class RuntimeEnvironmentTests
         RuntimeEnvironment.AddRuntimeLibraryDirectory();
         var path = Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable);
         RuntimeEnvironment.AddRuntimeLibraryDirectory();
-        _ = Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable).Should().Be(path);
+        Assert.Equal(path, Environment.GetEnvironmentVariable(RuntimeInformation.PathVariable));
     }
 }

@@ -5,19 +5,35 @@
 // -----------------------------------------------------------------------
 
 namespace Altemiq.Runtime.InteropServices;
+
 public class RuntimeInformationTests
 {
     [Fact]
-    public void GetRuntimeIdentifier() => RuntimeInformation.RuntimeIdentifier.Should().NotBeNullOrEmpty();
+    public void GetRuntimeIdentifier()
+    {
+        var rid = RuntimeInformation.RuntimeIdentifier;
+        Assert.NotNull(rid);
+        Assert.NotEmpty(rid);
+    }
 
     [Fact]
-    public void GetTargetFramework() => RuntimeInformation.TargetFramework.Should().NotBeNullOrEmpty();
+    public void GetTargetFramework()
+    {
+        var targetFramework = RuntimeInformation.TargetFramework;
+        Assert.NotNull(targetFramework);
+        Assert.NotEmpty(targetFramework);
+    }
 
     [Fact]
     public void GetTargetPlatform()
+    {
+        var targetPlatform = RuntimeInformation.TargetPlatform;
+        Assert.NotNull(targetPlatform);
 #if NET5_0_OR_GREATER && WINDOWS
-        => RuntimeInformation.TargetPlatform.Should().NotBeNullOrEmpty().And.Contain("Windows");
+        Assert.NotEmpty(targetPlatform);
+        Assert.Contains("Windows", targetPlatform);
 #else
-        => RuntimeInformation.TargetPlatform.Should().NotBeNull().And.BeEmpty();
+        Assert.Empty(targetPlatform);
 #endif
+    }
 }

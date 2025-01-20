@@ -18,28 +18,28 @@ public partial class ListTests
         [MemberData(nameof(GetLists))]
         public void Int32(IEnumerable<int> first, IEnumerable<int> second)
         {
-            _ = TestListList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1).Should().Be(1);
-            _ = TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1).Should().Be(1);
+            Assert.Equal(1, TestListList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1));
+            Assert.Equal(1, TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1));
         }
 
         [Theory]
         [MemberData(nameof(CreateNulls))]
         public void WithNull(System.Collections.IEnumerable? first, System.Collections.IEnumerable? second)
         {
-            ((IList<int>)first!).IndexOf((IList<int>)second!).Should().Be(-1);
-            ((IReadOnlyList<int>)first!).IndexOf((IReadOnlyList<int>)second!).Should().Be(-1);
+            Assert.Equal(-1, ((IList<int>)first!).IndexOf((IList<int>)second!));
+            Assert.Equal(-1, ((IReadOnlyList<int>)first!).IndexOf((IReadOnlyList<int>)second!));
         }
 
         [Theory]
         [MemberData(nameof(GetInt32ReadOnlyLists))]
-        public void Value(IReadOnlyList<int> list) => list.IndexOf(10, 1).Should().Be(2);
+        public void Value(IReadOnlyList<int> list) => Assert.Equal(2, list.IndexOf(10, 1));
 
         [Theory]
         [MemberData(nameof(GetLists))]
         public void Any(IEnumerable<int> first, IEnumerable<int> second)
         {
-            _ = TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
-            _ = TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1).Should().Be(1);
+            Assert.Equal(1,  TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
+            Assert.Equal(1, TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
         }
 
         [Theory]
@@ -48,20 +48,20 @@ public partial class ListTests
         {
             if (first is IList<int> firstList)
             {
-                firstList.IndexOf(2, 0).Should().Be(1);
+                Assert.Equal(1, firstList.IndexOf(2, 0));
             }
             else if (first is IReadOnlyList<int> firstReadOnlyList)
             {
-                firstReadOnlyList.IndexOf(2, 0).Should().Be(1);
+                Assert.Equal(1, firstReadOnlyList.IndexOf(2, 0));
             }
 
             if (second is IList<int> secondList)
             {
-                secondList.IndexOf(2, 0).Should().Be(0);
+                Assert.Equal(0, secondList.IndexOf(2, 0));
             }
             else if (second is IReadOnlyList<int> secondReadOnlyList)
             {
-                secondReadOnlyList.IndexOf(2, 0).Should().Be(0);
+                Assert.Equal(0, secondReadOnlyList.IndexOf(2, 0));
             }
         }
     }

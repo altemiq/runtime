@@ -13,9 +13,10 @@ public class RandomTests
     {
         var random = new Random();
         var first = random.NextDouble();
-        _ = first.Should().BeGreaterThanOrEqualTo(0D).And.BeLessThanOrEqualTo(1D);
+        Assert.InRange(first, 0D, 1D);
         var second = random.NextDouble();
-        _ = second.Should().BeGreaterThanOrEqualTo(0D).And.BeLessThanOrEqualTo(1D).And.NotBe(first);
+        Assert.InRange(first, 0D, 1D);
+        Assert.NotEqual(first, second);
     }
 
     [Fact]
@@ -23,9 +24,10 @@ public class RandomTests
     {
         var random = new Random();
         var first = random.Next();
-        _ = first.Should().BeGreaterThanOrEqualTo(0).And.BeLessThanOrEqualTo(int.MaxValue);
+        Assert.InRange(first, 0, int.MaxValue);
         var second = random.Next();
-        _ = second.Should().BeGreaterThanOrEqualTo(0).And.BeLessThanOrEqualTo(int.MaxValue).And.NotBe(first);
+        Assert.InRange(first, 0, int.MaxValue);
+        Assert.NotEqual(first, second);
     }
 
     [Fact]
@@ -34,9 +36,10 @@ public class RandomTests
         const int Max = 10000;
         var random = new Random();
         var first = random.Next(Max);
-        _ = first.Should().BeGreaterThanOrEqualTo(0).And.BeLessThanOrEqualTo(Max);
+        Assert.InRange(first, 0, Max);
         var second = random.Next(Max);
-        _ = second.Should().BeGreaterThanOrEqualTo(0).And.BeLessThanOrEqualTo(Max).And.NotBe(first);
+        Assert.InRange(second, 0, Max);
+        Assert.NotEqual(first, second);
     }
 
     [Fact]
@@ -46,9 +49,10 @@ public class RandomTests
         const int Max = 10000;
         var random = new Random();
         var first = random.Next(Min, Max);
-        _ = first.Should().BeGreaterThanOrEqualTo(Min).And.BeLessThanOrEqualTo(Max);
+        Assert.InRange(first, Min, Max);
         var second = random.Next(Min, Max);
-        _ = second.Should().BeGreaterThanOrEqualTo(Min).And.BeLessThanOrEqualTo(Max).And.NotBe(first);
+        Assert.InRange(second, Min, Max);
+        Assert.NotEqual(first, second);
     }
 
     [Fact]
@@ -56,7 +60,7 @@ public class RandomTests
     {
         const int Max = -1;
         var random = new Random();
-        random.Invoking(static r => r.Next(Max)).Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(() => random.Next(Max));
     }
 
     [Fact]
@@ -65,7 +69,7 @@ public class RandomTests
         const int Max = 100;
         const int Min = 1000;
         var random = new Random();
-        random.Invoking(static r => r.Next(Min, Max)).Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(() => random.Next(Min, Max));
     }
 
     [Fact]
@@ -73,6 +77,6 @@ public class RandomTests
     {
         const int MinMax = 1000;
         var random = new Random();
-        random.Next(MinMax, MinMax).Should().Be(MinMax);
+        Assert.Equal(MinMax, random.Next(MinMax, MinMax));
     }
 }

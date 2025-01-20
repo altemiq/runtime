@@ -7,7 +7,7 @@ public class XorBinaryPackingTest
         var codec = new XorBinaryPacking();
         var compBuf = TestUtils.Compress(codec, data);
         var decompBuf = TestUtils.Uncompress(codec, compBuf, data.Length);
-        _ = decompBuf.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, decompBuf);
     }
 
     [Fact]

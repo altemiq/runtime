@@ -14,7 +14,7 @@ public class TextInfoHelperTests
     public void GetInfoFromCultureInfo()
     {
         var cultureInfo = CultureInfo.CurrentCulture;
-        _ = TextInfoHelper.GetInstance(cultureInfo).Should().Be(cultureInfo.TextInfo);
+        Assert.Equal(cultureInfo.TextInfo, TextInfoHelper.GetInstance(cultureInfo));
     }
 
     [Fact]
@@ -22,13 +22,13 @@ public class TextInfoHelperTests
     {
         var cultureInfo = CultureInfo.CurrentCulture;
         var numberFormatProvider = NumberFormatInfo.GetInstance(cultureInfo);
-        _ = TextInfoHelper.GetInstance(numberFormatProvider).Should().Be(cultureInfo.TextInfo);
+        Assert.Equal(cultureInfo.TextInfo, TextInfoHelper.GetInstance(numberFormatProvider));
     }
 
     [Fact]
     public void GetInfoFromNull()
     {
         var cultureInfo = CultureInfo.CurrentCulture;
-        _ = TextInfoHelper.GetInstance(default).Should().Be(cultureInfo.TextInfo);
+        Assert.Equal(cultureInfo.TextInfo, TextInfoHelper.GetInstance(default));
     }
 }

@@ -13,11 +13,12 @@ public class MultipleMemoryStreamTests
     {
         var dictionary = new Dictionary<string, Stream>();
         var stream = new MultipleMemoryStream(dictionary);
-        stream.Invoking(static s => s.SwitchTo("first")).Should().NotThrow();
-        stream.Invoking(static s => s.SwitchTo("second")).Should().NotThrow();
+        Assert.True(stream.SwitchTo("first"));
+        Assert.True(stream.SwitchTo("second"));
 
-        dictionary.Values.Should()
-            .HaveCount(2)
-            .And.AllBeOfType<MemoryStream>();
+        Assert.Collection(
+            dictionary.Values, 
+            first => Assert.IsType<MemoryStream>(first),
+            second => Assert.IsType<MemoryStream>(second));
     }
 }

@@ -23,7 +23,7 @@ public class ExceptionThrowerTests
     public class ArgumentException
     {
         [Fact]
-        public void ThrowOnNull() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default));
+        public void ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default));
 
         [Fact]
         public void ThrowIfEmpty() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty));
@@ -337,14 +337,13 @@ public class ExceptionThrowerTests
     private static void Do<T>(Action act, bool @throw = true)
         where T : Exception
     {
-        var should = act.Should();
         if (@throw)
         {
-            _ = should.Throw<T>();
+            Assert.Throws<T>(act);
         }
         else
         {
-            _ = should.NotThrow<T>();
+            act();
         }
     }
 }

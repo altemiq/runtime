@@ -33,7 +33,6 @@
   <ItemGroup>
     <None Include="$([MSBuild]::GetPathOfFileAbove(xunit.runner.net.json))" CopyToOutputDirectory="PreserveNewest" Condition="$(IsNetOnCore)" Link="xunit.runner.json" />
     <None Include="$([MSBuild]::GetPathOfFileAbove(xunit.runner.json))" CopyToOutputDirectory="PreserveNewest" Condition="!$(IsNetOnCore)" />
-    <None Include="$([MSBuild]::GetPathOfFileAbove(app.config))" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <Using Include="FluentAssertions;Xunit" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

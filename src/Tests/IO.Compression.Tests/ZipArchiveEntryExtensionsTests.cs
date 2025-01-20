@@ -14,13 +14,13 @@ public class ZipArchiveEntryExtensionsTests
     public void OpenSeekableOnNonSeekable()
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
-        archive.Entries[0].OpenSeekable().Should().BeOfType<SeekableStream>();
+        Assert.IsType<SeekableStream>( archive.Entries[0].OpenSeekable());
     }
 
     [Fact]
     public void OpenSeekableOnSeekable()
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim(ZipArchiveMode.Update);
-        archive.Entries[0].OpenSeekable().Should().BeOfType<DisposableStream>();
+        Assert.IsType<DisposableStream>(archive.Entries[0].OpenSeekable());
     }
 }

@@ -1,7 +1,6 @@
 <Project>
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="xunit.v3" />
   </ItemGroup>
 

@@ -54,24 +54,26 @@ public class StringExtensionsTests
 #endif
 
     [Fact]
-    public void NullString() => new Func<string[]>(static () => default(string)!.SplitQuoted()).Should().ThrowExactly<ArgumentNullException>();
+    public void NullString() => Assert.Throws<ArgumentNullException>(static () => default(string)!.SplitQuoted());
 
     [Fact]
-    public void EmptyString() => string.Empty.SplitQuoted().Should().ContainSingle().And.HaveElementAt(0, string.Empty);
+    public void EmptyString() => Assert.Single(string.Empty.SplitQuoted(), string.Empty);
 
     [Fact]
-    public void EmptyStringWithOptions() => string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries).Should().BeEmpty();
+    public void EmptyStringWithOptions() => Assert.Empty(string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries)!);
 
     [Theory]
     [InlineData(SingleLineSimple, "3", 5, StringSplitOptions.None)]
     [InlineData(SingleLineWithEmptyValues, "", 5, StringSplitOptions.None)]
     [InlineData(SingleLineWithNullValues, null, 5, StringSplitOptions.None)]
     [InlineData(SingleLineWithNullValues, "4", 4, StringSplitOptions.RemoveEmptyEntries)]
-    public void ReadSimple(string input, string? value, int length, StringSplitOptions options) =>
-        input.SplitQuoted(',', options)
-            .Should().NotBeNull()
-            .And.Subject.Should().HaveCount(length)
-            .And.HaveElementAt(2, value);
+    public void ReadSimple(string input, string? value, int length, StringSplitOptions options)
+    {
+        var result = input.SplitQuoted(',', options);
+        Assert.NotNull(result);
+        Assert.Equal(length, result.Length);
+        Assert.Equal(value, result.Skip(2).Take(1).Single());
+    }
 
     [Theory]
     [InlineData(SingleLineUnquoted, 5)]
@@ -83,10 +85,12 @@ public class StringExtensionsTests
     [InlineData(SingleLineNewLineComma, 5)]
     [InlineData(SingleLineNewLineEmbeddedQuotes, 5)]
     [InlineData(SingleLineNewLineCommaEmbeddedQuotes, 5)]
-    public void ReadLength(string input, int length) =>
-        input.SplitQuoted(',')
-            .Should().NotBeNull()
-            .And.Subject.Should().HaveCount(length);
+    public void ReadLength(string input, int length)
+    {
+        var result = input.SplitQuoted(',');
+        Assert.NotNull(result);
+        Assert.Equal(length, result.Length);
+    }
 
     [Theory]
     [InlineData("", null, StringQuoteOptions.None, true)]
@@ -102,23 +106,23 @@ public class StringExtensionsTests
     public void Quote(string input, string? delimiter, StringQuoteOptions options, bool quoted)
     {
         var d = delimiter?.ToCharArray() ?? [];
-        _ = input.Quote(d, options).Should().Be(quoted ? "\"" + input + "\"" : input);
+        Assert.Equal(quoted ? "\"" + input + "\"" : input, input.Quote(d, options));
     }
 
     [Theory]
     [InlineData("value,second", ',', StringQuoteOptions.QuoteAll, true)]
     [InlineData("value,second", ',', StringQuoteOptions.None, true)]
-    public void QuoteChar(string input, char delimiter, StringQuoteOptions options, bool quoted) => input.Quote(delimiter, options).Should().Be(quoted ? "\"" + input + "\"" : input);
+    public void QuoteChar(string input, char delimiter, StringQuoteOptions options, bool quoted) => Assert.Equal(quoted ? "\"" + input + "\"" : input, input.Quote(delimiter, options));
 
     [Fact]
-    public void QuoteNull() => default(string).Quote().Should().Be(string.Empty);
+    public void QuoteNull() => Assert.Equal(string.Empty, default(string).Quote());
 
     [Theory]
     [MemberData(nameof(GetCharArrays))]
     public void SplitQuotedWithEmptyDelimeter(char[]? chars)
     {
         const string Value = "This is a string";
-        _ = Value.SplitQuoted(chars, options: StringSplitOptions.None).Should().HaveCount(4);
+        Assert.Equal(4, Value.SplitQuoted(chars, options: StringSplitOptions.None).Length);
     }
 
     public static TheoryData<char[]?> GetCharArrays() => new()
@@ -131,7 +135,7 @@ public class StringExtensionsTests
     public void Format()
     {
         const int Formattable = 123;
-        _ = Format(Formattable).Should().Be(Formattable.ToString(default(IFormatProvider)));
+        Assert.Equal(Formattable.ToString(default(IFormatProvider)), Format(Formattable));
 
         static string? Format<T>(T value)
             where T : IFormattable
@@ -142,6 +146,6 @@ public class StringExtensionsTests
 
 #if NET5_0_OR_GREATER
     [Fact]
-    public void TrimEntries() => "This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries).Should().BeEquivalentTo(expectation);
+    public void TrimEntries() => Assert.Equal(expectation, "This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries));
 #endif
 }

@@ -11,13 +11,13 @@ public class MemoryExtensionsTests
     [Theory]
     [InlineData("This is an old string", "an old", "a new", "This is a new string")]
     [InlineData("This is an old string", "a new", "blah", "This is an old string")]
-    public void Replace(string input, string old, string @new, string expected) => input.AsSpan().Replace(old.AsSpan(), @new.AsSpan()).ToString().Should().Be(expected);
+    public void Replace(string input, string old, string @new, string expected) => Assert.Equal(expected, input.AsSpan().Replace(old.AsSpan(), @new.AsSpan()).ToString());
 
     [Fact]
     public void IndexOfAny()
     {
-        _ = Create("This is an old string").IndexOfAny(Create("is"), Create("an"), Create("old"), Create("string")).Should().Be(2);
-        _ = default(ReadOnlySpan<char>).IndexOfAny(default, default).Should().Be(-1);
+        Assert.Equal(2, Create("This is an old string").IndexOfAny(Create("is"), Create("an"), Create("old"), Create("string")));
+        Assert.Equal(-1, default(ReadOnlySpan<char>).IndexOfAny(default, default));
 
         static ReadOnlySpan<char> Create(string input)
         {
@@ -30,23 +30,23 @@ public class MemoryExtensionsTests
     public void MoveNextOnEmptyString()
     {
         var enumerator = string.Empty.AsSpan().Split();
-        enumerator.MoveNext().Should().BeTrue();
-        enumerator.MoveNext().Should().BeFalse();
+        Assert.True(enumerator.MoveNext());
+        Assert.False(enumerator.MoveNext());
     }
 #endif
 
     [Fact]
-    public void MoveNextOrThrowOnEmptyString() => string.Empty.Invoking(static s =>
+    public void MoveNextOrThrowOnEmptyString() => Assert.Throws<InvalidOperationException>(() =>
     {
         var enumerator =
 #if NET9_0_OR_GREATER
-            System.MemoryExtensions.Split(s.AsSpan(), ' ');
+            System.MemoryExtensions.Split(string.Empty.AsSpan(), ' ');
 #else
-            s.AsSpan().Split();
+            string.Empty.AsSpan().Split();
 #endif
         enumerator.MoveNextOrThrow();
         enumerator.MoveNextOrThrow();
-    }).Should().ThrowExactly<InvalidOperationException>();
+    });
 
     [Fact]
     public void SplitOnChar()
@@ -59,12 +59,12 @@ public class MemoryExtensionsTests
 #else
             span.Split();
 #endif
-        _ = span.GetNextString(ref enumerator).Should().Be("This");
-        _ = span.GetNextString(ref enumerator).Should().Be("is");
-        _ = span.GetNextString(ref enumerator).Should().Be("a");
-        _ = span.GetNextString(ref enumerator).Should().Be("split");
-        _ = span.GetNextString(ref enumerator).Should().Be("string");
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.Equal("This", span.GetNextString(ref enumerator));
+        Assert.Equal("is", span.GetNextString(ref enumerator));
+        Assert.Equal("a", span.GetNextString(ref enumerator));
+        Assert.Equal("split", span.GetNextString(ref enumerator));
+        Assert.Equal("string", span.GetNextString(ref enumerator));
+        Assert.False(enumerator.MoveNext());
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class MemoryExtensionsTests
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
         var enumerator = span.Split(',', StringSplitOptions.RemoveEmptyEntries);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.False(enumerator.MoveNext());
     }
 
     [Theory]
@@ -91,12 +91,12 @@ public class MemoryExtensionsTests
 #else
             span.Split(separator.AsSpan());
 #endif
-        _ = span.GetNextString(ref enumerator).Should().Be(values[0]);
-        _ = span.GetNextString(ref enumerator).Should().Be(values[1]);
-        _ = span.GetNextString(ref enumerator).Should().Be(values[2]);
-        _ = span.GetNextString(ref enumerator).Should().Be(values[3]);
-        _ = span.GetNextString(ref enumerator).Should().Be(values[4]);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.Equal(values[0], span.GetNextString(ref enumerator));
+        Assert.Equal(values[1], span.GetNextString(ref enumerator));
+        Assert.Equal(values[2], span.GetNextString(ref enumerator));
+        Assert.Equal(values[3], span.GetNextString(ref enumerator));
+        Assert.Equal(values[4], span.GetNextString(ref enumerator));
+        Assert.False(enumerator.MoveNext());
     }
 
     [Fact]
@@ -111,10 +111,10 @@ public class MemoryExtensionsTests
         const string Value = $"{First}{Pipe}{Second}{Space}{Third}{Pipe}{Forth}";
         var span = Value.AsSpan();
         var enumerator = span.Split(Space, Pipe);
-        _ = span.GetNextString(ref enumerator).Should().Be(First);
-        _ = span.GetNextString(ref enumerator).Should().Be(Second);
-        _ = span.GetNextString(ref enumerator).Should().Be(Third);
-        _ = span.GetNextString(ref enumerator).Should().Be(Forth);
+        Assert.Equal(First, span.GetNextString(ref enumerator));
+        Assert.Equal(Second, span.GetNextString(ref enumerator));
+        Assert.Equal(Third, span.GetNextString(ref enumerator));
+        Assert.Equal(Forth, span.GetNextString(ref enumerator));
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class MemoryExtensionsTests
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
         var enumerator = span.Split(",".AsSpan(), StringSplitOptions.RemoveEmptyEntries);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.False(enumerator.MoveNext());
     }
 
     [Theory]
@@ -137,15 +137,15 @@ public class MemoryExtensionsTests
         var value = string.Join(stringSeparator, values);
         var span = value.AsSpan();
         var enumerator = span.SplitQuoted(separator);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(string.Join(stringSeparator, values[1], values[2]));
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[3]);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[0], span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(string.Join(stringSeparator, values[1], values[2]), span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[3], span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[4], span[enumerator.Current].ToString());
+        Assert.False(enumerator.MoveNext());
     }
 
     [Theory]
@@ -159,13 +159,13 @@ public class MemoryExtensionsTests
         var value = string.Join(stringSeparator, values);
         var span = value.AsSpan();
         var enumerator = span.SplitQuoted(separator);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(string.Join(stringSeparator, values[1], values[2], values[3]));
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[0], span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(string.Join(stringSeparator, values[1], values[2], values[3]), span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[4], span[enumerator.Current].ToString());
+        Assert.False(enumerator.MoveNext());
     }
 
     [Theory]
@@ -178,15 +178,15 @@ public class MemoryExtensionsTests
         var value = string.Join(separator, values);
         var span = value.AsSpan();
         var enumerator = span.SplitQuoted(separator.AsSpan());
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(string.Join(separator, values[1], values[2]));
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[3]);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[0], span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(string.Join(separator, values[1], values[2]), span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[3], span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[4], span[enumerator.Current].ToString());
+        Assert.False(enumerator.MoveNext());
     }
 
     [Theory]
@@ -199,13 +199,13 @@ public class MemoryExtensionsTests
         var value = string.Join(separator, values);
         var span = value.AsSpan();
         var enumerator = span.SplitQuoted(separator.AsSpan());
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[0]);
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(string.Join(separator, values[1], values[2], values[3]));
-        _ = enumerator.MoveNext().Should().BeTrue();
-        _ = span[enumerator.Current].ToString().Should().Be(values[4]);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[0], span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(string.Join(separator, values[1], values[2], values[3]), span[enumerator.Current].ToString());
+        Assert.True(enumerator.MoveNext());
+        Assert.Equal(values[4], span[enumerator.Current].ToString());
+        Assert.False(enumerator.MoveNext());
     }
 
     [Fact]
@@ -219,9 +219,9 @@ public class MemoryExtensionsTests
 #else
             span.Split('|');
 #endif
-        _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.First);
-        _ = span.GetNextEnum<EnumValue>(ref enumerator).Should().Be(EnumValue.Second);
-        _ = span.GetNextEnum<EnumValue>(ref enumerator, true).Should().Be(EnumValue.Third);
+        Assert.Equal(EnumValue.First, span.GetNextEnum<EnumValue>(ref enumerator, true));
+        Assert.Equal(EnumValue.Second, span.GetNextEnum<EnumValue>(ref enumerator));
+        Assert.Equal(EnumValue.Third, span.GetNextEnum<EnumValue>(ref enumerator, true));
     }
 
     [Fact]
@@ -235,13 +235,13 @@ public class MemoryExtensionsTests
 #else
             span.Split('|');
 #endif
-        _ = span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var enumValue).Should().BeTrue();
-        _ = enumValue.Should().Be(EnumValue.First);
-        _ = span.TryGetNextEnum(ref enumerator, out enumValue).Should().BeTrue();
-        _ = enumValue.Should().Be(EnumValue.Second);
-        _ = span.TryGetNextEnum(ref enumerator, true, out enumValue).Should().BeTrue();
-        _ = enumValue.Should().Be(EnumValue.Third);
-        _ = span.TryGetNextEnum<EnumValue>(ref enumerator, out _).Should().BeFalse();
+        Assert.True(span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var enumValue));
+        Assert.Equal(EnumValue.First, enumValue);
+        Assert.True(span.TryGetNextEnum(ref enumerator, out enumValue));
+        Assert.Equal(EnumValue.Second, enumValue);
+        Assert.True(span.TryGetNextEnum(ref enumerator, true, out enumValue));
+        Assert.Equal(EnumValue.Third, enumValue);
+        Assert.False(span.TryGetNextEnum<EnumValue>(ref enumerator, out _));
     }
 
 #if NETCOREAPP2_1_OR_GREATER
@@ -256,7 +256,7 @@ public class MemoryExtensionsTests
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
-            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+            Assert.Equal(randomValues, parsedValues);
         }
 
         public static TheoryData<Func<Random, int, double>, GetValuesCharDelegate<double>> GetCharValuesData() => new() { { static (Random random, int _) => random.NextDouble(), new GetValuesCharDelegate<double>(MemoryExtensions.GetDoubleValues) } };
@@ -270,7 +270,7 @@ public class MemoryExtensionsTests
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, "|", 10, System.Globalization.CultureInfo.CurrentCulture);
-            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+            Assert.Equal(randomValues, parsedValues);
         }
 
         public static TheoryData<Func<Random, int, double>, GetValuesSpanDelegate<double>> GetStringValuesData() => new()
@@ -307,13 +307,13 @@ public class MemoryExtensionsTests
                 ex = e;
             }
 
-            _ = ex.Should().BeNull();
-            _ = value.Should().Be(randomValues[i]);
+            Assert.Null(ex);
+            Assert.Equal(randomValues[i], value);
             count++;
         }
 
-        _ = count.Should().Be(10);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.Equal(10, count);
+        Assert.False(enumerator.MoveNext());
     }
 
     public static IEnumerable<object[]> GetData
@@ -342,8 +342,8 @@ public class MemoryExtensionsTests
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
-            _ = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
-            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+            Assert.True(getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues));
+            Assert.Equal(randomValues, parsedValues);
         }
 
         public static TheoryData<Func<Random, int, double>, TryGetValuesCharDelegate<double>> TryGetValuesCharData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesCharDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
@@ -356,8 +356,8 @@ public class MemoryExtensionsTests
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
-            _ = getValues(span, "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues).Should().BeTrue();
-            _ = parsedValues.Should().BeEquivalentTo(randomValues);
+            Assert.True(getValues(span, "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues));
+            Assert.Equal(randomValues, parsedValues);
         }
 
         public static TheoryData<Func<Random, int, double>, TryGetValuesSpanDelegate<double>> TryGetValuesSpanData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesSpanDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
@@ -380,12 +380,12 @@ public class MemoryExtensionsTests
         var count = 0;
         while (parser(span, ref enumerator, System.Globalization.CultureInfo.CurrentCulture, out var value))
         {
-            _ = value.Should().Be(randomValues[count]);
+            Assert.Equal(randomValues[count], value);
             count++;
         }
 
-        _ = count.Should().Be(10);
-        _ = enumerator.MoveNext().Should().BeFalse();
+        Assert.Equal(10, count);
+        Assert.False(enumerator.MoveNext());
     }
 
     public static IEnumerable<object[]> TryGetData

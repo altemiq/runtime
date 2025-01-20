@@ -73,8 +73,7 @@ public partial class BitConverterTests
             {
                 var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
                 System.Array.Resize(ref encoded, encoded.Length / 2);
-                var action = () => BitConverter.ToUInt64(encoded, 0, out var bytesRead);
-                action.Should().Throw<ArgumentException>();
+                Assert.Throws<ArgumentException>(() => BitConverter.ToUInt64(encoded, 0, out var bytesRead));
             }
 
             [Fact]
@@ -85,8 +84,8 @@ public partial class BitConverterTests
                 var length = encoded.Length;
                 System.Array.Resize(ref encoded, length * 2);
                 var decoded = BitConverter.ToUInt64(encoded, 0, out var bytesRead);
-                decoded.Should().Be(Number);
-                bytesRead.Should().Be(length);
+                Assert.Equal(Number, decoded);
+                Assert.Equal(length, bytesRead);
             }
 
             private static void EncodeAndDecode<T>(
@@ -96,8 +95,8 @@ public partial class BitConverterTests
             {
                 var encoded = encode(number);
                 var decoded = decode(encoded, 0, out var bytesRead);
-                decoded.Should().Be(number);
-                bytesRead.Should().Be(encoded.Length);
+                Assert.Equal(number, decoded);
+                Assert.Equal(encoded.Length, bytesRead);
             }
 
             private delegate byte[] GetVarBytes<T>(T value);
@@ -173,8 +172,7 @@ public partial class BitConverterTests
             public void ToSmall()
             {
                 var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
-                var action = () => BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out var bytesRead);
-                action.Should().Throw<ArgumentException>();
+                Assert.Throws<ArgumentException>(() => BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out var bytesRead));
             }
 
             [Fact]
@@ -185,8 +183,8 @@ public partial class BitConverterTests
                 var length = encoded.Length;
                 System.Array.Resize(ref encoded, length * 2);
                 var decoded = BitConverter.ToUInt64(encoded.AsSpan(), out var bytesRead);
-                decoded.Should().Be(Number);
-                bytesRead.Should().Be(length);
+                Assert.Equal(Number, decoded);
+                Assert.Equal(length, bytesRead);
             }
             private void EncodeAndDecode<T>(
                 T number,
@@ -194,10 +192,10 @@ public partial class BitConverterTests
                 ToValue<T> decode)
             {
                 Span<byte> encoded = stackalloc byte[20];
-                encode(encoded, number, out var bytesWritten).Should().BeTrue();
+                Assert.True(encode(encoded, number, out var bytesWritten));
                 var decoded = decode(encoded[..bytesWritten], out var bytesRead);
-                decoded.Should().Be(number);
-                bytesRead.Should().Be(bytesWritten);
+                Assert.Equal(number, decoded);
+                Assert.Equal(bytesWritten, bytesRead);
             }
 
             private delegate bool TryWriteBytes<T>(Span<byte> destination, T value, out int bytesWritten);

@@ -15,6 +15,8 @@ public class BitArrayEqualityComparerTests
         var firstBitArray = new System.Collections.BitArray(BitConverter.GetBytes(Value));
         var secondBitArray = new System.Collections.BitArray(BitConverter.GetBytes(Value));
 
-        BitArrayEqualityComparer.Instance.GetHashCode(firstBitArray).Should().Be(BitArrayEqualityComparer.Instance.GetHashCode(secondBitArray));
+        Assert.Equal(
+            BitArrayEqualityComparer.Instance.GetHashCode(firstBitArray),
+            BitArrayEqualityComparer.Instance.GetHashCode(secondBitArray));
     }
 }

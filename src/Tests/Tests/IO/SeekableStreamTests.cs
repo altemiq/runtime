@@ -12,31 +12,31 @@ public class SeekableStreamTests
     public void ShouldBeAbleToSeekForward()
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
-        _ = stream.Length.Should().Be(1024);
-        _ = stream.Seek(512, SeekOrigin.Begin).Should().Be(512);
+        Assert.Equal(1024, stream.Length);
+        Assert.Equal(512, stream.Seek(512, SeekOrigin.Begin));
     }
 
     [Fact]
     public void ShouldNotBeAbleToSeekBackwards()
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
-        _ = stream.Length.Should().Be(1024);
-        _ = stream.Seek(-512, SeekOrigin.End).Should().Be(512);
-        stream.Invoking(static s => s.Seek(-10, SeekOrigin.Current)).Should().Throw<InvalidOperationException>();
+        Assert.Equal(1024, stream.Length);
+        Assert.Equal(512,  stream.Seek(-512, SeekOrigin.End));
+        Assert.Throws<InvalidOperationException>(() => stream.Seek(-10, SeekOrigin.Current));
     }
 
     [Fact]
     public void SeekOnAlreadySeekableStream()
     {
         using var stream = new SeekableStream(new MemoryStream(512));
-        stream.Seek(256, SeekOrigin.Begin).Should().Be(256);
+        Assert.Equal(256, stream.Seek(256, SeekOrigin.Begin));
     }
 
     [Fact]
     public void SeekWithInvalidEnum()
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
-        stream.Invoking(static s => s.Seek(0, (SeekOrigin)(-1))).Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Seek(0, (SeekOrigin)(-1)));
     }
 
     private class ForwardOnlyStream : MemoryStream

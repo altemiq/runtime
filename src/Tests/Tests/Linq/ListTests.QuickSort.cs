@@ -69,117 +69,115 @@ public partial class ListTests
         [MemberData(nameof(GetEmptyLists))]
         public void WithNoItems(IList<int> list)
         {
-            WithNoParameters(list).Should().BeEmpty();
-            WithComparer(list).Should().BeEmpty();
+            Assert.Empty(WithNoParameters(list));
+            Assert.Empty(WithComparer(list));
         }
 
         [Theory]
         [MemberData(nameof(GetSingleItemLists))]
-        public void WithOneItem(IList<int> list) => WithNoParameters(list).Should()
-            .ContainSingle().And
-            .HaveElementAt(0, 1);
+        public void WithOneItem(IList<int> list) => Assert.Single(WithNoParameters(list), 1);
 
         [Theory]
         [MemberData(nameof(GetTwoItemsInOrderLists))]
-        public void WithTwoItemsInOrder(IList<int> list) => WithNoParameters(list).Should()
-            .HaveCount(2).And
-            .HaveElementAt(0, 1).And
-            .HaveElementAt(1, 2);
+        public void WithTwoItemsInOrder(IList<int> list) => Assert.Collection(
+            WithNoParameters(list),
+            static actual => Assert.Equal(1, actual),
+            static actual => Assert.Equal(2, actual));
 
         [Theory]
         [MemberData(nameof(GetTwoItemsNotInOrderLists))]
-        public void WithTwoItemsNotInOrder(IList<int> list) => WithNoParameters(list).Should()
-            .HaveCount(2).And
-            .HaveElementAt(0, 1).And
-            .HaveElementAt(1, 2);
+        public void WithTwoItemsNotInOrder(IList<int> list) => Assert.Collection(
+            WithNoParameters(list),
+           static  actual => Assert.Equal(1, actual),
+           static actual => Assert.Equal(2, actual));
 
         [Theory]
         [MemberData(nameof(GetThreeItemsNotInOrderLists))]
-        public void WithThreeItemsNotInOrder(IList<int> list) => WithNoParameters(list).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, 0).And
-            .HaveElementAt(1, 1).And
-            .HaveElementAt(2, 2);
+        public void WithThreeItemsNotInOrder(IList<int> list) => Assert.Collection(
+            WithNoParameters(list),
+            static actual => Assert.Equal(0, actual),
+            static actual => Assert.Equal(1, actual),
+            static actual => Assert.Equal(2, actual));
 
         [Theory]
         [MemberData(nameof(GetThreeItemsNotInOrderLists))]
-        public void WithThreeItemsNotInOrderWithSize(IList<int> list) => WithLength(list).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, 0).And
-            .HaveElementAt(1, 1).And
-            .HaveElementAt(2, 2);
+        public void WithThreeItemsNotInOrderWithSize(IList<int> list) => Assert.Collection(
+            WithLength(list),
+            static actual => Assert.Equal(0, actual),
+            static actual => Assert.Equal(1, actual),
+            static actual => Assert.Equal(2, actual));
 
         [Theory]
         [MemberData(nameof(GetThreeItemsNotInOrderLists))]
-        public void WithThreeItemsNotInOrderWithComparison(IList<int> list) => WithComparison(list, Comparer<int>.Default.Compare).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, 0).And
-            .HaveElementAt(1, 1).And
-            .HaveElementAt(2, 2);
+        public void WithThreeItemsNotInOrderWithComparison(IList<int> list) => Assert.Collection(
+            WithComparison(list, Comparer<int>.Default.Compare),
+            static actual => Assert.Equal(0, actual),
+            static actual => Assert.Equal(1, actual),
+            static actual => Assert.Equal(2, actual));
 
         [Theory]
         [MemberData(nameof(GetThreeItemsNotInOrderLists))]
-        public void WithThreeItemsNotInOrderWithComparer(IList<int> list) => WithComparer(list).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, 0).And
-            .HaveElementAt(1, 1).And
-            .HaveElementAt(2, 2);
+        public void WithThreeItemsNotInOrderWithComparer(IList<int> list) => Assert.Collection(
+            WithComparer(list),
+            static actual => Assert.Equal(0, actual),
+            static actual => Assert.Equal(1, actual),
+            static actual => Assert.Equal(2, actual));
 
         [Theory]
         [MemberData(nameof(GetThreeItemsNotInOrderLists))]
-        public void WithThreeItemsNotInOrderWithComparisonAndSize(IList<int> list) => WithStartLengthAndComparison(list, 0, list.Count, Comparer<int>.Default.Compare).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, 0).And
-            .HaveElementAt(1, 1).And
-            .HaveElementAt(2, 2);
+        public void WithThreeItemsNotInOrderWithComparisonAndSize(IList<int> list) =>Assert.Collection(
+            WithStartLengthAndComparison(list, 0, list.Count, Comparer<int>.Default.Compare),
+            static (actual) => Assert.Equal(0, actual),
+            static (actual) => Assert.Equal(1, actual),
+            static (actual) => Assert.Equal(2, actual));
 
         [Theory]
         [MemberData(nameof(GetItemLists))]
-        public void WithItems(IList<SimpleStruct> list, SimpleStruct first, SimpleStruct second, SimpleStruct third, SimpleStruct forth) => WithNoParameters(list).Should()
-            .HaveCount(4).And
-            .HaveElementAt(0, first).And
-            .HaveElementAt(1, second).And
-            .HaveElementAt(2, third).And
-            .HaveElementAt(3, forth);
+        public void WithItems(IList<SimpleStruct> list, SimpleStruct first, SimpleStruct second, SimpleStruct third, SimpleStruct forth) => Assert.Collection(
+            WithNoParameters(list),
+            actual => Assert.Equal(first, actual),
+            actual => Assert.Equal(second, actual),
+            actual => Assert.Equal(third, actual),
+            actual => Assert.Equal(forth, actual));
 
         [Theory]
         [MemberData(nameof(GetTwoIdenticalValuesLists))]
-        public void WithTwoIdenticalValues(IList<int> list) => WithNoParameters(list).Should()
-            .HaveCount(2).And
-            .HaveElementAt(0, 0).And
-            .HaveElementAt(1, 0);
+        public void WithTwoIdenticalValues(IList<int> list) => Assert.Collection(
+            WithNoParameters(list),
+            static actual => Assert.Equal(0, actual),
+            static actual => Assert.Equal(0, actual));
 
         [Theory]
         [MemberData(nameof(GetThreeIdenticalValuesLists))]
-        public void WithThreeIdenticalValues(IList<int> list) => WithNoParameters(list).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, 0).And
-            .HaveElementAt(1, 0).And
-            .HaveElementAt(2, 0);
+        public void WithThreeIdenticalValues(IList<int> list) => Assert.Collection(
+            WithNoParameters(list),
+            static actual => Assert.Equal(0, actual),
+            static actual => Assert.Equal(0, actual),
+            static actual => Assert.Equal(0, actual));
 
         [Theory]
         [MemberData(nameof(GetThreeIdenticalItemsList))]
-        public void QuickSortWithThreeIdenticalItems(IList<SimpleStruct> list, SimpleStruct first, SimpleStruct second, SimpleStruct third) => WithNoParameters(list).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, first).And
-            .HaveElementAt(1, second).And
-            .HaveElementAt(2, third);
+        public void QuickSortWithThreeIdenticalItems(IList<SimpleStruct> list, SimpleStruct first, SimpleStruct second, SimpleStruct third) => Assert.Collection(
+            WithNoParameters(list),
+            actual => Assert.Equal(first, actual),
+            actual => Assert.Equal(second, actual),
+            actual => Assert.Equal(third, actual));
 
         [Theory]
         [MemberData(nameof(GetsItemsWithNulls))]
-        public void WithNullsAndComparer(IList<SimpleClass?> list, SimpleClass first, SimpleClass? second, SimpleClass third) => WithComparison(list, SimpleClass.Comparison).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, first).And
-            .HaveElementAt(1, third).And
-            .HaveElementAt(2, second);
+        public void WithNullsAndComparer(IList<SimpleClass?> list, SimpleClass first, SimpleClass? second, SimpleClass third) => Assert.Collection(
+            WithComparison(list, SimpleClass.Comparison),
+            actual => Assert.Equal(first, actual),
+            actual => Assert.Equal(third, actual),
+            actual => Assert.Equal(second, actual));
 
         [Theory]
         [MemberData(nameof(GetsItemsWithNulls))]
-        public void WithNullsAndComparerAndSize(IList<SimpleClass?> list, SimpleClass first, SimpleClass? second, SimpleClass third) => WithStartLengthAndComparison(list, 0, list.Count, SimpleClass.Comparison).Should()
-            .HaveCount(3).And
-            .HaveElementAt(0, first).And
-            .HaveElementAt(1, third).And
-            .HaveElementAt(2, second);
+        public void WithNullsAndComparerAndSize(IList<SimpleClass?> list, SimpleClass first, SimpleClass? second, SimpleClass third) => Assert.Collection(
+            WithStartLengthAndComparison(list, 0, list.Count, SimpleClass.Comparison),
+            actual => Assert.Equal(first, actual),
+            actual => Assert.Equal(third, actual),
+            actual => Assert.Equal(second, actual));
 
         private static IList<T> WithNoParameters<T>(IList<T> source)
             where T : IComparable<T>

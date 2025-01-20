@@ -1,5 +1,7 @@
 namespace Altemiq.Buffers.Compression;
 
+using Xunit;
+
 public class ExampleTest(ITestOutputHelper testOutputHelper)
 {
     [Fact]
@@ -16,7 +18,7 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var compressed = iic.Compress(data);
         var recov = iic.Uncompress(compressed);
         testOutputHelper.WriteLine("compressed from " + (data.Length * 4 / 1024) + "KB to " + (compressed.Length * 4 / 1024) + "KB");
-        _ = recov.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, recov);
     }
 
     [Fact]
@@ -67,7 +69,7 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        _ = recovered.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, recovered);
     }
 
     /**
@@ -117,7 +119,7 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var inpos = 1;
         initValue = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length, howmany, ref initValue);
-        _ = recovered.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, recovered);
     }
 
     [Fact]
@@ -156,7 +158,7 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        _ = recovered.Should().HaveSameElementsAs(data);
+        Assert.Equal(data, recovered);
     }
 
     [Fact]
@@ -263,8 +265,8 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         outPos = 0;
         testOutputHelper.WriteLine("Decoding second array starting at pos = " + inPos);
         codec.Decompress(compressed, ref inPos, recovered2, ref outPos, compressed.Length, uncompressed2.Length);
-        _ = recovered1.Should().HaveSameElementsAs(uncompressed1);
-        _ = recovered2.Should().HaveSameElementsAs(uncompressed2);
+        Assert.Equal(uncompressed1, recovered1);
+        Assert.Equal(uncompressed2, recovered2);
 
         testOutputHelper.WriteLine("The arrays match, your code is probably ok.");
     }

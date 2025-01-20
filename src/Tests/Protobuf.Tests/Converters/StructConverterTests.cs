@@ -70,49 +70,50 @@ public class StructConverterTests
     [Fact]
     public void Deserialize()
     {
-        _ = System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options).Should().BeEquivalentTo(Struct);
+        Assert.Equal(Struct, System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options));
     }
 
     [Fact]
     public void DeserializeVsParseJson()
     {
-        _ = System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options).Should().BeEquivalentTo(Google.Protobuf.WellKnownTypes.Struct.Parser.ParseJson(Json));
+        Assert.Equal(Google.Protobuf.WellKnownTypes.Struct.Parser.ParseJson(Json), System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options));
     }
 
     [Fact]
     public void Serialize()
     {
-        _ = NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)).Should().BeEquivalentTo(NormalizeJson(Json));
+        Assert.Equal(NormalizeJson(Json), NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)));
     }
 
     [Fact]
     public void SerializeVsToString()
     {
-        _ = NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)).Should().BeEquivalentTo(NormalizeJson(Struct.ToString()));
+        Assert.Equal(NormalizeJson(Struct.ToString()), NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)));
     }
 
     [Fact]
     public void CreateStructFromJson()
     {
-        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse(Json)).Should().BeEquivalentTo(Struct);
+        Assert.Equal(Struct, StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse(Json)));
     }
 
     [Fact]
     public void CreateFromEmptyDocument()
     {
-        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")).Should().BeOfType<Google.Protobuf.WellKnownTypes.Struct>().Which.Fields.Should().BeEmpty();
+        var actual = Assert.IsType<Google.Protobuf.WellKnownTypes.Struct>(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")));
+        Assert.Empty(actual.Fields);
     }
 
     [Fact]
     public void CreateStructFromNull()
     {
-        _ = StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("null")).Should().BeNull();
+        Assert.Null(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("null")));
     }
 
     [Fact]
     public void CreateJsonFromStruct()
     {
-        _ = Struct.ToJsonDocument().Should().NotBeNull();
+        Assert.NotNull(Struct.ToJsonDocument());
     }
 
     private static string NormalizeJson(string json)

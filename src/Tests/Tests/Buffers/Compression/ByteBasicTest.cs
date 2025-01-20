@@ -28,7 +28,7 @@ public class ByteBasicTest
             bOffset = x;
             var cOffset = 0;
             C.Decompress(b, ref bOffset, c, ref cOffset, len);
-            _ = a.Should().HaveSameElementsAs(c);
+            Assert.Equal(a, c);
         }
     }
 
@@ -44,14 +44,14 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
     }
 
@@ -68,14 +68,14 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
     }
 

@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="FluentAssertions" Version="8.0.0-alpha.1" />
     <PackageVersion Include="Google.Protobuf" Version="3.29.2" />
     <PackageVersion Include="Grpc.Tools" Version="2.68.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
@@ -35,7 +34,6 @@
   </Choose>
 
   <ItemGroup Label="Analyzers" Condition=" '$(IsTestProject)' == 'true' ">
-    <GlobalPackageReference Include="FluentAssertions.Analyzers" Version="0.34.1" />
     <GlobalPackageReference Include="xunit.analyzers" Version="1.18.0" />
   </ItemGroup>
 

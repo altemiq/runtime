@@ -13,8 +13,7 @@ public class ArrayExtensionTests
     {
         var @array = new int[] { 1, 2, 3, 4 };
         var result = array.PadLeft(10);
-        result.Should().HaveCount(10);
-        result.Should().BeEquivalentTo([0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
+        Assert.Equal([0, 0, 0, 0, 0, 0, 1, 2, 3, 4], result);
     }
 
     [Fact]
@@ -22,8 +21,7 @@ public class ArrayExtensionTests
     {
         int[]? @array = default;
         var result = array.PadLeft(10);
-        result.Should().HaveCount(10);
-        result.Should().BeEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        Assert.Equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], result);
     }
 
     [Fact]
@@ -31,8 +29,7 @@ public class ArrayExtensionTests
     {
         var @array = new int[] { 1, 2, 3, 4 };
         var result = array.PadRight(10);
-        result.Should().HaveCount(10);
-        result.Should().BeEquivalentTo([1, 2, 3, 4, 0, 0, 0, 0, 0, 0]);
+        Assert.Equal([1, 2, 3, 4, 0, 0, 0, 0, 0, 0], result);
     }
 
     [Fact]
@@ -40,7 +37,6 @@ public class ArrayExtensionTests
     {
         int[]? @array = default;
         var result = array.PadRight(10);
-        result.Should().HaveCount(10);
-        result.Should().BeEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        Assert.Equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], result);
     }
 }

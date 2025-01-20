@@ -6,25 +6,25 @@ public class UUidTests
     public void FromGuid()
     {
         Guid guid = Guid.NewGuid();
-        _ = Uuid.ForGuid(guid).ToGuid().Should().Be(guid);
+        Assert.Equal(guid, Uuid.ForGuid(guid).ToGuid());
     }
 
     [Fact]
     public void Descriptor()
     {
-        _ = Uuid.Descriptor.Should().NotBeNull();
+        Assert.NotNull(Uuid.Descriptor);
     }
 
     [Fact]
     public void Parser()
     {
-        _ = Uuid.Parser.Should().NotBeNull();
+        Assert.NotNull(Uuid.Parser);
     }
 
     [Fact]
     public void NewUuid()
     {
-        _ = Uuid.NewUuid().Should().NotBeNull();
+        Assert.NotNull(Uuid.NewUuid());
     }
 
 #if NET9_0_OR_GREATER
@@ -32,19 +32,19 @@ public class UUidTests
     public void FromGuidVersion7()
     {
         Guid guid = Guid.CreateVersion7();
-        _ = Uuid.ForGuid(guid).ToGuid().Should().Be(guid);
+        Assert.Equal(guid, Uuid.ForGuid(guid).ToGuid());
     }
 
     [Fact]
     public void CreateVersion7()
     {
-        _ = Uuid.CreateVersion7().Should().NotBeNull();
+        Assert.NotNull(Uuid.CreateVersion7());
     }
 
     [Fact]
     public void CreateVersion7WithTimestamp()
     {
-        _ = Uuid.CreateVersion7(DateTimeOffset.UtcNow).Should().NotBeNull();
+        Assert.NotNull(Uuid.CreateVersion7(DateTimeOffset.UtcNow));
     }
 #endif
 }

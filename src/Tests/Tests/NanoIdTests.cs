@@ -12,56 +12,56 @@ public class NanoIds
     private const string DefaultAlphabet = "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     [Fact]
-    public void Default() => NanoId.Generate().Should().HaveLength(DefaultSize);
+    public void Default() => Assert.Equal(DefaultSize, NanoId.Generate().Length);
 
     [Fact]
-    public async Task DefaultAsync() => (await NanoId.GenerateAsync()).Should().HaveLength(DefaultSize);
+    public async Task DefaultAsync() => Assert.Equal(DefaultSize, (await NanoId.GenerateAsync()).Length);
 
     [Fact]
     public void CustomSize()
     {
         const int Size = 10;
-        _ = NanoId.Generate(size: Size).Should().HaveLength(Size);
+        Assert.Equal(Size, NanoId.Generate(size: Size).Length);
     }
 
     [Fact]
     public async Task CustomSizeAsync()
     {
         const int Size = 10;
-        _ = (await NanoId.GenerateAsync(size: Size)).Should().HaveLength(Size);
+        Assert.Equal(Size, (await NanoId.GenerateAsync(size: Size)).Length);
     }
 
     [Fact]
-    public void CustomAlphabet() => NanoId.Generate("1234abcd").Should().HaveLength(DefaultSize);
+    public void CustomAlphabet() => Assert.Equal(DefaultSize, NanoId.Generate("1234abcd").Length);
 
     [Fact]
-    public async Task CustomAlphabetAsync() => (await NanoId.GenerateAsync("1234abcd")).Should().HaveLength(DefaultSize);
+    public async Task CustomAlphabetAsync() => Assert.Equal(DefaultSize, (await NanoId.GenerateAsync("1234abcd")).Length);
 
     [Fact]
     public void CustomAlphabetAndSize()
     {
         const int Size = 7;
-        _ = NanoId.Generate("1234abcd", Size).Should().HaveLength(Size);
+        Assert.Equal(Size, NanoId.Generate("1234abcd", Size).Length);
     }
 
     [Fact]
     public async Task CustomAlphabetAndSizeAsync()
     {
         const int Size = 7;
-        _ = (await NanoId.GenerateAsync("1234abcd", Size)).Should().HaveLength(Size);
+        Assert.Equal(Size, (await NanoId.GenerateAsync("1234abcd", Size)).Length);
     }
 
     [Fact]
-    public void CustomRandom() => NanoId.Generate(new Random(10)).Should().HaveLength(DefaultSize);
+    public void CustomRandom() => Assert.Equal(DefaultSize, NanoId.Generate(new Random(10)).Length    );
 
     [Fact]
-    public async Task CustomRandomAsync() => (await NanoId.GenerateAsync(new Random(10))).Should().HaveLength(DefaultSize);
+    public async Task CustomRandomAsync() => Assert.Equal(DefaultSize, (await NanoId.GenerateAsync(new Random(10))).Length);
 
     [Fact]
-    public void SingleLetterAlphabet() => NanoId.Generate("a", 5).Should().Be("aaaaa");
+    public void SingleLetterAlphabet() => Assert.Equal("aaaaa", NanoId.Generate("a", 5));
 
     [Fact]
-    public async Task SingleLetterAlphabetAsync() => (await NanoId.GenerateAsync("a", 5)).Should().Be("aaaaa");
+    public async Task SingleLetterAlphabetAsync() => Assert.Equal("aaaaa", await NanoId.GenerateAsync("a", 5));
 
     [Theory]
     [InlineData(4, "adca")]
@@ -69,7 +69,7 @@ public class NanoIds
     public void PredefinedRandomSequence(int size, string expected)
     {
         var random = new PredefinedRandom([2, 255, 3, 7, 7, 7, 7, 7, 0, 1]);
-        _ = NanoId.Generate(random, "abcde", size).Should().Be(expected);
+        Assert.Equal(expected, NanoId.Generate(random, "abcde", size));
     }
 
     [Theory]
@@ -78,7 +78,7 @@ public class NanoIds
     public async Task PredefinedRandomSequenceAsync(int size, string expected)
     {
         var random = new PredefinedRandom([2, 255, 3, 7, 7, 7, 7, 7, 0, 1]);
-        _ = (await NanoId.GenerateAsync(random, "abcde", size)).Should().Be(expected);
+        Assert.Equal(expected, (await NanoId.GenerateAsync(random, "abcde", size)));
     }
 
     [Fact]
@@ -89,11 +89,11 @@ public class NanoIds
         while (count > 0)
         {
             var result = NanoId.Generate();
-            _ = result.Should().HaveLength(DefaultSize);
+            Assert.Equal(DefaultSize, result.Length);
 
             foreach (var c in result)
             {
-                _ = result.Should().Contain($"{c}");
+                Assert.Contains($"{c}", result);
             }
 
             count--;
@@ -108,11 +108,11 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            _ = result.Should().HaveLength(DefaultSize);
+            Assert.Equal(DefaultSize, result.Length);
 
             foreach (var c in result)
             {
-                _ = result.Should().Contain($"{c}");
+                Assert.Contains($"{c}", result);
             }
 
             count--;
@@ -129,7 +129,7 @@ public class NanoIds
         while (count > 0)
         {
             var result = NanoId.Generate();
-            _ = dictUsed.TryGetValue(result, out _).Should().BeFalse();
+            Assert.False(dictUsed.TryGetValue(result, out _));
             dictUsed.Add(result, true);
 
             count--;
@@ -146,7 +146,7 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            _ = dictUsed.TryGetValue(result, out _).Should().BeFalse();
+            Assert.False(dictUsed.TryGetValue(result, out _));
             dictUsed.Add(result, true);
 
             count--;
@@ -183,7 +183,7 @@ public class NanoIds
         foreach (var c in chars)
         {
             var distribution = c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize);
-            distribution.Should().BeApproximately(1, 0.05);
+            Assert.Equal(1, distribution, 0.05);
         }
     }
 
@@ -217,7 +217,7 @@ public class NanoIds
         foreach (var c in chars)
         {
             var distribution = c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize);
-            distribution.Should().BeApproximately(1, 0.05);
+            Assert.Equal(1, distribution, 0.05);
         }
     }
 
@@ -232,7 +232,7 @@ public class NanoIds
 #else
             var mask2 = (2 << 31 - NanoId.LeadingZeroCount((length - 1) | 1)) - 1;
 #endif
-            mask1.Should().Be(mask2);
+            Assert.Equal(mask2, mask1);
         }
     }
 

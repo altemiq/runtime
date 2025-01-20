@@ -8,7 +8,7 @@ public class SeekableStreamTests
         var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0]);
         stream.Dispose();
-        _ = archive.IsDisposed.Should().BeTrue();
+        Assert.True(archive.IsDisposed);
     }
 
     [Fact]
@@ -17,7 +17,7 @@ public class SeekableStreamTests
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0], true);
         stream.Dispose();
-        _ = archive.IsDisposed.Should().BeFalse();
+        Assert.False(archive.IsDisposed);
     }
 
 #if NETCOREAPP
@@ -27,7 +27,7 @@ public class SeekableStreamTests
         var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0]);
         await stream.DisposeAsync();
-        _ = archive.IsDisposed.Should().BeTrue();
+        Assert.True(archive.IsDisposed);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class SeekableStreamTests
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0], true);
         await stream.DisposeAsync();
-        _ = archive.IsDisposed.Should().BeFalse();
+        Assert.False(archive.IsDisposed);
     }
 #endif
 
@@ -45,7 +45,7 @@ public class SeekableStreamTests
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim(fillData: true);
         using var stream = new SeekableStream(archive.Entries[0], false);
-        _ = stream.Length.Should().Be(1024);
-        _ = stream.Seek(512, SeekOrigin.Begin).Should().Be(512);
+        Assert.Equal(1024, stream.Length);
+        Assert.Equal(512, stream.Seek(512, SeekOrigin.Begin));
     }
 }

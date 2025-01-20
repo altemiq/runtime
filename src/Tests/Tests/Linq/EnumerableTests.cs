@@ -12,11 +12,11 @@ public class EnumerableTests
     {
         [Theory]
         [MemberData(nameof(GetClassSequences))]
-        public void Class(string?[] sequence, int count) => sequence.WhereNotNull().Should().HaveCount(sequence.Length - count);
+        public void Class(string?[] sequence, int count) => Assert.Equal(sequence.WhereNotNull().Count(), sequence.Length - count);
 
         [Theory]
         [MemberData(nameof(GetStructSequences))]
-        public void Struct(int?[] sequence, int count) => sequence.WhereNotNull().Should().HaveCount(count);
+        public void Struct(int?[] sequence, int count) => Assert.Equal(sequence.WhereNotNull().Count(), count);
 
         public static TheoryData<string?[], int> GetClassSequences() => EnumerableTests.GetClassSequences();
 
@@ -30,7 +30,7 @@ public class EnumerableTests
 
     [Theory]
     [MemberData(nameof(GetClassSequences))]
-    public void WhereNull(string?[] sequence, int count) => sequence.WhereNull().Should().HaveCount(count);
+    public void WhereNull(string?[] sequence, int count) => Assert.Equal(sequence.WhereNull().Count(), count);
 
     public static TheoryData<string?[], int> GetClassSequences() => new()
     {

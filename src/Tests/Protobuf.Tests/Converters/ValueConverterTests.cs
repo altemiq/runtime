@@ -31,19 +31,19 @@ public class ValueConverterTests
         [Fact]
         public void CreateFromJson()
         {
-            _ = ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse(Json).RootElement).Should().NotBeNull();
+            Assert.NotNull(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse(Json).RootElement));
         }
 
         [Fact]
         public void CreateFromEmpty()
         {
-            _ = ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("{}").RootElement).Should().NotBeNull();
+            Assert.NotNull(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("{}").RootElement));
         }
 
         [Fact]
         public void CreateFromNull()
         {
-            _ = ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("null").RootElement).KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            Assert.Equal(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue, ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("null").RootElement).KindCase);
         }
 
         [Theory]
@@ -52,16 +52,16 @@ public class ValueConverterTests
         [MemberData(nameof(GetElementData))]
         public void CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.JsonElement, object?> getValue, object? expected)
         {
-            System.Text.Json.JsonElement element = ValueConverter.ToJsonElement(value);
-            _ = element.ValueKind.Should().Be(valueKind);
-            _ = getValue(element).Should().BeEquivalentTo(expected);
+            var element = ValueConverter.ToJsonElement(value);
+            Assert.Equal(valueKind, element.ValueKind);
+            Assert.Equal(expected, getValue(element));
         }
 
         public static TheoryData<Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.JsonElement, object?>, object?> GetElementData()
         {
             return new TheoryData<Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.JsonElement, object?>, object?>()
             {
-                { Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, (element) => element.GetUInt32(), 1 },
+                { Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, (element) => element.GetUInt32(), 1U },
                 { Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, (element) => element.GetDouble(), 123.456 },
                 { Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, (element) => element.GetBoolean(), false },
                 { Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, (element) => element.GetBoolean(), true },
@@ -96,19 +96,19 @@ public class ValueConverterTests
         [Fact]
         public void CreateFromJson()
         {
-            _ = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(Json)).Should().NotBeNull();
+            Assert.NotNull(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(Json)));
         }
 
         [Fact]
         public void CreateFromEmpty()
         {
-            _ = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("{}")).Should().NotBeNull();
+            Assert.NotNull(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("{}")));
         }
 
         [Fact]
         public void CreateFromNull()
         {
-            _ = ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("null")).KindCase.Should().Be(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            Assert.Equal(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue, ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("null")).KindCase);
         }
 
         [Theory]
@@ -119,8 +119,8 @@ public class ValueConverterTests
         {
             if (ValueConverter.ToJsonNode(value) is { } node)
             {
-                _ = node.GetValueKind().Should().Be(valueKind);
-                _ = getValue(node).Should().BeEquivalentTo(expected);
+                Assert.Equal(valueKind, node.GetValueKind());
+                Assert.Equal(expected, getValue(node));
             }
         }
 

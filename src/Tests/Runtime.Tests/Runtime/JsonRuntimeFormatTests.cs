@@ -14,8 +14,7 @@ public class JsonRuntimeFormatTests
     [InlineData("runtime.json.gz")]
     public void GetManifestStream(string name)
     {
-        Func<Stream> func = () => GetManifestStreamFromAssembly(name);
-        func.Should().NotThrow<InvalidOperationException>();
+        Assert.Null(Record.Exception(() => GetManifestStreamFromAssembly(name)));
     }
 
     [Theory]
@@ -25,9 +24,10 @@ public class JsonRuntimeFormatTests
     {
         using var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(name), System.IO.Compression.CompressionMode.Decompress, false);
         var json = JsonRuntimeFormat.ReadRuntimeGraph(stream!);
-        json.Should().NotBeNull().And.HaveCountGreaterThan(10);
+        Assert.NotNull(json);
+        Assert.InRange(json.Count, 10, int.MaxValue);
 
-        json.Select(static x => x.Runtime).Should().Contain("linux");
+        Assert.Contains("linux", json.Select(static x => x.Runtime));
     }
 
     private static Stream GetManifestStreamFromAssembly(string name) => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();

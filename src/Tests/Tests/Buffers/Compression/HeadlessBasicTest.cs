@@ -37,7 +37,7 @@ public class HeadlessBasicTest(ITestOutputHelper testOutputHelper)
         }
 
         var c = codec.Codec!;
-        testOutputHelper.WriteLine("[SkippeableBasicTest.consistentTest] codec = " + c);
+        testOutputHelper.WriteLine($"[{nameof(HeadlessBasicTest)}.{nameof(ConsistentTest)}] {nameof(codec)} = {c}");
         var outBuf = new int[N + 1024];
         for (var n = 0; n <= N; ++n)
         {
@@ -48,9 +48,9 @@ public class HeadlessBasicTest(ITestOutputHelper testOutputHelper)
             var inPoso = 0;
             var outPoso = 0;
             c.Decompress(outBuf, ref inPoso, rev, ref outPoso, outPos, n);
-            _ = outPoso.Should().Be(n);
-            _ = inPoso.Should().Be(outPos);
-            _ = rev.Take(n).Should().HaveSameElementsAs(data.Take(n));
+            Assert.Equal(n, outPoso);
+            Assert.Equal(outPos, inPoso);
+            Assert.Equal(data.Take(n), rev.Take(n));
         }
     }
 
@@ -67,18 +67,18 @@ public class HeadlessBasicTest(ITestOutputHelper testOutputHelper)
 
         var c = codec.Codec!;
 
-        testOutputHelper.WriteLine("[SkippeableBasicTest.varyingLengthTest] codec = " + c);
+        testOutputHelper.WriteLine($"[{nameof(HeadlessBasicTest)}.{nameof(VaryingLengthTest)}] {nameof(codec)} = {c}");
         for (var l = 1; l <= 128; l++)
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.UncompressHeadless(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.UncompressHeadless(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
     }
 
@@ -91,7 +91,7 @@ public class HeadlessBasicTest(ITestOutputHelper testOutputHelper)
         data[127] = -1;
         var c = codec.Codec!;
 
-        testOutputHelper.WriteLine("[SkippeableBasicTest.varyingLengthTest2] codec = " + c);
+        testOutputHelper.WriteLine($"[{nameof(HeadlessBasicTest)}.{nameof(VaryingLengthTest2)}] {nameof(codec)} = {c}");
 
         if (c is Simple9)
         {
@@ -107,13 +107,13 @@ public class HeadlessBasicTest(ITestOutputHelper testOutputHelper)
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.UncompressHeadless(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.UncompressHeadless(c, comp, l);
-            _ = answer.Should().HaveSameElementsAs(data.Take(l));
+            Assert.Equal(data.Take(l), answer);
         }
     }
 

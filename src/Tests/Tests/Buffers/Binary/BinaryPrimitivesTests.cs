@@ -19,7 +19,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
         BinaryPrimitives.WriteInt16BigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -29,7 +29,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
         BinaryPrimitives.WriteInt16LittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -39,7 +39,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(int)];
         BinaryPrimitives.WriteInt32BigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -49,7 +49,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(int)];
         BinaryPrimitives.WriteInt32LittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -59,7 +59,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(long)];
         BinaryPrimitives.WriteInt64BigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -69,7 +69,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(long)];
         BinaryPrimitives.WriteInt64LittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -79,7 +79,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(ushort)];
         BinaryPrimitives.WriteUInt16BigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -89,7 +89,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(ushort)];
         BinaryPrimitives.WriteUInt16LittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -99,7 +99,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(uint)];
         BinaryPrimitives.WriteUInt32BigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -109,7 +109,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(uint)];
         BinaryPrimitives.WriteUInt32LittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -119,7 +119,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(ulong)];
         BinaryPrimitives.WriteUInt64BigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -129,28 +129,28 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(ulong)];
         BinaryPrimitives.WriteUInt64LittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
 #if NET5_0_OR_GREATER
     [Theory]
     [InlineData(65504D, 0x7B, byte.MaxValue)]
     [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void WriteHalfBigEndian(SerializableHalf value, byte first, byte second)
+    public void WriteHalfBigEndian(Half value, byte first, byte second)
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
         BinaryPrimitives.WriteHalfBigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
     [InlineData(65504D, 0x7B, byte.MaxValue)]
     [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void WriteHalfLittleEndian(SerializableHalf value, byte second, byte first)
+    public void WriteHalfLittleEndian(Half value, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
         BinaryPrimitives.WriteHalfLittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.Equal([first, second], bytes.ToArray());
     }
 #endif
 
@@ -161,7 +161,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(float)];
         BinaryPrimitives.WriteSingleBigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -171,7 +171,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(float)];
         BinaryPrimitives.WriteSingleLittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -181,7 +181,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(double)];
         BinaryPrimitives.WriteDoubleBigEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -191,7 +191,7 @@ public class BinaryPrimitivesTests
     {
         Span<byte> bytes = stackalloc byte[sizeof(double)];
         BinaryPrimitives.WriteDoubleLittleEndian(bytes, value);
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -200,8 +200,8 @@ public class BinaryPrimitivesTests
     public void TryWriteInt16BigEndian(short value, byte first, byte second)
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
-        BinaryPrimitives.TryWriteInt16BigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.True(BinaryPrimitives.TryWriteInt16BigEndian(bytes, value));
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -210,8 +210,8 @@ public class BinaryPrimitivesTests
     public void TryWriteInt16LittleEndian(short value, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
-        BinaryPrimitives.TryWriteInt16LittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.True(BinaryPrimitives.TryWriteInt16LittleEndian(bytes, value));
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -220,8 +220,8 @@ public class BinaryPrimitivesTests
     public void TryWriteInt32BigEndian(int value, byte first, byte second, byte third, byte forth)
     {
         Span<byte> bytes = stackalloc byte[sizeof(int)];
-        BinaryPrimitives.TryWriteInt32BigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.True(BinaryPrimitives.TryWriteInt32BigEndian(bytes, value));
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -230,8 +230,8 @@ public class BinaryPrimitivesTests
     public void TryWriteInt32LittleEndian(int value, byte forth, byte third, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(int)];
-        BinaryPrimitives.TryWriteInt32LittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.True(BinaryPrimitives.TryWriteInt32LittleEndian(bytes, value));
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -240,8 +240,8 @@ public class BinaryPrimitivesTests
     public void TryWriteInt64BigEndian(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         Span<byte> bytes = stackalloc byte[sizeof(long)];
-        BinaryPrimitives.TryWriteInt64BigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.True(BinaryPrimitives.TryWriteInt64BigEndian(bytes, value));
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -250,8 +250,8 @@ public class BinaryPrimitivesTests
     public void TryWriteInt64LittleEndian(long value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(long)];
-        BinaryPrimitives.TryWriteInt64LittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.True(BinaryPrimitives.TryWriteInt64LittleEndian(bytes, value));
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -260,8 +260,8 @@ public class BinaryPrimitivesTests
     public void TryWriteUInt16BigEndian(ushort value, byte first, byte second)
     {
         Span<byte> bytes = stackalloc byte[sizeof(ushort)];
-        BinaryPrimitives.TryWriteUInt16BigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.True(BinaryPrimitives.TryWriteUInt16BigEndian(bytes, value));
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -270,8 +270,8 @@ public class BinaryPrimitivesTests
     public void TryWriteUInt16LittleEndian(ushort value, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(ushort)];
-        BinaryPrimitives.TryWriteUInt16LittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.True(BinaryPrimitives.TryWriteUInt16LittleEndian(bytes, value));
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
@@ -280,8 +280,8 @@ public class BinaryPrimitivesTests
     public void TryWriteUInt32BigEndian(uint value, byte first, byte second, byte third, byte forth)
     {
         Span<byte> bytes = stackalloc byte[sizeof(uint)];
-        BinaryPrimitives.TryWriteUInt32BigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.True(BinaryPrimitives.TryWriteUInt32BigEndian(bytes, value));
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -290,8 +290,8 @@ public class BinaryPrimitivesTests
     public void TryWriteUInt32LittleEndian(uint value, byte forth, byte third, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(uint)];
-        BinaryPrimitives.TryWriteUInt32LittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.True(BinaryPrimitives.TryWriteUInt32LittleEndian(bytes, value));
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -300,8 +300,8 @@ public class BinaryPrimitivesTests
     public void TryWriteUInt64BigEndian(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         Span<byte> bytes = stackalloc byte[sizeof(ulong)];
-        BinaryPrimitives.TryWriteUInt64BigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.True(BinaryPrimitives.TryWriteUInt64BigEndian(bytes, value));
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -310,29 +310,29 @@ public class BinaryPrimitivesTests
     public void TryWriteUInt64LittleEndian(ulong value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(ulong)];
-        BinaryPrimitives.TryWriteUInt64LittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.True(BinaryPrimitives.TryWriteUInt64LittleEndian(bytes, value));
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
 #if NET5_0_OR_GREATER
     [Theory]
     [InlineData(65504D, 0x7B, byte.MaxValue)]
     [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void TryWriteHalfBigEndian(SerializableHalf value, byte first, byte second)
+    public void TryWriteHalfBigEndian(Half value, byte first, byte second)
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
-        BinaryPrimitives.TryWriteHalfBigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.True(BinaryPrimitives.TryWriteHalfBigEndian(bytes, value));
+        Assert.Equal([first, second], bytes.ToArray());
     }
 
     [Theory]
     [InlineData(65504D, 0x7B, byte.MaxValue)]
     [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void TryWriteHalfLittleEndian(SerializableHalf value, byte second, byte first)
+    public void TryWriteHalfLittleEndian(Half value, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(short)];
-        BinaryPrimitives.TryWriteHalfLittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second]);
+        Assert.True(BinaryPrimitives.TryWriteHalfLittleEndian(bytes, value));
+        Assert.Equal([first, second], bytes.ToArray());
     }
 #endif
 
@@ -342,8 +342,8 @@ public class BinaryPrimitivesTests
     public void TryWriteSingleBigEndian(float value, byte first, byte second, byte third, byte forth)
     {
         Span<byte> bytes = stackalloc byte[sizeof(float)];
-        BinaryPrimitives.TryWriteSingleBigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.True(BinaryPrimitives.TryWriteSingleBigEndian(bytes, value));
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -352,8 +352,8 @@ public class BinaryPrimitivesTests
     public void TryWriteSingleLittleEndian(float value, byte forth, byte third, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(float)];
-        BinaryPrimitives.TryWriteSingleLittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth]);
+        Assert.True(BinaryPrimitives.TryWriteSingleLittleEndian(bytes, value));
+        Assert.Equal([first, second, third, forth], bytes.ToArray());
     }
 
     [Theory]
@@ -362,8 +362,8 @@ public class BinaryPrimitivesTests
     public void TryWriteDoubleBigEndian(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         Span<byte> bytes = stackalloc byte[sizeof(double)];
-        BinaryPrimitives.TryWriteDoubleBigEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.True(BinaryPrimitives.TryWriteDoubleBigEndian(bytes, value));
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 
     [Theory]
@@ -372,7 +372,7 @@ public class BinaryPrimitivesTests
     public void TryWriteDoubleLittleEndian(double value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         Span<byte> bytes = stackalloc byte[sizeof(double)];
-        BinaryPrimitives.TryWriteDoubleLittleEndian(bytes, value).Should().BeTrue();
-        bytes.ToArray().Should().BeEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        Assert.True(BinaryPrimitives.TryWriteDoubleLittleEndian(bytes, value));
+        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
     }
 }

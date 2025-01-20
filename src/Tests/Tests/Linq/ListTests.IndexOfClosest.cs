@@ -18,14 +18,14 @@ public partial class ListTests
 
         [Theory]
         [MemberData(nameof(GetInt32ReadOnlyLists))]
-        public void Int32ReadOnly(IReadOnlyList<int> list) => list.IndexOfClosest(7).Should().Be(1);
+        public void Int32ReadOnly(IReadOnlyList<int> list) => Assert.Equal(1, list.IndexOfClosest(7));
 
         [Theory]
         [MemberData(nameof(GetInt32Lists))]
-        public void Int32(IList<int> list) => list.IndexOfClosest(7).Should().Be(1);
+        public void Int32(IList<int> list) => Assert.Equal(1, list.IndexOfClosest(7));
 
         [Theory]
         [MemberData(nameof(GetDoubleReadOnlyLists))]
-        public void Double(IReadOnlyList<double> list) => list.IndexOfClosest(7D).Should().Be(1);
+        public void Double(IReadOnlyList<double> list) => Assert.Equal(1, list.IndexOfClosest(7D));
     }
 }

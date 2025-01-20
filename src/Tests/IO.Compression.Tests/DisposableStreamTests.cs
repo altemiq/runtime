@@ -8,7 +8,7 @@ public class DisposableStreamTests
         var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new DisposableStream(archive.Entries[0]);
         stream.Dispose();
-        _ = archive.IsDisposed.Should().BeTrue();
+        Assert.True(archive.IsDisposed);
     }
 
     [Fact]
@@ -17,7 +17,7 @@ public class DisposableStreamTests
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new DisposableStream(archive.Entries[0], true);
         stream.Dispose();
-        _ = archive.IsDisposed.Should().BeFalse();
+        Assert.False(archive.IsDisposed);
     }
 
 #if NETCOREAPP
@@ -27,7 +27,7 @@ public class DisposableStreamTests
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new DisposableStream(archive.Entries[0]);
         await stream.DisposeAsync();
-        _ = archive.IsDisposed.Should().BeTrue();
+        Assert.True(archive.IsDisposed);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class DisposableStreamTests
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new DisposableStream(archive.Entries[0], true);
         await stream.DisposeAsync();
-        _ = archive.IsDisposed.Should().BeFalse();
+        Assert.False(archive.IsDisposed);
     }
 #endif
 }

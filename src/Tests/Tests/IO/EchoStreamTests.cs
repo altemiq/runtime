@@ -30,8 +30,8 @@ public class EchoStreamTests
         var bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
-        _ = read.Should().Be(expectedLength);
-        _ = Encoding.UTF8.GetString(bytes).Should().Be(Text);
+        Assert.Equal(expectedLength, read);
+        Assert.Equal(Text, Encoding.UTF8.GetString(bytes));
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class EchoStreamTests
         var bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
-        _ = read.Should().Be(expectedLength);
-        _ = Encoding.UTF8.GetString(bytes).Should().Be(Text);
+        Assert.Equal(expectedLength, read);
+        Assert.Equal(Text, Encoding.UTF8.GetString(bytes));
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class EchoStreamTests
         bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
-        _ = read.Should().Be(Encoding.UTF8.GetByteCount(Text1));
-        _ = Encoding.UTF8.GetString(bytes, 0, read).Should().Be(Text1);
+        Assert.Equal(Encoding.UTF8.GetByteCount(Text1), read);
+        Assert.Equal(Text1, Encoding.UTF8.GetString(bytes, 0, read));
     }
 }

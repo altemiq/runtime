@@ -23,5 +23,5 @@ public class AssemblyExtensionsTests
     [InlineData("Altemiq, Version=1.0.0.0, Culture=neutral", "Altemiq, Version=2.0.0.0, Culture=neutral", false)]
     [InlineData("Altemiq, Version=1.0.0.0, Culture=neutral", "Altemiq, Version=2.0.0.0", false)]
     [InlineData("Altemiq, Version=2.0.0.0, Culture=en-US", "Altemiq, Version=1.0.0.0, Culture=neutral", false)]
-    public void IsCompatible(string assemblyName, string requiredAssemblyName, bool result) => new System.Reflection.AssemblyName(assemblyName).IsCompatible(new System.Reflection.AssemblyName(requiredAssemblyName)).Should().Be(result);
+    public void IsCompatible(string assemblyName, string requiredAssemblyName, bool expected) => Assert.Equal(expected, new System.Reflection.AssemblyName(assemblyName).IsCompatible(new System.Reflection.AssemblyName(requiredAssemblyName)));
 }
