@@ -14,7 +14,7 @@ public class ZipArchiveEntryExtensionsTests
     public void OpenSeekableOnNonSeekable()
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
-        Assert.IsType<SeekableStream>( archive.Entries[0].OpenSeekable());
+        Assert.IsType<SeekableStream>(archive.Entries[0].OpenSeekable());
     }
 
     [Fact]

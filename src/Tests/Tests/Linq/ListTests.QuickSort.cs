@@ -88,7 +88,7 @@ public partial class ListTests
         [MemberData(nameof(GetTwoItemsNotInOrderLists))]
         public void WithTwoItemsNotInOrder(IList<int> list) => Assert.Collection(
             WithNoParameters(list),
-           static  actual => Assert.Equal(1, actual),
+           static actual => Assert.Equal(1, actual),
            static actual => Assert.Equal(2, actual));
 
         [Theory]
@@ -125,7 +125,7 @@ public partial class ListTests
 
         [Theory]
         [MemberData(nameof(GetThreeItemsNotInOrderLists))]
-        public void WithThreeItemsNotInOrderWithComparisonAndSize(IList<int> list) =>Assert.Collection(
+        public void WithThreeItemsNotInOrderWithComparisonAndSize(IList<int> list) => Assert.Collection(
             WithStartLengthAndComparison(list, 0, list.Count, Comparer<int>.Default.Compare),
             static (actual) => Assert.Equal(0, actual),
             static (actual) => Assert.Equal(1, actual),

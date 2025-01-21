@@ -117,7 +117,7 @@ public class MultipleStreamTests
         multipleStream.SwitchTo(nameof(third));
         multipleStream.Write(thirdBytes, 0, thirdBytes.Length);
 
-        Assert.Empty( first.ToArray());
+        Assert.Empty(first.ToArray());
         Assert.Equal(secondBytes, second.ToArray());
         Assert.Equal(thirdBytes, third.ToArray());
     }

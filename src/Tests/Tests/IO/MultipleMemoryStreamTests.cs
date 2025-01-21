@@ -17,7 +17,7 @@ public class MultipleMemoryStreamTests
         Assert.True(stream.SwitchTo("second"));
 
         Assert.Collection(
-            dictionary.Values, 
+            dictionary.Values,
             first => Assert.IsType<MemoryStream>(first),
             second => Assert.IsType<MemoryStream>(second));
     }

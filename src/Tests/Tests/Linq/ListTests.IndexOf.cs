@@ -38,7 +38,7 @@ public partial class ListTests
         [MemberData(nameof(GetLists))]
         public void Any(IEnumerable<int> first, IEnumerable<int> second)
         {
-            Assert.Equal(1,  TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
+            Assert.Equal(1, TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
             Assert.Equal(1, TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
         }
 

@@ -52,7 +52,7 @@ public class NanoIds
     }
 
     [Fact]
-    public void CustomRandom() => Assert.Equal(DefaultSize, NanoId.Generate(new Random(10)).Length    );
+    public void CustomRandom() => Assert.Equal(DefaultSize, NanoId.Generate(new Random(10)).Length);
 
     [Fact]
     public async Task CustomRandomAsync() => Assert.Equal(DefaultSize, (await NanoId.GenerateAsync(new Random(10))).Length);

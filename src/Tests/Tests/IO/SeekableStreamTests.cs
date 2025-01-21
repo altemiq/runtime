@@ -21,7 +21,7 @@ public class SeekableStreamTests
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
         Assert.Equal(1024, stream.Length);
-        Assert.Equal(512,  stream.Seek(-512, SeekOrigin.End));
+        Assert.Equal(512, stream.Seek(-512, SeekOrigin.End));
         Assert.Throws<InvalidOperationException>(() => stream.Seek(-10, SeekOrigin.Current));
     }
 

@@ -20,7 +20,7 @@ public partial class BitConverterTests
     [Theory]
     [InlineData(true, 1)]
     [InlineData(false, 0)]
-    public void GetBooleanBytes(bool value, byte expected) =>  Assert.Equal([expected], BitConverter.GetBytes(value));
+    public void GetBooleanBytes(bool value, byte expected) => Assert.Equal([expected], BitConverter.GetBytes(value));
 
     [Theory]
     [InlineData(true, 1, ByteOrder.LittleEndian)]
@@ -35,7 +35,7 @@ public partial class BitConverterTests
     public void TryWriteBooleanBytes(bool value, byte expected)
     {
         Span<byte> span = stackalloc byte[sizeof(byte)];
-        Assert.True( BitConverter.TryWriteBytes(span, value));
+        Assert.True(BitConverter.TryWriteBytes(span, value));
         Assert.Equal([expected], span.ToArray());
     }
 
@@ -52,7 +52,7 @@ public partial class BitConverterTests
     }
 
     [Fact]
-    public void TryWriteBooleanBytesWithSmallSpan() => Assert.False( BitConverter.TryWriteBytes(default, default(bool)));
+    public void TryWriteBooleanBytesWithSmallSpan() => Assert.False(BitConverter.TryWriteBytes(default, default(bool)));
 
     [Theory]
     [InlineData(1, true)]
@@ -103,7 +103,7 @@ public partial class BitConverterTests
     public void TryWriteCharBytes(char value, byte first, byte second)
     {
         Span<byte> span = stackalloc byte[sizeof(char)];
-        Assert.True( BitConverter.TryWriteBytes(span, value));
+        Assert.True(BitConverter.TryWriteBytes(span, value));
         Assert.Equal(GetBytes(first, second, byteOrder: DefaultByteOrder), span.ToArray());
     }
 

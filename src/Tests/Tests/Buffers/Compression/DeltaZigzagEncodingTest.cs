@@ -25,7 +25,7 @@ public class DeltaZigzagEncodingTest
     public void CheckZigzagDecoder()
     {
         var d = new DeltaZigzagEncoding.Decoder(0);
-        Assert.Equal(0 , ZigzagDecode(d, 0));
+        Assert.Equal(0, ZigzagDecode(d, 0));
         Assert.Equal(-1, ZigzagDecode(d, 1));
         Assert.Equal(1, ZigzagDecode(d, 2));
         Assert.Equal(-2, ZigzagDecode(d, 3));

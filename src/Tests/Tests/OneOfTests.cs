@@ -30,7 +30,7 @@ public class OneOfTests
     {
         Assert.Equal("2.1", ResolveString(2.1));
         Assert.Equal("4", ResolveString(4));
-        Assert.Equal("6",ResolveString("6"));
+        Assert.Equal("6", ResolveString("6"));
 
         static string? ResolveString(OneOf<double, int, string> input)
         {
