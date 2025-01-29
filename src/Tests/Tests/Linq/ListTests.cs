@@ -6,7 +6,6 @@
 
 namespace Altemiq.Linq;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
 public partial class ListTests
 {
     [Fact]
