@@ -60,7 +60,7 @@ internal class EnumerableSerializer : IXunitSerializer
                 {
                     stringBuilder.Append(',');
                 }
-                
+
                 first = false;
             }
 
