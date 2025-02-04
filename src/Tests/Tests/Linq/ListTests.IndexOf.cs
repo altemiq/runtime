@@ -10,11 +10,8 @@ public partial class ListTests
 {
     public class IndexOf
     {
-        public static TheoryData<IEnumerable<int>, IEnumerable<int>> GetLists() => ListTests.GetLists();
-        public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => ListTests.GetInt32ReadOnlyLists();
-
         [Theory]
-        [MemberData(nameof(GetLists))]
+        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
         public void Int32(IEnumerable<int> first, IEnumerable<int> second)
         {
             Assert.Equal(1, TestListList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1));
@@ -29,11 +26,11 @@ public partial class ListTests
         }
 
         [Theory]
-        [MemberData(nameof(GetInt32ReadOnlyLists))]
+        [MemberData(nameof(GetInt32ReadOnlyLists), MemberType = typeof(ListTests))]
         public void Value(IReadOnlyList<int> list) => Assert.Equal(2, list.IndexOf(10, 1));
 
         [Theory]
-        [MemberData(nameof(GetLists))]
+        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
         public void Any(IEnumerable<int> first, IEnumerable<int> second)
         {
             Assert.Equal(1, TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
@@ -41,7 +38,7 @@ public partial class ListTests
         }
 
         [Theory]
-        [MemberData(nameof(GetLists))]
+        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
         public void Lists(IEnumerable<int> first, IEnumerable<int> second)
         {
             if (first is IList<int> firstList)

@@ -10,10 +10,8 @@ public partial class ListTests
 {
     public class Equal
     {
-        public static TheoryData<IEnumerable<int>, IEnumerable<int>> GetLists() => ListTests.GetLists();
-
         [Theory]
-        [MemberData(nameof(GetLists))]
+        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
         public void DoesEqual(IEnumerable<int> first, IEnumerable<int> second)
         {
             Assert.True(TestListList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true));
@@ -23,7 +21,7 @@ public partial class ListTests
         }
 
         [Theory]
-        [MemberData(nameof(GetLists))]
+        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
         public void DoesNotEqual(IEnumerable<int> first, IEnumerable<int> second)
         {
             Assert.False(TestListList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false));

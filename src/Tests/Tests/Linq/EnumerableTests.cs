@@ -11,14 +11,12 @@ public class EnumerableTests
     public class WhereNotNull
     {
         [Theory]
-        [MemberData(nameof(GetClassSequences))]
+        [MemberData(nameof(GetClassSequences), MemberType = typeof(EnumerableTests))]
         public void Class(string?[] sequence, int count) => Assert.Equal(sequence.WhereNotNull().Count(), sequence.Length - count);
 
         [Theory]
         [MemberData(nameof(GetStructSequences))]
         public void Struct(int?[] sequence, int count) => Assert.Equal(sequence.WhereNotNull().Count(), count);
-
-        public static TheoryData<string?[], int> GetClassSequences() => EnumerableTests.GetClassSequences();
 
         public static TheoryData<int?[], int> GetStructSequences() => new()
         {
