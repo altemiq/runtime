@@ -72,8 +72,6 @@ public partial class ListTests
 
     public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
 
-    public static TheoryData<System.Collections.IEnumerable?, System.Collections.IEnumerable?> CreateNulls() => new() { { null, null } };
-
     public static TheoryData<IEnumerable<int>, IEnumerable<int>> GetLists()
     {
         var theoryData = new TheoryData<IEnumerable<int>, IEnumerable<int>>();

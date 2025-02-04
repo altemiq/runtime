@@ -11,7 +11,6 @@ public partial class ListTests
     public class IndexOf
     {
         public static TheoryData<IEnumerable<int>, IEnumerable<int>> GetLists() => ListTests.GetLists();
-        public static TheoryData<System.Collections.IEnumerable?, System.Collections.IEnumerable?> CreateNulls() => ListTests.CreateNulls();
         public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => ListTests.GetInt32ReadOnlyLists();
 
         [Theory]
@@ -22,12 +21,11 @@ public partial class ListTests
             Assert.Equal(1, TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1));
         }
 
-        [Theory]
-        [MemberData(nameof(CreateNulls))]
-        public void WithNull(System.Collections.IEnumerable? first, System.Collections.IEnumerable? second)
+        [Fact]
+        public void WithNulls()
         {
-            Assert.Equal(-1, ((IList<int>)first!).IndexOf((IList<int>)second!));
-            Assert.Equal(-1, ((IReadOnlyList<int>)first!).IndexOf((IReadOnlyList<int>)second!));
+            Assert.Equal(-1, ((IList<int>)null!).IndexOf((IList<int>)null!));
+            Assert.Equal(-1, ((IReadOnlyList<int>)null!).IndexOf((IReadOnlyList<int>)null!));
         }
 
         [Theory]
