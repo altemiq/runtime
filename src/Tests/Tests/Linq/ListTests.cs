@@ -6,81 +6,82 @@
 
 namespace Altemiq.Linq;
 
+using NSubstitute.Exceptions;
+using TUnit.Assertions.AssertConditions.Throws;
+
 public partial class ListTests
 {
-    [Fact]
-    public void Cast()
+    [Test]
+    public async Task Cast()
     {
         IList<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        Assert.Equal(list, cast);
+        await Assert.That(cast).IsEquivalentTo(list);
     }
 
-    [Fact]
-    public void CastList()
+    [Test]
+    public async Task CastList()
     {
         List<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        Assert.Equal(list, cast);
+        await Assert.That(cast).IsEquivalentTo(list);
     }
 
-    [Fact]
-    public void CastListWithNoConstructors()
+    [Test]
+    public async Task CastListWithNoConstructors()
     {
         ListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        Assert.Equal(list, Assert.IsType<ListWithNoConstructors<IFirst>>(cast));
+        await Assert.That(cast).IsTypeOf<ListWithNoConstructors<IFirst>>().And.IsEquivalentTo(list);
     }
 
-    [Fact]
-    public void CastNonListWithNoConstructors()
+    [Test]
+    public async Task CastNonListWithNoConstructors()
     {
         NonListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        Assert.Equal(list, Assert.IsType<NonListWithNoConstructors<IFirst>>(cast));
+        await Assert.That(cast).IsTypeOf<NonListWithNoConstructors<IFirst>>().And.IsEquivalentTo(list);
     }
 
-    [Fact]
-    public void CastNested()
+    [Test]
+    public async Task CastNested()
     {
         NestedNonGenericList list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(list);
-        Assert.Equal(list, Assert.IsType<List<IFirst>>(cast));
+        await Assert.That(cast).IsTypeOf<List<IFirst>>().And.IsEquivalentTo(list);
     }
 
-    [Fact]
-    public void CastArray()
+    [Test]
+    public async Task CastArray()
     {
         ISecond[] array = [default(Third), default(Third), default(Third), default(Third), default(Third)];
         var cast = List.Cast<ISecond, IFirst>(array);
-        Assert.Equal(array, Assert.IsType<IFirst[]>(cast));
+        await Assert.That(cast).IsTypeOf<IFirst[]>().And.IsEquivalentTo(array);
     }
 
-    [Fact]
-    public void CastWithNull()
+    [Test]
+    public async Task CastWithNull()
     {
         IList<ISecond>? list = default;
-        Assert.Null(List.Cast<ISecond, IFirst>(list!));
+        await Assert.That(List.Cast<ISecond, IFirst>(list!)).IsNull();
     }
 
-    [Fact]
-    public void CastWithNonGeneric()
+    [Test]
+    public async Task CastWithNonGeneric()
     {
         NoBaseClass list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        Assert.Throws<InvalidOperationException>(() => list.Cast<ISecond, IFirst>());
+        await Assert.That(() => list.Cast<ISecond, IFirst>()).Throws<InvalidOperationException>();
     }
 
-    public static TheoryData<IReadOnlyList<int>> GetInt32ReadOnlyLists() => new(CreateReadOnlyLists(1, 5, 10, 15, 20));
+    public static IEnumerable<Func<IReadOnlyList<int>>> GetInt32ReadOnlyLists() => CreateFunc(CreateReadOnlyLists(1, 5, 10, 15, 20));
 
-    public static TheoryData<IEnumerable<int>, IEnumerable<int>> GetLists()
+    public static IEnumerable<Func<(IEnumerable<int>, IEnumerable<int>)>> GetLists()
     {
-        var theoryData = new TheoryData<IEnumerable<int>, IEnumerable<int>>();
-
         foreach (var first in CreateListsCore(1, 2, 3, 4, 5))
         {
             foreach (var second in CreateListsCore(2, 3, 4))
             {
-                theoryData.Add(first, second);
+                yield return () => (first, second);
             }
         }
 
@@ -88,7 +89,7 @@ public partial class ListTests
         {
             foreach (var second in CreateReadOnlyListsCore(2, 3, 4))
             {
-                theoryData.Add(first, second);
+                yield return () => (first, second);
             }
         }
 
@@ -96,7 +97,7 @@ public partial class ListTests
         {
             foreach (var second in CreateListsCore(2, 3, 4))
             {
-                theoryData.Add(first, second);
+                yield return () => (first, second);
             }
         }
 
@@ -104,11 +105,9 @@ public partial class ListTests
         {
             foreach (var second in CreateReadOnlyListsCore(2, 3, 4))
             {
-                theoryData.Add(first, second);
+                yield return () => (first, second);
             }
         }
-
-        return theoryData;
     }
 
     private static IEnumerable<IReadOnlyList<T>> CreateReadOnlyLists<T>(params T[] a) => CreateReadOnlyListsCore(a);
@@ -126,8 +125,10 @@ public partial class ListTests
     {
         yield return a;
         yield return new List<T>(a);
-        yield return new System.Collections.ObjectModel.Collection<T>(new List<T>(a));
+        yield return new System.Collections.ObjectModel.Collection<T>([.. a]);
     }
+
+    private static IEnumerable<Func<T>> CreateFunc<T>(IEnumerable<T> source) => source.Select<T, Func<T>>(x => () => x);
 
     private interface IFirst;
 

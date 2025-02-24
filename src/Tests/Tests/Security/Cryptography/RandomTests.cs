@@ -6,77 +6,79 @@
 
 namespace Altemiq.Security.Cryptography;
 
+using TUnit.Assertions.AssertConditions.Throws;
+
 public class RandomTests
 {
-    [Fact]
-    public void NextDouble()
+    [Test]
+    public async Task NextDouble()
     {
         var random = new Random();
         var first = random.NextDouble();
-        Assert.InRange(first, 0D, 1D);
+        await Assert.That(first).IsBetween(0D, 1D);
         var second = random.NextDouble();
-        Assert.InRange(first, 0D, 1D);
-        Assert.NotEqual(first, second);
+        await Assert.That(first).IsBetween(0D, 1D);
+        await Assert.That(first).IsNotEqualTo(second);
     }
 
-    [Fact]
-    public void Next()
+    [Test]
+    public async Task Next()
     {
         var random = new Random();
         var first = random.Next();
-        Assert.InRange(first, 0, int.MaxValue);
+        await Assert.That(first).IsBetween(0, int.MaxValue);
         var second = random.Next();
-        Assert.InRange(first, 0, int.MaxValue);
-        Assert.NotEqual(first, second);
+        await Assert.That(first).IsBetween(0, int.MaxValue);
+        await Assert.That(first).IsNotEqualTo(second);
     }
 
-    [Fact]
-    public void NextWithMax()
+    [Test]
+    public async Task NextWithMax()
     {
         const int Max = 10000;
         var random = new Random();
         var first = random.Next(Max);
-        Assert.InRange(first, 0, Max);
+        await Assert.That(first).IsBetween(0, Max);
         var second = random.Next(Max);
-        Assert.InRange(second, 0, Max);
-        Assert.NotEqual(first, second);
+        await Assert.That(second).IsBetween(0, Max);
+        await Assert.That(first).IsNotEqualTo(second);
     }
 
-    [Fact]
-    public void NextWithRange()
+    [Test]
+    public async Task NextWithRange()
     {
         const int Min = 1234;
         const int Max = 10000;
         var random = new Random();
         var first = random.Next(Min, Max);
-        Assert.InRange(first, Min, Max);
+        await Assert.That(first).IsBetween(Min, Max);
         var second = random.Next(Min, Max);
-        Assert.InRange(second, Min, Max);
-        Assert.NotEqual(first, second);
+        await Assert.That(second).IsBetween(Min, Max);
+        await Assert.That(first).IsNotEqualTo(second);
     }
 
-    [Fact]
-    public void NextWithInvalidMax()
+    [Test]
+    public async Task NextWithInvalidMax()
     {
         const int Max = -1;
         var random = new Random();
-        Assert.Throws<ArgumentOutOfRangeException>(() => random.Next(Max));
+        await Assert.That(() => random.Next(Max)).Throws<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public void NextWithInvalidMinMax()
+    [Test]
+    public async Task NextWithInvalidMinMax()
     {
         const int Max = 100;
         const int Min = 1000;
         var random = new Random();
-        Assert.Throws<ArgumentOutOfRangeException>(() => random.Next(Min, Max));
+        await Assert.That(() => random.Next(Min, Max)).Throws<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public void NextWithSameMinMax()
+    [Test]
+    public async Task NextWithSameMinMax()
     {
         const int MinMax = 1000;
         var random = new Random();
-        Assert.Equal(MinMax, random.Next(MinMax, MinMax));
+        await Assert.That(random.Next(MinMax, MinMax)).IsEqualTo(MinMax);
     }
 }

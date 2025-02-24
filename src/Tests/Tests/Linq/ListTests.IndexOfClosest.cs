@@ -10,20 +10,20 @@ public partial class ListTests
 {
     public class IndexOfClosest
     {
-        public static TheoryData<IList<int>> GetInt32Lists() => new(CreateLists(1, 5, 10, 15, 20));
+        public static IEnumerable<Func<IList<int>>> GetInt32Lists() => CreateFunc(CreateLists(1, 5, 10, 15, 20));
 
-        public static TheoryData<IReadOnlyList<double>> GetDoubleReadOnlyLists() => new(CreateReadOnlyLists(1D, 5D, 10D, 15D, 20D));
+        public static IEnumerable<Func<IReadOnlyList<double>>> GetDoubleReadOnlyLists() => CreateFunc(CreateReadOnlyLists(1D, 5D, 10D, 15D, 20D));
 
-        [Theory]
-        [MemberData(nameof(GetInt32ReadOnlyLists), MemberType = typeof(ListTests))]
-        public void Int32ReadOnly(IReadOnlyList<int> list) => Assert.Equal(1, list.IndexOfClosest(7));
+        [Test]
+        [MethodDataSource(typeof(ListTests), nameof(GetInt32ReadOnlyLists))]
+        public async Task Int32ReadOnly(IReadOnlyList<int> list) => await Assert.That(list.IndexOfClosest(7)).IsEqualTo(1);
 
-        [Theory]
-        [MemberData(nameof(GetInt32Lists))]
-        public void Int32(IList<int> list) => Assert.Equal(1, list.IndexOfClosest(7));
+        [Test]
+        [MethodDataSource(nameof(GetInt32Lists))]
+        public async Task Int32(IList<int> list) => await Assert.That(list.IndexOfClosest(7)).IsEqualTo(1);
 
-        [Theory]
-        [MemberData(nameof(GetDoubleReadOnlyLists))]
-        public void Double(IReadOnlyList<double> list) => Assert.Equal(1, list.IndexOfClosest(7D));
+        [Test]
+        [MethodDataSource(nameof(GetDoubleReadOnlyLists))]
+        public async Task Double(IReadOnlyList<double> list) => await Assert.That(list.IndexOfClosest(7D)).IsEqualTo(1);
     }
 }

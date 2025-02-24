@@ -2,11 +2,11 @@ namespace Altemiq.Grpc.Tools;
 
 public class ProtoTests
 {
-    [Fact]
-    public void TestUuid()
+    [Test]
+    public async Task TestUuid()
     {
         var guid = Guid.NewGuid();
         var testMessage = new Protobuf.WellKnownTypes.Tests.Test { Uuid = Protobuf.WellKnownTypes.Uuid.ForGuid(guid) };
-        Assert.Equal(guid, testMessage.Uuid.ToGuid());
+        await Assert.That(testMessage.Uuid.ToGuid()).IsEqualTo(guid);
     }
 }

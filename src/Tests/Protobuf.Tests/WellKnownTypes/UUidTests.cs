@@ -2,49 +2,49 @@ namespace Altemiq.Protobuf.WellKnownTypes;
 
 public class UUidTests
 {
-    [Fact]
-    public void FromGuid()
+    [Test]
+    public async Task FromGuid()
     {
         Guid guid = Guid.NewGuid();
-        Assert.Equal(guid, Uuid.ForGuid(guid).ToGuid());
+        await Assert.That(Uuid.ForGuid(guid).ToGuid()).IsEqualTo(guid);
     }
 
-    [Fact]
-    public void Descriptor()
+    [Test]
+    public async Task Descriptor()
     {
-        Assert.NotNull(Uuid.Descriptor);
+        await Assert.That(Uuid.Descriptor).IsNotNull();
     }
 
-    [Fact]
-    public void Parser()
+    [Test]
+    public async Task Parser()
     {
-        Assert.NotNull(Uuid.Parser);
+        await Assert.That(Uuid.Parser).IsNotNull();
     }
 
-    [Fact]
-    public void NewUuid()
+    [Test]
+    public async Task NewUuid()
     {
-        Assert.NotNull(Uuid.NewUuid());
+        await Assert.That(Uuid.NewUuid()).IsNotNull();
     }
 
 #if NET9_0_OR_GREATER
-    [Fact]
-    public void FromGuidVersion7()
+    [Test]
+    public async Task FromGuidVersion7()
     {
         Guid guid = Guid.CreateVersion7();
-        Assert.Equal(guid, Uuid.ForGuid(guid).ToGuid());
+        await Assert.That(Uuid.ForGuid(guid).ToGuid()).IsEqualTo(guid);
     }
 
-    [Fact]
-    public void CreateVersion7()
+    [Test]
+    public async Task CreateVersion7()
     {
-        Assert.NotNull(Uuid.CreateVersion7());
+        await Assert.That(Uuid.CreateVersion7()).IsNotNull();
     }
 
-    [Fact]
-    public void CreateVersion7WithTimestamp()
+    [Test]
+    public async Task CreateVersion7WithTimestamp()
     {
-        Assert.NotNull(Uuid.CreateVersion7(DateTimeOffset.UtcNow));
+        await Assert.That(Uuid.CreateVersion7(DateTimeOffset.UtcNow)).IsNotNull();
     }
 #endif
 }

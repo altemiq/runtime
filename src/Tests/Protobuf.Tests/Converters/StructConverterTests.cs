@@ -67,53 +67,54 @@ public class StructConverterTests
         }
     };
 
-    [Fact]
-    public void Deserialize()
+    [Test]
+    public async Task Deserialize()
     {
-        Assert.Equal(Struct, System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options));
+        await Assert.That(System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options)).IsEqualTo(Struct);
     }
 
-    [Fact]
-    public void DeserializeVsParseJson()
+    [Test]
+    public async Task DeserializeVsParseJson()
     {
-        Assert.Equal(Google.Protobuf.WellKnownTypes.Struct.Parser.ParseJson(Json), System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options));
+        await Assert.That(System.Text.Json.JsonSerializer.Deserialize<Google.Protobuf.WellKnownTypes.Struct>(Json, Options)).IsEqualTo(Google.Protobuf.WellKnownTypes.Struct.Parser.ParseJson(Json));
     }
 
-    [Fact]
-    public void Serialize()
+    [Test]
+    public async Task Serialize()
     {
-        Assert.Equal(NormalizeJson(Json), NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)));
+        await Assert.That(NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options))).IsEqualTo(NormalizeJson(Json));
     }
 
-    [Fact]
-    public void SerializeVsToString()
+    [Test]
+    public async Task SerializeVsToString()
     {
-        Assert.Equal(NormalizeJson(Struct.ToString()), NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options)));
+        await Assert.That(NormalizeJson(System.Text.Json.JsonSerializer.Serialize(Struct, Options))).IsEqualTo(NormalizeJson(Struct.ToString()));
     }
 
-    [Fact]
-    public void CreateStructFromJson()
+    [Test]
+    public async Task CreateStructFromJson()
     {
-        Assert.Equal(Struct, StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse(Json)));
+        await Assert.That(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse(Json))).IsEqualTo(Struct);
     }
 
-    [Fact]
-    public void CreateFromEmptyDocument()
+    [Test]
+    public async Task CreateFromEmptyDocument()
     {
-        var actual = Assert.IsType<Google.Protobuf.WellKnownTypes.Struct>(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")));
-        Assert.Empty(actual.Fields);
+        var actual = await Assert.That(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")))
+            .IsTypeOf<Google.Protobuf.WellKnownTypes.Struct>()
+            .And.Satisfies(a => (IEnumerable<KeyValuePair<string, Google.Protobuf.WellKnownTypes.Value>>)a.Fields, fields => fields.IsEmpty());
     }
 
-    [Fact]
-    public void CreateStructFromNull()
+    [Test]
+    public async Task CreateStructFromNull()
     {
-        Assert.Null(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("null")));
+        await Assert.That(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("null"))).IsNull();
     }
 
-    [Fact]
-    public void CreateJsonFromStruct()
+    [Test]
+    public async Task CreateJsonFromStruct()
     {
-        Assert.NotNull(Struct.ToJsonDocument());
+        await Assert.That(Struct.ToJsonDocument()).IsNotNull();
     }
 
     private static string NormalizeJson(string json)

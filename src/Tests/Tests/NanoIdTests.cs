@@ -11,96 +11,96 @@ public class NanoIds
     private const int DefaultSize = 21;
     private const string DefaultAlphabet = "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    [Fact]
-    public void Default() => Assert.Equal(DefaultSize, NanoId.Generate().Length);
+    [Test]
+    public async Task Default() => await Assert.That(NanoId.Generate()).HasCount().EqualTo(DefaultSize);
 
-    [Fact]
-    public async Task DefaultAsync() => Assert.Equal(DefaultSize, (await NanoId.GenerateAsync()).Length);
+    [Test]
+    public async Task DefaultAsync() => await Assert.That((await NanoId.GenerateAsync())).HasCount().EqualTo(DefaultSize);
 
-    [Fact]
-    public void CustomSize()
+    [Test]
+    public async Task CustomSize()
     {
         const int Size = 10;
-        Assert.Equal(Size, NanoId.Generate(size: Size).Length);
+        await Assert.That(NanoId.Generate(size: Size)).HasCount().EqualTo(Size);
     }
 
-    [Fact]
+    [Test]
     public async Task CustomSizeAsync()
     {
         const int Size = 10;
-        Assert.Equal(Size, (await NanoId.GenerateAsync(size: Size)).Length);
+        await Assert.That((await NanoId.GenerateAsync(size: Size))).HasCount().EqualTo(Size);
     }
 
-    [Fact]
-    public void CustomAlphabet() => Assert.Equal(DefaultSize, NanoId.Generate("1234abcd").Length);
+    [Test]
+    public async Task CustomAlphabet() => await Assert.That(NanoId.Generate("1234abcd")).HasCount().EqualTo(DefaultSize);
 
-    [Fact]
-    public async Task CustomAlphabetAsync() => Assert.Equal(DefaultSize, (await NanoId.GenerateAsync("1234abcd")).Length);
+    [Test]
+    public async Task CustomAlphabetAsync() => await Assert.That((await NanoId.GenerateAsync("1234abcd"))).HasCount().EqualTo(DefaultSize);
 
-    [Fact]
-    public void CustomAlphabetAndSize()
+    [Test]
+    public async Task CustomAlphabetAndSize()
     {
         const int Size = 7;
-        Assert.Equal(Size, NanoId.Generate("1234abcd", Size).Length);
+        await Assert.That(NanoId.Generate("1234abcd", Size)).HasCount().EqualTo(Size);
     }
 
-    [Fact]
+    [Test]
     public async Task CustomAlphabetAndSizeAsync()
     {
         const int Size = 7;
-        Assert.Equal(Size, (await NanoId.GenerateAsync("1234abcd", Size)).Length);
+        await Assert.That((await NanoId.GenerateAsync("1234abcd", Size))).HasCount().EqualTo(Size);
     }
 
-    [Fact]
-    public void CustomRandom() => Assert.Equal(DefaultSize, NanoId.Generate(new Random(10)).Length);
+    [Test]
+    public async Task CustomRandom() => await Assert.That(NanoId.Generate(new Random(10))).HasCount().EqualTo(DefaultSize);
 
-    [Fact]
-    public async Task CustomRandomAsync() => Assert.Equal(DefaultSize, (await NanoId.GenerateAsync(new Random(10))).Length);
+    [Test]
+    public async Task CustomRandomAsync() => await Assert.That((await NanoId.GenerateAsync(new Random(10)))).HasCount().EqualTo(DefaultSize);
 
-    [Fact]
-    public void SingleLetterAlphabet() => Assert.Equal("aaaaa", NanoId.Generate("a", 5));
+    [Test]
+    public async Task SingleLetterAlphabet() => await Assert.That(NanoId.Generate("a", 5)).IsEqualTo("aaaaa");
 
-    [Fact]
-    public async Task SingleLetterAlphabetAsync() => Assert.Equal("aaaaa", await NanoId.GenerateAsync("a", 5));
+    [Test]
+    public async Task SingleLetterAlphabetAsync() => await Assert.That(await NanoId.GenerateAsync("a", 5)).IsEqualTo("aaaaa");
 
-    [Theory]
-    [InlineData(4, "adca")]
-    [InlineData(18, "cbadcbadcbadcbadcc")]
-    public void PredefinedRandomSequence(int size, string expected)
+    [Test]
+    [Arguments(4, "adca")]
+    [Arguments(18, "cbadcbadcbadcbadcc")]
+    public async Task PredefinedRandomSequence(int size, string expected)
     {
         var random = new PredefinedRandom([2, 255, 3, 7, 7, 7, 7, 7, 0, 1]);
-        Assert.Equal(expected, NanoId.Generate(random, "abcde", size));
+        await Assert.That(NanoId.Generate(random, "abcde", size)).IsEqualTo(expected);
     }
 
-    [Theory]
-    [InlineData(4, "adca")]
-    [InlineData(18, "cbadcbadcbadcbadcc")]
+    [Test]
+    [Arguments(4, "adca")]
+    [Arguments(18, "cbadcbadcbadcbadcc")]
     public async Task PredefinedRandomSequenceAsync(int size, string expected)
     {
         var random = new PredefinedRandom([2, 255, 3, 7, 7, 7, 7, 7, 0, 1]);
-        Assert.Equal(expected, (await NanoId.GenerateAsync(random, "abcde", size)));
+        await Assert.That((await NanoId.GenerateAsync(random, "abcde", size))).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void GeneratesUrlFriendlyIDs()
+    [Test]
+    public async Task GeneratesUrlFriendlyIDs()
     {
         const int Total = 10;
         var count = Total;
         while (count > 0)
         {
             var result = NanoId.Generate();
-            Assert.Equal(DefaultSize, result.Length);
+            await Assert.That(result).HasCount().EqualTo(DefaultSize);
 
             foreach (var c in result)
             {
-                Assert.Contains($"{c}", result);
+                await Assert.That(result).Contains($"{c}");
             }
 
             count--;
         }
     }
 
-    [Fact]
+    [Test]
     public async Task GeneratesUrlFriendlyIDsAsync()
     {
         const int Total = 10;
@@ -108,19 +108,19 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            Assert.Equal(DefaultSize, result.Length);
+            await Assert.That( result).HasCount().EqualTo(DefaultSize);
 
             foreach (var c in result)
             {
-                Assert.Contains($"{c}", result);
+                await Assert.That( result).Contains($"{c}");
             }
 
             count--;
         }
     }
 
-    [Fact]
-    public void HasNoCollisions()
+    [Test]
+    public async Task HasNoCollisions()
     {
         const int Total = 100 * 1000;
         var dictUsed = new Dictionary<string, bool>();
@@ -129,14 +129,14 @@ public class NanoIds
         while (count > 0)
         {
             var result = NanoId.Generate();
-            Assert.False(dictUsed.TryGetValue(result, out _));
+            await Assert.That(dictUsed.TryGetValue(result, out _)).IsFalse();
             dictUsed.Add(result, true);
 
             count--;
         }
     }
 
-    [Fact]
+    [Test]
     public async Task HasNoCollisionsAsync()
     {
         const int Total = 100 * 1000;
@@ -146,15 +146,15 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            Assert.False(dictUsed.TryGetValue(result, out _));
+            await Assert.That(dictUsed.TryGetValue(result, out _)).IsFalse();
             dictUsed.Add(result, true);
 
             count--;
         }
     }
 
-    [Fact]
-    public void FlatDistribution()
+    [Test]
+    public async Task FlatDistribution()
     {
         const int Total = 100 * 1000;
         var chars = new Dictionary<char, int>();
@@ -183,11 +183,11 @@ public class NanoIds
         foreach (var c in chars)
         {
             var distribution = c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize);
-            Assert.Equal(1, distribution, 0.05);
+            await Assert.That(distribution).IsBetween(0.95, 1.05);
         }
     }
 
-    [Fact]
+    [Test]
     public async Task FlatDistributionAsync()
     {
         const int Total = 100 * 1000;
@@ -217,12 +217,12 @@ public class NanoIds
         foreach (var c in chars)
         {
             var distribution = c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize);
-            Assert.Equal(1, distribution, 0.05);
+            await Assert.That(distribution).IsBetween(0.95, 1.05);
         }
     }
 
-    [Fact]
-    public void Mask()
+    [Test]
+    public async Task Mask()
     {
         for (var length = 1; length < 256; length++)
         {
@@ -232,7 +232,7 @@ public class NanoIds
 #else
             var mask2 = (2 << 31 - NanoId.LeadingZeroCount((length - 1) | 1)) - 1;
 #endif
-            Assert.Equal(mask2, mask1);
+            await Assert.That( mask1).IsEqualTo(mask2);
         }
     }
 

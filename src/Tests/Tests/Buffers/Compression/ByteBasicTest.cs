@@ -1,17 +1,15 @@
 namespace Altemiq.Buffers.Compression;
 
-using Xunit.Sdk;
-
 public class ByteBasicTest
 {
-    private static readonly ISByteCodec[] codecs = [
-        new VariableByte(),
-        new Differential.DifferentialVariableByte(),
+    private static readonly IEnumerable<Func<ISByteCodec>> codecs = [
+        () => new VariableByte(),
+        () => new Differential.DifferentialVariableByte(),
     ];
 
-    [Theory]
-    [MemberData(nameof(Data))]
-    public void SaulTest(ByteIntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(Data))]
+    public async Task SaulTest(ByteIntegerCodec codec)
     {
         var C = codec.Codec!;
         for (var x = 0; x < 50 * 4; ++x)
@@ -28,13 +26,13 @@ public class ByteBasicTest
             bOffset = x;
             var cOffset = 0;
             C.Decompress(b, ref bOffset, c, ref cOffset, len);
-            Assert.Equal(a, c);
+            await Assert.That(c).IsEquivalentTo(a);
         }
     }
 
-    [Theory]
-    [MemberData(nameof(Data))]
-    public void VaryingLengthTest(ByteIntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(Data))]
+    public async Task VaryingLengthTest(ByteIntegerCodec codec)
     {
         const int N = 4096;
         var data = System.Linq.Enumerable.Range(0, N).ToArray();
@@ -44,20 +42,20 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            Assert.Equal(data.Take(l), answer);
+            await Assert.That(answer).IsEquivalentTo(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            Assert.Equal(data.Take(l), answer);
+            await Assert.That(answer).IsEquivalentTo(data.Take(l));
         }
     }
 
-    [Theory]
-    [MemberData(nameof(Data))]
-    public void VaryingLengthTest2(ByteIntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(Data))]
+    public async Task VaryingLengthTest2(ByteIntegerCodec codec)
     {
         const int N = 128;
         var data = new int[N];
@@ -68,55 +66,29 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            Assert.Equal(data.Take(l), answer);
+            await Assert.That(answer).IsEquivalentTo(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            Assert.Equal(data.Take(l), answer);
+            await Assert.That( answer).IsEquivalentTo(data.Take(l));
         }
     }
 
-    public static TheoryData<ByteIntegerCodec> Data()
+    public static IEnumerable<Func<ByteIntegerCodec>> Data()
     {
-        return new(codecs.Select(c => new ByteIntegerCodec(c)));
+        return codecs.Select(c => new Func<ByteIntegerCodec>(() => new() { Codec = c() }));
     }
 
-    public class ByteIntegerCodec : IXunitSerializable
+    public class ByteIntegerCodec 
     {
-        public ByteIntegerCodec()
-            : this(default)
-        {
-        }
-
-        internal ByteIntegerCodec(ISByteCodec? codec)
-        {
-            Codec = codec;
-        }
-
-        internal ISByteCodec? Codec { get; private set; }
-
-        public void Deserialize(IXunitSerializationInfo info)
-        {
-            if (info.GetValue<Type>(nameof(Codec)) is { } codecType)
-            {
-                Codec = Activator.CreateInstance(codecType) as ISByteCodec;
-            }
-        }
-
-        public void Serialize(IXunitSerializationInfo info)
-        {
-            if (Codec is not null)
-            {
-                info.AddValue(nameof(Codec), Codec.GetType());
-            }
-        }
+        internal ISByteCodec Codec { get; init; } = null!;
 
         public override string? ToString()
         {
-            return Codec?.ToString() ?? base.ToString();
+            return Codec.ToString();
         }
     }
 }

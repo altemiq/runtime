@@ -5,21 +5,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 public class HybridCacheTests
 {
-    [Fact]
-    public void AddSerializerFactory()
+    [Test]
+    public async Task AddSerializerFactory()
     {
         var services = new ServiceCollection();
         _ = services.AddHybridCache().AddProtobufSerializerFactory();
-        var factory = Assert.IsType<IHybridCacheSerializerFactory>(services.BuildServiceProvider().GetService<IHybridCacheSerializerFactory>(), false);
-        Assert.True(factory.TryCreateSerializer<Tests.SomeProtobufMessage>(out var serializer));
-        Assert.NotNull(serializer);
+        var factory = await Assert.That(services.BuildServiceProvider().GetService<IHybridCacheSerializerFactory>()).IsAssignableTo<IHybridCacheSerializerFactory>();
+        await Assert.That(factory!.TryCreateSerializer<Tests.SomeProtobufMessage>(out var serializer)).IsTrue();
+        await Assert.That(serializer).IsNotNull();
     }
 
-    [Fact]
-    public void AddSerializer()
+    [Test]
+    public async Task AddSerializer()
     {
         var services = new ServiceCollection();
         _ = services.AddHybridCache().AddProtobufSerializer<Tests.SomeProtobufMessage>();
-        Assert.NotNull(services.BuildServiceProvider().GetService<IHybridCacheSerializer<Tests.SomeProtobufMessage>>());
+        await Assert.That(services.BuildServiceProvider().GetService<IHybridCacheSerializer<Tests.SomeProtobufMessage>>()).IsNotNull();
     }
 }

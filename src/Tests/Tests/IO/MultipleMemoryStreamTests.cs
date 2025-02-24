@@ -8,17 +8,14 @@ namespace Altemiq.IO;
 
 public class MultipleMemoryStreamTests
 {
-    [Fact]
-    public void CreateMultiple()
+    [Test]
+    public async Task CreateMultiple()
     {
         var dictionary = new Dictionary<string, Stream>();
         var stream = new MultipleMemoryStream(dictionary);
-        Assert.True(stream.SwitchTo("first"));
-        Assert.True(stream.SwitchTo("second"));
+        await Assert.That(stream.SwitchTo("first")).IsTrue();
+        await Assert.That(stream.SwitchTo("second")).IsTrue();
 
-        Assert.Collection(
-            dictionary.Values,
-            first => Assert.IsType<MemoryStream>(first),
-            second => Assert.IsType<MemoryStream>(second));
+        await Assert.That(dictionary.Values).All().Satisfy(x => x.IsTypeOf<MemoryStream>());
     }
 }

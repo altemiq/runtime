@@ -6,28 +6,30 @@
 
 namespace Altemiq.Runtime;
 
+using TUnit.Assertions.AssertConditions.Throws;
+
 #if DEBUG
 public class JsonRuntimeFormatTests
 {
-    [Theory]
-    [InlineData("PortableRuntimeIdentifierGraph.json.gz")]
-    [InlineData("runtime.json.gz")]
-    public void GetManifestStream(string name)
+    [Test]
+    [Arguments("PortableRuntimeIdentifierGraph.json.gz")]
+    [Arguments("runtime.json.gz")]
+    public async Task GetManifestStream(string name)
     {
-        Assert.Null(Record.Exception(() => GetManifestStreamFromAssembly(name)));
+        await Assert.That(() => GetManifestStreamFromAssembly(name)).ThrowsNothing();
     }
 
-    [Theory]
-    [InlineData("PortableRuntimeIdentifierGraph.json.gz")]
-    [InlineData("runtime.json.gz")]
-    public void ReadJsonFromAssembly(string name)
+    [Test]
+    [Arguments("PortableRuntimeIdentifierGraph.json.gz")]
+    [Arguments("runtime.json.gz")]
+    public async Task ReadJsonFromAssembly(string name)
     {
         using var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(name), System.IO.Compression.CompressionMode.Decompress, false);
         var json = JsonRuntimeFormat.ReadRuntimeGraph(stream!);
-        Assert.NotNull(json);
-        Assert.InRange(json.Count, 10, int.MaxValue);
+        await Assert.That(json).IsNotNull();
+        await Assert.That(json.Count).IsBetween(10, int.MaxValue);
 
-        Assert.Contains("linux", json.Select(static x => x.Runtime));
+        await Assert.That(json.Select(static x => x.Runtime)).Contains("linux");
     }
 
     private static Stream GetManifestStreamFromAssembly(string name) => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();

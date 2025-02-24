@@ -10,14 +10,14 @@ using Altemiq.Runtime.InteropServices;
 
 public class RuntimeConfigTests
 {
-    [Fact]
-    public void ReadRuntimeConfig() => Assert.NotNull(RuntimeEnvironment.GetRuntimeConfig());
+    [Test]
+    public async Task ReadRuntimeConfig() => await Assert.That(RuntimeEnvironment.GetRuntimeConfig()).IsNotNull();
 
-    [Fact]
-    public void SaveRuntimeConfig()
+    [Test]
+    public async Task SaveRuntimeConfig()
     {
         var runtimeConfigRaw = NormalizeLineEndings(File.ReadAllText(RuntimeEnvironment.GetRuntimeConfigFileName()!));
-        Assert.Equal(runtimeConfigRaw, NormalizeLineEndings(RuntimeEnvironment.GetRuntimeConfig()!.ToString()));
+        await Assert.That(NormalizeLineEndings(RuntimeEnvironment.GetRuntimeConfig()!.ToString())).IsEqualTo(runtimeConfigRaw);
 
         static string NormalizeLineEndings(string input)
         {

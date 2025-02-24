@@ -8,371 +8,377 @@ namespace Altemiq.Buffers.Binary;
 
 public class BinaryPrimitivesTests
 {
-    private const byte PositiveByte = 0x7F;
+    private const int PositiveByte = 0x7F;
 
-    private const byte FloatByte = 0xEF;
+    private const int FloatByte = 0xEF;
 
-    [Theory]
-    [InlineData(short.MaxValue, PositiveByte, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue)]
-    public void WriteInt16BigEndian(short value, byte first, byte second)
+    private const int Int16Negative = -1;
+
+    private const int Int16MaxValue = short.MaxValue;
+
+    private const int ByteMaxValue = byte.MaxValue;
+
+    [Test]
+    [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue)]
+    [Arguments(Int16Negative, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteInt16BigEndian(short value, byte first, byte second)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
+        byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteInt16BigEndian(bytes, value);
-        Assert.Equal([first, second], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(short.MaxValue, PositiveByte, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue)]
-    public void WriteInt16LittleEndian(short value, byte second, byte first)
+    [Test]
+    [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue)]
+    [Arguments(Int16Negative, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteInt16LittleEndian(short value, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
+        byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteInt16LittleEndian(bytes, value);
-        Assert.Equal([first, second], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(int.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteInt32BigEndian(int value, byte first, byte second, byte third, byte forth)
+    [Test]
+    [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteInt32BigEndian(int value, byte first, byte second, byte third, byte forth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(int)];
+        byte[] bytes = new byte[sizeof(int)];
         BinaryPrimitives.WriteInt32BigEndian(bytes, value);
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(int.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteInt32LittleEndian(int value, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteInt32LittleEndian(int value, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(int)];
+        byte[] bytes = new byte[sizeof(int)];
         BinaryPrimitives.WriteInt32LittleEndian(bytes, value);
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(long.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteInt64BigEndian(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
+    [Test]
+    [Arguments(long.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteInt64BigEndian(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(long)];
+        byte[] bytes = new byte[sizeof(long)];
         BinaryPrimitives.WriteInt64BigEndian(bytes, value);
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(long.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteInt64LittleEndian(long value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(long.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteInt64LittleEndian(long value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(long)];
+        byte[] bytes = new byte[sizeof(long)];
         BinaryPrimitives.WriteInt64LittleEndian(bytes, value);
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(ushort.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ushort.MaxValue / 2, PositiveByte, byte.MaxValue)]
-    public void WriteUInt16BigEndian(ushort value, byte first, byte second)
+    [Test]
+    [Arguments(ushort.MaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ushort.MaxValue / 2, PositiveByte, ByteMaxValue)]
+    public async Task WriteUInt16BigEndian(ushort value, byte first, byte second)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ushort)];
+        byte[] bytes = new byte[sizeof(ushort)];
         BinaryPrimitives.WriteUInt16BigEndian(bytes, value);
-        Assert.Equal([first, second], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(ushort.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ushort.MaxValue / 2, PositiveByte, byte.MaxValue)]
-    public void WriteUInt16LittleEndian(ushort value, byte second, byte first)
+    [Test]
+    [Arguments(ushort.MaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ushort.MaxValue / 2, PositiveByte, ByteMaxValue)]
+    public async Task WriteUInt16LittleEndian(ushort value, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ushort)];
+        byte[] bytes = new byte[sizeof(ushort)];
         BinaryPrimitives.WriteUInt16LittleEndian(bytes, value);
-        Assert.Equal([first, second], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(uint.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(uint.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteUInt32BigEndian(uint value, byte first, byte second, byte third, byte forth)
+    [Test]
+    [Arguments(uint.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(uint.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteUInt32BigEndian(uint value, byte first, byte second, byte third, byte forth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(uint)];
+        byte[] bytes = new byte[sizeof(uint)];
         BinaryPrimitives.WriteUInt32BigEndian(bytes, value);
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(uint.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(uint.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteUInt32LittleEndian(uint value, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(uint.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(uint.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteUInt32LittleEndian(uint value, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(uint)];
+        byte[] bytes = new byte[sizeof(uint)];
         BinaryPrimitives.WriteUInt32LittleEndian(bytes, value);
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(ulong.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ulong.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteUInt64BigEndian(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
+    [Test]
+    [Arguments(ulong.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ulong.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteUInt64BigEndian(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ulong)];
+        byte[] bytes = new byte[sizeof(ulong)];
         BinaryPrimitives.WriteUInt64BigEndian(bytes, value);
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(ulong.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ulong.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteUInt64LittleEndian(ulong value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(ulong.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ulong.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteUInt64LittleEndian(ulong value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ulong)];
+        byte[] bytes = new byte[sizeof(ulong)];
         BinaryPrimitives.WriteUInt64LittleEndian(bytes, value);
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
 #if NET5_0_OR_GREATER
-    [Theory]
-    [InlineData(65504D, 0x7B, byte.MaxValue)]
-    [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void WriteHalfBigEndian(Half value, byte first, byte second)
+    [Test]
+    [Arguments(65504D, 0x7B, ByteMaxValue)]
+    [Arguments(-65504D, 0xFB, ByteMaxValue)]
+    public async Task WriteHalfBigEndian(Half value, byte first, byte second)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
+        byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteHalfBigEndian(bytes, value);
-        Assert.Equal([first, second], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(65504D, 0x7B, byte.MaxValue)]
-    [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void WriteHalfLittleEndian(Half value, byte second, byte first)
+    [Test]
+    [Arguments(65504D, 0x7B, ByteMaxValue)]
+    [Arguments(-65504D, 0xFB, ByteMaxValue)]
+    public async Task WriteHalfLittleEndian(Half value, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
+        byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteHalfLittleEndian(bytes, value);
-        Assert.Equal([first, second], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
     }
 #endif
 
-    [Theory]
-    [InlineData(float.MaxValue, PositiveByte, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    [InlineData(float.MinValue, byte.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    public void WriteSingleBigEndian(float value, byte first, byte second, byte third, byte forth)
+    [Test]
+    [Arguments(float.MaxValue, PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    [Arguments(float.MinValue, ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteSingleBigEndian(float value, byte first, byte second, byte third, byte forth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(float)];
+        byte[] bytes = new byte[sizeof(float)];
         BinaryPrimitives.WriteSingleBigEndian(bytes, value);
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(float.MaxValue, PositiveByte, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    [InlineData(float.MinValue, byte.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    public void WriteSingleLittleEndian(float value, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(float.MaxValue, PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    [Arguments(float.MinValue, ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteSingleLittleEndian(float value, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(float)];
+        byte[] bytes = new byte[sizeof(float)];
         BinaryPrimitives.WriteSingleLittleEndian(bytes, value);
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(double.MaxValue, PositiveByte, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(double.MinValue, byte.MaxValue, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteDoubleBigEndian(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
+    [Test]
+    [Arguments(double.MaxValue, PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(double.MinValue, ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteDoubleBigEndian(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(double)];
+        byte[] bytes = new byte[sizeof(double)];
         BinaryPrimitives.WriteDoubleBigEndian(bytes, value);
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(double.MaxValue, PositiveByte, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(double.MinValue, byte.MaxValue, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void WriteDoubleLittleEndian(double value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(double.MaxValue, PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(double.MinValue, ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task WriteDoubleLittleEndian(double value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(double)];
+        byte[] bytes = new byte[sizeof(double)];
         BinaryPrimitives.WriteDoubleLittleEndian(bytes, value);
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(short.MaxValue, PositiveByte, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteInt16BigEndian(short value, byte first, byte second)
+    [Test]
+    [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteInt16BigEndian(short value, byte first, byte second)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
-        Assert.True(BinaryPrimitives.TryWriteInt16BigEndian(bytes, value));
-        Assert.Equal([first, second], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(short)];
+        await Assert.That(BinaryPrimitives.TryWriteInt16BigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(short.MaxValue, PositiveByte, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteInt16LittleEndian(short value, byte second, byte first)
+    [Test]
+    [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteInt16LittleEndian(short value, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
-        Assert.True(BinaryPrimitives.TryWriteInt16LittleEndian(bytes, value));
-        Assert.Equal([first, second], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(short)];
+        await Assert.That(BinaryPrimitives.TryWriteInt16LittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(int.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteInt32BigEndian(int value, byte first, byte second, byte third, byte forth)
+    [Test]
+    [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteInt32BigEndian(int value, byte first, byte second, byte third, byte forth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(int)];
-        Assert.True(BinaryPrimitives.TryWriteInt32BigEndian(bytes, value));
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(int)];
+        await Assert.That(BinaryPrimitives.TryWriteInt32BigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(int.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteInt32LittleEndian(int value, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteInt32LittleEndian(int value, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(int)];
-        Assert.True(BinaryPrimitives.TryWriteInt32LittleEndian(bytes, value));
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(int)];
+        await Assert.That(BinaryPrimitives.TryWriteInt32LittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(long.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteInt64BigEndian(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
+    [Test]
+    [Arguments(long.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteInt64BigEndian(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(long)];
-        Assert.True(BinaryPrimitives.TryWriteInt64BigEndian(bytes, value));
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(long)];
+        await Assert.That(BinaryPrimitives.TryWriteInt64BigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(long.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(-1, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteInt64LittleEndian(long value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(long.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteInt64LittleEndian(long value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(long)];
-        Assert.True(BinaryPrimitives.TryWriteInt64LittleEndian(bytes, value));
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(long)];
+        await Assert.That(BinaryPrimitives.TryWriteInt64LittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(ushort.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ushort.MaxValue / 2, PositiveByte, byte.MaxValue)]
-    public void TryWriteUInt16BigEndian(ushort value, byte first, byte second)
+    [Test]
+    [Arguments(ushort.MaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ushort.MaxValue / 2, PositiveByte, ByteMaxValue)]
+    public async Task TryWriteUInt16BigEndian(ushort value, byte first, byte second)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ushort)];
-        Assert.True(BinaryPrimitives.TryWriteUInt16BigEndian(bytes, value));
-        Assert.Equal([first, second], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(ushort)];
+        await Assert.That(BinaryPrimitives.TryWriteUInt16BigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(ushort.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ushort.MaxValue / 2, PositiveByte, byte.MaxValue)]
-    public void TryWriteUInt16LittleEndian(ushort value, byte second, byte first)
+    [Test]
+    [Arguments(ushort.MaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ushort.MaxValue / 2, PositiveByte, ByteMaxValue)]
+    public async Task TryWriteUInt16LittleEndian(ushort value, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ushort)];
-        Assert.True(BinaryPrimitives.TryWriteUInt16LittleEndian(bytes, value));
-        Assert.Equal([first, second], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(ushort)];
+        await Assert.That(BinaryPrimitives.TryWriteUInt16LittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(uint.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(uint.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteUInt32BigEndian(uint value, byte first, byte second, byte third, byte forth)
+    [Test]
+    [Arguments(uint.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(uint.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteUInt32BigEndian(uint value, byte first, byte second, byte third, byte forth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(uint)];
-        Assert.True(BinaryPrimitives.TryWriteUInt32BigEndian(bytes, value));
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(uint)];
+        await Assert.That(BinaryPrimitives.TryWriteUInt32BigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(uint.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(uint.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteUInt32LittleEndian(uint value, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(uint.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(uint.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteUInt32LittleEndian(uint value, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(uint)];
-        Assert.True(BinaryPrimitives.TryWriteUInt32LittleEndian(bytes, value));
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(uint)];
+        await Assert.That(BinaryPrimitives.TryWriteUInt32LittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(ulong.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ulong.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteUInt64BigEndian(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
+    [Test]
+    [Arguments(ulong.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ulong.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteUInt64BigEndian(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ulong)];
-        Assert.True(BinaryPrimitives.TryWriteUInt64BigEndian(bytes, value));
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(ulong)];
+        await Assert.That(BinaryPrimitives.TryWriteUInt64BigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(ulong.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(ulong.MaxValue / 2, PositiveByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteUInt64LittleEndian(ulong value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(ulong.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(ulong.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteUInt64LittleEndian(ulong value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(ulong)];
-        Assert.True(BinaryPrimitives.TryWriteUInt64LittleEndian(bytes, value));
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(ulong)];
+        await Assert.That(BinaryPrimitives.TryWriteUInt64LittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
 #if NET5_0_OR_GREATER
-    [Theory]
-    [InlineData(65504D, 0x7B, byte.MaxValue)]
-    [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void TryWriteHalfBigEndian(Half value, byte first, byte second)
+    [Test]
+    [Arguments(65504D, 0x7B, ByteMaxValue)]
+    [Arguments(-65504D, 0xFB, ByteMaxValue)]
+    public async Task TryWriteHalfBigEndian(Half value, byte first, byte second)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
-        Assert.True(BinaryPrimitives.TryWriteHalfBigEndian(bytes, value));
-        Assert.Equal([first, second], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(short)];
+        await Assert.That(BinaryPrimitives.TryWriteHalfBigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
-    [Theory]
-    [InlineData(65504D, 0x7B, byte.MaxValue)]
-    [InlineData(-65504D, 0xFB, byte.MaxValue)]
-    public void TryWriteHalfLittleEndian(Half value, byte second, byte first)
+    [Test]
+    [Arguments(65504D, 0x7B, ByteMaxValue)]
+    [Arguments(-65504D, 0xFB, ByteMaxValue)]
+    public async Task TryWriteHalfLittleEndian(Half value, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(short)];
-        Assert.True(BinaryPrimitives.TryWriteHalfLittleEndian(bytes, value));
-        Assert.Equal([first, second], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(short)];
+        await Assert.That(BinaryPrimitives.TryWriteHalfLittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 #endif
 
-    [Theory]
-    [InlineData(float.MaxValue, PositiveByte, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    [InlineData(float.MinValue, byte.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteSingleBigEndian(float value, byte first, byte second, byte third, byte forth)
+    [Test]
+    [Arguments(float.MaxValue, PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    [Arguments(float.MinValue, ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteSingleBigEndian(float value, byte first, byte second, byte third, byte forth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(float)];
-        Assert.True(BinaryPrimitives.TryWriteSingleBigEndian(bytes, value));
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(float)];
+        await Assert.That(BinaryPrimitives.TryWriteSingleBigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(float.MaxValue, PositiveByte, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    [InlineData(float.MinValue, byte.MaxValue, PositiveByte, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteSingleLittleEndian(float value, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(float.MaxValue, PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    [Arguments(float.MinValue, ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteSingleLittleEndian(float value, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(float)];
-        Assert.True(BinaryPrimitives.TryWriteSingleLittleEndian(bytes, value));
-        Assert.Equal([first, second, third, forth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(float)];
+        await Assert.That(BinaryPrimitives.TryWriteSingleLittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
-    [Theory]
-    [InlineData(double.MaxValue, PositiveByte, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(double.MinValue, byte.MaxValue, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteDoubleBigEndian(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
+    [Test]
+    [Arguments(double.MaxValue, PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(double.MinValue, ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteDoubleBigEndian(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(double)];
-        Assert.True(BinaryPrimitives.TryWriteDoubleBigEndian(bytes, value));
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(double)];
+        await Assert.That(BinaryPrimitives.TryWriteDoubleBigEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
-    [Theory]
-    [InlineData(double.MaxValue, PositiveByte, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    [InlineData(double.MinValue, byte.MaxValue, FloatByte, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue)]
-    public void TryWriteDoubleLittleEndian(double value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
+    [Test]
+    [Arguments(double.MaxValue, PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    [Arguments(double.MinValue, ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
+    public async Task TryWriteDoubleLittleEndian(double value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
-        Span<byte> bytes = stackalloc byte[sizeof(double)];
-        Assert.True(BinaryPrimitives.TryWriteDoubleLittleEndian(bytes, value));
-        Assert.Equal([first, second, third, forth, fifth, sixth, seventh, eighth], bytes.ToArray());
+        byte[] bytes = new byte[sizeof(double)];
+        await Assert.That(BinaryPrimitives.TryWriteDoubleLittleEndian(bytes, value)).IsTrue();
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 }

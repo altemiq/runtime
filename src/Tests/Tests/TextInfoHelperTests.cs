@@ -10,25 +10,29 @@ using System.Globalization;
 
 public class TextInfoHelperTests
 {
-    [Fact]
-    public void GetInfoFromCultureInfo()
+    [Test]
+    public async Task GetInfoFromCultureInfo()
     {
         var cultureInfo = CultureInfo.CurrentCulture;
-        Assert.Equal(cultureInfo.TextInfo, TextInfoHelper.GetInstance(cultureInfo));
+        await Test(TextInfoHelper.GetInstance, cultureInfo, cultureInfo);
     }
 
-    [Fact]
-    public void GetInfoFromFormatProvider()
+    [Test]
+    public Task GetInfoFromFormatProvider()
     {
         var cultureInfo = CultureInfo.CurrentCulture;
-        var numberFormatProvider = NumberFormatInfo.GetInstance(cultureInfo);
-        Assert.Equal(cultureInfo.TextInfo, TextInfoHelper.GetInstance(numberFormatProvider));
+        return Test(TextInfoHelper.GetInstance, NumberFormatInfo.GetInstance(cultureInfo), cultureInfo);
     }
 
-    [Fact]
-    public void GetInfoFromNull()
+    [Test]
+    public Task GetInfoFromNull()
     {
-        var cultureInfo = CultureInfo.CurrentCulture;
-        Assert.Equal(cultureInfo.TextInfo, TextInfoHelper.GetInstance(default));
+        return Test(TextInfoHelper.GetInstance, default(IFormatProvider), CultureInfo.CurrentCulture);
+    }
+
+    private static async Task Test<T>(Func<T?, TextInfo> func, T? value, CultureInfo cultureInfo)
+        where T : IFormatProvider
+    {
+        await Assert.That(func(value)).IsEqualTo(cultureInfo.TextInfo);
     }
 }

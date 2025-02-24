@@ -8,22 +8,23 @@ namespace Altemiq.Runtime;
 
 public class ResolveTests
 {
-    [Fact]
-    public void FromLoaded()
+    [Test]
+    public async Task FromLoaded()
     {
+        var actualAssemblyName = typeof(ArgumentsAttribute).Assembly.GetName();
         var assemblyName = new System.Reflection.AssemblyName
         {
-            Name = "xunit.v3.core",
-            Version = new Version(1, 0),
+            Name = actualAssemblyName.Name,
+            Version = actualAssemblyName.Version,
         };
 
-        Assert.NotNull(Resolve.ResolveRuntimeAssembly(assemblyName));
+        await Assert.That(Resolve.ResolveRuntimeAssembly(assemblyName)).IsNotNull();
     }
 
-    [Fact]
-    public void LoadFromLib()
+    [Test]
+    public async Task LoadFromLib()
     {
         var assemblyName = new System.Reflection.AssemblyName { Name = "Altemiq.Dummy" };
-        Assert.NotNull(Resolve.ResolveRuntimeAssembly(assemblyName));
+        await Assert.That(Resolve.ResolveRuntimeAssembly(assemblyName)).IsNotNull();
     }
 }

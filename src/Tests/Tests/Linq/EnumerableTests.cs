@@ -10,30 +10,30 @@ public class EnumerableTests
 {
     public class WhereNotNull
     {
-        [Theory]
-        [MemberData(nameof(GetClassSequences), MemberType = typeof(EnumerableTests))]
-        public void Class(string?[] sequence, int count) => Assert.Equal(sequence.WhereNotNull().Count(), sequence.Length - count);
+        [Test]
+        [MethodDataSource(typeof(EnumerableTests), nameof(GetClassSequences))]
+        public async Task Class(string?[] sequence, int count) => await Assert.That(sequence.WhereNotNull()).HasCount().EqualTo(sequence.Length - count);
 
-        [Theory]
-        [MemberData(nameof(GetStructSequences))]
-        public void Struct(int?[] sequence, int count) => Assert.Equal(sequence.WhereNotNull().Count(), count);
+        [Test]
+        [MethodDataSource(nameof(GetStructSequences))]
+        public async Task Struct(int?[] sequence, int count) => await Assert.That(sequence.WhereNotNull()).HasCount().EqualTo(count);
 
-        public static TheoryData<int?[], int> GetStructSequences() => new()
+        public static IEnumerable<Func<(int?[], int)>> GetStructSequences()
         {
-            { System.Linq.Enumerable.Repeat((int?)1, 10).ToArray(), 10 },
-            { System.Linq.Enumerable.Repeat(default(int?), 10).ToArray(), 0 },
-            { [ default, 1, default, 2, default, 3, default, 4, default, 5], 5 },
-        };
+            yield return () => (System.Linq.Enumerable.Repeat((int?)1, 10).ToArray(), 10);
+            yield return () => (System.Linq.Enumerable.Repeat(default(int?), 10).ToArray(), 0);
+            yield return () => ([ default, 1, default, 2, default, 3, default, 4, default, 5], 5);
+        }
     }
 
-    [Theory]
-    [MemberData(nameof(GetClassSequences))]
-    public void WhereNull(string?[] sequence, int count) => Assert.Equal(sequence.WhereNull().Count(), count);
+    [Test]
+    [MethodDataSource(nameof(GetClassSequences))]
+    public async Task WhereNull(string?[] sequence, int count) => await Assert.That(sequence.WhereNull()).HasCount().EqualTo(count);
 
-    public static TheoryData<string?[], int> GetClassSequences() => new()
+    public static IEnumerable<Func<(string?[], int)>> GetClassSequences()
     {
-        { System.Linq.Enumerable.Repeat(string.Empty, 10).ToArray(), 0 },
-        { System.Linq.Enumerable.Repeat(default(string), 10).ToArray(), 10 },
-        { [string.Empty, default, string.Empty, default, string.Empty, default, string.Empty, default, string.Empty, default], 5 },
-    };
+        yield return () => (System.Linq.Enumerable.Repeat(string.Empty, 10).ToArray(), 0);
+        yield return () => (System.Linq.Enumerable.Repeat(default(string), 10).ToArray(), 10);
+        yield return () => ([string.Empty, default, string.Empty, default, string.Empty, default, string.Empty, default, string.Empty, default], 5);
+    }
 }

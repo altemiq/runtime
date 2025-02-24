@@ -10,53 +10,53 @@ public partial class ListTests
 {
     public class IndexOf
     {
-        [Theory]
-        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
-        public void Int32(IEnumerable<int> first, IEnumerable<int> second)
+        [Test]
+        [MethodDataSource(typeof(ListTests), nameof(GetLists))]
+        public async Task Int32(IEnumerable<int> first, IEnumerable<int> second)
         {
-            Assert.Equal(1, TestListList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1));
-            Assert.Equal(1, TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1));
+            await Assert.That(TestListList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1)).IsEqualTo(1);
+            await Assert.That(TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1)).IsEqualTo(1);
         }
 
-        [Fact]
-        public void WithNulls()
+        [Test]
+        public async Task WithNulls()
         {
-            Assert.Equal(-1, ((IList<int>)null!).IndexOf((IList<int>)null!));
-            Assert.Equal(-1, ((IReadOnlyList<int>)null!).IndexOf((IReadOnlyList<int>)null!));
+            await Assert.That(((IList<int>)null!).IndexOf((IList<int>)null!)).IsEqualTo(-1);
+            await Assert.That(((IReadOnlyList<int>)null!).IndexOf((IReadOnlyList<int>)null!)).IsEqualTo(-1);
         }
 
-        [Theory]
-        [MemberData(nameof(GetInt32ReadOnlyLists), MemberType = typeof(ListTests))]
-        public void Value(IReadOnlyList<int> list) => Assert.Equal(2, list.IndexOf(10, 1));
+        [Test]
+        [MethodDataSource(typeof(ListTests), nameof(GetInt32ReadOnlyLists))]
+        public async Task Value(IReadOnlyList<int> list) => await Assert.That(list.IndexOf(10, 1)).IsEqualTo(2);
 
-        [Theory]
-        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
-        public void Any(IEnumerable<int> first, IEnumerable<int> second)
+        [Test]
+        [MethodDataSource(typeof(ListTests), nameof(GetLists))]
+        public async Task Any(IEnumerable<int> first, IEnumerable<int> second)
         {
-            Assert.Equal(1, TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
-            Assert.Equal(1, TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1));
+            await Assert.That(TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1)).IsEqualTo(1);
+            await Assert.That(TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1)).IsEqualTo(1);
         }
 
-        [Theory]
-        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
-        public void Lists(IEnumerable<int> first, IEnumerable<int> second)
+        [Test]
+        [MethodDataSource(typeof(ListTests), nameof(GetLists))]
+        public async Task Lists(IEnumerable<int> first, IEnumerable<int> second)
         {
             if (first is IList<int> firstList)
             {
-                Assert.Equal(1, firstList.IndexOf(2, 0));
+                await Assert.That(firstList.IndexOf(2, 0)).IsEqualTo(1);
             }
             else if (first is IReadOnlyList<int> firstReadOnlyList)
             {
-                Assert.Equal(1, firstReadOnlyList.IndexOf(2, 0));
+                await Assert.That(firstReadOnlyList.IndexOf(2, 0)).IsEqualTo(1);
             }
 
             if (second is IList<int> secondList)
             {
-                Assert.Equal(0, secondList.IndexOf(2, 0));
+                await Assert.That(secondList.IndexOf(2, 0)).IsEqualTo(0);
             }
             else if (second is IReadOnlyList<int> secondReadOnlyList)
             {
-                Assert.Equal(0, secondReadOnlyList.IndexOf(2, 0));
+                await Assert.That(secondReadOnlyList.IndexOf(2, 0)).IsEqualTo(0);
             }
         }
     }

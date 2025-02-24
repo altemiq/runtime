@@ -13,6 +13,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">
@@ -31,16 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$([MSBuild]::GetPathOfFileAbove(xunit.runner.net.json))" CopyToOutputDirectory="PreserveNewest" Condition="$(IsNetOnCore)" Link="xunit.runner.json" />
-    <None Include="$([MSBuild]::GetPathOfFileAbove(xunit.runner.json))" CopyToOutputDirectory="PreserveNewest" Condition="!$(IsNetOnCore)" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

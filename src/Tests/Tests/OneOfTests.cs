@@ -8,29 +8,29 @@ namespace Altemiq;
 
 public class OneOfTests
 {
-    [Fact]
-    public void DefaultConstructorSetsValueToDefaultValueOfT0() => Assert.True(new OneOf<int, bool>().Match(static n => n == default, static n => false));
+    [Test]
+    public async Task DefaultConstructorSetsValueToDefaultValueOfT0() => await Assert.That(new OneOf<int, bool>().Match(static n => n == default, static n => false)).IsTrue();
 
-    [Fact]
-    public void DefaultSetsValueToDefaultValueOfT0() => Assert.True(default(OneOf<int, bool>).Match(static n => n == default, static n => false));
+    [Test]
+    public async Task DefaultSetsValueToDefaultValueOfT0() => await Assert.That(default(OneOf<int, bool>).Match(static n => n == default, static n => false)).IsTrue();
 
-    [Fact]
-    public void AreEqual()
+    [Test]
+    public async Task AreEqual()
     {
         var a = OneOf.From(1);
         var b = a;
-        Array.Equals(a, b);
+        await Assert.That(a).IsEqualTo(b);
     }
 
-    [Fact]
-    public void ResolveIFooFromResultMethod() => Assert.IsType<Foo>(OneOf.From<IFoo, int>(new Foo()).AsT0);
+    [Test]
+    public async Task ResolveIFooFromResultMethod() => await Assert.That(OneOf.From<IFoo, int>(new Foo()).AsT0).IsTypeOf<Foo>();
 
-    [Fact]
-    public void MapValue()
+    [Test]
+    public async Task MapValue()
     {
-        Assert.Equal("2.1", ResolveString(2.1));
-        Assert.Equal("4", ResolveString(4));
-        Assert.Equal("6", ResolveString("6"));
+        await Assert.That(ResolveString(2.1)).IsEqualTo("2.1");
+        await Assert.That(ResolveString(4)).IsEqualTo("4");
+        await Assert.That(ResolveString("6")).IsEqualTo("6");
 
         static string? ResolveString(OneOf<double, int, string> input)
         {
@@ -43,39 +43,35 @@ public class OneOfTests
 
     private static readonly System.Text.Json.JsonSerializerOptions options = new() { Converters = { new OneOfJsonConverter() } };
 
-    [Fact]
-    public void CanSerializeOneOfValueTransparently() => Assert.Equal("{\"Value\":\"A string value\"}", System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, options));
+    [Test]
+    public async Task CanSerializeOneOfValueTransparently() => await Assert.That(System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, options)).IsEqualTo("{\"Value\":\"A string value\"}");
 
-    [Fact]
-    public void TheValueAndTypeNameAreFormattedCorrectly() => Assert.Equal("System.Int32: 42", OneOf.From<string, int, DateTime, decimal>(42).ToString());
+    [Test]
+    public async Task TheValueAndTypeNameAreFormattedCorrectly() => await Assert.That(OneOf.From<string, int, DateTime, decimal>(42).ToString()).IsEqualTo("System.Int32: 42");
 
-    [Fact]
-    public void CallingToStringOnANestedNonRecursiveTypeWorks() => Assert.Equal($"{nameof(Altemiq)}.{nameof(OneOf)}`2[[System.String, {typeof(string).Assembly.FullName}],[System.Boolean, {typeof(bool).Assembly.FullName}]]: System.Boolean: True", OneOf.From<OneOf<string, bool>, OneOf<bool, string>>(OneOf.From<string, bool>(true)).ToString());
+    [Test]
+    public async Task CallingToStringOnANestedNonRecursiveTypeWorks() => await Assert.That(OneOf.From<OneOf<string, bool>, OneOf<bool, string>>(OneOf.From<string, bool>(true)).ToString()).IsEqualTo($"{nameof(Altemiq)}.{nameof(OneOf)}`2[[System.String, {typeof(string).Assembly.FullName}],[System.Boolean, {typeof(bool).Assembly.FullName}]]: System.Boolean: True");
 
-    [Theory]
-    [MemberData(nameof(DateData))]
-    public void LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => Assert.Equal(expectedResult, RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString));
+    [Test]
+    [MethodDataSource(nameof(DateData))]
+    public async Task LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That( RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString)).IsEqualTo(expectedResult);
 
-    [Theory]
-    [MemberData(nameof(DateData))]
-    public void RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => Assert.Equal(expectedResult, RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString));
+    [Test]
+    [MethodDataSource(nameof(DateData))]
+    public async Task RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That( RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString)).IsEqualTo(expectedResult);
 
-    [Theory]
-    [MemberData(nameof(DateData))]
-    public void SpecifyCulture(string cultureName, DateTime dateTime, string expectedResult) => Assert.Equal(expectedResult, OneOf.From<string, DateTime>(dateTime).ToString(new System.Globalization.CultureInfo(cultureName, false)));
+    [Test]
+    [MethodDataSource(nameof(DateData))]
+    public async Task SpecifyCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That( OneOf.From<string, DateTime>(dateTime).ToString(new System.Globalization.CultureInfo(cultureName, false))).IsEqualTo(expectedResult);
 
-    public static TheoryData<string, DateTime, string> DateData()
+    public static IEnumerable<Func<(string, DateTime, string)>> DateData()
     {
-        var theoryData = new TheoryData<string, DateTime, string>();
+        yield return () => Create(new System.Globalization.CultureInfo("en-NZ"), new DateTime(2019, 1, 2, 1, 2, 3));
+        yield return () => Create(new System.Globalization.CultureInfo("en-US"), new DateTime(2019, 1, 2, 1, 2, 3));
 
-        Add(theoryData, new System.Globalization.CultureInfo("en-NZ"), new DateTime(2019, 1, 2, 1, 2, 3));
-        Add(theoryData, new System.Globalization.CultureInfo("en-US"), new DateTime(2019, 1, 2, 1, 2, 3));
-
-        return theoryData;
-
-        static void Add(TheoryData<string, DateTime, string> data, System.Globalization.CultureInfo culture, DateTime dateTime)
+        static (string, DateTime, string) Create(System.Globalization.CultureInfo culture, DateTime dateTime)
         {
-            data.Add(culture.Name, dateTime, $"System.DateTime: {DateTime(dateTime, culture)}");
+            return (culture.Name, dateTime, $"System.DateTime: {DateTime(dateTime, culture)}");
 
             // get date time
             static string DateTime(DateTime dateTime, IFormatProvider provider)

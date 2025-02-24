@@ -2,12 +2,12 @@
 
 public class DifferentialInt32CompressorTests
 {
-    private readonly DifferentialInt32Compressor[] iic = [
-        new(new DifferentialVariableByte()),
-        new(new HeadlessDifferentialComposition(new DifferentialBinaryPacking(),new DifferentialVariableByte())) ];
+    private readonly IEnumerable<Func<DifferentialInt32Compressor>> iic = [
+        () => new(new DifferentialVariableByte()),
+        () => new(new HeadlessDifferentialComposition(new DifferentialBinaryPacking(),new DifferentialVariableByte())) ];
 
-    [Fact]
-    public void SuperSimpleExample()
+    [Test]
+    public async Task SuperSimpleExample()
     {
         var iic2 = new DifferentialInt32Compressor();
         var data = new int[2342351];
@@ -19,15 +19,11 @@ public class DifferentialInt32CompressorTests
         var compressed = iic2.Compress(data);
         var recov = iic2.Uncompress(compressed);
 
-        Assert.Equal(data.Length, recov.Length);
-        for (var k = 0; k < data.Length; ++k)
-        {
-            Assert.Equal(data[k], recov[k]);
-        }
+        await Assert.That(recov).HasCount().EqualTo(data.Length).And.IsEquivalentTo(data);
     }
 
-    [Fact]
-    public void BasicIntegratedTest()
+    [Test]
+    public async Task BasicIntegratedTest()
     {
         for (var n = 1; n <= 10000; n *= 10)
         {
@@ -37,11 +33,9 @@ public class DifferentialInt32CompressorTests
                 orig[k] = (3 * k) + 5;
             }
 
-            foreach (var i in iic)
+            foreach (var i in iic.Select(c => c()))
             {
-                var comp = i.Compress(orig);
-                var back = i.Uncompress(comp);
-                Assert.Equal(orig, back);
+                await Assert.That(i.Uncompress(i.Compress(orig))).IsEquivalentTo(orig);
             }
         }
     }

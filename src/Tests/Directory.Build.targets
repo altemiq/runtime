@@ -1,11 +1,13 @@
 <Project>
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+    <PackageReference Include="TUnit" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <RuntimeIdentifiers Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' ">win-x86;win-x64</RuntimeIdentifiers>
+  <PropertyGroup Condition=" ('$(IsTestProject)' == 'true') and ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework') ">
+    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
 </Project>

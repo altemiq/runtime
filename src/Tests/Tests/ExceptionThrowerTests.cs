@@ -6,236 +6,231 @@
 
 namespace Altemiq;
 
+using TUnit.Assertions.AssertConditions.Throws;
+
 public class ExceptionThrowerTests
 {
     public class ArgumentNullException
     {
-        [Fact]
+        [Test]
 #if !NET7_0_OR_GREATER
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "This is required for .NET 7.0")]
 #endif
-        public void ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(default(object)));
+        public Task ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(default(object)));
 
-        [Fact]
-        public void NotThrowOnNotNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(string.Empty), false);
+        [Test]
+        public Task NotThrowOnNotNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(string.Empty), false);
     }
 
     public class ArgumentException
     {
-        [Fact]
-        public void ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default));
+        [Test]
+        public Task ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default));
 
-        [Fact]
-        public void ThrowIfEmpty() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty));
+        [Test]
+        public Task ThrowIfEmpty() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty));
 
-        [Fact]
-        public void ThrowIfEmptyOrWhiteSpace() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrWhiteSpace("    "));
+        [Test]
+        public Task ThrowIfEmptyOrWhiteSpace() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrWhiteSpace("    "));
 
-        [Fact]
-        public void NotThrow() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(nameof(string.Empty)), false);
+        [Test]
+        public Task NotThrow() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(nameof(string.Empty)), false);
     }
 
     public class ArgumentOutOfRangeException
     {
 #if !NET8_0_OR_GREATER
-        [Theory]
-        [InlineData(0, 1, 2, true)]
-        [InlineData(1, 0, 2, false)]
+        [Test]
+        [Arguments(0, 1, 2, true)]
+        [Arguments(1, 0, 2, false)]
         [Obsolete("This will be removed when the method is removed")]
-        public void OnNotBetween(int value, int min, int max, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(value, min, max), @throw);
+        public Task OnNotBetween(int value, int min, int max, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(value, min, max), @throw);
 #endif
 
-        [Theory]
-        [MemberData(nameof(NegativeData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
-        public void OnNegative<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegative), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
+        [Test]
+        [MethodDataSource(nameof(NegativeData))]
+        public Task OnNegative(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegative), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
-        public static TheoryData<object, bool> NegativeData() => new()
+        public static IEnumerable<Func<(object, bool)>> NegativeData()
         {
-            { (sbyte)-1, true },
-            { default(sbyte), false },
-            { (short)-1, true },
-            { default(short), false },
-            { -1, true },
-            { default(int), false },
-            { -1L, true },
-            { default(long), false },
-            { -1F, true },
-            { default(float), false },
-            { -1D, true },
-            { default(double), false },
-            { -1M, true },
-            { default(decimal), false },
-        };
+            yield return () => ((sbyte)-1, true);
+            yield return () => (default(sbyte), false);
+            yield return () => ((short)-1, true);
+            yield return () => (default(short), false);
+            yield return () => (-1, true);
+            yield return () => (default(int), false);
+            yield return () => (-1L, true);
+            yield return () => (default(long), false);
+            yield return () => (-1F, true);
+            yield return () => (default(float), false);
+            yield return () => (-1D, true);
+            yield return () => (default(double), false);
+            yield return () => (-1M, true);
+            yield return () => (default(decimal), false);
+        }
 
-        [Theory]
-        [MemberData(nameof(NegativeOrZeroData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
-        public void OnNegativeOrZero<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegativeOrZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
+        [Test]
+        [MethodDataSource(nameof(NegativeOrZeroData))]
+        public Task OnNegativeOrZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegativeOrZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
-        public static TheoryData<object, bool> NegativeOrZeroData() => new()
+        public static IEnumerable<Func<(object, bool)>> NegativeOrZeroData()
         {
-            { (sbyte)0, true },
-            { (sbyte)-1, true },
-            { (sbyte)1, false },
-            { (short)0, true },
-            { (short)-1, true },
-            { (short)1, false },
-            { 0, true },
-            { -1, true },
-            { 1, false },
-            { 0L, true },
-            { -1L, true },
-            { 1L, false },
-            { 0F, true },
-            { -1F, true },
-            { 1F, false },
-            { 0D, true },
-            { -1D, true },
-            { 1D, false },
-            { 0M, true },
-            { -1M, true },
-            { 1M, false },
-        };
+            yield return () => ((sbyte)0, true);
+            yield return () => ((sbyte)-1, true);
+            yield return () => ((sbyte)1, false);
+            yield return () => ((short)0, true);
+            yield return () => ((short)-1, true);
+            yield return () => ((short)1, false);
+            yield return () => (0, true);
+            yield return () => (-1, true);
+            yield return () => (1, false);
+            yield return () => (0L, true);
+            yield return () => (-1L, true);
+            yield return () => (1L, false);
+            yield return () => (0F, true);
+            yield return () => (-1F, true);
+            yield return () => (1F, false);
+            yield return () => (0D, true);
+            yield return () => (-1D, true);
+            yield return () => (1D, false);
+            yield return () => (0M, true);
+            yield return () => (-1M, true);
+            yield return () => (1M, false);
+        }
 
-        [Theory]
-        [MemberData(nameof(ZeroData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
-        public void OnZero<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
+        [Test]
+        [MethodDataSource(nameof(ZeroData))]
+        public Task OnZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
 
-        public static TheoryData<object, bool> ZeroData() => new()
+        public static IEnumerable<Func<(object, bool)>> ZeroData()
         {
-            { (sbyte)0, true },
-            { (sbyte)-1, false },
-            { (sbyte)1, false },
-            { (short)0, true },
-            { (short)-1, false },
-            { (short)1, false },
-            { 0, true },
-            { -1, false },
-            { 1, false },
-            { 0L, true },
-            { -1L, false },
-            { 1L, false },
-            { 0F, true },
-            { -1F, false },
-            { 1F, false },
-            { 0D, true },
-            { -1D, false },
-            { 1D, false },
-            { 0M, true },
-            { -1M, false },
-            { 1M, false },
-        };
+            yield return () => ((sbyte)0, true);
+            yield return () => ((sbyte)-1, false);
+            yield return () => ((sbyte)1, false);
+            yield return () => ((short)0, true);
+            yield return () => ((short)-1, false);
+            yield return () => ((short)1, false);
+            yield return () => (0, true);
+            yield return () => (-1, false);
+            yield return () => (1, false);
+            yield return () => (0L, true);
+            yield return () => (-1L, false);
+            yield return () => (1L, false);
+            yield return () => (0F, true);
+            yield return () => (-1F, false);
+            yield return () => (1F, false);
+            yield return () => (0D, true);
+            yield return () => (-1D, false);
+            yield return () => (1D, false);
+            yield return () => (0M, true);
+            yield return () => (-1M, false);
+            yield return () => (1M, false);
+        }
 
-        [Theory]
-        [MemberData(nameof(LessThanData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
-        public void OnLessThan<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        [Test]
+        [MethodDataSource(nameof(LessThanData))]
+        public Task OnLessThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
 
-        public static TheoryData<object, bool> LessThanData() => new()
-{
-            { (sbyte)-1, true },
-            { (sbyte)1, false },
-            { (short)-1, true },
-            { (short)1, false },
-            { -1, true },
-            { 1, false },
-            { -1L, true },
-            { 1L, false },
-            { -1F, true },
-            { 1F, false },
-            { -1D, true },
-            { 1D, false },
-            { -1M, true },
-            { 1M, false },
-        };
-
-        [Theory]
-        [MemberData(nameof(LessThanOrEqualData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
-        public void OnLessThanOrEqual<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
-
-        public static TheoryData<object, bool> LessThanOrEqualData() => new()
+        public static IEnumerable<Func<(object, bool)>> LessThanData()
         {
-            { (sbyte)-1, true },
-            { (sbyte)0, true },
-            { (sbyte)1, false },
-            { (short)-1, true },
-            { (short)0, true },
-            { (short)1, false },
-            { -1, true },
-            { 0, true },
-            { 1, false },
-            { -1L, true },
-            { 0L, true },
-            { 1L, false },
-            { -1F, true },
-            { 0F, true },
-            { 1F, false },
-            { -1D, true },
-            { 0D, true },
-            { 1D, false },
-            { -1M, true },
-            { 0M, true },
-            { 1M, false },
-        };
+            yield return () => ((sbyte)-1, true);
+            yield return () => ((sbyte)1, false);
+            yield return () => ((short)-1, true);
+            yield return () => ((short)1, false);
+            yield return () => (-1, true);
+            yield return () => (1, false);
+            yield return () => (-1L, true);
+            yield return () => (1L, false);
+            yield return () => (-1F, true);
+            yield return () => (1F, false);
+            yield return () => (-1D, true);
+            yield return () => (1D, false);
+            yield return () => (-1M, true);
+            yield return () => (1M, false);
+        }
 
-        [Theory]
-        [MemberData(nameof(GreaterThanData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
-        public void OnGreaterThan<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        [Test]
+        [MethodDataSource(nameof(LessThanOrEqualData))]
+        public Task OnLessThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
 
-        public static TheoryData<object, bool> GreaterThanData() => new()
+        public static IEnumerable<Func<(object, bool)>> LessThanOrEqualData()
         {
-            { (sbyte)-1, false },
-            { (sbyte)1, true },
-            { (short)-1, false },
-            { (short)1, true },
-            { -1, false },
-            { 1, true },
-            { -1L, false },
-            { 1L, true },
-            { -1F, false },
-            { 1F, true },
-            { -1D, false },
-            { 1D, true },
-            { -1M, false },
-            { 1M, true },
-        };
+            yield return () => ((sbyte)-1, true);
+            yield return () => ((sbyte)0, true);
+            yield return () => ((sbyte)1, false);
+            yield return () => ((short)-1, true);
+            yield return () => ((short)0, true);
+            yield return () => ((short)1, false);
+            yield return () => (-1, true);
+            yield return () => (0, true);
+            yield return () => (1, false);
+            yield return () => (-1L, true);
+            yield return () => (0L, true);
+            yield return () => (1L, false);
+            yield return () => (-1F, true);
+            yield return () => (0F, true);
+            yield return () => (1F, false);
+            yield return () => (-1D, true);
+            yield return () => (0D, true);
+            yield return () => (1D, false);
+            yield return () => (-1M, true);
+            yield return () => (0M, true);
+            yield return () => (1M, false);
+        }
 
-        [Theory]
-        [MemberData(nameof(GreaterThanOrEqualData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1045:Avoid using TheoryData type arguments that might not be serializable", Justification = "Checked")]
-        public void OnGreaterThanOrEqual<T>(T value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        [Test]
+        [MethodDataSource(nameof(GreaterThanData))]
+        public Task OnGreaterThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
 
-        public static TheoryData<object, bool> GreaterThanOrEqualData() => new()
+        public static IEnumerable<Func<(object, bool)>> GreaterThanData()
         {
-            { (sbyte)-1, false },
-            { (sbyte)0, true },
-            { (sbyte)1, true },
-            { (short)-1, false },
-            { (short)0, true },
-            { (short)1, true },
-            { -1, false },
-            { 0, true },
-            { 1, true },
-            { -1L, false },
-            { 0L, true },
-            { 1L, true },
-            { -1F, false },
-            { 0F, true },
-            { 1F, true },
-            { -1D, false },
-            { 0D, true },
-            { 1D, true },
-            { -1M, false },
-            { 0M, true },
-            { 1M, true },
-        };
+            yield return () => ((sbyte)-1, false);
+            yield return () => ((sbyte)1, true);
+            yield return () => ((short)-1, false);
+            yield return () => ((short)1, true);
+            yield return () => (-1, false);
+            yield return () => (1, true);
+            yield return () => (-1L, false);
+            yield return () => (1L, true);
+            yield return () => (-1F, false);
+            yield return () => (1F, true);
+            yield return () => (-1D, false);
+            yield return () => (1D, true);
+            yield return () => (-1M, false);
+            yield return () => (1M, true);
+        }
 
-        [Fact]
-        public void OnValid() => Do<System.ArgumentOutOfRangeException>(
+        [Test]
+        [MethodDataSource(nameof(GreaterThanOrEqualData))]
+        public Task OnGreaterThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+
+        public static IEnumerable<Func<(object, bool)>> GreaterThanOrEqualData()
+        {
+            yield return () => ((sbyte)-1, false);
+            yield return () => ((sbyte)0, true);
+            yield return () => ((sbyte)1, true);
+            yield return () => ((short)-1, false);
+            yield return () => ((short)0, true);
+            yield return () => ((short)1, true);
+            yield return () => (-1, false);
+            yield return () => (0, true);
+            yield return () => (1, true);
+            yield return () => (-1L, false);
+            yield return () => (0L, true);
+            yield return () => (1L, true);
+            yield return () => (-1F, false);
+            yield return () => (0F, true);
+            yield return () => (1F, true);
+            yield return () => (-1D, false);
+            yield return () => (0D, true);
+            yield return () => (1D, true);
+            yield return () => (-1M, false);
+            yield return () => (0M, true);
+            yield return () => (1M, true);
+        }
+
+        [Test]
+        public Task OnValid() => Do<System.ArgumentOutOfRangeException>(
             static () =>
             {
                 ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan(1, 0);
@@ -243,24 +238,24 @@ public class ExceptionThrowerTests
             },
             false);
 
-        [Theory]
-        [InlineData(1, true)]
-        [InlineData(-1, false)]
-        public void OnEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfEqual(value, 1), @throw);
+        [Test]
+        [Arguments(1, true)]
+        [Arguments(-1, false)]
+        public Task OnEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfEqual(value, 1), @throw);
 
-        [Theory]
-        [InlineData(1, false)]
-        [InlineData(-1, true)]
-        public void OnNotEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfNotEqual(value, 1), @throw);
+        [Test]
+        [Arguments(1, false)]
+        [Arguments(-1, true)]
+        public Task OnNotEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfNotEqual(value, 1), @throw);
 
-        private static System.Reflection.MethodInfo GetMethod<T>(string name, Type type)
+        private static System.Reflection.MethodInfo GetMethod(string name, Type type, Type parameterType)
         {
-            var method = type.GetMethod(name, [typeof(T), typeof(string)])
+            var method = type.GetMethod(name, [parameterType, typeof(string)])
                 ?? type.GetMethod(name)
                 ?? throw new InvalidOperationException();
             if (method.IsGenericMethod)
             {
-                method = method.MakeGenericMethod(typeof(T));
+                method = method.MakeGenericMethod(parameterType);
             }
 
             return method;
@@ -278,45 +273,58 @@ public class ExceptionThrowerTests
             }
         }
 
-        private static void Run<T>(string name, Type type, params T[] values) => Run(GetMethod<T>(name, type), values);
+        private static void Run<T>(string name, Type type, params T[] values)
+        {
+            Run(GetMethod(name, type, GetValuesType(values)), values);
+            
+            static Type GetValuesType(T[] values)
+            {
+                if (values is not null && values.FirstOrDefault(x => x is not null) is { } first)
+                {
+                    return first.GetType();
+                }
+
+                return typeof(T);
+            }
+        }
     }
 
     public class ObjectDisposedException
     {
-        [Fact]
-        public void ThrowOnNull() => Do<System.ObjectDisposedException>(
+        [Test]
+        public Task ThrowOnNull() => Do<System.ObjectDisposedException>(
             static () =>
             {
                 object? @null = default;
                 ObjectDisposedExceptionThrower.ThrowIf(@null is null, @null);
             });
 
-        [Fact]
-        public void ThrowOnNullWithType() => Do<System.ObjectDisposedException>(
+        [Test]
+        public Task ThrowOnNullWithType() => Do<System.ObjectDisposedException>(
             static () =>
             {
                 string? @null = default;
                 ObjectDisposedExceptionThrower.ThrowIf(@null is null, typeof(string));
             });
 
-        [Fact]
-        public void ThrowOnNotNull() => Do<System.ObjectDisposedException>(
+        [Test]
+        public Task ThrowOnNotNull() => Do<System.ObjectDisposedException>(
             static () =>
             {
                 var @null = new object();
                 ObjectDisposedExceptionThrower.ThrowIf(@null is not null, @null!);
             });
 
-        [Fact]
-        public void ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(
+        [Test]
+        public Task ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(
             static () =>
             {
                 var @null = string.Empty;
                 ObjectDisposedExceptionThrower.ThrowIf(@null is not null, default!);
             });
 
-        [Fact]
-        public void NotThrowNotNull() => Do<System.ObjectDisposedException>(
+        [Test]
+        public Task NotThrowNotNull() => Do<System.ObjectDisposedException>(
             static () =>
             {
                 var notNull = new object();
@@ -324,8 +332,8 @@ public class ExceptionThrowerTests
             },
             false);
 
-        [Fact]
-        public void NotThrowNotNullWithType() => Do<System.ObjectDisposedException>(
+        [Test]
+        public Task NotThrowNotNullWithType() => Do<System.ObjectDisposedException>(
             static () =>
             {
                 var notNull = string.Empty;
@@ -334,12 +342,12 @@ public class ExceptionThrowerTests
             false);
     }
 
-    private static void Do<T>(Action act, bool @throw = true)
+    private static async Task Do<T>(Action act, bool @throw = true)
         where T : Exception
     {
         if (@throw)
         {
-            Assert.Throws<T>(act);
+            await Assert.That(act).Throws<T>();
         }
         else
         {

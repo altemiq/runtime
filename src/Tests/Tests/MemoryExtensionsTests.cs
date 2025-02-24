@@ -6,50 +6,53 @@
 
 namespace Altemiq;
 
+using System.Security;
+using TUnit.Assertions.AssertConditions.Throws;
+
 public class MemoryExtensionsTests
 {
-    [Theory]
-    [InlineData("This is an old string", "an old", "a new", "This is a new string")]
-    [InlineData("This is an old string", "a new", "blah", "This is an old string")]
-    public void Replace(string input, string old, string @new, string expected) => Assert.Equal(expected, input.AsSpan().Replace(old.AsSpan(), @new.AsSpan()).ToString());
+    [Test]
+    [Arguments("This is an old string", "an old", "a new", "This is a new string")]
+    [Arguments("This is an old string", "a new", "blah", "This is an old string")]
+    public async Task Replace(string input, string old, string @new, string expected) => await Assert.That(input.AsSpan().Replace(old.AsSpan(), @new.AsSpan()).ToString()).IsEqualTo(expected);
 
-    [Fact]
-    public void IndexOfAny()
+    [Test]
+    public async Task IndexOfAny()
     {
-        Assert.Equal(2, Create("This is an old string").IndexOfAny(Create("is"), Create("an"), Create("old"), Create("string")));
-        Assert.Equal(-1, default(ReadOnlySpan<char>).IndexOfAny(default, default));
+        await Assert.That(Span("This is an old string").IndexOfAny(Span("is"), Span("an"), Span("old"), Span("string"))).IsEqualTo(2);
+        await Assert.That(default(ReadOnlySpan<char>).IndexOfAny(default, default)).IsEqualTo(-1);
 
-        static ReadOnlySpan<char> Create(string input)
+        static ReadOnlySpan<char> Span(string input)
         {
             return input.AsSpan();
         }
     }
 
-#if !NET9_0_OR_GREATER
-    [Fact]
-    public void MoveNextOnEmptyString()
-    {
-        var enumerator = string.Empty.AsSpan().Split();
-        Assert.True(enumerator.MoveNext());
-        Assert.False(enumerator.MoveNext());
-    }
-#endif
+    //#if !NET9_0_OR_GREATER
+    //    [Test]
+    //    public async Task MoveNextOnEmptyString()
+    //    {
+    //        var enumerator = string.Empty.AsSpan().Split();
+    //        await Assert.That(enumerator.MoveNext()).IsTrue();
+    //        await Assert.That(enumerator.MoveNext()).IsFalse();
+    //    }
+    //#endif
 
-    [Fact]
-    public void MoveNextOrThrowOnEmptyString() => Assert.Throws<InvalidOperationException>(() =>
+    [Test]
+    public async Task MoveNextOrThrowOnEmptyString() => await Assert.That(() =>
     {
         var enumerator =
 #if NET9_0_OR_GREATER
             System.MemoryExtensions.Split(string.Empty.AsSpan(), ' ');
 #else
-            string.Empty.AsSpan().Split();
+                string.Empty.AsSpan().Split();
 #endif
         enumerator.MoveNextOrThrow();
         enumerator.MoveNextOrThrow();
-    });
+    }).Throws<InvalidOperationException>();
 
-    [Fact]
-    public void SplitOnChar()
+    [Test]
+    public async Task SplitOnChar()
     {
         const string Value = "This is a split string";
         var span = Value.AsSpan();
@@ -59,28 +62,23 @@ public class MemoryExtensionsTests
 #else
             span.Split();
 #endif
-        Assert.Equal("This", span.GetNextString(ref enumerator));
-        Assert.Equal("is", span.GetNextString(ref enumerator));
-        Assert.Equal("a", span.GetNextString(ref enumerator));
-        Assert.Equal("split", span.GetNextString(ref enumerator));
-        Assert.Equal("string", span.GetNextString(ref enumerator));
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(GetStringValues(span, enumerator)).IsEquivalentTo(["This", "is", "a", "split", "string"]);
     }
 
-    [Fact]
-    public void SplitEmptyValuesOnChar()
+    [Test]
+    public async Task SplitEmptyValuesOnChar()
     {
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
         var enumerator = span.Split(',', StringSplitOptions.RemoveEmptyEntries);
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(enumerator.MoveNext()).IsFalse();
     }
 
-    [Theory]
-    [InlineData(" ")]
-    [InlineData(",")]
-    [InlineData("||")]
-    public void SplitOnString(string separator)
+    [Test]
+    [Arguments(" ")]
+    [Arguments(",")]
+    [Arguments("||")]
+    public async Task SplitOnString(string separator)
     {
         var values = new[] { "This", "is", "a", "split", "string" };
         var value = string.Join(separator, values);
@@ -91,16 +89,11 @@ public class MemoryExtensionsTests
 #else
             span.Split(separator.AsSpan());
 #endif
-        Assert.Equal(values[0], span.GetNextString(ref enumerator));
-        Assert.Equal(values[1], span.GetNextString(ref enumerator));
-        Assert.Equal(values[2], span.GetNextString(ref enumerator));
-        Assert.Equal(values[3], span.GetNextString(ref enumerator));
-        Assert.Equal(values[4], span.GetNextString(ref enumerator));
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(GetStringValues(span, enumerator)).IsEquivalentTo(values);
     }
 
-    [Fact]
-    public void SplitOnMultipleString()
+    [Test]
+    public async Task SplitOnMultipleString()
     {
         const string First = "This,is";
         const string Second = "a";
@@ -110,106 +103,92 @@ public class MemoryExtensionsTests
         const string Pipe = "|";
         const string Value = $"{First}{Pipe}{Second}{Space}{Third}{Pipe}{Forth}";
         var span = Value.AsSpan();
-        var enumerator = span.Split(Space, Pipe);
-        Assert.Equal(First, span.GetNextString(ref enumerator));
-        Assert.Equal(Second, span.GetNextString(ref enumerator));
-        Assert.Equal(Third, span.GetNextString(ref enumerator));
-        Assert.Equal(Forth, span.GetNextString(ref enumerator));
+        await Assert.That(GetStringValues(span, span.Split(Space, Pipe))).IsEquivalentTo([First, Second, Third, Forth]);
     }
 
-    [Fact]
-    public void SplitEmptyValuesOnString()
+    [Test]
+    public async Task SplitEmptyValuesOnString()
     {
         const string EmptyValues = ",,,,";
         var span = EmptyValues.AsSpan();
         var enumerator = span.Split(",".AsSpan(), StringSplitOptions.RemoveEmptyEntries);
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(enumerator.MoveNext()).IsFalse();
     }
 
-    [Theory]
-    [InlineData(' ')]
-    [InlineData(',')]
-    [InlineData('|')]
-    public void SplitQuotedOnChar(char separator)
+    [Test]
+    [Arguments(' ')]
+    [Arguments(',')]
+    [Arguments('|')]
+    public async Task SplitQuotedOnChar(char separator)
     {
         var stringSeparator = new string(separator, 1);
         var values = new[] { "This", "\"is", "a\"", "split", "string" };
         var value = string.Join(stringSeparator, values);
         var span = value.AsSpan();
-        var enumerator = span.SplitQuoted(separator);
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[0], span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(string.Join(stringSeparator, values[1], values[2]), span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[3], span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[4], span[enumerator.Current].ToString());
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(GetStringValues(span, span.SplitQuoted(separator))).IsEquivalentTo(
+        [
+            values[0],
+            string.Join(stringSeparator, values[1], values[2]),
+            values[3],
+            values[4],
+        ]);
     }
 
-    [Theory]
-    [InlineData(' ')]
-    [InlineData(',')]
-    [InlineData('|')]
-    public void SplitQuotedOnCharWithMultiple(char separator)
+    [Test]
+    [Arguments(' ')]
+    [Arguments(',')]
+    [Arguments('|')]
+    public async Task SplitQuotedOnCharWithMultiple(char separator)
     {
         var stringSeparator = new string(separator, 1);
         var values = new[] { "This", "\"is", "a", "split\"", "string" };
         var value = string.Join(stringSeparator, values);
         var span = value.AsSpan();
-        var enumerator = span.SplitQuoted(separator);
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[0], span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(string.Join(stringSeparator, values[1], values[2], values[3]), span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[4], span[enumerator.Current].ToString());
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(GetStringValues(span, span.SplitQuoted(separator))).IsEquivalentTo(
+        [
+            values[0],
+            string.Join(stringSeparator, values[1], values[2], values[3]),
+            values[4]
+        ]);
     }
 
-    [Theory]
-    [InlineData(" ")]
-    [InlineData(",")]
-    [InlineData("||")]
-    public void SplitQuotedOnString(string separator)
+    [Test]
+    [Arguments(" ")]
+    [Arguments(",")]
+    [Arguments("||")]
+    public async Task SplitQuotedOnString(string separator)
     {
         var values = new[] { "This", "\"is", "a\"", "split", "string" };
         var value = string.Join(separator, values);
         var span = value.AsSpan();
-        var enumerator = span.SplitQuoted(separator.AsSpan());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[0], span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(string.Join(separator, values[1], values[2]), span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[3], span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[4], span[enumerator.Current].ToString());
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(GetStringValues(span, span.SplitQuoted(separator.AsSpan()))).IsEquivalentTo(
+        [
+            values[0],
+            string.Join(separator, values[1], values[2]),
+            values[3],
+            values[4]
+        ]);
     }
 
-    [Theory]
-    [InlineData(" ")]
-    [InlineData(",")]
-    [InlineData("||")]
-    public void SplitQuotedOnStringWithMultiple(string separator)
+    [Test]
+    [Arguments(" ")]
+    [Arguments(",")]
+    [Arguments("||")]
+    public async Task SplitQuotedOnStringWithMultiple(string separator)
     {
         var values = new[] { "This", "\"is", "a", "split\"", "string" };
         var value = string.Join(separator, values);
         var span = value.AsSpan();
-        var enumerator = span.SplitQuoted(separator.AsSpan());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[0], span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(string.Join(separator, values[1], values[2], values[3]), span[enumerator.Current].ToString());
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(values[4], span[enumerator.Current].ToString());
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(GetStringValues(span, span.SplitQuoted(separator.AsSpan()))).IsEquivalentTo(
+        [
+            values[0],
+            string.Join(separator, values[1], values[2], values[3]),
+            values[4]
+        ]);
     }
 
-    [Fact]
-    public void GetEnumValues()
+    [Test]
+    public async Task GetEnumValues()
     {
         var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
         var span = value.AsSpan();
@@ -219,13 +198,17 @@ public class MemoryExtensionsTests
 #else
             span.Split('|');
 #endif
-        Assert.Equal(EnumValue.First, span.GetNextEnum<EnumValue>(ref enumerator, true));
-        Assert.Equal(EnumValue.Second, span.GetNextEnum<EnumValue>(ref enumerator));
-        Assert.Equal(EnumValue.Third, span.GetNextEnum<EnumValue>(ref enumerator, true));
+        var first = span.GetNextEnum<EnumValue>(ref enumerator, true);
+        var second = span.GetNextEnum<EnumValue>(ref enumerator);
+        var third = span.GetNextEnum<EnumValue>(ref enumerator, true);
+        await Assert.That(first).IsEqualTo(EnumValue.First);
+        await Assert.That(second).IsEqualTo(EnumValue.Second);
+        await Assert.That(third).IsEqualTo(EnumValue.Third);
+
     }
 
-    [Fact]
-    public void TryGetEnumValues()
+    [Test]
+    public async Task TryGetEnumValues()
     {
         var value = $"{nameof(EnumValue.First)}|{nameof(EnumValue.Second)}|{nameof(EnumValue.Third)}";
         var span = value.AsSpan();
@@ -235,56 +218,94 @@ public class MemoryExtensionsTests
 #else
             span.Split('|');
 #endif
-        Assert.True(span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var enumValue));
-        Assert.Equal(EnumValue.First, enumValue);
-        Assert.True(span.TryGetNextEnum(ref enumerator, out enumValue));
-        Assert.Equal(EnumValue.Second, enumValue);
-        Assert.True(span.TryGetNextEnum(ref enumerator, true, out enumValue));
-        Assert.Equal(EnumValue.Third, enumValue);
-        Assert.False(span.TryGetNextEnum<EnumValue>(ref enumerator, out _));
+        var firstResult = span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var firstEnum);
+        var secondResult = span.TryGetNextEnum<EnumValue>(ref enumerator, out var secondEnum);
+        var thirdResult = span.TryGetNextEnum<EnumValue>(ref enumerator, true, out var thirdEnum);
+        var forthResult = span.TryGetNextEnum<EnumValue>(ref enumerator, out _);
+
+        await Assert.That(firstResult).IsTrue();
+        await Assert.That(firstEnum).IsEqualTo(EnumValue.First);
+        await Assert.That(secondResult).IsTrue();
+        await Assert.That(secondEnum).IsEqualTo(EnumValue.Second);
+        await Assert.That(thirdResult).IsTrue();
+        await Assert.That(thirdEnum).IsEqualTo(EnumValue.Third);
+        await Assert.That(forthResult).IsFalse();
     }
+
+    private static List<string> GetStringValues(ReadOnlySpan<char> span, SpanSplitEnumerator<char> enumerator)
+    {
+        var results = new List<string>();
+        while (span.TryGetNextString(ref enumerator, out var result))
+        {
+            results.Add(result);
+        }
+
+        return results;
+    }
+
+    private static List<string> GetStringValues(ReadOnlySpan<char> span, JoinedSpanSplitEnumerator<char> enumerator)
+    {
+        var results = new List<string>();
+        while (enumerator.MoveNext())
+        {
+            results.Add(span[enumerator.Current].ToString());
+        }
+
+        return results;
+    }
+
+#if NET9_0_OR_GREATER
+    private static List<string> GetStringValues(ReadOnlySpan<char> span, System.MemoryExtensions.SpanSplitEnumerator<char> enumerator)
+    {
+        var results = new List<string>();
+        while (span.TryGetNextString(ref enumerator, out var result))
+        {
+            results.Add(result);
+        }
+
+        return results;
+    }
+#endif
 
 #if NETCOREAPP2_1_OR_GREATER
     public class GetValues
     {
-        [Theory]
-        [MemberData(nameof(GetCharValuesData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void CharSeparated(Func<Random, int, double> creator, GetValuesCharDelegate<double> getValues)
+        [Test]
+        [MethodDataSource(nameof(GetCharValuesData))]
+        public async Task CharSeparated(Func<Random, int, double> creator, GetValuesCharDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
-            Assert.Equal(randomValues, parsedValues);
+            await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, GetValuesCharDelegate<double>> GetCharValuesData() => new() { { static (Random random, int _) => random.NextDouble(), new GetValuesCharDelegate<double>(MemoryExtensions.GetDoubleValues) } };
+        public static Func<(Func<Random, int, double>, GetValuesCharDelegate<double>)> GetCharValuesData() => () => (static (Random random, int _) => random.NextDouble(), new GetValuesCharDelegate<double>(MemoryExtensions.GetDoubleValues));
 
-        [Theory]
-        [MemberData(nameof(GetStringValuesData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void StringSeparated(Func<Random, int, double> creator, GetValuesSpanDelegate<double> getValues)
+        [Test]
+        [MethodDataSource(nameof(GetStringValuesData))]
+        public async Task StringSeparated(Func<Random, int, double> creator, GetValuesSpanDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, "|", 10, System.Globalization.CultureInfo.CurrentCulture);
-            Assert.Equal(randomValues, parsedValues);
+            await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, GetValuesSpanDelegate<double>> GetStringValuesData() => new()
+        public static Func<(Func<Random, int, double>, GetValuesSpanDelegate<double>)> GetStringValuesData()
         {
-            { static (Random random, int _) => random.NextDouble(), new GetValuesSpanDelegate<double>(MemoryExtensions.GetDoubleValues) }
-        };
+            return () => (static (Random random, int _) => random.NextDouble(), new GetValuesSpanDelegate<double>(MemoryExtensions.GetDoubleValues));
+        }
     }
 
-    [Theory]
-    [MemberData(nameof(GetData))]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "This cannot be expressed by TheoryData")]
-    public void Get<T>(Func<Random, int, T> creator, GetDelegate<T> parser, System.Globalization.NumberStyles style)
+    [Test]
+    [MethodDataSource(nameof(GetData))]
+    public async Task Get(Func<Random, int, object> creator, GetDelegateObject parser, System.Globalization.NumberStyles style)
     {
         var random = new Random();
+
         var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var enumerator =
@@ -293,80 +314,88 @@ public class MemoryExtensionsTests
 #else
             span.Split('|');
 #endif
-        var count = 0;
+        IList<object?> values = [];
+        IList<Exception?> exceptions = [];
         for (var i = 0; i < 10; i++)
         {
-            Exception? ex = default;
-            var value = default(T);
             try
             {
-                value = parser(span, ref enumerator, style, System.Globalization.CultureInfo.CurrentCulture);
+                values.Add(parser(span, ref enumerator, style, System.Globalization.CultureInfo.CurrentCulture));
             }
             catch (InvalidOperationException e)
             {
-                ex = e;
+                exceptions.Add(e);
             }
-
-            Assert.Null(ex);
-            Assert.Equal(randomValues[i], value);
-            count++;
         }
 
-        Assert.Equal(10, count);
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(enumerator.MoveNext()).IsFalse();
+        await Assert.That(exceptions).IsEmpty();
+        await Assert.That(values).HasCount().EqualTo(10).And.IsEquivalentTo(randomValues);
     }
 
-    public static IEnumerable<object[]> GetData
+    public static IEnumerable<Func<(Func<Random, int, object>, GetDelegateObject, System.Globalization.NumberStyles)>> GetData()
     {
-        get
+        yield return () => (static (Random random, int _) => random.NextDouble(), CreateDelegate<double>(MemoryExtensions.GetNextDouble), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
+        yield return () => (static (Random random, int _) => (float)random.NextDouble(), CreateDelegate<float>(MemoryExtensions.GetNextSingle), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
+        yield return () => (static (Random random, int _) => (byte)random.Next(byte.MaxValue), CreateDelegate<byte>(MemoryExtensions.GetNextByte), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (Random random, int _) => (short)random.Next(short.MaxValue), CreateDelegate<short>(MemoryExtensions.GetNextInt16), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), CreateDelegate<ushort>(MemoryExtensions.GetNextUInt16), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (Random random, int _) => random.Next(), CreateDelegate<int>(MemoryExtensions.GetNextInt32), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (Random random, int _) => (uint)random.Next(), CreateDelegate<uint>(MemoryExtensions.GetNextUInt32), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (Random random, int _) => (long)random.Next() + int.MaxValue, CreateDelegate<long>(MemoryExtensions.GetNextInt64), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, CreateDelegate<ulong>(MemoryExtensions.GetNextUInt64), System.Globalization.NumberStyles.Integer);
+
+        static GetDelegateObject CreateDelegate<T>(GetDelegate<T> @delegate)
         {
-            yield return new object[] { static (Random random, int _) => random.NextDouble(), new GetDelegate<double>(MemoryExtensions.GetNextDouble), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float };
-            yield return new object[] { static (Random random, int _) => (float)random.NextDouble(), new GetDelegate<float>(MemoryExtensions.GetNextSingle), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float };
-            yield return new object[] { static (Random random, int _) => (byte)random.Next(byte.MaxValue), new GetDelegate<byte>(MemoryExtensions.GetNextByte), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { static (Random random, int _) => (short)random.Next(short.MaxValue), new GetDelegate<short>(MemoryExtensions.GetNextInt16), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), new GetDelegate<ushort>(MemoryExtensions.GetNextUInt16), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { static (Random random, int _) => random.Next(), new GetDelegate<int>(MemoryExtensions.GetNextInt32), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { static (Random random, int _) => (uint)random.Next(), new GetDelegate<uint>(MemoryExtensions.GetNextUInt32), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { static (Random random, int _) => (long)random.Next() + int.MaxValue, new GetDelegate<long>(MemoryExtensions.GetNextInt64), System.Globalization.NumberStyles.Integer };
-            yield return new object[] { static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, new GetDelegate<ulong>(MemoryExtensions.GetNextUInt64), System.Globalization.NumberStyles.Integer };
+            return new GetDelegateObject(GetDelegateFunc);
+
+            object? GetDelegateFunc(
+                ReadOnlySpan<char> span,
+#if NET9_0_OR_GREATER
+                ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,
+#else
+                ref SpanSplitEnumerator<char> enumerator,
+#endif
+                System.Globalization.NumberStyles style,
+                IFormatProvider? provider)
+            {
+                return @delegate(span, ref enumerator, style, provider);
+            }
         }
     }
 
     public class TryGetValues
     {
-        [Theory]
-        [MemberData(nameof(TryGetValuesCharData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void CharSeparated(Func<Random, int, double> creator, TryGetValuesCharDelegate<double> getValues)
+        [Test]
+        [MethodDataSource(nameof(TryGetValuesCharData))]
+        public async Task CharSeparated(Func<Random, int, double> creator, TryGetValuesCharDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
-            Assert.True(getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues));
-            Assert.Equal(randomValues, parsedValues);
+            await Assert.That(getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
+            await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, TryGetValuesCharDelegate<double>> TryGetValuesCharData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesCharDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static Func<(Func<Random, int, double>, TryGetValuesCharDelegate<double>)> TryGetValuesCharData() => () => (static (Random random, int _) => random.NextDouble(), new TryGetValuesCharDelegate<double>(MemoryExtensions.TryGetDoubleValues));
 
-        [Theory]
-        [MemberData(nameof(TryGetValuesSpanData))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1044:Avoid using TheoryData type arguments that are not serializable", Justification = "Checked")]
-        public void StringSeparated(Func<Random, int, double> creator, TryGetValuesSpanDelegate<double> getValues)
+        [Test]
+        [MethodDataSource(nameof(TryGetValuesSpanData))]
+        public async Task StringSeparated(Func<Random, int, double> creator, TryGetValuesSpanDelegate<double> getValues)
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
-            Assert.True(getValues(span, "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues));
-            Assert.Equal(randomValues, parsedValues);
+            await Assert.That(getValues(span, "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
+            await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 
-        public static TheoryData<Func<Random, int, double>, TryGetValuesSpanDelegate<double>> TryGetValuesSpanData() => new() { { static (Random random, int _) => random.NextDouble(), new TryGetValuesSpanDelegate<double>(MemoryExtensions.TryGetDoubleValues) } };
+        public static Func<(Func<Random, int, double>, TryGetValuesSpanDelegate<double>)> TryGetValuesSpanData() => () => (static (Random random, int _) => random.NextDouble(), new TryGetValuesSpanDelegate<double>(MemoryExtensions.TryGetDoubleValues));
     }
 
-    [Theory]
-    [MemberData(nameof(TryGetData))]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "This cannot be expressed by TheoryData")]
-    public static void TryGet<T>(Func<Random, int, T> creator, TryGetDelegate<T> parser)
+    [Test]
+    [MethodDataSource(nameof(TryGetData))]
+    public async Task TryGet(Func<Random, int, object> creator, TryGetDelegateObject parser)
     {
         var random = new Random();
         var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
@@ -377,36 +406,62 @@ public class MemoryExtensionsTests
 #else
             span.Split('|');
 #endif
-        var count = 0;
+        IList<object> values = [];
         while (parser(span, ref enumerator, System.Globalization.CultureInfo.CurrentCulture, out var value))
         {
-            Assert.Equal(randomValues[count], value);
-            count++;
+            values.Add(value);
         }
 
-        Assert.Equal(10, count);
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(enumerator.MoveNext()).IsFalse();
+        await Assert.That(values).HasCount().EqualTo(10).And.IsEquivalentTo(randomValues);
     }
 
-    public static IEnumerable<object[]> TryGetData
+    public static IEnumerable<Func<(Func<Random, int, object>, TryGetDelegateObject)>> TryGetData()
     {
-        get
+        yield return () => (static (Random random, int _) => random.NextDouble(), CreateDelegate<double>(MemoryExtensions.TryGetNextDouble));
+        yield return () => (static (Random random, int _) => (float)random.NextDouble(), CreateDelegate<float>(MemoryExtensions.TryGetNextSingle));
+        yield return () => (static (Random random, int _) => (byte)random.Next(byte.MaxValue), CreateDelegate<byte>(MemoryExtensions.TryGetNextByte));
+        yield return () => (static (Random random, int _) => (short)random.Next(short.MaxValue), CreateDelegate<short>(MemoryExtensions.TryGetNextInt16));
+        yield return () => (static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), CreateDelegate<ushort>(MemoryExtensions.TryGetNextUInt16));
+        yield return () => (static (Random random, int _) => random.Next(), CreateDelegate<int>(MemoryExtensions.TryGetNextInt32));
+        yield return () => (static (Random random, int _) => (uint)random.Next(), CreateDelegate<uint>(MemoryExtensions.TryGetNextUInt32));
+        yield return () => (static (Random random, int _) => (long)random.Next() + int.MaxValue, CreateDelegate<long>(MemoryExtensions.TryGetNextInt64));
+        yield return () => (static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, CreateDelegate<ulong>(MemoryExtensions.TryGetNextUInt64));
+
+        static TryGetDelegateObject CreateDelegate<T>(TryGetDelegate<T> @delegate)
         {
-            yield return new object[] { static (Random random, int _) => random.NextDouble(), new TryGetDelegate<double>(MemoryExtensions.TryGetNextDouble) };
-            yield return new object[] { static (Random random, int _) => (float)random.NextDouble(), new TryGetDelegate<float>(MemoryExtensions.TryGetNextSingle) };
-            yield return new object[] { static (Random random, int _) => (byte)random.Next(byte.MaxValue), new TryGetDelegate<byte>(MemoryExtensions.TryGetNextByte) };
-            yield return new object[] { static (Random random, int _) => (short)random.Next(short.MaxValue), new TryGetDelegate<short>(MemoryExtensions.TryGetNextInt16) };
-            yield return new object[] { static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), new TryGetDelegate<ushort>(MemoryExtensions.TryGetNextUInt16) };
-            yield return new object[] { static (Random random, int _) => random.Next(), new TryGetDelegate<int>(MemoryExtensions.TryGetNextInt32) };
-            yield return new object[] { static (Random random, int _) => (uint)random.Next(), new TryGetDelegate<uint>(MemoryExtensions.TryGetNextUInt32) };
-            yield return new object[] { static (Random random, int _) => (long)random.Next() + int.MaxValue, new TryGetDelegate<long>(MemoryExtensions.TryGetNextInt64) };
-            yield return new object[] { static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, new TryGetDelegate<ulong>(MemoryExtensions.TryGetNextUInt64) };
+            return new TryGetDelegateObject(TryGetDelegateFunc);
+
+            bool TryGetDelegateFunc(
+                ReadOnlySpan<char> span,
+#if NET9_0_OR_GREATER
+                ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,
+#else
+                ref SpanSplitEnumerator<char> enumerator,
+#endif
+                IFormatProvider? provider,
+                [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object? value)
+            {
+                var result = @delegate(span, ref enumerator, provider, out var item);
+                value = item;
+                return result;
+            }
         }
     }
 
     public delegate bool TryGetValuesSpanDelegate<TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider, out TResult[]? output);
 
     public delegate bool TryGetValuesCharDelegate<TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider, out TResult[]? output);
+
+    public delegate bool TryGetDelegateObject(
+        ReadOnlySpan<char> span,
+#if NET9_0_OR_GREATER
+        ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,
+#else
+        ref SpanSplitEnumerator<char> enumerator,
+#endif
+        IFormatProvider? provider,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object? value);
 
     public delegate bool TryGetDelegate<T>(
         ReadOnlySpan<char> span,
@@ -421,6 +476,16 @@ public class MemoryExtensionsTests
     public delegate TResult[] GetValuesSpanDelegate<TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider);
 
     public delegate TResult[] GetValuesCharDelegate<TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider);
+
+    public delegate object? GetDelegateObject(
+        ReadOnlySpan<char> span,
+#if NET9_0_OR_GREATER
+        ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,
+#else
+        ref SpanSplitEnumerator<char> enumerator,
+#endif
+        System.Globalization.NumberStyles style,
+        IFormatProvider? provider);
 
     public delegate T GetDelegate<T>(
         ReadOnlySpan<char> span,

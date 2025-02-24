@@ -1,102 +1,113 @@
 ﻿namespace Altemiq;
 
+using TUnit.Assertions.AssertConditions.Throws;
+
 public partial class BitConverterTests
 {
     public class VarInt
     {
+        private const int SByteMaxValue = sbyte.MaxValue;
+        private const int SByteDefault = default(sbyte);
+        private const int SByteMinValue = sbyte.MinValue;
+        private const int ByteMaxValue = byte.MaxValue;
+        private const int ByteMinValue = byte.MinValue;
+        private const int Int16MaxValue = short.MaxValue;
+        private const int Int16Default = default(short);
+        private const int Int16MinValue = short.MinValue;
+
         public class Array
         {
-            [Theory]
-            [InlineData(sbyte.MaxValue)]
-            [InlineData(sbyte.MinValue)]
-            [InlineData(default(sbyte))]
-            [InlineData(sbyte.MaxValue / 2)]
-            public void EncodeAndDecodeSByte(sbyte number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToSByte);
+            [Test]
+            [Arguments(SByteMaxValue)]
+            [Arguments(SByteMinValue)]
+            [Arguments(SByteDefault)]
+            [Arguments(SByteMaxValue / 2)]
+            public async Task EncodeAndDecodeSByte(sbyte number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToSByte);
 
-            [Theory]
-            [InlineData(byte.MaxValue)]
-            [InlineData(byte.MinValue)]
-            [InlineData(byte.MaxValue / 2)]
-            public void EncodeAndDecodeByte(byte number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToByte);
+            [Test]
+            [Arguments(ByteMaxValue)]
+            [Arguments(ByteMinValue)]
+            [Arguments(ByteMaxValue / 2)]
+            public async Task EncodeAndDecodeByte(byte number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToByte);
 
-            [Theory]
-            [InlineData(short.MaxValue)]
-            [InlineData(short.MinValue)]
-            [InlineData(default(short))]
-            [InlineData(short.MaxValue / 2)]
-            public void EncodeAndDecodeInt16(short number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt16);
+            [Test]
+            [Arguments(Int16MaxValue)]
+            [Arguments(Int16MinValue)]
+            [Arguments(Int16Default)]
+            [Arguments(Int16MaxValue / 2)]
+            public async Task EncodeAndDecodeInt16(short number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt16);
 
-            [Theory]
-            [InlineData(ushort.MaxValue)]
-            [InlineData(ushort.MinValue)]
-            [InlineData(ushort.MaxValue / 2)]
-            public void EncodeAndDecodeUInt16(ushort number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt16);
+            [Test]
+            [Arguments(ushort.MaxValue)]
+            [Arguments(ushort.MinValue)]
+            [Arguments(ushort.MaxValue / 2)]
+            public async Task EncodeAndDecodeUInt16(ushort number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt16);
 
-            [Theory]
-            [InlineData(int.MaxValue)]
-            [InlineData(int.MinValue)]
-            [InlineData(default(int))]
-            [InlineData(int.MaxValue / 2)]
-            public void EncodeAndDecodeInt32(int number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt32);
+            [Test]
+            [Arguments(int.MaxValue)]
+            [Arguments(int.MinValue)]
+            [Arguments(default(int))]
+            [Arguments(int.MaxValue / 2)]
+            public async Task EncodeAndDecodeInt32(int number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt32);
 
-            [Theory]
-            [InlineData(uint.MaxValue)]
-            [InlineData(uint.MinValue)]
-            [InlineData(uint.MaxValue / 2)]
-            public void EncodeAndDecodeUInt32(uint number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt32);
+            [Test]
+            [Arguments(uint.MaxValue)]
+            [Arguments(uint.MinValue)]
+            [Arguments(uint.MaxValue / 2)]
+            public async Task EncodeAndDecodeUInt32(uint number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt32);
 
-            [Theory]
-            [InlineData(long.MaxValue)]
-            [InlineData(long.MinValue)]
-            [InlineData(default(long))]
-            [InlineData(long.MaxValue / 2)]
-            public void EncodeAndDecodeInt64(long number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt64);
+            [Test]
+            [Arguments(long.MaxValue)]
+            [Arguments(long.MinValue)]
+            [Arguments(default(long))]
+            [Arguments(long.MaxValue / 2)]
+            public async Task EncodeAndDecodeInt64(long number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt64);
 
-            [Theory]
-            [InlineData(ulong.MaxValue)]
-            [InlineData(ulong.MinValue)]
-            [InlineData(ulong.MaxValue / 2)]
-            public void EncodeAndDecodeUInt64(ulong number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt64);
+            [Test]
+            [Arguments(ulong.MaxValue)]
+            [Arguments(ulong.MinValue)]
+            [Arguments(ulong.MaxValue / 2)]
+            public async Task EncodeAndDecodeUInt64(ulong number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt64);
 
 #if NET7_0_OR_GREATER
-            [Theory]
-            [MemberData(nameof(GetInt128Data), MemberType = typeof(VarInt))]
-            public void EncodeAndDecodeInt128(Int128 number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt128);
+            [Test]
+            [MethodDataSource(typeof(VarInt), nameof(GetInt128Data))]
+            public async Task EncodeAndDecodeInt128(Int128 number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt128);
 
-            [Theory]
-            [MemberData(nameof(GetUInt128Data), MemberType = typeof(VarInt))]
-            public void EncodeAndDecodeUInt128(UInt128 number) => EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt128);
+            [Test]
+            [MethodDataSource(typeof(VarInt), nameof(GetUInt128Data))]
+            public async Task EncodeAndDecodeUInt128(UInt128 number) => await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToUInt128);
 #endif
 
-            [Fact]
-            public void ToSmall()
+            [Test]
+            public async Task ToSmall()
             {
                 var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
                 System.Array.Resize(ref encoded, encoded.Length / 2);
-                Assert.Throws<ArgumentException>(() => BitConverter.ToUInt64(encoded, 0, out var bytesRead));
+                await Assert.That(() => BitConverter.ToUInt64(encoded, 0, out var bytesRead)).Throws<ArgumentException>();
             }
 
-            [Fact]
-            public void ToBig()
+            [Test]
+            public async Task ToBig()
             {
                 const ulong Number = ulong.MaxValue / 2;
                 var encoded = BitConverter.GetVarBytes(Number);
                 var length = encoded.Length;
                 System.Array.Resize(ref encoded, length * 2);
                 var decoded = BitConverter.ToUInt64(encoded, 0, out var bytesRead);
-                Assert.Equal(Number, decoded);
-                Assert.Equal(length, bytesRead);
+                await Assert.That(decoded).IsEqualTo(Number);
+                await Assert.That(bytesRead).IsEqualTo(length);
             }
 
-            private static void EncodeAndDecode<T>(
+            private static async Task EncodeAndDecode<T>(
                 T number,
                 GetVarBytes<T> encode,
                 ToValue<T> decode)
             {
                 var encoded = encode(number);
                 var decoded = decode(encoded, 0, out var bytesRead);
-                Assert.Equal(number, decoded);
-                Assert.Equal(encoded.Length, bytesRead);
+                await Assert.That(decoded).IsEqualTo(number);
+                await Assert.That(bytesRead).IsEqualTo(encoded.Length);
             }
 
             private delegate byte[] GetVarBytes<T>(T value);
@@ -106,96 +117,97 @@ public partial class BitConverterTests
 
         public class Span
         {
-            [Theory]
-            [InlineData(sbyte.MaxValue)]
-            [InlineData(sbyte.MinValue)]
-            [InlineData(default(sbyte))]
-            [InlineData(sbyte.MaxValue / 2)]
-            public void EncodeAndDecodeSByte(sbyte number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToSByte);
+            [Test]
+            [Arguments(SByteMaxValue)]
+            [Arguments(SByteMinValue)]
+            [Arguments(SByteDefault)]
+            [Arguments(SByteMaxValue / 2)]
+            public async Task EncodeAndDecodeSByte(sbyte number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToSByte);
 
-            [Theory]
-            [InlineData(byte.MaxValue)]
-            [InlineData(byte.MinValue)]
-            [InlineData(byte.MaxValue / 2)]
-            public void EncodeAndDecodeByte(byte number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToByte);
+            [Test]
+            [Arguments(ByteMaxValue)]
+            [Arguments(ByteMinValue)]
+            [Arguments(ByteMaxValue / 2)]
+            public async Task EncodeAndDecodeByte(byte number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToByte);
 
-            [Theory]
-            [InlineData(short.MaxValue)]
-            [InlineData(short.MinValue)]
-            [InlineData(default(short))]
-            [InlineData(short.MaxValue / 2)]
-            public void EncodeAndDecodeInt16(short number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt16);
+            [Test]
+            [Arguments(Int16MaxValue)]
+            [Arguments(Int16MinValue)]
+            [Arguments(Int16Default)]
+            [Arguments(Int16MaxValue / 2)]
+            public async Task EncodeAndDecodeInt16(short number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt16);
 
-            [Theory]
-            [InlineData(ushort.MaxValue)]
-            [InlineData(ushort.MinValue)]
-            [InlineData(ushort.MaxValue / 2)]
-            public void EncodeAndDecodeUInt16(ushort number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt16);
+            [Test]
+            [Arguments(ushort.MaxValue)]
+            [Arguments(ushort.MinValue)]
+            [Arguments(ushort.MaxValue / 2)]
+            public async Task EncodeAndDecodeUInt16(ushort number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt16);
 
-            [Theory]
-            [InlineData(int.MaxValue)]
-            [InlineData(int.MinValue)]
-            [InlineData(default(int))]
-            [InlineData(int.MaxValue / 2)]
-            public void EncodeAndDecodeInt32(int number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt32);
+            [Test]
+            [Arguments(int.MaxValue)]
+            [Arguments(int.MinValue)]
+            [Arguments(default(int))]
+            [Arguments(int.MaxValue / 2)]
+            public async Task EncodeAndDecodeInt32(int number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt32);
 
-            [Theory]
-            [InlineData(uint.MaxValue)]
-            [InlineData(uint.MinValue)]
-            [InlineData(uint.MaxValue / 2)]
-            public void EncodeAndDecodeUInt32(uint number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt32);
+            [Test]
+            [Arguments(uint.MaxValue)]
+            [Arguments(uint.MinValue)]
+            [Arguments(uint.MaxValue / 2)]
+            public async Task EncodeAndDecodeUInt32(uint number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt32);
 
-            [Theory]
-            [InlineData(long.MaxValue)]
-            [InlineData(long.MinValue)]
-            [InlineData(default(long))]
-            [InlineData(long.MaxValue / 2)]
-            public void EncodeAndDecodeInt64(long number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt64);
+            [Test]
+            [Arguments(long.MaxValue)]
+            [Arguments(long.MinValue)]
+            [Arguments(default(long))]
+            [Arguments(long.MaxValue / 2)]
+            public async Task EncodeAndDecodeInt64(long number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt64);
 
-            [Theory]
-            [InlineData(ulong.MaxValue)]
-            [InlineData(ulong.MinValue)]
-            [InlineData(ulong.MaxValue / 2)]
-            public void EncodeAndDecodeUInt64(ulong number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt64);
+            [Test]
+            [Arguments(ulong.MaxValue)]
+            [Arguments(ulong.MinValue)]
+            [Arguments(ulong.MaxValue / 2)]
+            public async Task EncodeAndDecodeUInt64(ulong number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt64);
 
 #if NET7_0_OR_GREATER
-            [Theory]
-            [MemberData(nameof(GetInt128Data), MemberType = typeof(VarInt))]
-            public void EncodeAndDecodeInt128(Int128 number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt128);
+            [Test]
+            [MethodDataSource(typeof(VarInt), nameof(GetInt128Data))]
+            public async Task EncodeAndDecodeInt128(Int128 number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt128);
 
-            [Theory]
-            [MemberData(nameof(GetUInt128Data), MemberType = typeof(VarInt))]
-            public void EncodeAndDecodeUInt128(UInt128 number) => EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt128);
+            [Test]
+            [MethodDataSource(typeof(VarInt), nameof(GetUInt128Data))]
+            public async Task EncodeAndDecodeUInt128(UInt128 number) => await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToUInt128);
 #endif
 
-            [Fact]
-            public void ToSmall()
+            [Test]
+            public async Task ToSmall()
             {
                 var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
-                Assert.Throws<ArgumentException>(() => BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out var bytesRead));
+                await Assert.That(() => BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out var bytesRead)).Throws<ArgumentException>();
             }
 
-            [Fact]
-            public void ToBig()
+            [Test]
+            public async Task ToBig()
             {
                 const ulong Number = ulong.MaxValue / 2;
                 var encoded = BitConverter.GetVarBytes(Number);
                 var length = encoded.Length;
                 System.Array.Resize(ref encoded, length * 2);
                 var decoded = BitConverter.ToUInt64(encoded.AsSpan(), out var bytesRead);
-                Assert.Equal(Number, decoded);
-                Assert.Equal(length, bytesRead);
+                await Assert.That(decoded).IsEqualTo(Number);
+                await Assert.That(bytesRead).IsEqualTo(length);
             }
-            private void EncodeAndDecode<T>(
+
+            private static async Task EncodeAndDecode<T>(
                 T number,
                 TryWriteBytes<T> encode,
                 ToValue<T> decode)
             {
-                Span<byte> encoded = stackalloc byte[20];
-                Assert.True(encode(encoded, number, out var bytesWritten));
-                var decoded = decode(encoded[..bytesWritten], out var bytesRead);
-                Assert.Equal(number, decoded);
-                Assert.Equal(bytesWritten, bytesRead);
+                var encoded = new byte[20];
+                await Assert.That(encode(encoded, number, out var bytesWritten)).IsTrue();
+                var decoded = decode(encoded.AsSpan()[..bytesWritten], out var bytesRead);
+                await Assert.That(decoded).IsEqualTo(number);
+                await Assert.That(bytesRead).IsEqualTo(bytesWritten);
             }
 
             private delegate bool TryWriteBytes<T>(Span<byte> destination, T value, out int bytesWritten);
@@ -204,20 +216,20 @@ public partial class BitConverterTests
         }
 
 #if NET7_0_OR_GREATER
-        public static TheoryData<Int128> GetInt128Data() =>
-        [
-            Int128.MinValue,
-            Int128.MaxValue,
-            default(Int128),
-            Int128.MaxValue / 2,
-        ];
+        public static IEnumerable<Func<Int128>> GetInt128Data()
+        {
+            yield return () => Int128.MinValue;
+            yield return () => Int128.MaxValue;
+            yield return () => default;
+            yield return () => Int128.MaxValue / 2;
+        }
 
-        public static TheoryData<UInt128> GetUInt128Data() =>
-        [
-            UInt128.MinValue,
-            UInt128.MaxValue,
-            UInt128.MaxValue / 2,
-        ];
+        public static IEnumerable<Func<UInt128>> GetUInt128Data()
+        {
+            yield return () => UInt128.MinValue;
+            yield return () => UInt128.MaxValue;
+            yield return () => UInt128.MaxValue / 2;
+        }
 #endif
     }
 }

@@ -1,11 +1,11 @@
 namespace Altemiq.Buffers.Compression;
 
-using Xunit;
+using System.Threading.Tasks;
 
-public class ExampleTest(ITestOutputHelper testOutputHelper)
+public class ExampleTest
 {
-    [Fact]
-    public void SuperSimpleExample()
+    [Test]
+    public async Task SuperSimpleExample()
     {
         var iic = new Differential.DifferentialInt32Compressor();
         var data = new int[2342351];
@@ -14,18 +14,15 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
             data[k] = k;
         }
 
-        testOutputHelper.WriteLine("Compressing " + data.Length + " integers using friendly interface");
         var compressed = iic.Compress(data);
         var recov = iic.Uncompress(compressed);
-        testOutputHelper.WriteLine("compressed from " + (data.Length * 4 / 1024) + "KB to " + (compressed.Length * 4 / 1024) + "KB");
-        Assert.Equal(data, recov);
+        await Assert.That(recov).IsEquivalentTo(data);
     }
 
-    [Fact]
-    public void BasicExample()
+    [Test]
+    public async Task BasicExample()
     {
         var data = new int[2342351];
-        testOutputHelper.WriteLine("Compressing " + data.Length + " integers in one go");
 
         // data should be sorted for best results
         for (var k = 0; k < data.Length; ++k)
@@ -51,10 +48,7 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length);
 
         // got it!
-        // inputoffset should be at data.Length but outputoffset tells
-        // us where we are...
-        testOutputHelper.WriteLine(
-            "compressed from " + (data.Length * 4 / 1024) + "KB to " + (outputoffset * 4 / 1024) + "KB");
+        // inputoffset should be at data.Length but outputoffset tells us where we are...
         // we can repack the data: (optional)
         System.Array.Resize(ref compressed, outputoffset);
 
@@ -69,19 +63,17 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        Assert.Equal(data, recovered);
+        await Assert.That(recovered).IsEquivalentTo(data);
     }
 
     /**
 	     * Like the basicExample, but we store the input array size manually.
 	     */
-    [Fact]
-    public void BasicExampleHeadless()
+    [Test]
+    public async Task BasicExampleHeadless()
     {
         var data = new int[2342351];
-        testOutputHelper.WriteLine("Compressing " + data.Length + " integers in one go using the headless approach");
-        // data should be sorted for best
-        // results
+        // data should be sorted for best results
         for (var k = 0; k < data.Length; ++k)
         {
             data[k] = k;
@@ -107,9 +99,6 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         compressed[0] = data.Length; // we manually store how many integers we
         codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length, ref initValue);
 
-        // got it! inputoffset should be at data.Length but outputoffset tells us where we are...
-        testOutputHelper.WriteLine("compressed from " + (data.Length * 4 / 1024) + "KB to " + (outputoffset * 4 / 1024) + "KB");
-
         // we can repack the data: (optional)
         System.Array.Resize(ref compressed, outputoffset);
 
@@ -119,11 +108,11 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var inpos = 1;
         initValue = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length, howmany, ref initValue);
-        Assert.Equal(data, recovered);
+        await Assert.That(recovered).IsEquivalentTo(data);
     }
 
-    [Fact]
-    public void UnsortedExample()
+    [Test]
+    public async Task UnsortedExample()
     {
         const int N = 1333333;
         var data = new int[N];
@@ -150,7 +139,6 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var inputoffset = 0;
         var outputoffset = 0;
         codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length);
-        testOutputHelper.WriteLine("compressed unsorted integers from " + (data.Length * 4 / 1024) + "KB to " + (outputoffset * 4 / 1024) + "KB");
         // we can repack the data: (optional)
         System.Array.Resize(ref compressed, outputoffset);
 
@@ -158,16 +146,14 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        Assert.Equal(data, recovered);
+        await Assert.That(recovered).IsEquivalentTo(data);
     }
 
-    [Fact]
-    public void AdvancedExample()
+    [Test]
+    public async Task AdvancedExample()
     {
         const int TotalSize = 2342351; // some arbitrary number
         const int ChunkSize = 16384; // size of each chunk, choose a multiple of 128
-        testOutputHelper.WriteLine("Compressing " + TotalSize + " integers using chunks of " + ChunkSize + " integers (" + (ChunkSize * 4 / 1024) + "KB)");
-        testOutputHelper.WriteLine("(It is often better for applications to work in chunks fitting in CPU cache.)");
         var data = new int[TotalSize];
         // data should be sorted for best results
         for (var k = 0; k < data.Length; ++k)
@@ -194,9 +180,6 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
 
         lastcodec.Compress(data, ref inputoffset, compressed, ref outputoffset, TotalSize % ChunkSize);
 
-        // got it! inputoffset should be at data.Length but outputoffset tells us where we are...
-        testOutputHelper.WriteLine("compressed from " + (data.Length * 4 / 1024) + "KB to " + (outputoffset * 4 / 1024) + "KB");
-
         // we can repack the data:
         System.Array.Resize(ref compressed, outputoffset);
 
@@ -214,22 +197,19 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
                 // last chunk detected
                 ivb.Decompress(compressed, ref compoff, recovered, ref recoffset, compressed.Length - compoff);
             }
+
             for (var i = 0; i < recoffset; ++i)
             {
-                if (data[currentpos + i] != recovered[i])
-                {
-                    throw new Exception("bug"); // could use assert
-                }
+                await Assert.That(recovered[i]).IsEqualTo(data[currentpos + i]);
             }
+
             currentpos += recoffset;
         }
-        testOutputHelper.WriteLine("data is recovered without loss");
     }
 
-    [Fact]
-    public void HeadlessDemo()
+    [Test]
+    public async Task HeadlessDemo()
     {
-        testOutputHelper.WriteLine("Compressing arrays with minimal header...");
         int[] uncompressed1 = [1, 2, 1, 3, 1];
         int[] uncompressed2 = [3, 2, 4, 6, 1];
 
@@ -250,24 +230,17 @@ public class ExampleTest(ITestOutputHelper testOutputHelper)
         var length2 = outPos - previous;
 
         System.Array.Resize(ref compressed, length1 + length2);
-        testOutputHelper.WriteLine("compressed unsorted integers from " + (uncompressed1.Length * 4) + "B to " + (length1 * 4) + "B");
-        testOutputHelper.WriteLine("compressed unsorted integers from " + (uncompressed2.Length * 4) + "B to " + (length2 * 4) + "B");
-        testOutputHelper.WriteLine("Total compressed output " + compressed.Length);
 
         var recovered1 = new int[uncompressed1.Length];
         var recovered2 = new int[uncompressed1.Length];
 
         inPos = 0;
         outPos = 0;
-        testOutputHelper.WriteLine("Decoding first array starting at pos = " + inPos);
         codec.Decompress(compressed, ref inPos, recovered1, ref outPos, compressed.Length, uncompressed1.Length);
 
         outPos = 0;
-        testOutputHelper.WriteLine("Decoding second array starting at pos = " + inPos);
         codec.Decompress(compressed, ref inPos, recovered2, ref outPos, compressed.Length, uncompressed2.Length);
-        Assert.Equal(uncompressed1, recovered1);
-        Assert.Equal(uncompressed2, recovered2);
-
-        testOutputHelper.WriteLine("The arrays match, your code is probably ok.");
+        await Assert.That(recovered1).IsEquivalentTo(uncompressed1);
+        await Assert.That(recovered2).IsEquivalentTo(uncompressed2);
     }
 }

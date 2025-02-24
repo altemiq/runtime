@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 public class EchoStreamTests
 {
-    [Fact]
-    public void ReadFromWrite()
+    [Test]
+    public async Task ReadFromWrite()
     {
         const string Text = "text to read and write";
         using var stream = new EchoStream();
@@ -24,18 +24,18 @@ public class EchoStreamTests
                 var bytes = Encoding.UTF8.GetBytes(Text);
                 stream.Write(bytes, 0, bytes.Length);
             },
-            TestContext.Current.CancellationToken);
+            TestContext.Current?.CancellationToken ?? CancellationToken.None);
 
         var expectedLength = Encoding.UTF8.GetByteCount(Text);
         var bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
-        Assert.Equal(expectedLength, read);
-        Assert.Equal(Text, Encoding.UTF8.GetString(bytes));
+        await Assert.That(read).IsEqualTo(expectedLength);
+        await Assert.That(Encoding.UTF8.GetString(bytes)).IsEqualTo(Text);
     }
 
-    [Fact]
-    public void ReadFromMultipleWrite()
+    [Test]
+    public async Task ReadFromMultipleWrite()
     {
         const string Text1 = "text to re";
         const string Text2 = "ad an";
@@ -56,18 +56,18 @@ public class EchoStreamTests
                     stream.Write(bytes, 0, bytes.Length);
                 }
             },
-            TestContext.Current.CancellationToken);
+            TestContext.Current?.CancellationToken ?? CancellationToken.None);
 
         var expectedLength = Encoding.UTF8.GetByteCount(Text);
         var bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
-        Assert.Equal(expectedLength, read);
-        Assert.Equal(Text, Encoding.UTF8.GetString(bytes));
+        await Assert.That(read).IsEqualTo(expectedLength);
+        await Assert.That(Encoding.UTF8.GetString(bytes)).IsEqualTo(Text);
     }
 
-    [Fact]
-    public void TimeoutReadFromMultipleWrite()
+    [Test]
+    public async Task TimeoutReadFromMultipleWrite()
     {
         const string Text1 = "text to re";
         const string Text2 = "ad an";
@@ -81,7 +81,7 @@ public class EchoStreamTests
         bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
-        Assert.Equal(Encoding.UTF8.GetByteCount(Text1), read);
-        Assert.Equal(Text1, Encoding.UTF8.GetString(bytes, 0, read));
+        await Assert.That(read).IsEqualTo(Encoding.UTF8.GetByteCount(Text1));
+        await Assert.That(Encoding.UTF8.GetString(bytes, 0, read)).IsEqualTo(Text1);
     }
 }

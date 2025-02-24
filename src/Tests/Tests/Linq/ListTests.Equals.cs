@@ -10,24 +10,24 @@ public partial class ListTests
 {
     public class Equal
     {
-        [Theory]
-        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
-        public void DoesEqual(IEnumerable<int> first, IEnumerable<int> second)
+        [Test]
+        [MethodDataSource(typeof(ListTests), nameof(GetLists))]
+        public async Task DoesEqual(IEnumerable<int> first, IEnumerable<int> second)
         {
-            Assert.True(TestListList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true));
-            Assert.True(TestListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true));
-            Assert.True(TestReadOnlyListList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true));
-            Assert.True(TestReadOnlyListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true));
+            await Assert.That(TestListList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true)).IsTrue();
+            await Assert.That(TestListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true)).IsTrue();
+            await Assert.That(TestReadOnlyListList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true)).IsTrue();
+            await Assert.That(TestReadOnlyListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(1, s, 0, s.Count), true)).IsTrue();
         }
 
-        [Theory]
-        [MemberData(nameof(GetLists), MemberType = typeof(ListTests))]
-        public void DoesNotEqual(IEnumerable<int> first, IEnumerable<int> second)
+        [Test]
+        [MethodDataSource(typeof(ListTests), nameof(GetLists))]
+        public async Task DoesNotEqual(IEnumerable<int> first, IEnumerable<int> second)
         {
-            Assert.False(TestListList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false));
-            Assert.False(TestListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false));
-            Assert.False(TestReadOnlyListList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false));
-            Assert.False(TestReadOnlyListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false));
+            await Assert.That(TestListList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false)).IsFalse();
+            await Assert.That(TestListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false)).IsFalse();
+            await Assert.That(TestReadOnlyListList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false)).IsFalse();
+            await Assert.That(TestReadOnlyListReadOnlyList<int, bool>(first, second, static (f, s) => f.Equals(2, s, 0, s.Count), false)).IsFalse();
         }
 
         private static TResult? TestListReadOnlyList<T, TResult>(object first, object second, Func<IList<T>, IReadOnlyList<T>, TResult> func, TResult? defaultResult = default) => first is IList<T> f && second is IReadOnlyList<T> s ? func(f, s) : defaultResult;

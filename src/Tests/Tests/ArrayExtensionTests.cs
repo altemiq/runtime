@@ -8,35 +8,35 @@ namespace Altemiq;
 
 public class ArrayExtensionTests
 {
-    [Fact]
-    public void PadLeft()
+    [Test]
+    public async Task PadLeft()
     {
         var @array = new int[] { 1, 2, 3, 4 };
         var result = array.PadLeft(10);
-        Assert.Equal([0, 0, 0, 0, 0, 0, 1, 2, 3, 4], result);
+        await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
     }
 
-    [Fact]
-    public void NullPadLeft()
+    [Test]
+    public async Task NullPadLeft()
     {
         int[]? @array = default;
         var result = array.PadLeft(10);
-        Assert.Equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], result);
+        await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     }
 
-    [Fact]
-    public void PadRight()
+    [Test]
+    public async Task PadRight()
     {
         var @array = new int[] { 1, 2, 3, 4 };
         var result = array.PadRight(10);
-        Assert.Equal([1, 2, 3, 4, 0, 0, 0, 0, 0, 0], result);
+        await Assert.That(result).IsEquivalentTo([1, 2, 3, 4, 0, 0, 0, 0, 0, 0]);
     }
 
-    [Fact]
-    public void NullPadRight()
+    [Test]
+    public async Task NullPadRight()
     {
         int[]? @array = default;
         var result = array.PadRight(10);
-        Assert.Equal([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], result);
+        await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     }
 }

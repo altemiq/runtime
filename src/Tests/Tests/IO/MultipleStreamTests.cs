@@ -10,7 +10,7 @@ using NSubstitute;
 
 public class MultipleStreamTests
 {
-    [Fact]
+    [Test]
     public void FlushAllStreams()
     {
         var first = Substitute.For<Stream>();
@@ -29,7 +29,7 @@ public class MultipleStreamTests
         third.Received().Flush();
     }
 
-    [Fact]
+    [Test]
     public void DisposeAllStreams()
     {
         var first = Substitute.For<Stream>();
@@ -48,7 +48,7 @@ public class MultipleStreamTests
         third.Received().Dispose();
     }
 
-    [Fact]
+    [Test]
     public async Task FlushAllStreamsAsync()
     {
         var first = Substitute.For<Stream>();
@@ -60,18 +60,19 @@ public class MultipleStreamTests
         multipleStream.Add(nameof(second), second);
         multipleStream.Add(nameof(third), third);
 
-        await multipleStream.FlushAsync(TestContext.Current.CancellationToken);
+        var cancellationToken = TestContext.Current?.CancellationToken ?? CancellationToken.None;
+        await multipleStream.FlushAsync(cancellationToken);
 
         Received.InOrder(async () =>
         {
-            await first.FlushAsync(TestContext.Current.CancellationToken);
-            await second.FlushAsync(TestContext.Current.CancellationToken);
-            await third.FlushAsync(TestContext.Current.CancellationToken);
+            await first.FlushAsync(cancellationToken);
+            await second.FlushAsync(cancellationToken);
+            await third.FlushAsync(cancellationToken);
         });
     }
 
 #if NET
-    [Fact]
+    [Test]
     public async Task DisposeAllStreamsAsync()
     {
         var first = Substitute.For<Stream>();
@@ -94,8 +95,8 @@ public class MultipleStreamTests
     }
 #endif
 
-    [Fact]
-    public void SwitchStream()
+    [Test]
+    public async Task SwitchStream()
     {
         var first = new MemoryStream();
         var second = new MemoryStream();
@@ -117,21 +118,21 @@ public class MultipleStreamTests
         multipleStream.SwitchTo(nameof(third));
         multipleStream.Write(thirdBytes, 0, thirdBytes.Length);
 
-        Assert.Empty(first.ToArray());
-        Assert.Equal(secondBytes, second.ToArray());
-        Assert.Equal(thirdBytes, third.ToArray());
+        await Assert.That(first.ToArray()).IsEmpty();
+        await Assert.That(second.ToArray()).IsEquivalentTo(secondBytes);
+        await Assert.That(third.ToArray()).IsEquivalentTo(thirdBytes);
     }
 
-    [Fact]
-    public void TryAddTwice()
+    [Test]
+    public async Task TryAddTwice()
     {
         var multipleStream = Substitute.ForPartsOf<MultipleStream>();
-        Assert.True(multipleStream.TryAdd(nameof(multipleStream), static () => default!));
-        Assert.False(multipleStream.TryAdd(nameof(multipleStream), static () => default!));
+        await Assert.That(multipleStream.TryAdd(nameof(multipleStream), static () => default!)).IsTrue();
+        await Assert.That(multipleStream.TryAdd(nameof(multipleStream), static () => default!)).IsFalse();
     }
 
-    [Fact]
-    public void ReadAcrossStreamsUsingArray()
+    [Test]
+    public async Task ReadAcrossStreamsUsingArray()
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
@@ -149,13 +150,13 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        Assert.Equal(ReadSize, stream.Read(third, 0, ReadSize));
+        await Assert.That(stream.Read(third, 0, ReadSize)).IsEqualTo(ReadSize);
 
-        Assert.Equal(first, new ArraySegment<byte>(third, 0, FirstSize));
-        Assert.Equal(new ArraySegment<byte>(second, 0, ReadSize - FirstSize), new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize));
+        await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
+        await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
     }
 
-    [Fact]
+    [Test]
 #if NET
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'", Justification = "We are trying to test an overload.")]
 #endif
@@ -177,15 +178,15 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        Assert.Equal(ReadSize, await stream.ReadAsync(third, 0, ReadSize, TestContext.Current.CancellationToken));
+        await Assert.That(await stream.ReadAsync(third, 0, ReadSize, TestContext.Current?.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
 
-        Assert.Equal(first, new ArraySegment<byte>(third, 0, FirstSize));
-        Assert.Equal(new ArraySegment<byte>(second, 0, ReadSize - FirstSize), new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize));
+        await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
+        await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
     }
 
 #if NET
-    [Fact]
-    public void ReadAcrossStreamsUsingSpan()
+    [Test]
+    public async Task ReadAcrossStreamsUsingSpan()
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
@@ -203,13 +204,13 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        Assert.Equal(ReadSize, stream.Read(third.AsSpan()));
+        await Assert.That(stream.Read(third.AsSpan())).IsEqualTo(ReadSize);
 
-        Assert.Equal(first, new ArraySegment<byte>(third, 0, FirstSize));
-        Assert.Equal(new ArraySegment<byte>(second, 0, ReadSize - FirstSize), new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize));
+        await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
+        await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
     }
 
-    [Fact]
+    [Test]
     public async Task ReadAcrossStreamsUsingMemoryAsync()
     {
         const int FirstSize = 1024;
@@ -228,15 +229,15 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        Assert.Equal(ReadSize, await stream.ReadAsync(third.AsMemory(), TestContext.Current.CancellationToken));
+        await Assert.That(await stream.ReadAsync(third.AsMemory(), TestContext.Current?.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
 
-        Assert.Equal(first, new ArraySegment<byte>(third, 0, FirstSize));
-        Assert.Equal(new ArraySegment<byte>(second, 0, ReadSize - FirstSize), new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize));
+        await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
+        await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
     }
 #endif
 
-    [Fact]
-    public void ReadFromSecondStream()
+    [Test]
+    public async Task ReadFromSecondStream()
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
@@ -259,13 +260,13 @@ public class MultipleStreamTests
         var expectedBytes = new byte[20];
         System.Array.Copy(second, PositionToRead - FirstSize, expectedBytes, 0, expectedBytes.Length);
 
-        Assert.Equal(expectedBytes, bytes);
+        await Assert.That(bytes).IsEquivalentTo(expectedBytes);
 
         stream.Dispose();
     }
 
-    [Fact]
-    public void CopyTo()
+    [Test]
+    public async Task CopyTo()
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
@@ -287,13 +288,13 @@ public class MultipleStreamTests
             stream.CopyTo(memoryStream);
         }
 
-        Assert.Equal(first, new ArraySegment<byte>(destination, 0, FirstSize));
-        Assert.Equal(second, new ArraySegment<byte>(destination, FirstSize, SecondSize));
-        Assert.Equal(third, new ArraySegment<byte>(destination, FirstSize + SecondSize, ThirdSize));
+        await Assert.That(new ArraySegment<byte>(destination, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
+        await Assert.That(new ArraySegment<byte>(destination, FirstSize, SecondSize)).IsEquivalentTo(new ArraySegment<byte>(second));
+        await Assert.That(new ArraySegment<byte>(destination, FirstSize + SecondSize, ThirdSize)).IsEquivalentTo(new ArraySegment<byte>(third));
     }
 
 #if NET
-    [Fact]
+    [Test]
     public async Task CopyToAsync()
     {
         const int FirstSize = 1024;
@@ -313,12 +314,12 @@ public class MultipleStreamTests
         var destination = new byte[FirstSize + SecondSize + ThirdSize];
         using (var memoryStream = new MemoryStream(destination))
         {
-            await stream.CopyToAsync(memoryStream, TestContext.Current.CancellationToken);
+            await stream.CopyToAsync(memoryStream, TestContext.Current?.CancellationToken ?? CancellationToken.None);
         }
 
-        Assert.Equal(first, new ArraySegment<byte>(destination, 0, FirstSize));
-        Assert.Equal(second, new ArraySegment<byte>(destination, FirstSize, SecondSize));
-        Assert.Equal(third, new ArraySegment<byte>(destination, FirstSize + SecondSize, ThirdSize));
+        await Assert.That(new ArraySegment<byte>(destination, 0, FirstSize)).IsEquivalentTo(first);
+        await Assert.That(new ArraySegment<byte>(destination, FirstSize, SecondSize)).IsEquivalentTo(second);
+        await Assert.That(new ArraySegment<byte>(destination, FirstSize + SecondSize, ThirdSize)).IsEquivalentTo(third);
     }
 #endif
 

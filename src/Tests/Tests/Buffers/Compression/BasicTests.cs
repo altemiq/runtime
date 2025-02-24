@@ -1,33 +1,29 @@
 namespace Altemiq.Buffers.Compression;
 
-using Xunit.Sdk;
-
-public partial class BasicTests(ITestOutputHelper testOutputHelper)
+public partial class BasicTests
 {
-    private static readonly IInt32Codec[] codecs =
+    private static readonly IEnumerable<Func<IInt32Codec>> codecs =
     [
-        new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>(),
-        new Copy(),
-        new VariableByte(),
-        new Differential.DifferentialVariableByte(),
-        new Composition<BinaryPacking, VariableByte>(),
-        new Composition<NewPfdS9, VariableByte>(),
-        new Composition<NewPfdS16, VariableByte>(),
-        new Composition<OptPfdS9, VariableByte>(),
-        new Composition<OptPfdS16, VariableByte>(),
-        new Composition<FastPatchingFrameOfReference128, VariableByte>(),
-        new Composition<FastPatchingFrameOfReference256, VariableByte>(),
-        new Simple9(),
-        new Simple16(),
-        new Composition<Differential.XorBinaryPacking, VariableByte>(),
-        new Composition<DeltaZigzagBinaryPacking, DeltaZigzagVariableByte>()
+        () => new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>(),
+        () => new Copy(),
+        () => new VariableByte(),
+        () => new Differential.DifferentialVariableByte(),
+        () => new Composition<BinaryPacking, VariableByte>(),
+        () => new Composition<NewPfdS9, VariableByte>(),
+        () => new Composition<NewPfdS16, VariableByte>(),
+        () => new Composition<OptPfdS9, VariableByte>(),
+        () => new Composition<OptPfdS16, VariableByte>(),
+        () => new Composition<FastPatchingFrameOfReference128, VariableByte>(),
+        () => new Composition<FastPatchingFrameOfReference256, VariableByte>(),
+        () => new Simple9(),
+        () => new Simple16(),
+        () => new Composition<Differential.XorBinaryPacking, VariableByte>(),
+        () => new Composition<DeltaZigzagBinaryPacking, DeltaZigzagVariableByte>()
     ];
 
-    private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
-
-    [Theory]
-    [MemberData(nameof(IntegerCodecs))]
-    public void SaulTest(IntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(IntegerCodecs))]
+    public async Task SaulTest(IntegerCodec codec)
     {
         var ic = codec.Codec!;
 
@@ -45,13 +41,13 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             bOffset = x;
             var cOffset = 0;
             ic.Decompress(b, ref bOffset, c, ref cOffset, len);
-            Assert.Equal(a, c);
+            await Assert.That(c).IsEquivalentTo(a);
         }
     }
 
-    [Theory]
-    [MemberData(nameof(IntegerCodecs))]
-    public void VaryingLengthTest(IntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(IntegerCodecs))]
+    public async Task VaryingLengthTest(IntegerCodec codec)
     {
         const int N = 4096;
         var data = new int[N];
@@ -68,10 +64,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             var answer = TestUtils.Uncompress(c, comp, L);
             for (var k = 0; k < L; ++k)
             {
-                if (answer[k] != data[k])
-                {
-                    throw new InvalidOperationException("bug");
-                }
+                await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
         for (var L = 128; L <= N; L *= 2)
@@ -80,19 +73,14 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             var answer = TestUtils.Uncompress(c, comp, L);
             for (var k = 0; k < L; ++k)
             {
-                if (answer[k] != data[k])
-                {
-                    _testOutputHelper.WriteLine(TestUtils.ArrayToString(TestUtils.CopyArray(answer, L)));
-                    _testOutputHelper.WriteLine(TestUtils.ArrayToString(TestUtils.CopyArray(data, L)));
-                    throw new InvalidOperationException("bug");
-                }
+                await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
     }
 
-    [Theory]
-    [MemberData(nameof(ComplexCodecs))]
-    public void VaryingLengthTest2(IntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(ComplexCodecs))]
+    public async Task VaryingLengthTest2(IntegerCodec codec)
     {
         const int N = 128;
         var data = new int[N];
@@ -105,10 +93,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             var answer = TestUtils.Uncompress(c, comp, L);
             for (var k = 0; k < L; ++k)
             {
-                if (answer[k] != data[k])
-                {
-                    throw new Exception("bug");
-                }
+                await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
         for (var L = 128; L <= N; L *= 2)
@@ -117,100 +102,97 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             var answer = TestUtils.Uncompress(c, comp, L);
             for (var k = 0; k < L; ++k)
             {
-                if (answer[k] != data[k])
-                {
-                    throw new Exception("bug");
-                }
+                await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
     }
 
-    public static TheoryData<IntegerCodec> IntegerCodecs()
+    public static IEnumerable<Func<IntegerCodec>> IntegerCodecs()
     {
-        return new(codecs.Select(c => new IntegerCodec(c)));
+        return codecs.Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c())));
     }
 
-    public static TheoryData<IntegerCodec> ComplexCodecs()
+    public static IEnumerable<Func<IntegerCodec>> ComplexCodecs()
     {
-        return new(codecs.Where(c => c is not Simple9 and not Simple16).Select(c => new IntegerCodec(c)));
+        return codecs.Select(c => c()).Where(c => c is not Simple9 and not Simple16).Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c)));
     }
 
-    [Fact]
-    public void CheckDeltaZigzagZero()
+    [Test]
+    public Task CheckDeltaZigzagZero()
     {
-        TestZeroInZeroOut(new DeltaZigzagVariableByte());
+        return TestZeroInZeroOut(new DeltaZigzagVariableByte());
     }
 
-    [Theory]
-    [MemberData(nameof(Data))]
-    public void CheckDeltaZigzagVariableByte(int[][] data)
+    [Test]
+    [MethodDataSource(nameof(Data))]
+    public Task CheckDeltaZigzagVariableByte(int[][] data)
     {
-        TestCodec(new DeltaZigzagVariableByte(), new DeltaZigzagVariableByte(), data);
+        return TestCodec(new DeltaZigzagVariableByte(), new DeltaZigzagVariableByte(), data);
     }
 
-    [Fact]
-    public void CheckDeltaZigzagPacking()
+    [Test]
+    public async Task CheckDeltaZigzagPacking()
     {
         var codec = new DeltaZigzagBinaryPacking();
-        TestZeroInZeroOut(codec);
-        TestSpurious(codec);
+        await TestZeroInZeroOut(codec);
+        await TestSpurious(codec);
     }
 
-    [Fact]
-    public void CheckDeltaZigzagZeroInZeroOut()
+    [Test]
+    public async Task CheckDeltaZigzagZeroInZeroOut()
     {
         IInt32Codec compo = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
-        TestZeroInZeroOut(compo);
+        await TestZeroInZeroOut(compo);
     }
 
-    [Fact]
-    public void CheckDeltaZigzagUnsorted()
+    [Test]
+    public async Task CheckDeltaZigzagUnsorted()
     {
         IInt32Codec compo = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
-        TestUnsorted(compo);
+        await TestUnsorted(compo);
     }
 
-    [Theory]
-    [MemberData(nameof(Data))]
-    public void CheckDeltaZigzagPackingComposition(int[][] data)
+    [Test]
+    [MethodDataSource(nameof(Data))]
+    public async Task CheckDeltaZigzagPackingComposition(int[][] data)
     {
         IInt32Codec compo = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
         IInt32Codec compo2 = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
 
-        TestCodec(compo, compo2, data);
+        await TestCodec(compo, compo2, data);
     }
 
-    [Fact]
-    public void CheckXorBinaryPacking()
+    [Test]
+    public async Task CheckXorBinaryPacking()
     {
-        TestZeroInZeroOut(new Differential.XorBinaryPacking());
-        TestSpurious(new Differential.XorBinaryPacking());
+        await TestZeroInZeroOut(new Differential.XorBinaryPacking());
+        await TestSpurious(new Differential.XorBinaryPacking());
     }
 
-    [Fact]
-    public void CheckXorBinaryPacking1()
+    [Test]
+    public Task CheckXorBinaryPacking1()
     {
-        TestZeroInZeroOut(new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte()));
+        return TestZeroInZeroOut(new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte()));
     }
 
-    [Fact]
-    public void CheckXorBinaryPacking2()
+    [Test]
+    public Task CheckXorBinaryPacking2()
     {
-        TestUnsorted(new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte()));
+        return TestUnsorted(new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte()));
     }
 
-    [Theory]
-    [MemberData(nameof(Data))]
-    public void CheckXorBinaryPacking3(int[][] data)
+    [Test]
+    [MethodDataSource(nameof(Data))]
+    public async Task CheckXorBinaryPacking3(int[][] data)
     {
         IInt32Codec c = new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte());
         IInt32Codec co = new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte());
-        TestCodec(c, co, data);
+        await TestCodec(c, co, data);
     }
 
-    public static TheoryData<int[][]> Data()
+    public static IEnumerable<Func<int[][]>> Data()
     {
-        return new TheoryData<int[][]>(GetAllData());
+        return GetAllData().Select(x => new Func<int[][]>(() => x));
 
         static IEnumerable<int[][]> GetAllData()
         {
@@ -234,13 +216,13 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         }
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(8)]
-    [InlineData(16)]
-    [InlineData(24)]
-    [InlineData(30)]
-    public void VerifyBitPacking(int bit)
+    [Test]
+    [Arguments(0)]
+    [Arguments(8)]
+    [Arguments(16)]
+    [Arguments(24)]
+    [Arguments(30)]
+    public async Task VerifyBitPacking(int bit)
     {
         const int N = 32;
         var r = new Random();
@@ -256,16 +238,16 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
         BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-        Assert.Equal(data, uncompressed);
+        await Assert.That(data).IsEquivalentTo(data);
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(8)]
-    [InlineData(16)]
-    [InlineData(24)]
-    [InlineData(30)]
-    public void VerifyWithoutMask(int bit)
+    [Test]
+    [Arguments(0)]
+    [Arguments(8)]
+    [Arguments(16)]
+    [Arguments(24)]
+    [Arguments(30)]
+    public async Task VerifyWithoutMask(int bit)
     {
         const int N = 32;
         var r = new Random();
@@ -280,16 +262,16 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         BitPacking.PackWithoutMask(data.AsSpan(0), compressed.AsSpan(0), bit);
         BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-        Assert.Equal(data, uncompressed);
+        await Assert.That(data).IsEquivalentTo(data);
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(8)]
-    [InlineData(16)]
-    [InlineData(24)]
-    [InlineData(30)]
-    public void VerifyWithExceptions(int bit)
+    [Test]
+    [Arguments(0)]
+    [Arguments(8)]
+    [Arguments(16)]
+    [Arguments(24)]
+    [Arguments(30)]
+    public async Task VerifyWithExceptions(int bit)
     {
         const int N = 32;
         const int TIMES = 1000;
@@ -309,7 +291,7 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
             // Check assertions.
             MaskArray(data, (1 << bit) - 1);
-            Assert.Equal(data, uncompressed);
+            await Assert.That(uncompressed).IsEquivalentTo(data);
         }
 
         static void MaskArray(int[] array, int mask)
@@ -321,43 +303,35 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         }
     }
 
-    [Theory]
-    [MemberData(nameof(BasicTestData))]
-    public void BasicTest(IntegerCodec c, IntegerCodec co, int[][] data)
+    [Test]
+    [MethodDataSource(nameof(BasicTestData))]
+    public Task BasicTest(IntegerCodec c, IntegerCodec co, int[][] data)
     {
-        TestCodec(c.Codec, co.Codec, data);
+        return TestCodec(c.Codec, co.Codec, data);
     }
 
-    public static TheoryData<IntegerCodec, IntegerCodec, int[][]> BasicTestData()
+    public static IEnumerable<Func<(IntegerCodec, IntegerCodec, int[][])>> BasicTestData()
     {
-        var data = new TheoryData<IntegerCodec, IntegerCodec, int[][]>();
+        return AddData(5, 10).Concat(AddData(5, 14)).Concat(AddData(2, 18));
 
-        _ = AddData(data, 5, 10);
-        _ = AddData(data, 5, 14);
-        _ = AddData(data, 2, 18);
-
-        return data;
-
-        static TheoryData<IntegerCodec, IntegerCodec, int[][]> AddData(TheoryData<IntegerCodec, IntegerCodec, int[][]> data, int N, int nbr)
+        static IEnumerable<Func<(IntegerCodec, IntegerCodec, int[][])>> AddData(int N, int nbr)
         {
             for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
             {
                 var generatedData = GenerateData(N, nbr, sparsity);
-                data.Add(new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Copy()), new IntegerCodec(new Copy()), generatedData);
-                data.Add(new IntegerCodec(new VariableByte()), new IntegerCodec(new VariableByte()), generatedData);
-                data.Add(new IntegerCodec(new Differential.DifferentialVariableByte()), new IntegerCodec(new Differential.DifferentialVariableByte()), generatedData);
-                data.Add(new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), generatedData);
-                data.Add(new IntegerCodec(new Simple9()), new IntegerCodec(new Simple9()), generatedData);
+                yield return () => (new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Copy()), new IntegerCodec(new Copy()), generatedData);
+                yield return () => (new IntegerCodec(new VariableByte()), new IntegerCodec(new VariableByte()), generatedData);
+                yield return () => (new IntegerCodec(new Differential.DifferentialVariableByte()), new IntegerCodec(new Differential.DifferentialVariableByte()), generatedData);
+                yield return () => (new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), new IntegerCodec(new Composition<BinaryPacking, VariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), new IntegerCodec(new Composition<NewPfdS9, VariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), new IntegerCodec(new Composition<NewPfdS16, VariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), new IntegerCodec(new Composition<OptPfdS9, VariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), new IntegerCodec(new Composition<OptPfdS16, VariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()), generatedData);
+                yield return () => (new IntegerCodec(new Simple9()), new IntegerCodec(new Simple9()), generatedData);
             }
-
-            return data;
 
             static int[][] GenerateData(int N, int nbr, int sparsity)
             {
@@ -375,55 +349,53 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         }
     }
 
-    [Theory]
-    [InlineData(typeof(Differential.DifferentialBinaryPacking))]
-    [InlineData(typeof(BinaryPacking))]
-    [InlineData(typeof(NewPfdS9))]
-    [InlineData(typeof(NewPfdS16))]
-    [InlineData(typeof(OptPfdS9))]
-    [InlineData(typeof(OptPfdS16))]
-    [InlineData(typeof(FastPatchingFrameOfReference128))]
-    [InlineData(typeof(FastPatchingFrameOfReference256))]
-    public void SpuriousOut(Type type)
+    [Test]
+    [Arguments(typeof(Differential.DifferentialBinaryPacking))]
+    [Arguments(typeof(BinaryPacking))]
+    [Arguments(typeof(NewPfdS9))]
+    [Arguments(typeof(NewPfdS16))]
+    [Arguments(typeof(OptPfdS9))]
+    [Arguments(typeof(OptPfdS16))]
+    [Arguments(typeof(FastPatchingFrameOfReference128))]
+    [Arguments(typeof(FastPatchingFrameOfReference256))]
+    public async Task SpuriousOut(Type type)
     {
         var codec = Activator.CreateInstance(type) as IInt32Codec;
-        Assert.NotNull(codec);
-        TestSpurious(codec);
+        await Assert.That(codec).IsNotNull();
+        await TestSpurious(codec!);
     }
 
-    [Theory]
-    [MemberData(nameof(ZeroInZeroOutData))]
-    public void ZeroInZeroOut(IntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(ZeroInZeroOutData))]
+    public Task ZeroInZeroOut(IntegerCodec codec)
     {
-        TestZeroInZeroOut(codec.Codec!);
+        return TestZeroInZeroOut(codec.Codec!);
     }
 
-    public static TheoryData<IntegerCodec> ZeroInZeroOutData()
+    public static IEnumerable<Func<IntegerCodec>> ZeroInZeroOutData()
     {
-        return [
-            new IntegerCodec(new Differential.DifferentialBinaryPacking()),
-            new IntegerCodec(new Differential.DifferentialVariableByte()),
-            new IntegerCodec(new BinaryPacking()),
-            new IntegerCodec(new NewPfdS9()),
-            new IntegerCodec(new NewPfdS16()),
-            new IntegerCodec(new OptPfdS9()),
-            new IntegerCodec(new OptPfdS16()),
-            new IntegerCodec(new FastPatchingFrameOfReference128()),
-            new IntegerCodec(new FastPatchingFrameOfReference256()),
-            new IntegerCodec(new VariableByte()),
-            new IntegerCodec(new Composition<Differential.DifferentialBinaryPacking, VariableByte>()),
-            new IntegerCodec(new Composition<BinaryPacking, VariableByte>()),
-            new IntegerCodec(new Composition<NewPfdS9, VariableByte>()),
-            new IntegerCodec(new Composition<NewPfdS16, VariableByte>()),
-            new IntegerCodec(new Composition<OptPfdS9, VariableByte>()),
-            new IntegerCodec(new Composition<OptPfdS16, VariableByte>()),
-            new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()),
-            new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()),
-            new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()),
-        ];
+        yield return () => new IntegerCodec(new Differential.DifferentialBinaryPacking());
+        yield return () => new IntegerCodec(new Differential.DifferentialVariableByte());
+        yield return () => new IntegerCodec(new BinaryPacking());
+        yield return () => new IntegerCodec(new NewPfdS9());
+        yield return () => new IntegerCodec(new NewPfdS16());
+        yield return () => new IntegerCodec(new OptPfdS9());
+        yield return () => new IntegerCodec(new OptPfdS16());
+        yield return () => new IntegerCodec(new FastPatchingFrameOfReference128());
+        yield return () => new IntegerCodec(new FastPatchingFrameOfReference256());
+        yield return () => new IntegerCodec(new VariableByte());
+        yield return () => new IntegerCodec(new Composition<Differential.DifferentialBinaryPacking, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<BinaryPacking, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<NewPfdS9, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<NewPfdS16, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<OptPfdS9, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<OptPfdS16, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>());
+        yield return () => new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
     }
 
-    private static void TestSpurious(IInt32Codec c)
+    private static async Task TestSpurious(IInt32Codec c)
     {
         var x = new int[1024];
         int[] y = [];
@@ -432,23 +404,23 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         for (var inlength = 0; inlength < 32; ++inlength)
         {
             c.Compress(x, ref i0, y, ref i1, inlength);
-            Assert.Equal(0, i1);
+            await Assert.That(i1).IsEqualTo(0);
         }
     }
 
-    private static void TestZeroInZeroOut(IInt32Codec c)
+    private static async Task TestZeroInZeroOut(IInt32Codec c)
     {
         int[] x = [];
         int[] y = [];
         var i0 = 0;
         var i1 = 0;
         c.Compress(x, ref i0, y, ref i1, 0);
-        Assert.Equal(0, i1);
+        await Assert.That(i1).IsEqualTo(0);
 
         int[] @out = [];
         var outpos = 0;
         c.Decompress(y, ref i1, @out, ref outpos, 0);
-        Assert.Equal(0, outpos);
+        await Assert.That(outpos).IsEqualTo(0);
     }
 
     //private static void Test(IInt32Codec c, IInt32Codec co, int N, int nbr)
@@ -467,10 +439,10 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
     //    }
     //}
 
-    private static void TestCodec(IInt32Codec? c, IInt32Codec? co, int[][] data)
+    private static async Task TestCodec(IInt32Codec? c, IInt32Codec? co, int[][] data)
     {
-        Assert.NotNull(c);
-        Assert.NotNull(co);
+        await Assert.That(c).IsNotNull();
+        await Assert.That(co).IsNotNull();
 
         var N = data.Length;
         var maxlength = 0;
@@ -514,40 +486,38 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             }
 
             // Check assertions.
-            Assert.Equal(data[k].Length, outpos);
+            await Assert.That(data[k]).HasCount().EqualTo(outpos);
             var bufferCutout = TestUtils.CopyArray(buffer, outpos);
-            Assert.Equal(data[k], bufferCutout);
+            await Assert.That(data[k]).IsEquivalentTo(bufferCutout);
         }
     }
 
-    [Theory]
-    [MemberData(nameof(ExampleCodecs))]
-    public void TestUnsortedExample(IntegerCodec codec)
+    [Test]
+    [MethodDataSource(nameof(ExampleCodecs))]
+    public async Task TestUnsortedExample(IntegerCodec codec)
     {
         var c = codec.Codec!;
-        TestUnsorted(c);
-        TestUnsorted2(c);
-        TestUnsorted3(c);
+        await TestUnsorted(c);
+        await TestUnsorted2(c);
+        await TestUnsorted3(c);
     }
 
-    public static TheoryData<IntegerCodec> ExampleCodecs()
+    public static IEnumerable<Func<IntegerCodec>> ExampleCodecs()
     {
-        return [
-            new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()),
-            new IntegerCodec(new Composition<Differential.DifferentialBinaryPacking, VariableByte>()),
-            new IntegerCodec(new VariableByte()),
-            new IntegerCodec(new Differential.DifferentialVariableByte()),
-            new IntegerCodec(new Composition<BinaryPacking, VariableByte>()),
-            new IntegerCodec(new Composition<NewPfdS9, VariableByte>()),
-            new IntegerCodec(new Composition<NewPfdS16, VariableByte>()),
-            new IntegerCodec(new Composition<OptPfdS9, VariableByte>()),
-            new IntegerCodec(new Composition<OptPfdS16, VariableByte>()),
-            new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>()),
-            new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>()),
-        ];
+        yield return () => new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
+        yield return () => new IntegerCodec(new Composition<Differential.DifferentialBinaryPacking, VariableByte>());
+        yield return () => new IntegerCodec(new VariableByte());
+        yield return () => new IntegerCodec(new Differential.DifferentialVariableByte());
+        yield return () => new IntegerCodec(new Composition<BinaryPacking, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<NewPfdS9, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<NewPfdS16, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<OptPfdS9, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<OptPfdS16, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<FastPatchingFrameOfReference128, VariableByte>());
+        yield return () => new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>());
     }
 
-    private static void TestUnsorted(IInt32Codec codec)
+    private static async Task TestUnsorted(IInt32Codec codec)
     {
         int[] lengths = [133, 1026, 1333333];
         foreach (var N in lengths)
@@ -582,11 +552,11 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
             var recoffset = 0;
             var inpos = 0;
             codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-            Assert.Equal(data, recovered);
+            await Assert.That(data).IsEquivalentTo(data);
         }
     }
 
-    private static void TestUnsorted2(IInt32Codec codec)
+    private static async Task TestUnsorted2(IInt32Codec codec)
     {
         var data = new int[128];
         data[5] = -1;
@@ -601,10 +571,10 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        Assert.Equal(data, recovered);
+        await Assert.That(data).IsEquivalentTo(data);
     }
 
-    private static void TestUnsorted3(IInt32Codec codec)
+    private static async Task TestUnsorted3(IInt32Codec codec)
     {
         var data = new int[128];
         data[127] = -1;
@@ -619,11 +589,11 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
         var recoffset = 0;
         var inpos = 0;
         codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        Assert.Equal(data, recovered);
+        await Assert.That(data).IsEquivalentTo(data);
     }
 
-    [Fact]
-    public void FastPFor()
+    [Test]
+    public async Task FastPFor()
     {
         // proposed by Stefan Ackermann (https://github.com/Stivo)
         var codec1 = new FastPatchingFrameOfReference256();
@@ -637,11 +607,11 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        Assert.Equal(data, TestUtils.Uncompress(codec2, comp, N));
+        await Assert.That(TestUtils.Uncompress(codec2, comp, N)).IsEquivalentTo(data);
     }
 
-    [Fact]
-    public void FastPFor128()
+    [Test]
+    public async Task FastPFor128()
     {
         // proposed by Stefan Ackermann (https://github.com/Stivo)
         var codec1 = new FastPatchingFrameOfReference128();
@@ -655,42 +625,21 @@ public partial class BasicTests(ITestOutputHelper testOutputHelper)
 
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        Assert.Equal(data, TestUtils.Uncompress(codec2, comp, N));
+        await Assert.That(TestUtils.Uncompress(codec2, comp, N)).IsEquivalentTo(data);
     }
 
-    public class IntegerCodec : IXunitSerializable
+    public class IntegerCodec
     {
-        public IntegerCodec()
-            : this(default)
-        {
-        }
-
-        internal IntegerCodec(IInt32Codec? codec)
+        internal IntegerCodec(IInt32Codec codec)
         {
             Codec = codec;
         }
 
-        internal virtual IInt32Codec? Codec { get; private set; }
-
-        public virtual void Deserialize(IXunitSerializationInfo info)
-        {
-            if (info.GetValue<Type>(nameof(Codec)) is { } codecType)
-            {
-                Codec = Activator.CreateInstance(codecType) as IInt32Codec;
-            }
-        }
-
-        public virtual void Serialize(IXunitSerializationInfo info)
-        {
-            if (Codec is not null)
-            {
-                info.AddValue(nameof(Codec), Codec.GetType());
-            }
-        }
+        internal virtual IInt32Codec Codec { get; private set; }
 
         public override string? ToString()
         {
-            return Codec?.ToString() ?? base.ToString();
+            return Codec.ToString();
         }
     }
 }

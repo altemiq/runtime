@@ -6,37 +6,39 @@
 
 namespace Altemiq.IO;
 
+using TUnit.Assertions.AssertConditions.Throws;
+
 public class SeekableStreamTests
 {
-    [Fact]
-    public void ShouldBeAbleToSeekForward()
+    [Test]
+    public async Task ShouldBeAbleToSeekForward()
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
-        Assert.Equal(1024, stream.Length);
-        Assert.Equal(512, stream.Seek(512, SeekOrigin.Begin));
+        await Assert.That(stream.Length).IsEqualTo(1024);
+        await Assert.That(stream.Seek(512, SeekOrigin.Begin)).IsEqualTo(512);
     }
 
-    [Fact]
-    public void ShouldNotBeAbleToSeekBackwards()
+    [Test]
+    public async Task ShouldNotBeAbleToSeekBackwards()
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
-        Assert.Equal(1024, stream.Length);
-        Assert.Equal(512, stream.Seek(-512, SeekOrigin.End));
-        Assert.Throws<InvalidOperationException>(() => stream.Seek(-10, SeekOrigin.Current));
+        await Assert.That(stream.Length).IsEqualTo(1024);
+        await Assert.That(stream.Seek(-512, SeekOrigin.End)).IsEqualTo(512);
+        await Assert.That(() => stream.Seek(-10, SeekOrigin.Current)).Throws<InvalidOperationException>();
     }
 
-    [Fact]
-    public void SeekOnAlreadySeekableStream()
+    [Test]
+    public async Task SeekOnAlreadySeekableStream()
     {
         using var stream = new SeekableStream(new MemoryStream(512));
-        Assert.Equal(256, stream.Seek(256, SeekOrigin.Begin));
+        await Assert.That( stream.Seek(256, SeekOrigin.Begin)).IsEqualTo(256);
     }
 
-    [Fact]
-    public void SeekWithInvalidEnum()
+    [Test]
+    public async Task SeekWithInvalidEnum()
     {
         using var stream = new SeekableStream(new ForwardOnlyStream());
-        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Seek(0, (SeekOrigin)(-1)));
+        await Assert.That(() => stream.Seek(0, (SeekOrigin)(-1))).Throws<ArgumentOutOfRangeException>();
     }
 
     private class ForwardOnlyStream : MemoryStream

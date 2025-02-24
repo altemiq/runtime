@@ -5,6 +5,7 @@
     <TargetFrameworks>net9.0;net8.0;net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);net472</TargetFrameworks>
     <NoWarn>$(NoWarn);CA1861</NoWarn>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NSubstitute" />
-    <PackageReference Include="System.Text.Json" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' " />
   </ItemGroup>
 
   <ItemGroup>

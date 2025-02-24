@@ -10,17 +10,17 @@ using System.IO.Compression;
 
 public class ZipArchiveEntryExtensionsTests
 {
-    [Fact]
-    public void OpenSeekableOnNonSeekable()
+    [Test]
+    public async Task OpenSeekableOnNonSeekable()
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
-        Assert.IsType<SeekableStream>(archive.Entries[0].OpenSeekable());
+        await Assert.That(archive.Entries[0].OpenSeekable()).IsTypeOf<SeekableStream>();
     }
 
-    [Fact]
-    public void OpenSeekableOnSeekable()
+    [Test]
+    public async Task OpenSeekableOnSeekable()
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim(ZipArchiveMode.Update);
-        Assert.IsType<DisposableStream>(archive.Entries[0].OpenSeekable());
+        await Assert.That(archive.Entries[0].OpenSeekable()).IsTypeOf<DisposableStream>();
     }
 }
