@@ -159,7 +159,6 @@ public static partial class BitConverter
     /// <returns>A Boolean representing the converted bytes.</returns>
     /// <exception cref="ArgumentOutOfRangeException">The length of <paramref name="value"/> is less than 1.</exception>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool ToBoolean(ReadOnlySpan<byte> value, ByteOrder byteOrder) => ToBoolean(value);
 #endif
@@ -584,7 +583,6 @@ public static partial class BitConverter
     /// <param name="value">The Boolean to convert.</param>
     /// <param name="byteOrder">The required byte order.</param>
     /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "This parameter is not used.")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
     public static bool TryWriteBytes(Span<byte> destination, bool value, ByteOrder byteOrder) => TryWriteBytes(destination, value);
 #endif

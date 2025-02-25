@@ -214,7 +214,7 @@ public partial class SourceGenerator
                         Token(SyntaxKind.CommaToken),
                         SimpleBaseType(
                             GenericName(
-                                Identifier(nameof(IEquatable<object>)))
+                                Identifier(nameof(IEquatable<>)))
                             .WithTypeArgumentList(
                                 TypeArgumentList(
                                     SingletonSeparatedList<TypeSyntax>(
@@ -1744,7 +1744,7 @@ public partial class SourceGenerator
                                 XmlCrefAttribute(
                                     NameMemberCref(
                                         GenericName(
-                                            Identifier(nameof(Func<object>)))
+                                            Identifier(nameof(Func<>)))
                                         .WithTypeArgumentList(
                                             TypeArgumentList(
                                                 SeparatedList<TypeSyntax>(
@@ -1862,7 +1862,7 @@ public partial class SourceGenerator
                         Identifier(GetFunctionName(i)))
                         .WithType(
                         GenericName(
-                            Identifier(nameof(Func<object>)))
+                            Identifier(nameof(Func<>)))
                         .WithTypeArgumentList(
                             TypeArgumentList(
                                 SeparatedList<TypeSyntax>(
@@ -1984,7 +1984,7 @@ public partial class SourceGenerator
                                 Identifier(MapFunctionName))
                             .WithType(
                                 GenericName(
-                                    Identifier(nameof(Func<object>)))
+                                    Identifier(nameof(Func<>)))
                                 .WithTypeArgumentList(
                                     TypeArgumentList(
                                         SeparatedList<TypeSyntax>(
@@ -3485,7 +3485,7 @@ public partial class SourceGenerator
         {
             return MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
-                GetBaseMemberAccessExpression(GetNames(typeof(T)).ToList()),
+                GetBaseMemberAccessExpression([.. GetNames(typeof(T))]),
                 IdentifierName(Enum.GetName(typeof(T), value)));
 
             static MemberAccessExpressionSyntax GetBaseMemberAccessExpression(IList<IdentifierNameSyntax> names)

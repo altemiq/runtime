@@ -712,6 +712,6 @@ public static class RuntimeEnvironment
         }
 #endif
 
-        return RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal).ToArray();
+        return [.. RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal)];
     }
 }

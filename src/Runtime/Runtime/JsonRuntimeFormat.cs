@@ -37,7 +37,13 @@ internal static class JsonRuntimeFormat
     /// <returns>The runtime graph.</returns>
     public static IReadOnlyList<RuntimeFallbacks> ReadRuntimeGraph(Stream stream)
     {
-        return Flatten(GetRuntimes(stream).ToList()).ToList();
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP
+        return [.. Flatten([.. GetRuntimes(stream)])];
+#else
+#pragma warning disable IDE0305 // Simplify collection initialization
+        return Flatten([.. GetRuntimes(stream)]).ToList().AsReadOnly();
+#pragma warning restore IDE0305 // Simplify collection initialization
+#endif
 
         static IEnumerable<Runtime> GetRuntimes(Stream stream)
         {
@@ -46,7 +52,7 @@ internal static class JsonRuntimeFormat
             {
                 yield return new Runtime(
                     json.Name,
-                    json.Value.GetProperty("#import").EnumerateArray().Select(static p => p.GetString()!).ToArray());
+                    [.. json.Value.GetProperty("#import").EnumerateArray().Select(static p => p.GetString()!)]);
             }
 #else
             var loadSettings = new JsonLoadSettings()

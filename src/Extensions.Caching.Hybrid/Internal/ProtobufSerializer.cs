@@ -12,7 +12,7 @@ using Google.Protobuf;
 /// The <see cref="IMessage{T}"/> serializer.
 /// </summary>
 /// <typeparam name="T">The type of message to serialize.</typeparam>
-internal sealed class ProtobufSerializer<T> : Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer<T>
+internal sealed class ProtobufSerializer<[System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties)] T> : Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer<T>
     where T : IMessage<T>
 {
     private static readonly MessageParser<T> Parser = GetDescriptor().Parser as MessageParser<T> ?? throw new InvalidOperationException("Message parser not found; type may not be Google.Protobuf");

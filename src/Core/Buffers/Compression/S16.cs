@@ -39,7 +39,7 @@ internal sealed class S16
         [28],
     ];
 
-    private static readonly int[][] ShiftedS16Bits = S16Bits.Select(x => x.Select(x => 1 << x).ToArray()).ToArray();
+    private static readonly int[][] ShiftedS16Bits = [.. S16Bits.Select(static x => x.Select(x => 1 << x).ToArray())];
 
     /// <inheritdoc cref="Compression.Compress" />
     public static int Compress(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)

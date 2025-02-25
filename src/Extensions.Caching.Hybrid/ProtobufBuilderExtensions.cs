@@ -19,7 +19,7 @@ public static class ProtobufBuilderExtensions
     /// <typeparam name="T">The type of message.</typeparam>
     /// <param name="builder">The builder.</param>
     /// <returns>The <see cref="Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder"/> instance.</returns>
-    public static Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder AddProtobufSerializer<T>(this Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder builder)
+    public static Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder AddProtobufSerializer<[System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties)] T>(this Microsoft.Extensions.Caching.Hybrid.IHybridCacheBuilder builder)
         where T : Google.Protobuf.IMessage<T> => builder.AddSerializer<T, Altemiq.Extensions.Caching.Hybrid.Internal.ProtobufSerializer<T>>();
 
     /// <summary>

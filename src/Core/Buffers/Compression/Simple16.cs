@@ -38,7 +38,7 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
         [28],
     ];
 
-    private static readonly int[][] ShiftedS16Bits = S16Bits.Select(x => x.Select(x => 1 << x).ToArray()).ToArray();
+    private static readonly int[][] ShiftedS16Bits = [.. S16Bits.Select(static x => x.Select(x => 1 << x).ToArray())];
 
     /// <inheritdoc/>
     void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
