@@ -9,6 +9,8 @@ namespace Altemiq.Extensions.Caching.Hybrid.Internal;
 /// <summary>
 /// Hybrid cache serializer factory for <see cref="Google.Protobuf"/> types.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.RequiresDynamicCode("The native code for this instantiation might not be available at runtime.")]
+[System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("If some of the generic arguments are annotated (either with DynamicallyAccessedMembersAttribute, or generic constraints), trimming can't validate that the requirements of those annotations are met.")]
 public sealed class ProtobufSerializerFactory : Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializerFactory
 {
     /// <inheritdoc/>
@@ -21,10 +23,7 @@ public sealed class ProtobufSerializerFactory : Microsoft.Extensions.Caching.Hyb
     {
         try
         {
-            // need to ensure that the type is an IMessage<T> to work with serializer.
-            if (typeof(Google.Protobuf.IMessage).IsAssignableFrom(typeof(T))
-                && typeof(Google.Protobuf.IMessage<>).MakeGenericType(typeof(T)).IsAssignableFrom(typeof(T))
-                && Activator.CreateInstance(typeof(ProtobufSerializer<>).MakeGenericType(typeof(T))) is Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer<T> createdSerializer)
+            if (ProtobufSerializer.Create<T>() is { } createdSerializer)
             {
                 serializer = createdSerializer;
                 return true;

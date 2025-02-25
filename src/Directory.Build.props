@@ -15,6 +15,9 @@
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) ">

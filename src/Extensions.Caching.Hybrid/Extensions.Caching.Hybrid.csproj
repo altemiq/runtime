@@ -4,8 +4,8 @@
     <TargetFrameworks>net9.0;net8.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
     <NoWarn>$(NoWarn);EXTEXP0018</NoWarn>
     <SuppressTfmSupportBuildWarnings Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net4.0')) ">true</SuppressTfmSupportBuildWarnings>
-    <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+    <PolySharpIncludeGeneratedTypes>System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute;System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute;System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute</PolySharpIncludeGeneratedTypes>
   </PropertyGroup>
 
   <ItemGroup>

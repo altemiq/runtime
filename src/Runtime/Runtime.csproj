@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netstandard2.0;netstandard1.6;net47;net451</TargetFrameworks>
+    <TargetFrameworks>net6.0;net5.0;netstandard2.0;netstandard1.6;net47;net451</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Runtime'))">$(RootNamespace.Replace('.Runtime', ''))</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+    <PolySharpIncludeGeneratedTypes>System.Diagnostics.CodeAnalysis.MaybeNullAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute</PolySharpIncludeGeneratedTypes>
   </PropertyGroup>
 
   <ItemGroup>

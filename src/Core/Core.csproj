@@ -6,6 +6,7 @@
     <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PolySharpUsePublicAccessibilityForGeneratedTypes>true</PolySharpUsePublicAccessibilityForGeneratedTypes>
+    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

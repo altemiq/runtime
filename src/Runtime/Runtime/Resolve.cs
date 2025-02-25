@@ -29,11 +29,13 @@ public static class Resolve
     /// <summary>
     /// Resolves runtime assemblies.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Types and members the loaded assembly depends on might be removed")]
     public static void RuntimeAssemblies() => AppDomain.CurrentDomain.AssemblyResolve += ResolveRuntimeAssembliesHandler;
 
     /// <summary>
     /// Removes resolution overrides.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Types and members the loaded assembly depends on might be removed")]
     public static void Remove() => AppDomain.CurrentDomain.AssemblyResolve -= ResolveRuntimeAssembliesHandler;
 
     /// <summary>
@@ -41,6 +43,7 @@ public static class Resolve
     /// </summary>
     /// <param name="requiredAssemblyName">The required assembly name.</param>
     /// <returns>The required assembly.</returns>
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Types and members the loaded assembly depends on might be removed")]
     internal static System.Reflection.Assembly? ResolveRuntimeAssembly(System.Reflection.AssemblyName requiredAssemblyName)
     {
         return FromLoaded(requiredAssemblyName) ?? FromPaths(requiredAssemblyName);
@@ -81,6 +84,7 @@ public static class Resolve
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Types and members the loaded assembly depends on might be removed")]
     private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args) => ResolveRuntimeAssembly(new System.Reflection.AssemblyName(args.Name));
 #endif
 }
