@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package altemiq.protobuf;
 
-option cc_enable_arenas = true;
 option go_package = "altemiq.golang.org/protobuf/types/known/uuidpb";
 option java_package = "com.altemiq.protobuf";
 option java_outer_classname = "UuidProto";
