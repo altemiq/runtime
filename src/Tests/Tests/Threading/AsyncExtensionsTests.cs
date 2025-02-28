@@ -25,6 +25,6 @@ public class AsyncExtensionsTests
     {
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.CancelAfter(100);
-        await Assert.That(async () => await cancellationTokenSource.Token.ConfigureAwait(CancellationTokenConfigureAwaitOptions.None)).ThrowsNothing();
+        await Assert.That(async () => await cancellationTokenSource.Token.ConfigureAwait(CancellationTokenConfigureAwaitOptions.SuppressThrowing)).ThrowsNothing();
     }
 }

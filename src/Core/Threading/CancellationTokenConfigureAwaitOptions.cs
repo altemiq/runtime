@@ -18,7 +18,7 @@ public enum CancellationTokenConfigureAwaitOptions
     None = 0,
 
     /// <summary>
-    /// Throw an <see cref="OperationCanceledException"/> when getting the result.
+    /// Avoids throwing an exception at the completion of awaiting a <see cref="CancellationToken"/>.
     /// </summary>
-    ThrowOnResult = 1 << 0,
+    SuppressThrowing = 1 << 1,
 }

@@ -28,7 +28,7 @@ public readonly struct CancellationTokenAwaiter : System.Runtime.CompilerService
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <param name="options">The options.</param>
-    internal CancellationTokenAwaiter(CancellationToken cancellationToken, Threading.CancellationTokenConfigureAwaitOptions options = Threading.CancellationTokenConfigureAwaitOptions.ThrowOnResult)
+    internal CancellationTokenAwaiter(CancellationToken cancellationToken, Threading.CancellationTokenConfigureAwaitOptions options = Threading.CancellationTokenConfigureAwaitOptions.None)
     {
         this.CancellationToken = cancellationToken;
         this.Options = options;
@@ -50,7 +50,7 @@ public readonly struct CancellationTokenAwaiter : System.Runtime.CompilerService
             throw new InvalidOperationException("The cancellation token has not yet been cancelled.");
         }
 
-        if (this.Options.HasFlag(Threading.CancellationTokenConfigureAwaitOptions.ThrowOnResult))
+        if (!this.Options.HasFlag(Threading.CancellationTokenConfigureAwaitOptions.SuppressThrowing))
         {
             throw new OperationCanceledException();
         }
