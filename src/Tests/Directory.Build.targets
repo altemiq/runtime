@@ -2,7 +2,6 @@
 
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
-    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="TUnit" />
   </ItemGroup>
 
