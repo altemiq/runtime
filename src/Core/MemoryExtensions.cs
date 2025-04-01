@@ -14,7 +14,7 @@ namespace Altemiq;
 /// <param name="input">The input value.</param>
 /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
 /// <returns>The output value.</returns>
-public delegate TOutput Parse<TInput, TOutput>(ReadOnlySpan<TInput> input, IFormatProvider? provider);
+public delegate TOutput Parse<TInput, out TOutput>(ReadOnlySpan<TInput> input, IFormatProvider? provider);
 
 /// <summary>
 /// Parses out the value of <typeparamref name="T"/> from the specified value.
@@ -22,7 +22,7 @@ public delegate TOutput Parse<TInput, TOutput>(ReadOnlySpan<TInput> input, IForm
 /// <typeparam name="T">The type to parse.</typeparam>
 /// <param name="input">The input value.</param>
 /// <returns>The parsed value.</returns>
-public delegate T Parse<T>(ReadOnlySpan<char> input);
+public delegate T Parse<out T>(ReadOnlySpan<char> input);
 
 /// <summary>
 /// Tries to parse the <see cref="ReadOnlySpan{T}"/> to an instance of <typeparamref name="TOutput"/> and returns whether it was successful.
@@ -94,11 +94,11 @@ public static partial class MemoryExtensions
         // no changes, just return the input.
         return input;
 
-        void Initialise(ref Span<char> span, int length)
+        void Initialise(ref Span<char> span, int initLength)
         {
             if (span is { Length: 0 })
             {
-                span = new Span<char>(new char[length - (oldLength - newLength)]);
+                span = new Span<char>(new char[initLength - (oldLength - newLength)]);
             }
         }
     }
@@ -131,7 +131,7 @@ public static partial class MemoryExtensions
     /// <param name="separator">The separator character to be used to split the provided span.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
 #if NET9_0_OR_GREATER
-    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<>)}, {nameof(Char)}) instead")]
+    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(Char)}) instead")]
 #endif
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, char separator) => Split(span, separator, StringSplitOptions.None);
 
@@ -153,9 +153,9 @@ public static partial class MemoryExtensions
     /// <param name="separator">The separator string to be used to split the provided span.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
 #if NET9_0_OR_GREATER
-    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<>)}, {nameof(ReadOnlySpan<>)}) instead")]
+    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
 #else
-    [Obsolete($"Use {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<>)}, {nameof(ReadOnlySpan<>)}) instead")]
+    [Obsolete($"Use {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
 #endif
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator) => Split(span, separator, StringSplitOptions.None);
 
@@ -167,7 +167,7 @@ public static partial class MemoryExtensions
     /// <param name="separator">The separator string to be used to split the provided span.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
 #if NET9_0_OR_GREATER
-    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<>)}, {nameof(ReadOnlySpan<>)}) instead")]
+    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
 #endif
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, ReadOnlySpan<char> separator) => new(span, separator, StringSplitOptions.None);
 
@@ -590,12 +590,12 @@ public static partial class MemoryExtensions
     {
         return span.TryGetNextValue(ref enumerator, TryParse, out value);
 
-        bool TryParse(ReadOnlySpan<char> span, out T value)
+        bool TryParse(ReadOnlySpan<char> input, out T output)
         {
 #if NET6_0_OR_GREATER
-            return Enum.TryParse(span, ignoreCase, out value);
+            return Enum.TryParse(input, ignoreCase, out output);
 #else
-            return Enum.TryParse(span.ToString(), ignoreCase, out value);
+            return Enum.TryParse(input.ToString(), ignoreCase, out output);
 #endif
         }
     }

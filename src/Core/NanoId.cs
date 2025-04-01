@@ -242,16 +242,16 @@ public static class NanoId
         /// <summary>
         /// English alphabet letters and digits without lookalikes: 1, l, I, 0, O, o, u, v, 5, S, s, 2, Z.
         /// </summary>
-        public const string NoLookAlikes = SubAlphabets.NoLookAlikeDigits + SubAlphabets.NoLookAlikeLetters;
+        public const string NoLookAlike = SubAlphabets.NoLookAlikeDigits + SubAlphabets.NoLookAlikeLetters;
 
         /// <summary>
         /// English alphabet letters and digits without lookalikes (1, l, I, 0, O, o, u, v, 5, S, s, 2, Z) and with removed vowels and the following letters: 3, 4, x, X, V.
         /// </summary>
         /// <remarks>This list should protect you from accidentally getting obscene words in generated strings.</remarks>
-        public const string NoLookAlikesSafe = SubAlphabets.NoLookAlikeSafeDigits + SubAlphabets.NoLookAlikeSafeLetters;
+        public const string NoLookAlikeSafe = SubAlphabets.NoLookAlikeSafeDigits + SubAlphabets.NoLookAlikeSafeLetters;
 
         /// <summary>
-        /// The default alphabet used by Nanoid. Includes ascii digits, letters and the symbols '_' and '-'.
+        /// The default alphabet used by Nanoid. Includes ascii digits, letters and the symbols "_" and "-".
         /// </summary>
         public const string Default = SubAlphabets.Symbols + LettersAndDigits;
 

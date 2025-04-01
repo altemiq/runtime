@@ -231,9 +231,9 @@ public static partial class MemoryExtensions
     {
         return span.TryGetNextValue(ref enumerator, TryParse, out value);
 
-        bool TryParse(ReadOnlySpan<char> span, out T value)
+        bool TryParse(ReadOnlySpan<char> input, out T output)
         {
-            return Enum.TryParse(span, ignoreCase, out value);
+            return Enum.TryParse(input, ignoreCase, out output);
         }
     }
 

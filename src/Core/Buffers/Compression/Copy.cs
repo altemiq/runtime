@@ -15,13 +15,13 @@ internal sealed class Copy : IInt32Codec, IHeadlessInt32Codec
     void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number);
 
     /// <inheritdoc/>
     public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, length);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(Copy);
@@ -33,7 +33,7 @@ internal sealed class Copy : IInt32Codec, IHeadlessInt32Codec
         destinationIndex += length;
     }
 
-    private static void HeadlessUncompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
+    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
     {
         System.Array.Copy(source, sourceIndex, destination, destinationIndex, number);
         sourceIndex += number;

@@ -32,7 +32,7 @@ public static class StringExtensions
     /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
     /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>An array whose elements contain the substrings from <paramref name="s"/> that are delimited by <paramref name="separator"/>.</returns>
-    public static string[]? SplitQuoted(this string s, char separator, StringSplitOptions options = StringSplitOptions.None) => SplitQuotedInternal(s, [separator], options);
+    public static string[] SplitQuoted(this string s, char separator, StringSplitOptions options = StringSplitOptions.None) => SplitQuotedInternal(s, [separator], options);
 
     /// <summary>
     /// Splits a string into substrings based on specified delimiting characters, ignoring separators in quoted areas.
@@ -71,7 +71,7 @@ public static class StringExtensions
     {
         // quote an empty string to differentiate it from a null string
         { Length: 0 } => string.Concat(QuoteString, QuoteString),
-        string value => SmartQuote(value, delimiter, options),
+        { } value => SmartQuote(value, delimiter, options),
         _ => string.Empty,
     };
 
@@ -81,7 +81,7 @@ public static class StringExtensions
     /// <param name="formattable">The object that can be formatted.</param>
     /// <param name="provider">The provider to use to format the value.</param>
     /// <returns>The value of <paramref name="formattable"/> using <paramref name="provider"/>.</returns>
-    public static string? ToString(this IFormattable formattable, IFormatProvider? provider) => formattable.ToString(format: default, provider);
+    public static string ToString(this IFormattable formattable, IFormatProvider? provider) => formattable.ToString(format: default, provider);
 
     private static string[] SplitQuotedInternal(string s, IList<char>? separator, StringSplitOptions options)
     {
@@ -127,15 +127,7 @@ public static class StringExtensions
 
             static bool Contains(IList<char> characters, char character)
             {
-                for (var i = 0; i < characters.Count; i++)
-                {
-                    if (characters[i] == character)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return characters.Any(@char => @char == character);
             }
         }
 

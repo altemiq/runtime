@@ -113,11 +113,6 @@ public partial class SourceGenerator
 
         static IEnumerable<MemberDeclarationSyntax> GetMemberDeclarations(int count)
         {
-            static IEnumerable<TypeSyntax> GetTypes(int count)
-            {
-                return GetTypeParameterNames(count).Select(IdentifierName);
-            }
-
             for (var i = 0; i < count; i++)
             {
                 foreach (var declaration in GetSubMemberDeclarations(i + 1))
@@ -415,6 +410,11 @@ public partial class SourceGenerator
                     }
                 }
             }
+
+            static IEnumerable<TypeSyntax> GetTypes(int count)
+            {
+                return GetTypeParameterNames(count).Select(IdentifierName);
+            }
         }
 
         static StructDeclarationSyntax GetNoneStructDeclaration(int count)
@@ -492,8 +492,8 @@ public partial class SourceGenerator
             {
                 for (var i = 1; i < count; i++)
                 {
-                    var typeParameterNames = GetTypeParameterNames(i);
-                    var fullTypeParameterNames = typeParameterNames.Append(None);
+                    var typeParameterNames = GetTypeParameterNames(i).ToList();
+                    var fullTypeParameterNames = typeParameterNames.Append(None).ToList();
 
                     yield return MethodDeclaration(
                         GenericName(
@@ -525,8 +525,7 @@ public partial class SourceGenerator
 
                     static IEnumerable<XmlNodeSyntax> GetDocumentation(int count)
                     {
-                        var typeParameterNames = GetTypeParameterNames(count);
-                        var fullTypeParameterNames = typeParameterNames.Append(None);
+                        var fullTypeParameterNames = GetTypeParameterNames(count).Append(None).ToList();
 
                         yield return XmlText()
                             .WithTextTokens(

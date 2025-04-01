@@ -28,7 +28,7 @@ internal interface ISByteCodec
     void Compress(int[] source, ref int sourceIndex, sbyte[] destination, ref int destinationIndex, int length);
 
     /// <summary>
-    /// Uncompress data from an array to another array.
+    /// Decompress data from an array to another array.
     /// </summary>
     /// <param name="source">The array containing data in compressed form.</param>
     /// <param name="sourceIndex">Where to start reading in the array.</param>

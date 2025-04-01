@@ -47,31 +47,33 @@ public class StructConverter : System.Text.Json.Serialization.JsonConverter<Stru
     /// <inheritdoc/>
     public override Struct? Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
     {
-        if (reader.TokenType is JsonTokenType.StartObject)
+        if (reader.TokenType is not JsonTokenType.StartObject)
         {
-            var @struct = new Struct();
-
-            while (reader.Read() && reader.TokenType is not JsonTokenType.EndObject)
-            {
-                if (reader.TokenType is JsonTokenType.PropertyName)
-                {
-                    var propertyName = reader.GetString();
-
-                    if (reader.Read())
-                    {
-                        @struct.Fields.Add(propertyName, ValueConverter.Instance.Read(ref reader, typeToConvert, options));
-                    }
-                }
-            }
-
-            return @struct;
+            return default;
         }
 
-        return default;
+        var @struct = new Struct();
+
+        while (reader.Read() && reader.TokenType is not JsonTokenType.EndObject)
+        {
+            if (reader.TokenType is not JsonTokenType.PropertyName)
+            {
+                continue;
+            }
+
+            var propertyName = reader.GetString();
+
+            if (reader.Read() && propertyName is not null)
+            {
+                @struct.Fields.Add(propertyName, ValueConverter.Instance.Read(ref reader, typeToConvert, options));
+            }
+        }
+
+        return @struct;
     }
 
     /// <inheritdoc/>
-    public override void Write(Utf8JsonWriter writer, Struct value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, Struct? value, JsonSerializerOptions options)
     {
         if (value is null)
         {

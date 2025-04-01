@@ -89,6 +89,8 @@ public partial class SourceGenerator : IIncrementalGenerator
             yield return Token(SyntaxKind.CommaToken);
             yield return enumerator.Current;
         }
+
+        enumerator.Dispose();
     }
 
     private static AttributeSyntax GetGeneratedCodeAttribute()
@@ -122,18 +124,21 @@ public partial class SourceGenerator : IIncrementalGenerator
         var enumerator = GetNames(type).GetEnumerator();
         _ = enumerator.MoveNext();
 
-        NameSyntax name = enumerator.Current;
-        while (enumerator.MoveNext())
+        NameSyntax? name = enumerator.Current;
+        while (enumerator.MoveNext() && name is not null && enumerator.Current is not null)
         {
             name = QualifiedName(name, enumerator.Current);
         }
 
-        return name;
+        enumerator.Dispose();
+        return name ?? throw new InvalidOperationException();
     }
 
     private static IEnumerable<IdentifierNameSyntax> GetNames(Type type)
     {
-        return type.FullName.Split('.').Select(RemoveAttribute).Select(IdentifierName);
+        return type.FullName is { } fullName
+            ? fullName.Split('.').Select(RemoveAttribute).Select(IdentifierName)
+            : [];
 
         static string RemoveAttribute(string name)
         {

@@ -72,20 +72,14 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
             (null, _) or (_, JsonValueKind.Null) => Value.ForNull(),
             (JsonValue, JsonValueKind.False) => Value.ForBool(value: false),
             (JsonValue, JsonValueKind.True) => Value.ForBool(value: true),
-            (JsonValue value, JsonValueKind.String) => value.GetValue<string?>() is string stringValue ? Value.ForString(stringValue) : Value.ForNull(),
+            (JsonValue value, JsonValueKind.String) => value.GetValue<string?>() is { } stringValue ? Value.ForString(stringValue) : Value.ForNull(),
             (JsonValue value, JsonValueKind.Number) => Value.ForNumber(value.GetValue<double>()),
             _ => throw new InvalidCastException(),
         };
 
         static Value ToList(JsonArray array)
         {
-            var values = new List<Value?>();
-            foreach (var item in array)
-            {
-                values.Add(ToValue(item));
-            }
-
-            return Value.ForList([.. values]);
+            return Value.ForList([.. array.Select(ToValue)]);
         }
 
         static Value ToStruct(JsonObject @object)

@@ -86,7 +86,7 @@ public static partial class BitArrayExtensions
     }
 
     /// <summary>
-    /// Determines wether the 2 instances of <see cref="System.Collections.BitArray"/> instances are considered equal.
+    /// Determines whether the 2 instances of <see cref="System.Collections.BitArray"/> instances are considered equal.
     /// </summary>
     /// <param name="bits">The bits.</param>
     /// <param name="other">The other.</param>

@@ -21,6 +21,7 @@ public static class ZipArchiveEntryExtensions
     /// <param name="leaveOpen"><see langword="true"/> to leave the <paramref name="entry"/> open after the <see cref="Stream"/> object is disposed; otherwise, <see langword="false"/>.</param>
     public static Stream OpenSeekable(this ZipArchiveEntry entry, bool leaveOpen = true)
     {
+        ArgumentNullExceptionEx.ThrowIfNull(entry.Archive);
         var stream = entry.Open();
         return stream.CanSeek
             ? new Altemiq.IO.Compression.DisposableStream(entry.Archive, stream, leaveOpen)

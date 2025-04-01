@@ -22,7 +22,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
 
     private Stream currentStream = Null;
 
-    private long offset;
+    private long currentOffset;
 
     /// <summary>
     /// Initialises a new instance of the <see cref="MultipleStream"/> class.
@@ -65,7 +65,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// <inheritdoc/>
     public override long Position
     {
-        get => this.offset + this.currentStream.Position;
+        get => this.currentOffset + this.currentStream.Position;
         set => this.SetPosition(value);
     }
 
@@ -100,17 +100,17 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override async Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
     {
         // copy from the current stream to the end.
-        var enumerator = this.streams.GetEnumerator();
-        var currentOffset = 0L;
+        using var enumerator = this.streams.GetEnumerator();
+        var streamOffset = 0L;
         while (enumerator.MoveNext() && enumerator.Current.Value != this.currentStream)
         {
-            currentOffset += enumerator.Current.Value.Length;
+            streamOffset += enumerator.Current.Value.Length;
         }
 
         do
         {
             var kvp = enumerator.Current;
-            this.SetCurrent(kvp.Key, kvp.Value, currentOffset);
+            this.SetCurrent(kvp.Key, kvp.Value, streamOffset);
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP
             // ignore the buffer size here, and use the best size for each stream
@@ -118,7 +118,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
 #else
             await GetTask(this.currentStream, destination, cancellationToken).ConfigureAwait(false);
 #endif
-            currentOffset += kvp.Value.Length;
+            streamOffset += kvp.Value.Length;
         }
         while (enumerator.MoveNext());
 
@@ -143,14 +143,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override void Flush()
     {
         // flush all the buffers for this
-        if (this.streams.Values is IList<Stream> list)
-        {
-            for (var i = 0; i < list.Count; i++)
-            {
-                list[i].Flush();
-            }
-        }
-        else if (this.streams.Values is IEnumerable<Stream> enumerable)
+        if (this.streams.Values is IEnumerable<Stream> enumerable)
         {
             foreach (var stream in enumerable)
             {
@@ -163,14 +156,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override async Task FlushAsync(CancellationToken cancellationToken)
     {
         // flush all the buffers for this
-        if (this.streams.Values is IList<Stream> list)
-        {
-            for (var i = 0; i < list.Count; i++)
-            {
-                await list[i].FlushAsync(cancellationToken).ConfigureAwait(false);
-            }
-        }
-        else if (this.streams.Values is IEnumerable<Stream> enumerable)
+        if (this.streams.Values is IEnumerable<Stream> enumerable)
         {
             foreach (var stream in enumerable)
             {
@@ -363,11 +349,11 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// <inheritdoc/>
     public override void CopyTo(Stream destination, int bufferSize)
     {
-        var enumerator = this.streams.GetEnumerator();
-        var currentOffset = 0L;
+        using var enumerator = this.streams.GetEnumerator();
+        var streamOffset = 0L;
         while (enumerator.MoveNext() && enumerator.Current.Value != this.currentStream)
         {
-            currentOffset += enumerator.Current.Value.Length;
+            streamOffset += enumerator.Current.Value.Length;
         }
 
         do
@@ -381,13 +367,13 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
             }
 
             // set this as the current stream
-            this.SetCurrent(kvp.Key, kvp.Value, currentOffset + kvp.Value.Position);
+            this.SetCurrent(kvp.Key, kvp.Value, streamOffset + kvp.Value.Position);
 
             // ignore the buffer size here, and use the best size for each stream
             this.currentStream.CopyTo(destination);
 
             // update the offset to the start of the next stream
-            currentOffset += kvp.Value.Length;
+            streamOffset += kvp.Value.Length;
         }
         while (enumerator.MoveNext());
     }
@@ -506,54 +492,54 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
 
     private void SetCurrent(string name, Stream stream, long offset)
     {
-        this.currentStream?.Flush();
+        this.currentStream.Flush();
         this.currentName = name;
         this.currentStream = stream;
-        this.offset = offset;
+        this.currentOffset = offset;
     }
 
     private void SetPosition(long position)
     {
-        var currentPosition = position - this.offset;
+        var currentPosition = position - this.currentOffset;
         if (currentPosition >= 0 && currentPosition < this.currentStream.Length)
         {
             this.currentStream.Position = currentPosition;
             return;
         }
 
-        var currentOffset = 0L;
+        var streamOffset = 0L;
         foreach (var kvp in this.streams)
         {
-            currentPosition = position - currentOffset;
+            currentPosition = position - streamOffset;
             var length = kvp.Value.Length;
             if (currentPosition < length)
             {
-                this.SetCurrent(kvp.Key, kvp.Value, currentOffset);
+                this.SetCurrent(kvp.Key, kvp.Value, streamOffset);
                 kvp.Value.Position = currentPosition;
                 return;
             }
 
-            currentOffset += length;
+            streamOffset += length;
         }
     }
 
     private bool TryMoveToStartOfNext()
     {
         // get the current index
-        var currentOffset = 0L;
-        var enumerator = this.streams.GetEnumerator();
+        var streamOffset = 0L;
+        using var enumerator = this.streams.GetEnumerator();
         while (enumerator.MoveNext())
         {
             var kvp = enumerator.Current;
             var length = kvp.Value.Length;
-            currentOffset += length;
+            streamOffset += length;
 
             if (enumerator.Current.Value == this.currentStream)
             {
                 if (enumerator.MoveNext())
                 {
                     enumerator.Current.Value.Position = 0;
-                    this.SetCurrent(enumerator.Current.Key, enumerator.Current.Value, currentOffset);
+                    this.SetCurrent(enumerator.Current.Key, enumerator.Current.Value, streamOffset);
                     return true;
                 }
 

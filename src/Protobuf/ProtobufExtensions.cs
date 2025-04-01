@@ -29,5 +29,5 @@ public static class ProtobufExtensions
 #endif
 
     /// <inheritdoc cref="WellKnownTypes.Uuid.ForGuid(System.Guid)"/>
-    public static Altemiq.Protobuf.WellKnownTypes.Uuid ToUuid(this System.Guid guid) => WellKnownTypes.Uuid.ForGuid(guid);
+    public static WellKnownTypes.Uuid ToUuid(this Guid guid) => WellKnownTypes.Uuid.ForGuid(guid);
 }

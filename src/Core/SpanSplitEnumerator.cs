@@ -121,7 +121,6 @@ public ref struct SpanSplitEnumerator<T>
             return false;
         }
 
-        int elementLength;
         var currentValid = false;
         var removeEmpty = this.options.HasFlag(StringSplitOptions.RemoveEmptyEntries);
         do
@@ -134,7 +133,7 @@ public ref struct SpanSplitEnumerator<T>
             var slice = this.buffer[this.startNext..];
             this.startCurrent = this.startNext;
 
-            elementLength = this.multipleTokens
+            var elementLength = this.multipleTokens
                 ? this.MoveNextMultipleTokens(slice)
                 : this.MoveNextSingleToken(slice);
 
@@ -147,12 +146,11 @@ public ref struct SpanSplitEnumerator<T>
 
     private int MoveNextMultipleTokens(ReadOnlySpan<T> slice)
     {
-        int elementLength;
         var firstSeparatorIndex = slice.IndexOf(this.firstSpanSeparator);
         var secondSeparatorIndex = slice.IndexOf(this.secondSpanSeparator);
 
 #pragma warning disable SA1008 // Opening parenthesis should be spaced correctly
-        (elementLength, var length) = (firstSeparatorIndex, secondSeparatorIndex) switch
+        var (elementLength, length) = (firstSeparatorIndex, secondSeparatorIndex) switch
         {
             ( < 0, >= 0) => (secondSeparatorIndex, this.secondSpanSeparator.Length),
             ( >= 0, >= 0) when secondSeparatorIndex < firstSeparatorIndex => (secondSeparatorIndex, this.secondSpanSeparator.Length),
@@ -169,9 +167,8 @@ public ref struct SpanSplitEnumerator<T>
 
     private int MoveNextSingleToken(ReadOnlySpan<T> slice)
     {
-        int elementLength;
         var separatorIndex = this.splitOnSingleToken ? slice.IndexOf(this.separator) : slice.IndexOf(this.firstSpanSeparator);
-        elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
+        var elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
 
         this.endCurrent = this.startCurrent + elementLength;
         this.startNext = this.endCurrent + this.separatorLength;

@@ -131,9 +131,9 @@ public static class RuntimeEnvironment
     public static string? GetToolDirectory(string name) => GetToolsDirectories().FirstOrDefault(p => File.Exists(Path.Combine(p, name)));
 
     /// <summary>
-    /// Gets the tools directory.
+    /// Gets the directory containing tools.
     /// </summary>
-    /// <returns>The tools directory.</returns>
+    /// <returns>The directory containing tools.</returns>
     public static string? GetToolsDirectory() => GetToolsDirectories().FirstOrDefault();
 
     /// <summary>
@@ -152,8 +152,7 @@ public static class RuntimeEnvironment
         {
             if (Directory.GetDirectories(directory)
                 .Select(Path.GetFileName)
-                .Where(static fileName => fileName is not null)
-                .Cast<string>()
+                .OfType<string>()
                 .ToList() is { Count: not 0 } availableRids)
             {
                 return GetRuntimeRids()
@@ -482,17 +481,15 @@ public static class RuntimeEnvironment
     /// <returns>The runtime config file name.</returns>
     internal static string? GetRuntimeConfigFileName()
     {
-        const string RuntimeConfigJson = "runtimeconfig.json";
-
-        if (Reflection.Assembly.GetEntryAssembly() is { FullName: { } fullName })
+        if (Reflection.Assembly.GetEntryAssembly() is not { FullName: { } fullName })
         {
-            var name = new AssemblyName(fullName);
-            var fileName = $"{name.Name}.{RuntimeConfigJson}";
-
-            return RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, fileName)).FirstOrDefault(File.Exists);
+            return default;
         }
 
-        return default;
+        var name = new AssemblyName(fullName);
+        var fileName = $"{name.Name}.runtimeconfig.json";
+
+        return RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, fileName)).FirstOrDefault(File.Exists);
     }
 
     /// <summary>
@@ -540,8 +537,7 @@ public static class RuntimeEnvironment
             // get the rids
             if (Directory.GetDirectories(runtimesDirectory)
                 .Select(Path.GetFileName)
-                .Where(static fileName => fileName is not null)
-                .Cast<string>()
+                .OfType<string>()
                 .ToList() is { Count: not 0 } availableRids)
             {
                 if (GetRuntimeRids().Intersect(availableRids, GetPathComparer()).ToList() is { Capacity: not 0 } rids)

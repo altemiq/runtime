@@ -120,7 +120,7 @@ public static class BinaryReaderExtensions
     public static double ReadDouble(this BinaryReader reader, ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadDouble(), byteOrder, ReverseEndianness);
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndianessFunction) => byteOrder is not ByteOrder.LittleEndian ? reverseEndianessFunction(value) : value;
+    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction) => byteOrder is not ByteOrder.LittleEndian ? reverseEndiannessFunction(value) : value;
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static char ReverseEndianness(char value) => (char)Buffers.Binary.BinaryPrimitives.ReverseEndianness(unchecked((short)value));

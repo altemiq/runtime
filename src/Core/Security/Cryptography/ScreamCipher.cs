@@ -124,10 +124,9 @@ public class ScreamCipher
         {
             if (char.IsLetter(c))
             {
-                var v = PlainTextToScreamCipherMap[c];
-                for (var i = 0; i < v.Length; i++)
+                foreach (var v in PlainTextToScreamCipherMap[c])
                 {
-                    WriteCharacter(v[i], ref destination, ref charsWritten);
+                    WriteCharacter(v, ref destination, ref charsWritten);
                 }
             }
             else

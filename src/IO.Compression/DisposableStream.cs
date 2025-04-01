@@ -23,7 +23,7 @@ public class DisposableStream : Stream
     /// <param name="archiveEntry">The archive entry.</param>
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
     public DisposableStream(System.IO.Compression.ZipArchiveEntry archiveEntry, bool leaveOpen = false)
-        : this(archiveEntry.Archive, archiveEntry.Open(), leaveOpen)
+        : this(archiveEntry.Archive!, archiveEntry.Open(), leaveOpen)
     {
     }
 
@@ -35,6 +35,7 @@ public class DisposableStream : Stream
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
     internal DisposableStream(System.IO.Compression.ZipArchive archive, Stream stream, bool leaveOpen = false)
     {
+        ArgumentNullExceptionEx.ThrowIfNull(archive);
         this.archive = archive;
         this.stream = stream;
         this.closeArchive = !leaveOpen;
@@ -116,7 +117,7 @@ public class DisposableStream : Stream
 #pragma warning restore S1133 // Deprecated code should be removed
 #elif NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <inheritdoc/>
-    public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();
+    public override object? InitializeLifetimeService() => this.stream.InitializeLifetimeService();
 #endif
 
     /// <inheritdoc/>

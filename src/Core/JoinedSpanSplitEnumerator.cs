@@ -110,7 +110,6 @@ public ref struct JoinedSpanSplitEnumerator<T>
             return false;
         }
 
-        int elementLength;
         var currentValid = false;
         var removeEmpty = this.options.HasFlag(StringSplitOptions.RemoveEmptyEntries);
         do
@@ -148,7 +147,7 @@ public ref struct JoinedSpanSplitEnumerator<T>
 
             this.startCurrent = this.startNext;
 
-            elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
+            var elementLength = separatorIndex is not -1 ? separatorIndex : slice.Length;
 
             this.endCurrent = this.startCurrent + elementLength;
             this.startNext = this.endCurrent + this.separatorLength;

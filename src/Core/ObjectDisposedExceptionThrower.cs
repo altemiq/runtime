@@ -9,7 +9,7 @@ namespace System;
 #pragma warning restore IDE0130
 
 /// <summary>
-/// <see cref="ArgumentOutOfRangeException"/> helper.
+/// <see cref="ObjectDisposedException"/> helper.
 /// </summary>
 [Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "This is part of the API now")]
 public sealed class ObjectDisposedExceptionEx

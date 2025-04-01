@@ -42,11 +42,11 @@ internal sealed class BinaryPacking : IInt32Codec, IHeadlessInt32Codec
 
         var destinationLength = source[sourceIndex];
         sourceIndex++;
-        HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, destinationLength);
+        HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, destinationLength);
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(BinaryPacking);
@@ -85,16 +85,16 @@ internal sealed class BinaryPacking : IInt32Codec, IHeadlessInt32Codec
         destinationIndex = temporaryDestinationIndex;
     }
 
-    private static void HeadlessUncompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
+    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
     {
         var destinationLength = Util.GreatestMultiple(number, BlockSize);
         var temporarySourceIndex = sourceIndex;
         int s;
         for (s = destinationIndex; s + (BlockSize * 4) - 1 < destinationIndex + destinationLength; s += BlockSize * 4)
         {
-            var firstMaxBits = (int)((uint)source[temporarySourceIndex] >> 24);
-            var secondMaxBits = (int)((uint)source[temporarySourceIndex] >> 16) & 0xFF;
-            var thirdMaxBits = (int)((uint)source[temporarySourceIndex] >> 8) & 0xFF;
+            var firstMaxBits = source[temporarySourceIndex] >>> 24;
+            var secondMaxBits = source[temporarySourceIndex] >>> 16 & 0xFF;
+            var thirdMaxBits = source[temporarySourceIndex] >>> 8 & 0xFF;
             var forthMaxBits = (int)(uint)source[temporarySourceIndex] & 0xFF;
             temporarySourceIndex++;
             BitPacking.Unpack(source.AsSpan(temporarySourceIndex), destination.AsSpan(s), firstMaxBits);

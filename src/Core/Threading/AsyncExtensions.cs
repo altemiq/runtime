@@ -18,7 +18,7 @@ public static class AsyncExtensions
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The awaiter for <paramref name="cancellationToken"/>.</returns>
-    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    [ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)]
     public static Altemiq.Runtime.CompilerServices.CancellationTokenAwaiter GetAwaiter(this CancellationToken cancellationToken) => new(cancellationToken);
 
     /// <summary>

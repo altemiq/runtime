@@ -112,7 +112,7 @@ public static partial class List
     public static int IndexOf<T>(this IReadOnlyList<T> buffer, T value, int startIndex, int count)
         where T : IEquatable<T>
     {
-        return buffer is null ? -1 : IndexOfCore(buffer, value, startIndex, count);
+        return buffer is not null ? IndexOfCore(buffer, value, startIndex, count) : -1;
 
         static int IndexOfCore(IReadOnlyList<T> buffer, T value, int startIndex, int count)
         {

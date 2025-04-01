@@ -68,7 +68,7 @@ internal static class DeltaZigzagEncoding
         /// <returns>The decoded value.</returns>
         public int Decode(int value)
         {
-            var n = (int)((uint)value >> 1) ^ (value << 31 >> 31);
+            var n = value >>> 1 ^ (value << 31 >> 31);
             n += this.ContextValue;
             this.ContextValue = n;
             return n;

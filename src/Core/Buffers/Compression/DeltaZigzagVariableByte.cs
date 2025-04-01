@@ -36,22 +36,22 @@ internal sealed class DeltaZigzagVariableByte : IInt32Codec
 
             if (zeros < 4)
             {
-                byteBuffer.WriteSByte((sbyte)(((int)((uint)n >> 28) & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)((n >>> 28 & 0x7F) | 0x80));
             }
 
             if (zeros < 11)
             {
-                byteBuffer.WriteSByte((sbyte)(((int)((uint)n >> 21) & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)((n >>> 21 & 0x7F) | 0x80));
             }
 
             if (zeros < 18)
             {
-                byteBuffer.WriteSByte((sbyte)(((int)((uint)n >> 14) & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)((n >>> 14 & 0x7F) | 0x80));
             }
 
             if (zeros < 25)
             {
-                byteBuffer.WriteSByte((sbyte)(((int)((uint)n >> 7) & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)((n >>> 7 & 0x7F) | 0x80));
             }
 
             byteBuffer.WriteSByte((sbyte)((uint)n & 0x7F));
@@ -79,31 +79,31 @@ internal sealed class DeltaZigzagVariableByte : IInt32Codec
         var sourcePosition = sourceIndex;
         var destinationPosition = destinationIndex;
 
-        // Varialbe Byte Context.
-        var varibaleByteContextNumber = 0;
-        var varibaleByteContextShift = 24;
+        // Variable Byte Context.
+        var variableByteContextNumber = 0;
+        var variableByteContextShift = 24;
 
         var sourceIndexLast = sourcePosition + length;
         while (sourcePosition < sourceIndexLast)
         {
             // Fetch a byte value.
-            var n = (int)((uint)source[sourcePosition] >> varibaleByteContextShift) & 0xFF;
-            if (varibaleByteContextShift > 0)
+            var n = source[sourcePosition] >>> variableByteContextShift & 0xFF;
+            if (variableByteContextShift > 0)
             {
-                varibaleByteContextShift -= 8;
+                variableByteContextShift -= 8;
             }
             else
             {
-                varibaleByteContextShift = 24;
+                variableByteContextShift = 24;
                 sourcePosition++;
             }
 
             // Decode variable byte and delta+zigzag.
-            varibaleByteContextNumber = (varibaleByteContextNumber << 7) + (n & 0x7F);
+            variableByteContextNumber = (variableByteContextNumber << 7) + (n & 0x7F);
             if ((n & 0x80) is 0)
             {
-                destination[destinationPosition++] = context.Decode(varibaleByteContextNumber);
-                varibaleByteContextNumber = 0;
+                destination[destinationPosition++] = context.Decode(variableByteContextNumber);
+                variableByteContextNumber = 0;
             }
         }
 

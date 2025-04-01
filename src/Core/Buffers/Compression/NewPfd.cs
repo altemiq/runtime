@@ -7,7 +7,7 @@
 namespace Altemiq.Buffers.Compression;
 
 /// <summary>
-/// NewPFD/NewPFOR: fast patching scheme by Yan et al.
+/// NewPFD: fast patching scheme by Yan et al.
 /// </summary>
 /// <param name="compress">The compression delegate.</param>
 /// <param name="decompress">The decompression delegate.</param>
@@ -52,11 +52,11 @@ internal abstract class NewPfd(Compress compress, Decompress decompress) : IInt3
 
         var destinationLength = source[sourceIndex];
         sourceIndex++;
-        this.HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, length, destinationLength);
+        this.HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, length, destinationLength);
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => this.HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, length, number);
+    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => this.HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, length, number);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(NewPfd);
@@ -71,13 +71,13 @@ internal abstract class NewPfd(Compress compress, Decompress decompress) : IInt3
 
         EncodePage(source, ref sourceIndex, destination, ref destinationIndex, length);
 
-        void EncodePage(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+        void EncodePage(int[] sourcePage, ref int sourcePageIndex, int[] destinationPage, ref int destinationPageIndex, int size)
         {
-            var temporaryDestinationIndex = destinationIndex;
-            var temporarySourceIndex = sourceIndex;
-            for (var finalSourceIndex = temporarySourceIndex + length; temporarySourceIndex + BlockSize <= finalSourceIndex; temporarySourceIndex += BlockSize)
+            var temporaryDestinationIndex = destinationPageIndex;
+            var temporarySourceIndex = sourcePageIndex;
+            for (var finalSourceIndex = temporarySourceIndex + size; temporarySourceIndex + BlockSize <= finalSourceIndex; temporarySourceIndex += BlockSize)
             {
-                var (bestBit, bestException) = GetBestBit(source, temporarySourceIndex);
+                var (bestBit, bestException) = GetBestBit(sourcePage, temporarySourceIndex);
                 var exceptionSize = 0;
                 var remember = temporaryDestinationIndex;
                 temporaryDestinationIndex++;
@@ -86,34 +86,34 @@ internal abstract class NewPfd(Compress compress, Decompress decompress) : IInt3
                     var c = 0;
                     for (var i = 0; i < BlockSize; i++)
                     {
-                        if ((int)((uint)source[temporarySourceIndex + i] >> Bits[bestBit]) is not 0)
+                        if (sourcePage[temporarySourceIndex + i] >>> Bits[bestBit] is not 0)
                         {
                             this.exceptionBuffer[c + bestException] = i;
-                            this.exceptionBuffer[c] = (int)((uint)source[temporarySourceIndex + i] >> Bits[bestBit]);
+                            this.exceptionBuffer[c] = sourcePage[temporarySourceIndex + i] >>> Bits[bestBit];
                             c++;
                         }
                     }
 
-                    exceptionSize = this.compress(this.exceptionBuffer, 0, destination, temporaryDestinationIndex, 2 * bestException);
+                    exceptionSize = this.compress(this.exceptionBuffer, 0, destinationPage, temporaryDestinationIndex, 2 * bestException);
                     temporaryDestinationIndex += exceptionSize;
                 }
 
-                destination[remember] = bestBit | bestException << 8 | exceptionSize << 16;
+                destinationPage[remember] = bestBit | bestException << 8 | exceptionSize << 16;
                 for (var k = 0; k < BlockSize; k += 32)
                 {
-                    BitPacking.Pack(source.AsSpan(temporarySourceIndex + k), destination.AsSpan(temporaryDestinationIndex), Bits[bestBit]);
+                    BitPacking.Pack(sourcePage.AsSpan(temporarySourceIndex + k), destinationPage.AsSpan(temporaryDestinationIndex), Bits[bestBit]);
                     temporaryDestinationIndex += Bits[bestBit];
                 }
             }
 
-            sourceIndex = temporarySourceIndex;
-            destinationIndex = temporaryDestinationIndex;
+            sourcePageIndex = temporarySourceIndex;
+            destinationPageIndex = temporaryDestinationIndex;
 
             static (int BestB, int BestExcept) GetBestBit(int[] source, int pos)
             {
                 var maxBits = Util.MaxBits(source, pos, BlockSize);
                 var minimum = 0;
-                if (minimum + 28 < Bits[InverseBits[maxBits]])
+                if (Bits[InverseBits[maxBits]] >= 28)
                 {
                     minimum = Bits[InverseBits[maxBits]] - 28; // 28 is the max for
                 }
@@ -126,7 +126,7 @@ internal abstract class NewPfd(Compress compress, Decompress decompress) : IInt3
                     var counter = 0;
                     for (var k = pos; k < BlockSize + pos; k++)
                     {
-                        if ((int)((uint)source[k] >> Bits[i]) is not 0)
+                        if (source[k] >>> Bits[i] is not 0)
                         {
                             counter++;
                         }
@@ -145,7 +145,7 @@ internal abstract class NewPfd(Compress compress, Decompress decompress) : IInt3
         }
     }
 
-    private void HeadlessUncompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number)
+    private void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number)
     {
         if (length is 0)
         {
@@ -154,35 +154,35 @@ internal abstract class NewPfd(Compress compress, Decompress decompress) : IInt3
 
         DecodePage(source, ref sourceIndex, destination, ref destinationIndex, Util.GreatestMultiple(number, BlockSize));
 
-        void DecodePage(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+        void DecodePage(int[] sourcePage, ref int sourcePageIndex, int[] destinationPage, ref int destinationPageIndex, int size)
         {
-            var temporaryDestinationIndex = destinationIndex;
-            var temporarySourceIndex = sourceIndex;
+            var temporaryDestinationIndex = destinationPageIndex;
+            var temporarySourceIndex = sourcePageIndex;
 
-            var runEnd = length / BlockSize;
+            var runEnd = size / BlockSize;
             for (var run = 0; run < runEnd; run++, temporaryDestinationIndex += BlockSize)
             {
-                var b = source[temporarySourceIndex] & 0xFF;
-                var exceptionCount = (int)((uint)source[temporarySourceIndex] >> 8) & 0xFF;
-                var exceptionSize = (int)((uint)source[temporarySourceIndex] >> 16);
+                var b = sourcePage[temporarySourceIndex] & 0xFF;
+                var exceptionCount = sourcePage[temporarySourceIndex] >>> 8 & 0xFF;
+                var exceptionSize = sourcePage[temporarySourceIndex] >>> 16;
                 temporarySourceIndex++;
-                this.decompress(source, temporarySourceIndex, exceptionSize, this.exceptionBuffer, 0, 2 * exceptionCount);
+                this.decompress(sourcePage, temporarySourceIndex, exceptionSize, this.exceptionBuffer, 0, 2 * exceptionCount);
                 temporarySourceIndex += exceptionSize;
                 var bit = Bits[b];
                 for (var k = 0; k < BlockSize; k += 32)
                 {
-                    BitPacking.Unpack(source.AsSpan(temporarySourceIndex), destination.AsSpan(temporaryDestinationIndex + k), bit);
+                    BitPacking.Unpack(sourcePage.AsSpan(temporarySourceIndex), destinationPage.AsSpan(temporaryDestinationIndex + k), bit);
                     temporarySourceIndex += bit;
                 }
 
                 for (var k = 0; k < exceptionCount; k++)
                 {
-                    destination[temporaryDestinationIndex + this.exceptionBuffer[k + exceptionCount]] |= this.exceptionBuffer[k] << bit;
+                    destinationPage[temporaryDestinationIndex + this.exceptionBuffer[k + exceptionCount]] |= this.exceptionBuffer[k] << bit;
                 }
             }
 
-            destinationIndex = temporaryDestinationIndex;
-            sourceIndex = temporarySourceIndex;
+            destinationPageIndex = temporaryDestinationIndex;
+            sourcePageIndex = temporarySourceIndex;
         }
     }
 }

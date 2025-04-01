@@ -128,7 +128,7 @@ internal sealed class S16
     }
 
     /// <inheritdoc cref="Compression.Decompress" />
-    public static void Uncompress(int[] source, int sourceIndex, int length, int[] destination, int destinationIndex, int destinationLength)
+    public static void Decompress(int[] source, int sourceIndex, int length, int[] destination, int destinationIndex, int destinationLength)
     {
         var endSourceIndex = sourceIndex + length;
         while (sourceIndex < endSourceIndex)
@@ -141,12 +141,12 @@ internal sealed class S16
 
         static int DecompressBlock(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
         {
-            var index = (int)((uint)source[sourceIndex] >> S16BitsSize);
+            var index = source[sourceIndex] >>> S16BitsSize;
             var count = Math.Min(S16Num[index], length);
             var bits = 0;
             for (var j = 0; j < count; j++)
             {
-                destination[destinationIndex + j] = (int)((uint)source[sourceIndex] >> bits) & (int)(0xffffffff >> (32 - S16Bits[index][j]));
+                destination[destinationIndex + j] = source[sourceIndex] >>> bits & (int)(0xffffffff >> (32 - S16Bits[index][j]));
                 bits += S16Bits[index][j];
             }
 

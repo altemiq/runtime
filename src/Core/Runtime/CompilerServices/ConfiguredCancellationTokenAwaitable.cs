@@ -20,7 +20,7 @@ public readonly struct ConfiguredCancellationTokenAwaitable
     /// Initializes a new instance of the <see cref="ConfiguredCancellationTokenAwaitable"/> struct.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <param name="options">The congifuration options.</param>
+    /// <param name="options">The configuration options.</param>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Checked")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1068:CancellationToken parameters must come last", Justification = "This is not used to cancel something")]
     internal ConfiguredCancellationTokenAwaitable(CancellationToken cancellationToken, Threading.CancellationTokenConfigureAwaitOptions options)
@@ -30,5 +30,5 @@ public readonly struct ConfiguredCancellationTokenAwaitable
     }
 
     /// <inheritdoc cref="Task.GetAwaiter" />
-    public Altemiq.Runtime.CompilerServices.CancellationTokenAwaiter GetAwaiter() => new(this.cancellationToken, this.options);
+    public CancellationTokenAwaiter GetAwaiter() => new(this.cancellationToken, this.options);
 }

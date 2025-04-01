@@ -186,7 +186,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
         while (currentIndex < endDestinationIndex - 28)
         {
             var value = source[temporarySourceIndex++];
-            switch ((int)((uint)value >> 28))
+            switch (value >>> 28)
             {
                 case 0:
                     // number : 28, bitwidth : 1

@@ -32,7 +32,7 @@ public static partial class List
             _ => null,
         };
 
-        static TResult[]? CreateArray(TSource[] source)
+        static TResult[] CreateArray(TSource[] source)
         {
             return [.. source];
         }
@@ -118,7 +118,7 @@ public static partial class List
                         return constructors
                             .Select(static constructor => constructor.GetParameters())
                             .SingleOrDefault(static parameters => parameters.Length is 1 && typeof(IEnumerable<TResult>).GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType.GetTypeInfo())) is not null
-                            ? [source.Cast<TResult>()]
+                            ? [source]
                             : [];
                     }
                 }
@@ -257,7 +257,7 @@ public static partial class List
                 // this improves performance in the face of already sorted data, or
                 // data that is made up of multiple sorted runs appended together.
                 var middle = i + ((j - i) >> 1);
-                SwapIfGreaterWithItems(i, middle); // swap the low with the mid point
+                SwapIfGreaterWithItems(i, middle); // swap the low with the mid-point
                 SwapIfGreaterWithItems(i, j); // swap the low with the high
                 SwapIfGreaterWithItems(middle, j); // swap the middle with the high
 
@@ -398,7 +398,7 @@ public static partial class List
                 // this improves performance in the face of already sorted data, or
                 // data that is made up of multiple sorted runs appended together.
                 var middle = i + ((j - i) >> 1);
-                SwapIfGreaterWithItems(i, middle); // swap the low with the mid point
+                SwapIfGreaterWithItems(i, middle); // swap the low with the mid-point
                 SwapIfGreaterWithItems(i, j); // swap the low with the high
                 SwapIfGreaterWithItems(middle, j); // swap the middle with the high
 

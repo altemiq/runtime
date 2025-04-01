@@ -7,7 +7,7 @@
 namespace System;
 
 /// <content>
-/// Methods for when the value is less.
+/// Methods for when the value is less than.
 /// </content>
 public partial class ArgumentOutOfRangeExceptionEx
 {

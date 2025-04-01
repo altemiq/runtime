@@ -44,7 +44,7 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
     void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number);
 
     /// <inheritdoc/>
     public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
@@ -69,7 +69,7 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
 
         var destinationLength = source[sourceIndex];
         sourceIndex++;
-        HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, destinationLength);
+        HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, destinationLength);
     }
 
     /// <inheritdoc/>
@@ -82,7 +82,7 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
         var endStartIndex = temporarySourceIndex + length;
         while (temporarySourceIndex < endStartIndex)
         {
-            var offset = Compressblock(source, temporarySourceIndex, destination, temporaryDestinationIndex++, length);
+            var offset = CompressBlock(source, temporarySourceIndex, destination, temporaryDestinationIndex++, length);
             if (offset is -1)
             {
                 throw new InvalidDataException("Too big a number");
@@ -95,7 +95,7 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
         sourceIndex = temporarySourceIndex;
         destinationIndex = temporaryDestinationIndex;
 
-        static int Compressblock(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
+        static int CompressBlock(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
         {
             for (var i = 0; i < S16NumSize; i++)
             {
@@ -120,7 +120,7 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
         }
     }
 
-    private static void HeadlessUncompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
+    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
     {
         var temporarySourceIndex = sourceIndex;
         var temporaryDestinationIndex = destinationIndex;
@@ -137,12 +137,12 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
 
         static int DecompressBlock(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
         {
-            var index = (int)((uint)source[sourceIndex] >> S16BitsSize);
+            var index = source[sourceIndex] >>> S16BitsSize;
             var count = Math.Min(S16Num[index], length);
             var bits = 0;
             for (var j = 0; j < count; j++)
             {
-                destination[destinationIndex + j] = (int)((uint)source[sourceIndex] >> bits) & (int)(0xffffffff >> (32 - S16Bits[index][j]));
+                destination[destinationIndex + j] = source[sourceIndex] >>> bits & (int)(0xffffffff >> (32 - S16Bits[index][j]));
                 bits += S16Bits[index][j];
             }
 

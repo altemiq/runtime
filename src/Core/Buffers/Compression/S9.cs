@@ -154,22 +154,22 @@ internal sealed class S9
 
     /// <inheritdoc cref="Compression.Decompress"/>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for the API.")]
-    public static void Uncompress(int[] source, int sourceIndex, int sourceLength, int[] destination, int destinationIndex, int destinationLength)
+    public static void Decompress(int[] source, int sourceIndex, int sourceLength, int[] destination, int destinationIndex, int destinationLength)
     {
         var endDestinationIndex = destinationIndex + destinationLength;
 
         while (destinationIndex < endDestinationIndex)
         {
             var value = source[sourceIndex++];
-            switch ((int)((uint)value >> 28))
+            switch (value >>> 28)
             {
                 case 0:
                     {
-                        // number : 28, bitwidth : 1
+                        // number : 28, bit-width : 1
                         var count = endDestinationIndex - destinationIndex < 28 ? endDestinationIndex - destinationIndex : 28;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << (k + 4)) >> 31);
+                            destination[destinationIndex++] = (value << (k + 4)) >>> 31;
                         }
 
                         break;
@@ -177,11 +177,11 @@ internal sealed class S9
 
                 case 1:
                     {
-                        // number : 14, bitwidth : 2
+                        // number : 14, bit-width : 2
                         var count = endDestinationIndex - destinationIndex < 14 ? endDestinationIndex - destinationIndex : 14;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << ((2 * k) + 4)) >> 30);
+                            destination[destinationIndex++] = (value << ((2 * k) + 4)) >>> 30;
                         }
 
                         break;
@@ -189,11 +189,11 @@ internal sealed class S9
 
                 case 2:
                     {
-                        // number : 9, bitwidth : 3
+                        // number : 9, bit-width : 3
                         var count = endDestinationIndex - destinationIndex < 9 ? endDestinationIndex - destinationIndex : 9;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << ((3 * k) + 5)) >> 29);
+                            destination[destinationIndex++] = (value << ((3 * k) + 5)) >>> 29;
                         }
 
                         break;
@@ -201,11 +201,11 @@ internal sealed class S9
 
                 case 3:
                     {
-                        // number : 7, bitwidth : 4
+                        // number : 7, bit-width : 4
                         var count = endDestinationIndex - destinationIndex < 7 ? endDestinationIndex - destinationIndex : 7;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << ((4 * k) + 4)) >> 28);
+                            destination[destinationIndex++] = (value << ((4 * k) + 4)) >>> 28;
                         }
 
                         break;
@@ -213,11 +213,11 @@ internal sealed class S9
 
                 case 4:
                     {
-                        // number : 5, bitwidth : 5
+                        // number : 5, bit-width : 5
                         var count = endDestinationIndex - destinationIndex < 5 ? endDestinationIndex - destinationIndex : 5;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << ((5 * k) + 7)) >> 27);
+                            destination[destinationIndex++] = (value << ((5 * k) + 7)) >>> 27;
                         }
 
                         break;
@@ -225,11 +225,11 @@ internal sealed class S9
 
                 case 5:
                     {
-                        // number : 4, bitwidth : 7
+                        // number : 4, bit-width : 7
                         var count = endDestinationIndex - destinationIndex < 4 ? endDestinationIndex - destinationIndex : 4;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << ((7 * k) + 4)) >> 25);
+                            destination[destinationIndex++] = (value << ((7 * k) + 4)) >>> 25;
                         }
 
                         break;
@@ -237,11 +237,11 @@ internal sealed class S9
 
                 case 6:
                     {
-                        // number : 3, bitwidth : 9
+                        // number : 3, bit-width : 9
                         var count = endDestinationIndex - destinationIndex < 3 ? endDestinationIndex - destinationIndex : 3;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << ((9 * k) + 5)) >> 23);
+                            destination[destinationIndex++] = (value << ((9 * k) + 5)) >>> 23;
                         }
 
                         break;
@@ -249,19 +249,19 @@ internal sealed class S9
 
                 case 7:
                     {
-                        // number : 2, bitwidth : 14
+                        // number : 2, bit-width : 14
                         var count = endDestinationIndex - destinationIndex < 2 ? endDestinationIndex - destinationIndex : 2;
                         for (var k = 0; k < count; k++)
                         {
-                            destination[destinationIndex++] = (int)((uint)(value << ((14 * k) + 4)) >> 18);
+                            destination[destinationIndex++] = (value << ((14 * k) + 4)) >>> 18;
                         }
 
                         break;
                     }
 
                 case 8:
-                    // number : 1, bitwidth : 28
-                    destination[destinationIndex++] = (int)((uint)(value << 4) >> 4);
+                    // number : 1, bit-width : 28
+                    destination[destinationIndex++] = (value << 4) >>> 4;
                     break;
 
                 default:

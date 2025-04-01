@@ -27,7 +27,7 @@ internal interface IHeadlessInt32Codec
     void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length);
 
     /// <summary>
-    /// Uncompress data from an array to another array.
+    /// Decompress data from an array to another array.
     /// </summary>
     /// <param name="source">The array containing data in compressed form.</param>
     /// <param name="sourceIndex">The where to start reading in the array.</param>

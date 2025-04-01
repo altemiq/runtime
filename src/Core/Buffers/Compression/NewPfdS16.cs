@@ -7,9 +7,9 @@
 namespace Altemiq.Buffers.Compression;
 
 /// <summary>
-/// NewPFD/NewPFOR based on <see cref="Simple16"/> by Yan et al.
+/// <see cref="NewPfd"/> based on <see cref="Simple16"/> by Yan et al.
 /// </summary>
-internal sealed class NewPfdS16() : NewPfd(S16.Compress, S16.Uncompress)
+internal sealed class NewPfdS16() : NewPfd(S16.Compress, S16.Decompress)
 {
     /// <inheritdoc/>
     public override string ToString() => nameof(NewPfdS16);

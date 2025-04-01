@@ -37,7 +37,7 @@ internal static class ProtobufSerializer
     /// <typeparam name="T">The type to get the message parser for.</typeparam>
     /// <returns>The message parser.</returns>
     public static Google.Protobuf.MessageParser<T> GetMessageParser<T>()
-        where T : Google.Protobuf.IMessage<T>, new() => GetMessageParser<T>(new T());
+        where T : Google.Protobuf.IMessage<T>, new() => GetMessageParser(new T());
 
     /// <summary>
     /// Gets the message parser.

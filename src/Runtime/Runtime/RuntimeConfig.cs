@@ -404,7 +404,7 @@ internal sealed class RuntimeConfig(string path)
             }
             else
             {
-                runtimeOptions.Add(name + "s", new Newtonsoft.Json.Linq.JArray(values.Select(write).ToArray()));
+                runtimeOptions.Add(name + "s", new Newtonsoft.Json.Linq.JArray(values.Select(write).Cast<object>().ToArray()));
             }
         }
 
@@ -473,7 +473,7 @@ internal sealed class RuntimeConfig(string path)
         public string? RollForward { get; private set; }
 
         /// <summary>
-        /// Gets the framework for when there is not candidate.
+        /// Gets the framework for when there is not a candidate.
         /// </summary>
         public int? RollForwardOnNoCandidateFx { get; private set; }
 
@@ -586,7 +586,7 @@ internal sealed class RuntimeConfig(string path)
         /// <summary>
         /// Writes this instance as an object.
         /// </summary>
-        /// <returns>The JDON object.</returns>
+        /// <returns>The JSON object.</returns>
         internal Newtonsoft.Json.Linq.JObject ToJson()
         {
             Newtonsoft.Json.Linq.JObject frameworkReference = [];

@@ -211,12 +211,12 @@ public static partial class BitConverter
 #endif
 
     /// <summary>
-    /// Returns 16-bit usigned value from <c>varint</c> encoded array of bytes.
+    /// Returns 16-bit unsigned value from <c>varint</c> encoded array of bytes.
     /// </summary>
     /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
     /// <param name="startIndex">The start index.</param>
     /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
-    /// <returns>16-bit usigned value.</returns>
+    /// <returns>16-bit unsigned value.</returns>
     [CLSCompliant(false)]
     public static ushort ToUInt16(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
@@ -227,11 +227,11 @@ public static partial class BitConverter
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
     /// <summary>
-    /// Returns 16-bit usigned value from <c>varint</c> encoded array of bytes.
+    /// Returns 16-bit unsigned value from <c>varint</c> encoded array of bytes.
     /// </summary>
     /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
     /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
-    /// <returns>16-bit usigned value.</returns>
+    /// <returns>16-bit unsigned value.</returns>
     [CLSCompliant(false)]
     public static ushort ToUInt16(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
@@ -728,7 +728,7 @@ public static partial class BitConverter
             shift += BitShift;
         }
 
-        throw new ArgumentException("Cannot decode varint from byte array.", nameof(bytes));
+        throw new ArgumentException("Cannot decode variable integer from byte array.", nameof(bytes));
     }
 #endif
 }

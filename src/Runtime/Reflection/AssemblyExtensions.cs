@@ -47,12 +47,12 @@ public static class AssemblyExtensions
         }
     }
 
-    private readonly struct CheckValue<T>(T value, Func<T, T?, bool> check)
+    private readonly struct CheckValue<T>(T actual, Func<T, T?, bool> check)
     {
         public static readonly CheckValue<T> True = new(default!, static (_, _) => true);
 
-        private readonly T value = value;
+        private readonly T actual = actual;
 
-        public bool To(T? value) => check(this.value, value);
+        public bool To(T? expected) => check(this.actual, expected);
     }
 }

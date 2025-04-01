@@ -13,8 +13,6 @@ public class SeekableStream : IO.SeekableStream
 {
     private readonly System.IO.Compression.ZipArchive archive;
 
-    private readonly long length;
-
     private readonly bool closeArchive;
 
     /// <summary>
@@ -23,7 +21,7 @@ public class SeekableStream : IO.SeekableStream
     /// <param name="archiveEntry">The archive entry.</param>
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
     public SeekableStream(System.IO.Compression.ZipArchiveEntry archiveEntry, bool leaveOpen = false)
-        : this(archiveEntry.Archive, archiveEntry.Open(), archiveEntry.Length, leaveOpen)
+        : this(archiveEntry.Archive!, archiveEntry.Open(), archiveEntry.Length, leaveOpen)
     {
     }
 
@@ -42,13 +40,14 @@ public class SeekableStream : IO.SeekableStream
     private SeekableStream(System.IO.Compression.ZipArchive archive, Stream stream, long length, long initialPosition = 0L, bool leaveOpen = false)
         : base(stream, initialPosition, leaveOpen: false)
     {
+        ArgumentNullExceptionEx.ThrowIfNull(archive);
         this.archive = archive;
         this.closeArchive = !leaveOpen;
-        this.length = length;
+        this.Length = length;
     }
 
     /// <inheritdoc/>
-    public override long Length => this.length;
+    public override long Length { get; }
 
 #if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <inheritdoc/>

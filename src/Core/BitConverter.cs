@@ -1057,17 +1057,17 @@ public static partial class BitConverter
     }
 #endif
 
-    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndianessFunction)
+    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction)
     {
-        return ShouldReverseEndiannesss(byteOrder)
-            ? reverseEndianessFunction(value)
+        return ShouldReverseEndianness(byteOrder)
+            ? reverseEndiannessFunction(value)
             : value;
 
-        static bool ShouldReverseEndiannesss(ByteOrder byteOrder)
+        static bool ShouldReverseEndianness(ByteOrder byteOrder)
         {
             return IsLittleEndian
-            ? byteOrder is not ByteOrder.LittleEndian
-            : byteOrder is not ByteOrder.BigEndian;
+                ? byteOrder is not ByteOrder.LittleEndian
+                : byteOrder is not ByteOrder.BigEndian;
         }
     }
 

@@ -144,6 +144,7 @@ public partial class SourceGenerator
                             NewLine,
                             NewLine,
                             TriviaList())));
+
                 for (var i = 0; i < typeParameterNames.Count; i++)
                 {
                     var typeParameterExample = typeParameterNames.Count is 1
@@ -214,7 +215,7 @@ public partial class SourceGenerator
                         Token(SyntaxKind.CommaToken),
                         SimpleBaseType(
                             GenericName(
-                                Identifier(nameof(IEquatable<>)))
+                                Identifier(nameof(IEquatable<object>)))
                             .WithTypeArgumentList(
                                 TypeArgumentList(
                                     SingletonSeparatedList<TypeSyntax>(
@@ -1443,6 +1444,7 @@ public partial class SourceGenerator
                             NewLine,
                             NewLine,
                             TriviaList())));
+
                 for (var i = 0; i < typeParameterNames.Count; i++)
                 {
                     yield return XmlText()
@@ -1718,6 +1720,7 @@ public partial class SourceGenerator
                             NewLine,
                             NewLine,
                             TriviaList())));
+
                 for (var i = 0; i < typeParameterNames.Count; i++)
                 {
                     yield return XmlText()
@@ -1744,7 +1747,7 @@ public partial class SourceGenerator
                                 XmlCrefAttribute(
                                     NameMemberCref(
                                         GenericName(
-                                            Identifier(nameof(Func<>)))
+                                            Identifier(nameof(Func<object>)))
                                         .WithTypeArgumentList(
                                             TypeArgumentList(
                                                 SeparatedList<TypeSyntax>(
@@ -1862,7 +1865,7 @@ public partial class SourceGenerator
                         Identifier(GetFunctionName(i)))
                         .WithType(
                         GenericName(
-                            Identifier(nameof(Func<>)))
+                            Identifier(nameof(Func<object>)))
                         .WithTypeArgumentList(
                             TypeArgumentList(
                                 SeparatedList<TypeSyntax>(
@@ -1960,7 +1963,7 @@ public partial class SourceGenerator
 
             for (var i = 0; i < typeParameterNames.Count; i++)
             {
-                var types = GetTypeArguments(i, typeParameterNames);
+                var types = GetTypeArguments(i, typeParameterNames).ToList();
 
                 yield return MethodDeclaration(
                     GenericName(
@@ -1984,7 +1987,7 @@ public partial class SourceGenerator
                                 Identifier(MapFunctionName))
                             .WithType(
                                 GenericName(
-                                    Identifier(nameof(Func<>)))
+                                    Identifier(nameof(Func<object>)))
                                 .WithTypeArgumentList(
                                     TypeArgumentList(
                                         SeparatedList<TypeSyntax>(
@@ -2648,7 +2651,7 @@ public partial class SourceGenerator
                                             SingletonList<XmlAttributeSyntax>(
                                                 XmlTextAttribute(
                                                     XmlName(
-                                                        Identifier(Keywords.Langword)),
+                                                        Identifier(Keywords.LangWord)),
                                                     Token(SyntaxKind.DoubleQuoteToken),
                                                     Token(SyntaxKind.DoubleQuoteToken))
                                                 .WithTextTokens(
@@ -2671,7 +2674,7 @@ public partial class SourceGenerator
                                             SingletonList<XmlAttributeSyntax>(
                                                 XmlTextAttribute(
                                                     XmlName(
-                                                        Identifier(Keywords.Langword)),
+                                                        Identifier(Keywords.LangWord)),
                                                     Token(SyntaxKind.DoubleQuoteToken),
                                                     Token(SyntaxKind.DoubleQuoteToken))
                                                 .WithTextTokens(
@@ -2910,7 +2913,6 @@ public partial class SourceGenerator
                                             NewLine,
                                             TriviaList()))),
                             ]))));
-
             yield return MethodDeclaration(
                 PredefinedType(
                     Token(SyntaxKind.BoolKeyword)),
@@ -2980,6 +2982,7 @@ public partial class SourceGenerator
                                                 NewLine,
                                                 TriviaList()))),
                                 ]))));
+            yield break;
 
             static SwitchExpressionSyntax GetSwitchExpression(IList<string> typeParameterNames)
             {
@@ -3486,7 +3489,7 @@ public partial class SourceGenerator
             return MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 GetBaseMemberAccessExpression([.. GetNames(typeof(T))]),
-                IdentifierName(Enum.GetName(typeof(T), value)));
+                IdentifierName(Enum.GetName(typeof(T), value)!));
 
             static MemberAccessExpressionSyntax GetBaseMemberAccessExpression(IList<IdentifierNameSyntax> names)
             {

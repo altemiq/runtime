@@ -9,7 +9,7 @@ namespace Altemiq.Buffers.Compression;
 /// <summary>
 /// <see cref="OptPfd"/> based on <see cref="Simple16"/> by Yan et al.
 /// </summary>
-internal sealed class OptPfdS16() : OptPfd(S16.Compress, S16.Uncompress, S16.EstimateCompress)
+internal sealed class OptPfdS16() : OptPfd(S16.Compress, S16.Decompress, S16.EstimateCompress)
 {
     /// <inheritdoc/>
     public override string ToString() => nameof(OptPfdS16);

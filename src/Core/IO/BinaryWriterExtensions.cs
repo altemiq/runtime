@@ -42,13 +42,13 @@ public static class BinaryWriterExtensions
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static void Write(this BinaryWriter writer, char value, System.Text.Encoding encoding, ByteOrder byteOrder)
     {
-        if (encoding.GetByteCount([value]) <= 1)
+        writer.Write(GetValue(value, encoding, byteOrder));
+
+        static char GetValue(char value, System.Text.Encoding encoding, ByteOrder byteOrder)
         {
-            writer.Write(value);
-        }
-        else
-        {
-            writer.Write(ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness));
+            return encoding.GetByteCount([value]) <= 1
+                ? value
+                : ReverseEndiannessIfRequired(value, byteOrder, ReverseEndianness);
         }
     }
 
@@ -283,7 +283,7 @@ public static class BinaryWriterExtensions
 #endif
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndianessFunction) => byteOrder is not ByteOrder.LittleEndian ? reverseEndianessFunction(value) : value;
+    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction) => byteOrder is not ByteOrder.LittleEndian ? reverseEndiannessFunction(value) : value;
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static char ReverseEndianness(char value) => (char)Buffers.Binary.BinaryPrimitives.ReverseEndianness(unchecked((short)value));

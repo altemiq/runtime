@@ -24,8 +24,8 @@ public class EchoStream : Stream
     private readonly System.Collections.Concurrent.BlockingCollection<byte[]> buffers;
 
     private byte[]? currentBuffer;
-    private int offset;
-    private int count;
+    private int currentOffset;
+    private int currentCount;
 
     private bool closed;
 
@@ -59,7 +59,7 @@ public class EchoStream : Stream
     public override bool CanRead { get; } = true;
 
     /// <inheritdoc/>
-    public override bool CanSeek { get; }
+    public override bool CanSeek { get; } = false;
 
     /// <inheritdoc/>
     public override bool CanWrite { get; } = true;
@@ -163,7 +163,7 @@ public class EchoStream : Stream
 
         lock (this.lockObject)
         {
-            if (this.count is 0 && this.buffers.Count is 0)
+            if (this.currentCount is 0 && this.buffers.Count is 0)
             {
                 if (this.closed)
                 {
@@ -172,8 +172,8 @@ public class EchoStream : Stream
 
                 if (this.buffers.TryTake(out this.currentBuffer, this.ReadTimeout) && this.currentBuffer is { } b)
                 {
-                    this.offset = 0;
-                    this.count = b.Length;
+                    this.currentOffset = 0;
+                    this.currentCount = b.Length;
                 }
                 else
                 {
@@ -184,12 +184,12 @@ public class EchoStream : Stream
             var returnBytes = 0;
             while (count > 0)
             {
-                if (this.count is 0)
+                if (this.currentCount is 0)
                 {
                     if (this.buffers.TryTake(out this.currentBuffer, this.ReadTimeout) && this.currentBuffer is { } cb)
                     {
-                        this.offset = 0;
-                        this.count = cb.Length;
+                        this.currentOffset = 0;
+                        this.currentCount = cb.Length;
                     }
                     else
                     {
@@ -197,14 +197,14 @@ public class EchoStream : Stream
                     }
                 }
 
-                var bytesToCopy = Math.Min(count, this.count);
+                var bytesToCopy = Math.Min(count, this.currentCount);
                 if (this.currentBuffer is { } b)
                 {
-                    Buffer.BlockCopy(b, this.offset, buffer, offset, bytesToCopy);
+                    Buffer.BlockCopy(b, this.currentOffset, buffer, offset, bytesToCopy);
                 }
 
-                this.offset += bytesToCopy;
-                this.count -= bytesToCopy;
+                this.currentOffset += bytesToCopy;
+                this.currentCount -= bytesToCopy;
                 offset += bytesToCopy;
                 count -= bytesToCopy;
 
