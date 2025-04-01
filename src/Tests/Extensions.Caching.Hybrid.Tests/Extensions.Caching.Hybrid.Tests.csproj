@@ -4,7 +4,6 @@
     <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);net472</TargetFrameworks>
     <SuppressTfmSupportBuildWarnings Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net4.0')) ">true</SuppressTfmSupportBuildWarnings>
-    <NoWarn>$(NoWarn);EXTEXP0018</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
