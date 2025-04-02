@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0;netcoreapp3.1;netstandard2.1;netstandard2.0;netstandard1.1;net462;net461;net45</TargetFrameworks>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <PolySharpIncludeGeneratedTypes>System.Diagnostics.CodeAnalysis.StringSyntaxAttribute;System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute</PolySharpIncludeGeneratedTypes>
+    <PolySharpIncludeGeneratedTypes>System.Index,System.Range,System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute,System.Diagnostics.CodeAnalysis.StringSyntaxAttribute;System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute</PolySharpIncludeGeneratedTypes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +32,10 @@
       <ItemGroup>
         <Compile Remove="Converters\StructConverter.cs" />
         <Compile Remove="Converters\ValueConverter.cs" />
+      </ItemGroup>
+      
+      <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.3')) ">
+        <PackageReference Include="System.ValueTuple" VersionOverride="4.3.0" />
       </ItemGroup>
     </When>
   </Choose>

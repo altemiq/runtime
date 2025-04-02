@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package altemiq.protobuf.versioning;
+
+option go_package = "altemiq.golang.org/protobuf/types/known/semverpb";
+option java_package = "com.altemiq.protobuf";
+option java_outer_classname = "SemanticVersionProto";
+option java_multiple_files = true;
+option objc_class_prefix = "APB";
+option csharp_namespace = "Altemiq.Protobuf.WellKnownTypes";
+
+// A strict SemVer implementation.
+message SemanticVersion {
+	// Major version X (X.y.z)
+	int32 major = 1;
+	// Minor version Y (x.Y.z)
+	int32 minor = 2;
+	// Patch version Z (x.y.Z)
+	int32 patch = 3;
+	// A collection of pre-release labels attached to the version.
+	repeated string release_labels = 4;
+	// Build metadata attached to the version.
+	optional string metadata = 5;
+}
