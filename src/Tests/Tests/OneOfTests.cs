@@ -54,15 +54,15 @@ public class OneOfTests
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That( RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString)).IsEqualTo(expectedResult);
+    public async Task LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString)).IsEqualTo(expectedResult);
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That( RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString)).IsEqualTo(expectedResult);
+    public async Task RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString)).IsEqualTo(expectedResult);
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task SpecifyCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That( OneOf.From<string, DateTime>(dateTime).ToString(new System.Globalization.CultureInfo(cultureName, false))).IsEqualTo(expectedResult);
+    public async Task SpecifyCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(OneOf.From<string, DateTime>(dateTime).ToString(new System.Globalization.CultureInfo(cultureName, false))).IsEqualTo(expectedResult);
 
     public static IEnumerable<Func<(string, DateTime, string)>> DateData()
     {

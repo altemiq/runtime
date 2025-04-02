@@ -42,5 +42,15 @@ csharp_style_var_when_type_is_apparent = true:silent
 
 #### Supressions ####
 
+## Roslynator
+
 # RCS1163: Unused parameter
 dotnet_diagnostic.RCS1163.severity = none
+
+## Resharper
+
+# Add explicit 'return' or 'continue' before local functions﻿
+resharper_separate_local_functions_with_jump_statement_highlighting = none
+
+# Namespace does not correspond to file location
+resharper_check_namespace_highlighting = none

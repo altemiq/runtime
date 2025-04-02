@@ -73,7 +73,7 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Uncompress(c, comp, l);
-            await Assert.That( answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).IsEquivalentTo(data.Take(l));
         }
     }
 
@@ -82,7 +82,7 @@ public class ByteBasicTest
         return codecs.Select(c => new Func<ByteIntegerCodec>(() => new() { Codec = c() }));
     }
 
-    public class ByteIntegerCodec 
+    public class ByteIntegerCodec
     {
         internal ISByteCodec Codec { get; init; } = null!;
 

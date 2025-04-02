@@ -31,7 +31,7 @@ public class SeekableStreamTests
     public async Task SeekOnAlreadySeekableStream()
     {
         using var stream = new SeekableStream(new MemoryStream(512));
-        await Assert.That( stream.Seek(256, SeekOrigin.Begin)).IsEqualTo(256);
+        await Assert.That(stream.Seek(256, SeekOrigin.Begin)).IsEqualTo(256);
     }
 
     [Test]

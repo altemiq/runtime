@@ -22,7 +22,7 @@ public class EnumerableTests
         {
             yield return () => (System.Linq.Enumerable.Repeat((int?)1, 10).ToArray(), 10);
             yield return () => (System.Linq.Enumerable.Repeat(default(int?), 10).ToArray(), 0);
-            yield return () => ([ default, 1, default, 2, default, 3, default, 4, default, 5], 5);
+            yield return () => ([default, 1, default, 2, default, 3, default, 4, default, 5], 5);
         }
     }
 

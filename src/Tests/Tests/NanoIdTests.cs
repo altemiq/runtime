@@ -108,11 +108,11 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            await Assert.That( result).HasCount().EqualTo(DefaultSize);
+            await Assert.That(result).HasCount().EqualTo(DefaultSize);
 
             foreach (var c in result)
             {
-                await Assert.That( result).Contains($"{c}");
+                await Assert.That(result).Contains($"{c}");
             }
 
             count--;
@@ -232,7 +232,7 @@ public class NanoIds
 #else
             var mask2 = (2 << 31 - NanoId.LeadingZeroCount((length - 1) | 1)) - 1;
 #endif
-            await Assert.That( mask1).IsEqualTo(mask2);
+            await Assert.That(mask1).IsEqualTo(mask2);
         }
     }
 

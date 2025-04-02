@@ -276,7 +276,7 @@ public class ExceptionThrowerTests
         private static void Run<T>(string name, Type type, params T[] values)
         {
             Run(GetMethod(name, type, GetValuesType(values)), values);
-            
+
             static Type GetValuesType(T[] values)
             {
                 if (values is not null && values.FirstOrDefault(x => x is not null) is { } first)

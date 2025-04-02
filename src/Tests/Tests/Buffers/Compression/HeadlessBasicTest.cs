@@ -103,7 +103,7 @@ public class HeadlessBasicTest
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = await TestUtils.UncompressHeadless(c, comp, l);
-            await Assert.That( answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).IsEquivalentTo(data.Take(l));
         }
     }
 
