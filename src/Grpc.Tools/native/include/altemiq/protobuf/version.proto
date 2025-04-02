@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package altemiq.protobuf.versioning;
+
+option go_package = "altemiq.golang.org/protobuf/types/known/versionpb";
+option java_package = "com.altemiq.protobuf";
+option java_outer_classname = "VersionProto";
+option java_multiple_files = true;
+option objc_class_prefix = "APB";
+option csharp_namespace = "Altemiq.Protobuf.WellKnownTypes";
+
+// Represents the version number of an assembly, operating system, or the common language runtime. This class cannot be inherited.
+message Version {
+	// Gets the value of the major component of the version number for the current version.
+	int32 major = 1;
+	// Gets the value of the minor component of the version number for the current version.
+	int32 minor = 2;
+	// Gets the value of the build component of the version number for the current version.
+	optional int32 build = 3;
+	// Gets the value of the revision component of the version number for the current version.
+	optional int32 revision = 4;
+}
