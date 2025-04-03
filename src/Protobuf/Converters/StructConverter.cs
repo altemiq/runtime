@@ -29,11 +29,17 @@ public class StructConverter : System.Text.Json.Serialization.JsonConverter<Stru
             return default;
         }
 
+        if (document.RootElement.ValueKind is not JsonValueKind.Object)
+        {
+            // needs to be an object to do this
+            throw new JsonException();
+        }
+
         // convert this to a `google.protobuf.Struct`
         return document.RootElement.ToValue() switch
         {
             { StructValue: { } structValue } => structValue,
-            var v => new Struct { Fields = { { "root", v } } },
+            _ => throw new JsonException(),
         };
     }
 

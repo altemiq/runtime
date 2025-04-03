@@ -1,20 +1,22 @@
 ﻿namespace Altemiq.Protobuf.Converters;
 
+using TUnit.Assertions.AssertConditions.Throws;
+
 public class StructConverterTests
 {
-    private const string Json =
-        """
+    private static readonly string Json =
+        $$"""
         {
           "Number": 1,
-          "Double": 123.456,
-          "False": false,
-          "True": true,
+          "{{nameof(Double)}}": 123.456,
+          "{{bool.FalseString}}": false,
+          "{{bool.TrueString}}": true,
           "Null": null,
-          "String": "value",
+          "{{nameof(String)}}": "value",
           "Nested": {
             "Id": 1
           },
-          "Array": [
+          "{{nameof(Array)}}": [
             1,
             2,
             3,
@@ -38,11 +40,11 @@ public class StructConverterTests
         Fields =
         {
             { "Number", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) },
-            { "Double", Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456) },
-            { "False", Google.Protobuf.WellKnownTypes.Value.ForBool(false) },
-            { "True", Google.Protobuf.WellKnownTypes.Value.ForBool(true) },
+            { nameof(Double), Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456) },
+            { bool.FalseString, Google.Protobuf.WellKnownTypes.Value.ForBool(false) },
+            { bool.TrueString, Google.Protobuf.WellKnownTypes.Value.ForBool(true) },
             { "Null", Google.Protobuf.WellKnownTypes.Value.ForNull() },
-            { "String", Google.Protobuf.WellKnownTypes.Value.ForString("value") },
+            { nameof(String), Google.Protobuf.WellKnownTypes.Value.ForString("value") },
             {
                 "Nested",
                 Google.Protobuf.WellKnownTypes.Value.ForStruct(
@@ -55,14 +57,13 @@ public class StructConverterTests
                     })
             },
             {
-                "Array",
+                nameof(Array),
                 Google.Protobuf.WellKnownTypes.Value.ForList(
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(1),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(2),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(3),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(4),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(5))
-
             }
         }
     };
@@ -100,7 +101,7 @@ public class StructConverterTests
     [Test]
     public async Task CreateFromEmptyDocument()
     {
-        var actual = await Assert.That(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")))
+        await Assert.That(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")))
             .IsTypeOf<Google.Protobuf.WellKnownTypes.Struct>()
             .And.Satisfies(a => (IEnumerable<KeyValuePair<string, Google.Protobuf.WellKnownTypes.Value>>)a.Fields, fields => fields.IsEmpty());
     }
@@ -115,6 +116,12 @@ public class StructConverterTests
     public async Task CreateJsonFromStruct()
     {
         await Assert.That(Struct.ToJsonDocument()).IsNotNull();
+    }
+
+    [Test]
+    public async Task FailToConvertValue()
+    {
+        await Assert.That(() => StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse(bool.TrueString))).Throws<System.Text.Json.JsonException>();
     }
 
     private static string NormalizeJson(string json)

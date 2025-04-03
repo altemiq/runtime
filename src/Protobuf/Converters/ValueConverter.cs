@@ -37,13 +37,7 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
 
         static Value ToList(JsonElement element)
         {
-            var values = new List<Value>();
-            foreach (var item in element.EnumerateArray())
-            {
-                values.Add(item.ToValue());
-            }
-
-            return Value.ForList([.. values]);
+            return Value.ForList([.. element.EnumerateArray().Select(item => item.ToValue())]);
         }
 
         static Value ToStruct(JsonElement element)
