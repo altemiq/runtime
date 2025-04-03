@@ -16,7 +16,7 @@ public class VersionTests
             .Satisfies(x => x.HasRevision, m => m.IsEqualTo(revision >= 0)).And
             .Satisfies(x => x.Revision, m => revision >= 0 ? m.IsEqualTo(revision) : m.IsEqualTo(0));
     }
-    
+
     [Test]
     [Arguments("1.2", 1, 2, -1, -1)]
     [Arguments("1.2.3", 1, 2, 3, -1)]
@@ -33,7 +33,7 @@ public class VersionTests
             .Satisfies(x => x.HasRevision, m => m.IsEqualTo(revision >= 0)).And
             .Satisfies(x => x.Revision, m => revision >= 0 ? m.IsEqualTo(revision) : m.IsEqualTo(0));
     }
-    
+
     [Test]
     [Arguments("1.2", 1, 2, -1, -1)]
     [Arguments("1.2.3", 1, 2, 3, -1)]
@@ -44,11 +44,11 @@ public class VersionTests
             (build, revision) switch
             {
                 (_, >= 0) => new(major, minor, build, revision),
-                (>= 0, _) => new(major, minor, build),
+                ( >= 0, _) => new(major, minor, build),
                 _ => new(major, minor),
             }).ToString(default, default)).IsEqualTo(input);
     }
-    
+
     [Test]
     [Arguments("1.2", 1, 2, -1, -1)]
     [Arguments("1.2.3", 1, 2, 3, -1)]
@@ -63,10 +63,11 @@ public class VersionTests
                 (build, revision) switch
                 {
                     (_, >= 0) => new(major, minor, build, revision),
-                    (>= 0, _) => new(major, minor, build),
+                    ( >= 0, _) => new(major, minor, build),
                     _ => new(major, minor),
                 }).TryFormat(outputSpan, out var charsWritten, default, default);
-            output = outputSpan.Slice(0, charsWritten).ToString();
+            Range range = new(Index.Start, new(charsWritten));
+            output = outputSpan[range].ToString();
             return response;
         }).IsTrue();
         await Assert.That(output).IsEqualTo(input);
@@ -91,7 +92,7 @@ public class VersionTests
             {
                 version.Build = build;
             }
-            
+
             if (revision >= 0)
             {
                 version.Revision = revision;
@@ -100,5 +101,5 @@ public class VersionTests
             return version;
         }
     }
-    
+
 }

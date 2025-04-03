@@ -84,7 +84,7 @@ public partial class BitConverterTests
             {
                 var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
                 System.Array.Resize(ref encoded, encoded.Length / 2);
-                await Assert.That(() => BitConverter.ToUInt64(encoded, 0, out var bytesRead)).Throws<ArgumentException>();
+                await Assert.That(() => BitConverter.ToUInt64(encoded, 0, out _)).Throws<ArgumentException>();
             }
 
             [Test]
@@ -110,9 +110,9 @@ public partial class BitConverterTests
                 await Assert.That(bytesRead).IsEqualTo(encoded.Length);
             }
 
-            private delegate byte[] GetVarBytes<T>(T value);
+            private delegate byte[] GetVarBytes<in T>(T value);
 
-            private delegate T ToValue<T>(byte[] bytes, int startIndex, out int bytesRead);
+            private delegate T ToValue<out T>(byte[] bytes, int startIndex, out int bytesRead);
         }
 
         public class Span
@@ -183,7 +183,7 @@ public partial class BitConverterTests
             public async Task ToSmall()
             {
                 var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
-                await Assert.That(() => BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out var bytesRead)).Throws<ArgumentException>();
+                await Assert.That(() => BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out _)).Throws<ArgumentException>();
             }
 
             [Test]
@@ -205,14 +205,15 @@ public partial class BitConverterTests
             {
                 var encoded = new byte[20];
                 await Assert.That(encode(encoded, number, out var bytesWritten)).IsTrue();
-                var decoded = decode(encoded.AsSpan()[..bytesWritten], out var bytesRead);
+                Range range = new(Index.Start, new(bytesWritten));
+                var decoded = decode(encoded.AsSpan()[range], out var bytesRead);
                 await Assert.That(decoded).IsEqualTo(number);
                 await Assert.That(bytesRead).IsEqualTo(bytesWritten);
             }
 
-            private delegate bool TryWriteBytes<T>(Span<byte> destination, T value, out int bytesWritten);
+            private delegate bool TryWriteBytes<in T>(Span<byte> destination, T value, out int bytesWritten);
 
-            private delegate T ToValue<T>(ReadOnlySpan<byte> source, out int bytesRead);
+            private delegate T ToValue<out T>(ReadOnlySpan<byte> source, out int bytesRead);
         }
 
 #if NET7_0_OR_GREATER

@@ -129,6 +129,7 @@ public partial class Version :
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
 #endif
+    [SuppressMessage("Microsoft.Style", "IDE0060:Remove unused parameter", Justification = "This is required for implementing the interface")]
     public static Version Parse(string s, IFormatProvider? provider) => new(System.Version.Parse(s));
 
 #if NET7_0_OR_GREATER
@@ -181,6 +182,7 @@ public partial class Version :
     /// <param name="result">When this method returns, contains the result of successfully parsing <paramref name="s"/>, or an undefined value on failure.</param>
     /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
 #endif
+    [SuppressMessage("Microsoft.Style", "IDE0060:Remove unused parameter", Justification = "This is required for implementing the interface")]
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Version result)
     {
         if (s is not null && System.Version.TryParse(s, out var version))

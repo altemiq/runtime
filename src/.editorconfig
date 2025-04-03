@@ -40,7 +40,13 @@ csharp_style_var_elsewhere = true:silent
 csharp_style_var_for_built_in_types = true:silent
 csharp_style_var_when_type_is_apparent = true:silent
 
+# preferences
+csharp_style_prefer_unbound_generic_type_in_nameof = false:silent
+
 #### Supressions ####
+
+# IDE0340: Use unbound generic type
+#dotnet_diagnostic.IDE0340.severity = none
 
 ## Roslynator
 
@@ -49,7 +55,7 @@ dotnet_diagnostic.RCS1163.severity = none
 
 ## Resharper
 
-# Add explicit 'return' or 'continue' before local functions﻿
+# Add explicit 'return' or 'continue' before local functions
 resharper_separate_local_functions_with_jump_statement_highlighting = none
 
 # Namespace does not correspond to file location

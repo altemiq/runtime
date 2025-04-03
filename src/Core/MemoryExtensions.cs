@@ -131,7 +131,7 @@ public static partial class MemoryExtensions
     /// <param name="separator">The separator character to be used to split the provided span.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
 #if NET9_0_OR_GREATER
-    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(Char)}) instead")]
+    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(Split)}({nameof(ReadOnlySpan<char>)}, {nameof(Char)}) instead")]
 #endif
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, char separator) => Split(span, separator, StringSplitOptions.None);
 
@@ -153,9 +153,9 @@ public static partial class MemoryExtensions
     /// <param name="separator">The separator string to be used to split the provided span.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
 #if NET9_0_OR_GREATER
-    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
+    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
 #else
-    [Obsolete($"Use {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
+    [Obsolete($"Use {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
 #endif
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator) => Split(span, separator, StringSplitOptions.None);
 
@@ -167,7 +167,7 @@ public static partial class MemoryExtensions
     /// <param name="separator">The separator string to be used to split the provided span.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
 #if NET9_0_OR_GREATER
-    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
+    [Obsolete($"Use {nameof(System)}.{nameof(MemoryExtensions)}.{nameof(Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
 #endif
     public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, ReadOnlySpan<char> separator) => new(span, separator, StringSplitOptions.None);
 

@@ -178,6 +178,7 @@ public partial class SemanticVersion :
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
 #endif
+    [SuppressMessage("Microsoft.Style", "IDE0060:Remove unused parameter", Justification = "This is required for implementing the interface")]
     public static SemanticVersion Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
         if (!TryParse(s, System.Globalization.CultureInfo.InvariantCulture, out var ver))
@@ -239,7 +240,7 @@ public partial class SemanticVersion :
         ParseSections(s, out string? versionString, out string[]? releaseLabels, out string? buildMetadata);
 
         // null indicates the string did not meet the rules
-        if (!System.Version.TryParse(versionString!, out var systemVersion))
+        if (!System.Version.TryParse(versionString, out var systemVersion))
         {
             return false;
         }

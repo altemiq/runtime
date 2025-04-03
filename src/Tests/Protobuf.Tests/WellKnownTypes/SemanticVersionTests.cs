@@ -80,7 +80,8 @@ public class SemanticVersionTests
         {
             Span<char> inputSpan = stackalloc char[input.Length * 2];
             var result = version.TryFormat(inputSpan, out charsWritten, "F", default);
-            output = inputSpan.Slice(0, charsWritten).ToString();
+            Range range = new(new(0), new(charsWritten));
+            output = inputSpan[range].ToString();
             return result;
         }).IsTrue();
         await Assert.That(charsWritten).IsEqualTo(input.Length);
