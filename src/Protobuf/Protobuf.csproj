@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0;netcoreapp3.1;netstandard2.1;netstandard2.0;netstandard1.1;net462;net461;net45</TargetFrameworks>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <PolySharpIncludeGeneratedTypes>System.Index,System.Range,System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute,System.Diagnostics.CodeAnalysis.StringSyntaxAttribute;System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute</PolySharpIncludeGeneratedTypes>
+    <PolySharpIncludeGeneratedTypes>System.Index,System.Range,System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute,System.Diagnostics.CodeAnalysis.StringSyntaxAttribute;System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute,System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute</PolySharpIncludeGeneratedTypes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -87,7 +87,8 @@ internal sealed class RuntimeConfig(string path)
             }
 #else
             using var textReader = File.OpenText(path);
-            using var reader = new Newtonsoft.Json.JsonTextReader(textReader) { MaxDepth = null };
+            using var reader = new Newtonsoft.Json.JsonTextReader(textReader);
+            reader.MaxDepth = null;
             var root = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.Linq.JToken.ReadFrom(reader);
             var runtimeOptions = (Newtonsoft.Json.Linq.JObject)root["runtimeOptions"];
             TryGetFromProperty<Newtonsoft.Json.Linq.JToken>(runtimeOptions, "tfm", tfm => runtimeConfig.WithTfm((string)tfm));
@@ -378,9 +379,9 @@ internal sealed class RuntimeConfig(string path)
         WriteNull(this.Tfm, tfm => runtimeOptions.Add("tfm", tfm));
         WriteArray(runtimeOptions, "framework", this.frameworks, framework => framework.ToJson());
         WriteArray(runtimeOptions, "includedFramework", this.includedFrameworks, framework => framework.ToJson());
-        WriteNull(this.rollForward, rollForward => runtimeOptions.Add(Constants.RollForwardSetting.RuntimeConfigPropertyName, rollForward));
-        WriteNullable(this.rollForwardOnNoCandidateFx, rollForwardOnNoCandidateFx => runtimeOptions.Add(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, rollForwardOnNoCandidateFx));
-        WriteNullable(this.applyPatches, applyPatches => runtimeOptions.Add(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, applyPatches));
+        WriteNull(this.rollForward, value => runtimeOptions.Add(Constants.RollForwardSetting.RuntimeConfigPropertyName, value));
+        WriteNullable(this.rollForwardOnNoCandidateFx, value => runtimeOptions.Add(Constants.RollForwardOnNoCandidateFxSetting.RuntimeConfigPropertyName, value));
+        WriteNullable(this.applyPatches, value => runtimeOptions.Add(Constants.ApplyPatchesSetting.RuntimeConfigPropertyName, value));
         WriteArray(runtimeOptions, Constants.AdditionalProbingPath.RuntimeConfigPropertyName, this.additionalProbingPaths, additionalProbingPath => new Newtonsoft.Json.Linq.JValue(additionalProbingPath));
         WriteObject(runtimeOptions, "configProperties", this.properties, property => bool.TryParse(property, out var result) ? result : property);
 

@@ -39,12 +39,16 @@ internal sealed class DifferentialInt32Compressor(IHeadlessDifferentialInt32Code
         return compressed;
     }
 
+    /// <inheritdoc cref="Decompress"/>
+    [Obsolete($"Use {nameof(Int32Compressor)}.{nameof(Decompress)} instead.")]
+    public int[] Uncompress(int[] compressed) => this.Decompress(compressed);
+
     /// <summary>
-    /// Uncompress an array and returns the uncompressed result as a new array.
+    /// Decompress an array and returns the uncompressed result as a new array.
     /// </summary>
     /// <param name="compressed">The compressed array.</param>
     /// <returns>The uncompressed array.</returns>
-    public int[] Uncompress(int[] compressed)
+    public int[] Decompress(int[] compressed)
     {
         var decompressed = new int[compressed[0]];
         var sourceIndex = 1;

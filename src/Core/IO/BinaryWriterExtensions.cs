@@ -61,8 +61,24 @@ public static class BinaryWriterExtensions
     public static void Write(this BinaryWriter writer, char[] buffer, System.Text.Encoding encoding, ByteOrder byteOrder)
     {
         // we must not mutate the original array, so we need to copy it
-        if (byteOrder is not ByteOrder.LittleEndian)
+        if (IsBigEndian(byteOrder))
         {
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            Span<char> copy = stackalloc char[buffer.Length];
+            buffer.CopyTo(copy);
+
+            for (var i = 0; i < copy.Length; i++)
+            {
+                var c = copy[i];
+                if (encoding.GetByteCount([c]) > 1)
+                {
+                    copy[i] = ReverseEndianness(c);
+                }
+            }
+
+            writer.Write(copy);
+            return;
+#else
             var copy = new char[buffer.Length];
             buffer.CopyTo(copy, 0);
 
@@ -76,6 +92,7 @@ public static class BinaryWriterExtensions
             }
 
             buffer = copy;
+#endif
         }
 
         writer.Write(buffer);
@@ -283,21 +300,21 @@ public static class BinaryWriterExtensions
 #endif
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction) => byteOrder is not ByteOrder.LittleEndian ? reverseEndiannessFunction(value) : value;
+    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction) => IsBigEndian(byteOrder) ? reverseEndiannessFunction(value) : value;
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static char ReverseEndianness(char value) => (char)Buffers.Binary.BinaryPrimitives.ReverseEndianness(unchecked((short)value));
 
+#if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP2_1_OR_GREATER
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static float ReverseEndianness(float value) => BitConverter.Int32BitsToSingle(Buffers.Binary.BinaryPrimitives.ReverseEndianness(BitConverter.SingleToInt32Bits(value)));
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static double ReverseEndianness(double value) => BitConverter.Int64BitsToDouble(Buffers.Binary.BinaryPrimitives.ReverseEndianness(BitConverter.DoubleToInt64Bits(value)));
+#endif
 
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static bool IsBigEndian(ByteOrder byteOrder) => byteOrder is not ByteOrder.LittleEndian;
-#endif
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static T Cast<T>(object? value)

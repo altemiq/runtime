@@ -67,4 +67,14 @@ public static class Enumerable
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T?> WhereNull<T>(this IEnumerable<T?> source)
         where T : class => source.Where(static item => item is null);
+
+    /// <summary>
+    /// Filters a sequence of values based on the ones that are <see langword="null"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of <paramref name="source"/>.</typeparam>
+    /// <param name="source">An <see cref="IEnumerable{T}"/> to filter.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> that contains elements from the input sequence that are <see langword="null"/>.</returns>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static IEnumerable<T?> WhereNull<T>(this IEnumerable<T?> source)
+        where T : struct => source.Where(static item => !item.HasValue);
 }

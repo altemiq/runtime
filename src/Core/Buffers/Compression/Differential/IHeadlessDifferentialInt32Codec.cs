@@ -32,7 +32,7 @@ internal interface IHeadlessDifferentialInt32Codec
     void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, ref int initialValue);
 
     /// <summary>
-    /// Uncompress data from an array to another array.
+    /// Decompress data from an array to another array.
     /// </summary>
     /// <remarks>
     /// Both <paramref name="sourceIndex"/> and <paramref name="destinationIndex"/> parameters are modified to indicate new positions after read/write.

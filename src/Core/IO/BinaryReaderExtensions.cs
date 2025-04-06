@@ -43,12 +43,14 @@ public static class BinaryReaderExtensions
     public static char[] ReadChars(this BinaryReader reader, int count, ByteOrder byteOrder)
     {
         var chars = reader.ReadChars(count);
-        if (byteOrder is not ByteOrder.LittleEndian)
+        if (byteOrder is ByteOrder.LittleEndian)
         {
-            for (var i = 0; i < count; i++)
-            {
-                chars[i] = ReverseEndianness(chars[i]);
-            }
+            return chars;
+        }
+
+        for (var i = 0; i < count; i++)
+        {
+            chars[i] = ReverseEndianness(chars[i]);
         }
 
         return chars;

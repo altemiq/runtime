@@ -99,10 +99,10 @@ internal sealed class XorBinaryPacking : IDifferentialInt32Codec
         var destinationIndexLast = destinationIndex + outLen;
         for (; destinationIndex < destinationIndexLast; destinationIndex += BlockLength)
         {
-            var bits1 = (int)((uint)source[sourceIndex] >> 24);
-            var bits2 = (int)((uint)source[sourceIndex] >> 16) & 0xFF;
-            var bits3 = (int)((uint)source[sourceIndex] >> 8) & 0xFF;
-            var bits4 = (int)((uint)source[sourceIndex] >> 0) & 0xFF;
+            var bits1 = source[sourceIndex] >>> 24;
+            var bits2 = source[sourceIndex] >>> 16 & 0xFF;
+            var bits3 = source[sourceIndex] >>> 8 & 0xFF;
+            var bits4 = source[sourceIndex] >>> 0 & 0xFF;
             sourceIndex++;
             sourceIndex += XorUnpack(source.AsSpan(sourceIndex), destination.AsSpan(destinationIndex + 0), bits1, context, work);
             sourceIndex += XorUnpack(source.AsSpan(sourceIndex), destination.AsSpan(destinationIndex + 32), bits2, destination[destinationIndex + 31], work);

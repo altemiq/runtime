@@ -172,4 +172,10 @@
     <value>Forward only seeking allowed.</value>
     <comment>Error messing for forward only seeking</comment>
   </data>
+  <data name="ByteArrayTooLarge" xml:space="preserve">
+    <value>Byte array is too large.</value>
+  </data>
+  <data name="CanNotDecodeVarInt" xml:space="preserve">
+    <value>Cannot decode varint from byte array.</value>
+  </data>
 </root>

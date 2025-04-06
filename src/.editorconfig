@@ -45,13 +45,15 @@ csharp_style_prefer_unbound_generic_type_in_nameof = false:silent
 
 #### Supressions ####
 
-# IDE0340: Use unbound generic type
-#dotnet_diagnostic.IDE0340.severity = none
-
 ## Roslynator
 
 # RCS1163: Unused parameter
 dotnet_diagnostic.RCS1163.severity = none
+
+## Sonar
+
+# S1133: Deprecated code should be removed
+dotnet_diagnostic.S1133.severity = suggestion
 
 ## Resharper
 

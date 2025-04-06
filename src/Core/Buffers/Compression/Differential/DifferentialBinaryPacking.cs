@@ -41,17 +41,17 @@ internal sealed class DifferentialBinaryPacking : IDifferentialInt32Codec, IHead
             return;
         }
 
-        var destintaionLength = source[sourceIndex];
+        var destinationLength = source[sourceIndex];
         sourceIndex++;
         var initValue = 0;
-        HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, destintaionLength, ref initValue);
+        HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, destinationLength, ref initValue);
     }
 
     /// <inheritdoc/>
     void IHeadlessDifferentialInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, ref int initialValue) => HeadlessCompress(source, ref sourceIndex, length, destination, ref destinationIndex, ref initialValue);
 
     /// <inheritdoc/>
-    void IHeadlessDifferentialInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number, ref int initialValue) => HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, number, ref initialValue);
+    void IHeadlessDifferentialInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number, ref int initialValue) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number, ref initialValue);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(DifferentialBinaryPacking);
@@ -85,18 +85,18 @@ internal sealed class DifferentialBinaryPacking : IDifferentialInt32Codec, IHead
             var firstMaxBits = MaxDiffBits(firstInitialOffset, source, index, BlockSize);
             var secondInitialOffset = source[index + 31];
             var secondMaxBits = MaxDiffBits(secondInitialOffset, source, index + BlockSize, BlockSize);
-            var thirdinitialOffset = source[index + BlockSize + 31];
-            var thirdMaxBits = MaxDiffBits(thirdinitialOffset, source, index + (2 * BlockSize), BlockSize);
-            var forthinitialOffset = source[index + (2 * BlockSize) + 31];
-            var forthMaxBits = MaxDiffBits(forthinitialOffset, source, index + (3 * BlockSize), BlockSize);
+            var thirdInitialOffset = source[index + BlockSize + 31];
+            var thirdMaxBits = MaxDiffBits(thirdInitialOffset, source, index + (2 * BlockSize), BlockSize);
+            var forthInitialOffset = source[index + (2 * BlockSize) + 31];
+            var forthMaxBits = MaxDiffBits(forthInitialOffset, source, index + (3 * BlockSize), BlockSize);
             destination[temporaryDestinationIndex++] = (firstMaxBits << 24) | (secondMaxBits << 16) | (thirdMaxBits << 8) | forthMaxBits;
             DifferentialBitPacking.Pack(firstInitialOffset, source.AsSpan(index), destination.AsSpan(temporaryDestinationIndex), firstMaxBits);
             temporaryDestinationIndex += firstMaxBits;
             DifferentialBitPacking.Pack(secondInitialOffset, source.AsSpan(index + BlockSize), destination.AsSpan(temporaryDestinationIndex), secondMaxBits);
             temporaryDestinationIndex += secondMaxBits;
-            DifferentialBitPacking.Pack(thirdinitialOffset, source.AsSpan(index + (2 * BlockSize)), destination.AsSpan(temporaryDestinationIndex), thirdMaxBits);
+            DifferentialBitPacking.Pack(thirdInitialOffset, source.AsSpan(index + (2 * BlockSize)), destination.AsSpan(temporaryDestinationIndex), thirdMaxBits);
             temporaryDestinationIndex += thirdMaxBits;
-            DifferentialBitPacking.Pack(forthinitialOffset, source.AsSpan(index + (3 * BlockSize)), destination.AsSpan(temporaryDestinationIndex), forthMaxBits);
+            DifferentialBitPacking.Pack(forthInitialOffset, source.AsSpan(index + (3 * BlockSize)), destination.AsSpan(temporaryDestinationIndex), forthMaxBits);
             temporaryDestinationIndex += forthMaxBits;
             firstInitialOffset = source[index + (3 * BlockSize) + 31];
         }
@@ -114,46 +114,46 @@ internal sealed class DifferentialBinaryPacking : IDifferentialInt32Codec, IHead
         destinationIndex = temporaryDestinationIndex;
     }
 
-    private static void HeadlessUncompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int num, ref int initialValue)
+    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int num, ref int initialValue)
     {
         var destinationLength = Util.GreatestMultiple(num, BlockSize);
         var temporarySourceIndex = sourceIndex;
-        var initoffset = initialValue;
+        var initialOffset = initialValue;
         var s = destinationIndex;
         for (; s + (BlockSize * 4) - 1 < destinationIndex + destinationLength; s += BlockSize * 4)
         {
-            var mbits1 = (int)((uint)source[temporarySourceIndex] >> 24);
-            var mbits2 = (int)((uint)source[temporarySourceIndex] >> 16) & 0xFF;
-            var mbits3 = (int)((uint)source[temporarySourceIndex] >> 8) & 0xFF;
-            var mbits4 = source[temporarySourceIndex] & 0xFF;
+            var bits1 = source[temporarySourceIndex] >>> 24;
+            var bits2 = source[temporarySourceIndex] >>> 16 & 0xFF;
+            var bits3 = source[temporarySourceIndex] >>> 8 & 0xFF;
+            var bits4 = source[temporarySourceIndex] & 0xFF;
 
             temporarySourceIndex++;
-            DifferentialBitPacking.Unpack(initoffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s), mbits1);
-            temporarySourceIndex += mbits1;
-            initoffset = destination[s + 31];
-            DifferentialBitPacking.Unpack(initoffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s + BlockSize), mbits2);
-            temporarySourceIndex += mbits2;
-            initoffset = destination[s + BlockSize + 31];
-            DifferentialBitPacking.Unpack(initoffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s + (2 * BlockSize)), mbits3);
-            temporarySourceIndex += mbits3;
-            initoffset = destination[s + (2 * BlockSize) + 31];
-            DifferentialBitPacking.Unpack(initoffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s + (3 * BlockSize)), mbits4);
-            temporarySourceIndex += mbits4;
-            initoffset = destination[s + (3 * BlockSize) + 31];
+            DifferentialBitPacking.Unpack(initialOffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s), bits1);
+            temporarySourceIndex += bits1;
+            initialOffset = destination[s + 31];
+            DifferentialBitPacking.Unpack(initialOffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s + BlockSize), bits2);
+            temporarySourceIndex += bits2;
+            initialOffset = destination[s + BlockSize + 31];
+            DifferentialBitPacking.Unpack(initialOffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s + (2 * BlockSize)), bits3);
+            temporarySourceIndex += bits3;
+            initialOffset = destination[s + (2 * BlockSize) + 31];
+            DifferentialBitPacking.Unpack(initialOffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s + (3 * BlockSize)), bits4);
+            temporarySourceIndex += bits4;
+            initialOffset = destination[s + (3 * BlockSize) + 31];
         }
 
         for (; s < destinationIndex + destinationLength; s += BlockSize)
         {
-            var mbits = source[temporarySourceIndex];
+            var bits = source[temporarySourceIndex];
             temporarySourceIndex++;
-            DifferentialBitPacking.Unpack(initoffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s), mbits);
-            initoffset = destination[s + 31];
+            DifferentialBitPacking.Unpack(initialOffset, source.AsSpan(temporarySourceIndex), destination.AsSpan(s), bits);
+            initialOffset = destination[s + 31];
 
-            temporarySourceIndex += mbits;
+            temporarySourceIndex += bits;
         }
 
         destinationIndex += destinationLength;
-        initialValue = initoffset;
+        initialValue = initialOffset;
         sourceIndex = temporarySourceIndex;
     }
 }

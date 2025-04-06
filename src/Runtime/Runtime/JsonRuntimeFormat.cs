@@ -135,8 +135,8 @@ internal static class JsonRuntimeFormat
 
     private sealed class Runtime(string name, IEnumerable<string> imports)
     {
-        public string Name { get; } = name;
+        public string Name => name;
 
-        public IEnumerable<string> Imports { get; } = imports;
+        public IEnumerable<string> Imports => imports;
     }
 }

@@ -237,16 +237,16 @@ public partial class SemanticVersion :
     {
         result = null;
 
-        ParseSections(s, out string? versionString, out string[]? releaseLabels, out string? buildMetadata);
+        ParseSections(s, out var versionString, out var releaseLabels, out var buildMetadata);
 
         // null indicates the string did not meet the rules
-        if (!System.Version.TryParse(versionString, out var systemVersion))
+        if (versionString is null || !System.Version.TryParse(versionString, out var systemVersion))
         {
             return false;
         }
 
         // validate the version string
-        var parts = versionString!.Split('.');
+        var parts = versionString.Split('.');
 
         if (parts.Length != 3)
         {

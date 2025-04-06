@@ -183,7 +183,7 @@ public static partial class List
     /// <param name="index">The start index.</param>
     /// <param name="length">The length.</param>
     /// <param name="comparer">The comparer.</param>
-    public static void QuickSort<T>(this IList<T> values, int index, int length, IComparer<T> comparer)
+    public static void QuickSort<T>(this IList<T> values, int index, int length, IComparer<T>? comparer)
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
 
@@ -339,7 +339,7 @@ public static partial class List
     /// </summary>
     /// <typeparam name="T">The type of items to sort.</typeparam>
     /// <param name="values">The values.</param>
-    public static void QuickSort<T>(this IList<T> values)
+    public static void QuickSort<T>(this IList<T?> values)
         where T : IComparable<T>
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
@@ -370,7 +370,7 @@ public static partial class List
     /// <param name="values">The values.</param>
     /// <param name="index">The start index.</param>
     /// <param name="length">The length.</param>
-    public static void QuickSort<T>(this IList<T> values, int index, int length)
+    public static void QuickSort<T>(this IList<T?> values, int index, int length)
         where T : IComparable<T>
     {
         ArgumentNullExceptionThrower.ThrowIfNull(values);
@@ -384,7 +384,7 @@ public static partial class List
 
         QuickSortCore(values, index, Math.Min(index + length, values.Count) - 1);
 
-        static void QuickSortCore(IList<T> values, int left, int right)
+        static void QuickSortCore(IList<T?> values, int left, int right)
         {
             // The code in this function looks very similar to QuickSort in ArraySortHelper<T> class.
             // The difference is that T is constrained to IComparable<T> here.
@@ -415,12 +415,12 @@ public static partial class List
                     }
                     else
                     {
-                        while (x.CompareTo(values[i]) > 0)
+                        while (values[i] is { } v && x.CompareTo(v) > 0)
                         {
                             i++;
                         }
 
-                        while (j >= 0 && x.CompareTo(values[j]) < 0)
+                        while (j >= 0 && values[j] is { } v && x.CompareTo(v) < 0)
                         {
                             j--;
                         }
@@ -465,13 +465,15 @@ public static partial class List
             void SwapIfGreaterWithItems(int firstIndex, int secondIndex)
             {
                 if (firstIndex == secondIndex
-                    || values[firstIndex] is null
-                    || values[firstIndex].CompareTo(values[secondIndex]) <= 0)
+                    || values[firstIndex] is not { } first
+                    || values[secondIndex] is not { } second
+                    || first.CompareTo(second) <= 0)
                 {
                     return;
                 }
 
-                (values[secondIndex], values[firstIndex]) = (values[firstIndex], values[secondIndex]);
+                values[firstIndex] = second;
+                values[secondIndex] = first;
             }
         }
     }

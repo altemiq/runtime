@@ -152,7 +152,7 @@ public static class RuntimeEnvironment
         {
             if (Directory.GetDirectories(directory)
                 .Select(Path.GetFileName)
-                .OfType<string>()
+                .WhereNotNull()
                 .ToList() is { Count: not 0 } availableRids)
             {
                 return GetRuntimeRids()
@@ -537,7 +537,7 @@ public static class RuntimeEnvironment
             // get the rids
             if (Directory.GetDirectories(runtimesDirectory)
                 .Select(Path.GetFileName)
-                .OfType<string>()
+                .WhereNotNull()
                 .ToList() is { Count: not 0 } availableRids)
             {
                 if (GetRuntimeRids().Intersect(availableRids, GetPathComparer()).ToList() is { Capacity: not 0 } rids)
@@ -710,4 +710,6 @@ public static class RuntimeEnvironment
 
         return [.. RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal)];
     }
+
+    private static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) => source.OfType<T>();
 }

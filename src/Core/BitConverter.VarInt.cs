@@ -404,7 +404,7 @@ public static partial class BitConverter
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
     /// <summary>
-    /// Converts a 8-bit signed integer into a span of bytes.
+    /// Converts an 8-bit signed integer into a span of bytes.
     /// </summary>
     /// <param name="destination">When this method returns, the bytes representing the converted 8-bit signed integer.</param>
     /// <param name="value">The 8-bit signed integer to convert.</param>
@@ -419,7 +419,7 @@ public static partial class BitConverter
 #endif
 
     /// <summary>
-    /// Converts a 8-bit unsigned integer into a span of bytes.
+    /// Converts an 8-bit unsigned integer into a span of bytes.
     /// </summary>
     /// <param name="destination">When this method returns, the bytes representing the converted 8-bit unsigned integer.</param>
     /// <param name="value">The 8-bit unsigned integer to convert.</param>
@@ -640,7 +640,7 @@ public static partial class BitConverter
 
             if (shift > sizeBites)
             {
-                throw new ArgumentOutOfRangeException(nameof(bytes), "Byte array is too large.");
+                throw new ArgumentOutOfRangeException(nameof(bytes), Properties.Resources.ByteArrayTooLarge);
             }
 
             if ((byteValue & MostSignificantBit) is not MostSignificantBit)
@@ -652,7 +652,7 @@ public static partial class BitConverter
             shift += BitShift;
         }
 
-        throw new ArgumentException("Cannot decode varint from byte array.", nameof(bytes));
+        throw new ArgumentException(Properties.Resources.CanNotDecodeVarInt, nameof(bytes));
     }
 #else
     private static byte[] GetVarBytesCore(ulong value)
