@@ -15,7 +15,7 @@ public class NanoIds
     public async Task Default() => await Assert.That(NanoId.Generate()).HasCount().EqualTo(DefaultSize);
 
     [Test]
-    public async Task DefaultAsync() => await Assert.That((await NanoId.GenerateAsync())).HasCount().EqualTo(DefaultSize);
+    public async Task DefaultAsync() => await Assert.That(await NanoId.GenerateAsync()).HasCount().EqualTo(DefaultSize);
 
     [Test]
     public async Task CustomSize()
@@ -28,14 +28,14 @@ public class NanoIds
     public async Task CustomSizeAsync()
     {
         const int Size = 10;
-        await Assert.That((await NanoId.GenerateAsync(size: Size))).HasCount().EqualTo(Size);
+        await Assert.That(await NanoId.GenerateAsync(size: Size)).HasCount().EqualTo(Size);
     }
 
     [Test]
     public async Task CustomAlphabet() => await Assert.That(NanoId.Generate("1234abcd")).HasCount().EqualTo(DefaultSize);
 
     [Test]
-    public async Task CustomAlphabetAsync() => await Assert.That((await NanoId.GenerateAsync("1234abcd"))).HasCount().EqualTo(DefaultSize);
+    public async Task CustomAlphabetAsync() => await Assert.That(await NanoId.GenerateAsync("1234abcd")).HasCount().EqualTo(DefaultSize);
 
     [Test]
     public async Task CustomAlphabetAndSize()
@@ -48,14 +48,14 @@ public class NanoIds
     public async Task CustomAlphabetAndSizeAsync()
     {
         const int Size = 7;
-        await Assert.That((await NanoId.GenerateAsync("1234abcd", Size))).HasCount().EqualTo(Size);
+        await Assert.That(await NanoId.GenerateAsync("1234abcd", Size)).HasCount().EqualTo(Size);
     }
 
     [Test]
     public async Task CustomRandom() => await Assert.That(NanoId.Generate(new Random(10))).HasCount().EqualTo(DefaultSize);
 
     [Test]
-    public async Task CustomRandomAsync() => await Assert.That((await NanoId.GenerateAsync(new Random(10)))).HasCount().EqualTo(DefaultSize);
+    public async Task CustomRandomAsync() => await Assert.That(await NanoId.GenerateAsync(new Random(10))).HasCount().EqualTo(DefaultSize);
 
     [Test]
     public async Task SingleLetterAlphabet() => await Assert.That(NanoId.Generate("a", 5)).IsEqualTo("aaaaa");
@@ -78,7 +78,7 @@ public class NanoIds
     public async Task PredefinedRandomSequenceAsync(int size, string expected)
     {
         var random = new PredefinedRandom([2, 255, 3, 7, 7, 7, 7, 7, 0, 1]);
-        await Assert.That((await NanoId.GenerateAsync(random, "abcde", size))).IsEqualTo(expected);
+        await Assert.That(await NanoId.GenerateAsync(random, "abcde", size)).IsEqualTo(expected);
     }
 
     [Test]
@@ -180,9 +180,8 @@ public class NanoIds
             count--;
         }
 
-        foreach (var c in chars)
+        foreach (var distribution in chars.Select(c => c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize)))
         {
-            var distribution = c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize);
             await Assert.That(distribution).IsBetween(0.95, 1.05);
         }
     }
@@ -240,7 +239,7 @@ public class NanoIds
     {
         public override void NextBytes(byte[] buffer)
         {
-            var seq = this.GetSequence(buffer.Length).GetEnumerator();
+            using var seq = this.GetSequence(buffer.Length).GetEnumerator();
             var i = 0;
             while (seq.MoveNext())
             {
@@ -263,7 +262,7 @@ public class NanoIds
 
             // Update the sequence to match nanoid.js tests and implementation
             // which takes random bytes in reverse order (as of 3489e1e3b0dd7678b72c30f5fb00b806c8ce4fef).
-            for (var i = 0; i < (size / sequence.Length); i++)
+            for (var i = 0; i < size / sequence.Length; i++)
             {
                 result = result.Concat(result);
             }

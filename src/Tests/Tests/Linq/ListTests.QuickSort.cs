@@ -109,7 +109,7 @@ public partial class ListTests
         [MethodDataSource(nameof(GetsItemsWithNulls))]
         public async Task WithNullsAndComparerAndSize(IList<SimpleClass?> list, SimpleClass first, SimpleClass? second, SimpleClass third) => await Assert.That(WithStartLengthAndComparison(list, 0, list.Count, SimpleClass.Comparison)).IsEquivalentTo([first, third, second]);
 
-        private static IList<T> WithNoParameters<T>(IList<T> source)
+        private static IList<T?> WithNoParameters<T>(IList<T?> source)
             where T : IComparable<T>
         {
             source.QuickSort();
@@ -146,13 +146,11 @@ public partial class ListTests
 
         private static Func<(IList<TList>, T1, T2, T3, T4)> CreateListFunc<TList, T1, T2, T3, T4>(IList<TList> list, T1 first, T2 second, T3 third, T4 forth) => () => (list, first, second, third, forth);
 
-        public struct SimpleStruct : IComparable<SimpleStruct>
+        public struct SimpleStruct(int index, double value) : IComparable<SimpleStruct>
         {
-            public SimpleStruct(int index, double value) => (this.Index, this.Value) = (index, value);
+            private int Index { get; } = index;
 
-            public int Index { get; private set; }
-
-            public double Value { get; private set; }
+            public double Value { get; private set; } = value;
 
             public readonly int CompareTo(SimpleStruct other) => this.Index.CompareTo(other.Index);
         }
@@ -165,7 +163,7 @@ public partial class ListTests
 
             public SimpleClass(int index, double value) => (this.Index, this.Value) = (index, value);
 
-            public int Index { get; private set; }
+            private int Index { get; }
 
             public double Value { get; private set; }
 

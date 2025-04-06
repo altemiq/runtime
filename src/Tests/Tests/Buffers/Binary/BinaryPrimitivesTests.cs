@@ -25,7 +25,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteInt16BigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
     [Test]
@@ -35,7 +35,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteInt16LittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
     [Test]
@@ -45,7 +45,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(int)];
         BinaryPrimitives.WriteInt32BigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(int)];
         BinaryPrimitives.WriteInt32LittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(long)];
         BinaryPrimitives.WriteInt64BigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
     [Test]
@@ -75,7 +75,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(long)];
         BinaryPrimitives.WriteInt64LittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
     [Test]
@@ -85,7 +85,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(ushort)];
         BinaryPrimitives.WriteUInt16BigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
     [Test]
@@ -95,7 +95,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(ushort)];
         BinaryPrimitives.WriteUInt16LittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
     [Test]
@@ -105,7 +105,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(uint)];
         BinaryPrimitives.WriteUInt32BigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
     [Test]
@@ -115,7 +115,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(uint)];
         BinaryPrimitives.WriteUInt32LittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
     [Test]
@@ -125,7 +125,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(ulong)];
         BinaryPrimitives.WriteUInt64BigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
     [Test]
@@ -135,7 +135,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(ulong)];
         BinaryPrimitives.WriteUInt64LittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
 #if NET5_0_OR_GREATER
@@ -146,7 +146,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteHalfBigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
     [Test]
@@ -156,7 +156,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(short)];
         BinaryPrimitives.WriteHalfLittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second]);
+        await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 #endif
 
@@ -167,7 +167,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(float)];
         BinaryPrimitives.WriteSingleBigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
     [Test]
@@ -177,7 +177,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(float)];
         BinaryPrimitives.WriteSingleLittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
     [Test]
@@ -187,7 +187,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(double)];
         BinaryPrimitives.WriteDoubleBigEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
     [Test]
@@ -197,7 +197,7 @@ public class BinaryPrimitivesTests
     {
         byte[] bytes = new byte[sizeof(double)];
         BinaryPrimitives.WriteDoubleLittleEndian(bytes, value);
-        await Assert.That(bytes.ToArray()).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
+        await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
     [Test]

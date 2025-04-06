@@ -19,12 +19,12 @@ public class BinaryReaderExtensionsTests
     [Test]
     public async Task ReadString()
     {
-        const string value = "This is a string";
-        using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(value));
+        const string Value = "This is a string";
+        using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(Value));
         stream.Position = 0;
 
         using var reader = new BinaryReader(stream);
-        await Assert.That(reader.ReadString(value.Length)).IsEqualTo(value);
+        await Assert.That(reader.ReadString(Value.Length)).IsEqualTo(Value);
     }
 
     [Test]
@@ -46,7 +46,7 @@ public class BinaryReaderExtensionsTests
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public Task ReadInt16(short value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryReaderExtensions.ReadInt16, byteOrder, GetBytes(first, second, byteOrder), (short)value);
+    public Task ReadInt16(short value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryReaderExtensions.ReadInt16, byteOrder, GetBytes(first, second, byteOrder), value);
 
     [Test]
     [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
@@ -89,7 +89,7 @@ public class BinaryReaderExtensionsTests
     [Arguments(-65504D, 0xFB, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(65504D, 0x7B, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(-65504D, 0xFB, ByteMaxValue, ByteOrder.BigEndian)]
-    public Task ReadHalf(Half value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryReaderExtensions.ReadHalf, byteOrder, GetBytes(first, second, byteOrder), (Half)value);
+    public Task ReadHalf(Half value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryReaderExtensions.ReadHalf, byteOrder, GetBytes(first, second, byteOrder), value);
 #endif
 
     [Test]

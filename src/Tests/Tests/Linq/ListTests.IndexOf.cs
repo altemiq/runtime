@@ -21,8 +21,8 @@ public partial class ListTests
         [Test]
         public async Task WithNulls()
         {
-            await Assert.That(((IList<int>)null!).IndexOf((IList<int>)null!)).IsEqualTo(-1);
-            await Assert.That(((IReadOnlyList<int>)null!).IndexOf((IReadOnlyList<int>)null!)).IsEqualTo(-1);
+            await Assert.That(((IList<int>)null!).IndexOf(null!)).IsEqualTo(-1);
+            await Assert.That(((IReadOnlyList<int>)null!).IndexOf(null!)).IsEqualTo(-1);
         }
 
         [Test]

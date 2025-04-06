@@ -9,9 +9,7 @@ public partial class BitConverterTests
         private const int SByteMaxValue = sbyte.MaxValue;
         private const int SByteDefault = default(sbyte);
         private const int SByteMinValue = sbyte.MinValue;
-        private const int ByteMaxValue = byte.MaxValue;
         private const int ByteMinValue = byte.MinValue;
-        private const int Int16MaxValue = short.MaxValue;
         private const int Int16Default = default(short);
         private const int Int16MinValue = short.MinValue;
 

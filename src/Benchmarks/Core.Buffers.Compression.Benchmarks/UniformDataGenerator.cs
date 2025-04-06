@@ -53,9 +53,8 @@ internal class UniformDataGenerator
             var ans = new int[max - x.Length];
             var i = 0;
             var c = 0;
-            for (var j = 0; j < x.Length; ++j)
+            foreach (var v in x)
             {
-                var v = x[j];
                 for (; i < v; ++i)
                 {
                     ans[c++] = i;
@@ -72,19 +71,19 @@ internal class UniformDataGenerator
             return ans;
         }
 
-        int[] GenerateUniformBitmap(int n, int max)
+        int[] GenerateUniformBitmap(int size, int length)
         {
-            if (n > max)
+            if (size > length)
             {
                 throw new InvalidDataException("not possible");
             }
 
-            var ans = new int[n];
-            var bs = new System.Collections.BitArray(max);
+            var ans = new int[size];
+            var bs = new System.Collections.BitArray(length);
             var cardinality = 0;
-            while (cardinality < n)
+            while (cardinality < size)
             {
-                var v = Random.Next(max);
+                var v = Random.Next(length);
                 if (!bs[v])
                 {
                     bs[v] = true;
@@ -114,23 +113,23 @@ internal class UniformDataGenerator
             }
         }
 
-        int[] GenerateUniformHash(int n, int max)
+        int[] GenerateUniformHash(int size, int length)
         {
-            if (n > max)
+            if (size > length)
             {
                 throw new InvalidDataException("not possible");
             }
 
-            var ans = new int[n];
+            var ans = new int[size];
             HashSet<int> s = [];
-            while (s.Count < n)
+            while (s.Count < size)
             {
-                _ = s.Add(Random.Next(max));
+                _ = s.Add(Random.Next(length));
             }
 
             var i = s.GetEnumerator();
 
-            for (var k = 0; k < n; ++k)
+            for (var k = 0; k < size; ++k)
             {
                 ans[k] = i.Current;
                 _ = i.MoveNext();

@@ -6,7 +6,6 @@
 
 namespace Altemiq;
 
-using System.Security;
 using TUnit.Assertions.AssertConditions.Throws;
 
 public class MemoryExtensionsTests
@@ -275,20 +274,20 @@ public class MemoryExtensionsTests
         public async Task CharSeparated(Func<Random, int, double> creator, GetValuesCharDelegate<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
             await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 
-        public static Func<(Func<Random, int, double>, GetValuesCharDelegate<double>)> GetCharValuesData() => () => (static (Random random, int _) => random.NextDouble(), new GetValuesCharDelegate<double>(MemoryExtensions.GetDoubleValues));
+        public static Func<(Func<Random, int, double>, GetValuesCharDelegate<double>)> GetCharValuesData() => () => (static (random, _) => random.NextDouble(), MemoryExtensions.GetDoubleValues);
 
         [Test]
         [MethodDataSource(nameof(GetStringValuesData))]
         public async Task StringSeparated(Func<Random, int, double> creator, GetValuesSpanDelegate<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, "|", 10, System.Globalization.CultureInfo.CurrentCulture);
             await Assert.That(parsedValues).IsEquivalentTo(randomValues);
@@ -296,7 +295,7 @@ public class MemoryExtensionsTests
 
         public static Func<(Func<Random, int, double>, GetValuesSpanDelegate<double>)> GetStringValuesData()
         {
-            return () => (static (Random random, int _) => random.NextDouble(), new GetValuesSpanDelegate<double>(MemoryExtensions.GetDoubleValues));
+            return () => (static (random, _) => random.NextDouble(), MemoryExtensions.GetDoubleValues);
         }
     }
 
@@ -306,7 +305,7 @@ public class MemoryExtensionsTests
     {
         var random = new Random();
 
-        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var enumerator =
 #if NET9_0_OR_GREATER
@@ -335,19 +334,19 @@ public class MemoryExtensionsTests
 
     public static IEnumerable<Func<(Func<Random, int, object>, GetDelegateObject, System.Globalization.NumberStyles)>> GetData()
     {
-        yield return () => (static (Random random, int _) => random.NextDouble(), CreateDelegate<double>(MemoryExtensions.GetNextDouble), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
-        yield return () => (static (Random random, int _) => (float)random.NextDouble(), CreateDelegate<float>(MemoryExtensions.GetNextSingle), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
-        yield return () => (static (Random random, int _) => (byte)random.Next(byte.MaxValue), CreateDelegate<byte>(MemoryExtensions.GetNextByte), System.Globalization.NumberStyles.Integer);
-        yield return () => (static (Random random, int _) => (short)random.Next(short.MaxValue), CreateDelegate<short>(MemoryExtensions.GetNextInt16), System.Globalization.NumberStyles.Integer);
-        yield return () => (static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), CreateDelegate<ushort>(MemoryExtensions.GetNextUInt16), System.Globalization.NumberStyles.Integer);
-        yield return () => (static (Random random, int _) => random.Next(), CreateDelegate<int>(MemoryExtensions.GetNextInt32), System.Globalization.NumberStyles.Integer);
-        yield return () => (static (Random random, int _) => (uint)random.Next(), CreateDelegate<uint>(MemoryExtensions.GetNextUInt32), System.Globalization.NumberStyles.Integer);
-        yield return () => (static (Random random, int _) => (long)random.Next() + int.MaxValue, CreateDelegate<long>(MemoryExtensions.GetNextInt64), System.Globalization.NumberStyles.Integer);
-        yield return () => (static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, CreateDelegate<ulong>(MemoryExtensions.GetNextUInt64), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (random, _) => random.NextDouble(), CreateDelegate(MemoryExtensions.GetNextDouble), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
+        yield return () => (static (random, _) => (float)random.NextDouble(), CreateDelegate(MemoryExtensions.GetNextSingle), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
+        yield return () => (static (random, _) => (byte)random.Next(byte.MaxValue), CreateDelegate(MemoryExtensions.GetNextByte), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (random, _) => (short)random.Next(short.MaxValue), CreateDelegate(MemoryExtensions.GetNextInt16), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (random, _) => (ushort)random.Next(ushort.MaxValue), CreateDelegate(MemoryExtensions.GetNextUInt16), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (random, _) => random.Next(), CreateDelegate(MemoryExtensions.GetNextInt32), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (random, _) => (uint)random.Next(), CreateDelegate(MemoryExtensions.GetNextUInt32), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (random, _) => (long)random.Next() + int.MaxValue, CreateDelegate(MemoryExtensions.GetNextInt64), System.Globalization.NumberStyles.Integer);
+        yield return () => (static (random, _) => (ulong)random.Next() + uint.MaxValue, CreateDelegate(MemoryExtensions.GetNextUInt64), System.Globalization.NumberStyles.Integer);
 
         static GetDelegateObject CreateDelegate<T>(GetDelegate<T> @delegate)
         {
-            return new GetDelegateObject(GetDelegateFunc);
+            return GetDelegateFunc;
 
             object? GetDelegateFunc(
                 ReadOnlySpan<char> span,
@@ -371,26 +370,26 @@ public class MemoryExtensionsTests
         public async Task CharSeparated(Func<Random, int, double> creator, TryGetValuesCharDelegate<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             await Assert.That(getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
             await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 
-        public static Func<(Func<Random, int, double>, TryGetValuesCharDelegate<double>)> TryGetValuesCharData() => () => (static (Random random, int _) => random.NextDouble(), new TryGetValuesCharDelegate<double>(MemoryExtensions.TryGetDoubleValues));
+        public static Func<(Func<Random, int, double>, TryGetValuesCharDelegate<double>)> TryGetValuesCharData() => () => (static (random, _) => random.NextDouble(), MemoryExtensions.TryGetDoubleValues);
 
         [Test]
         [MethodDataSource(nameof(TryGetValuesSpanData))]
         public async Task StringSeparated(Func<Random, int, double> creator, TryGetValuesSpanDelegate<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             await Assert.That(getValues(span, "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
             await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 
-        public static Func<(Func<Random, int, double>, TryGetValuesSpanDelegate<double>)> TryGetValuesSpanData() => () => (static (Random random, int _) => random.NextDouble(), new TryGetValuesSpanDelegate<double>(MemoryExtensions.TryGetDoubleValues));
+        public static Func<(Func<Random, int, double>, TryGetValuesSpanDelegate<double>)> TryGetValuesSpanData() => () => (static (random, _) => random.NextDouble(), MemoryExtensions.TryGetDoubleValues);
     }
 
     [Test]
@@ -398,7 +397,7 @@ public class MemoryExtensionsTests
     public async Task TryGet(Func<Random, int, object> creator, TryGetDelegateObject parser)
     {
         var random = new Random();
-        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(_ => creator(random, _)).ToArray();
+        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var enumerator =
 #if NET9_0_OR_GREATER
@@ -418,19 +417,19 @@ public class MemoryExtensionsTests
 
     public static IEnumerable<Func<(Func<Random, int, object>, TryGetDelegateObject)>> TryGetData()
     {
-        yield return () => (static (Random random, int _) => random.NextDouble(), CreateDelegate<double>(MemoryExtensions.TryGetNextDouble));
-        yield return () => (static (Random random, int _) => (float)random.NextDouble(), CreateDelegate<float>(MemoryExtensions.TryGetNextSingle));
-        yield return () => (static (Random random, int _) => (byte)random.Next(byte.MaxValue), CreateDelegate<byte>(MemoryExtensions.TryGetNextByte));
-        yield return () => (static (Random random, int _) => (short)random.Next(short.MaxValue), CreateDelegate<short>(MemoryExtensions.TryGetNextInt16));
-        yield return () => (static (Random random, int _) => (ushort)random.Next(ushort.MaxValue), CreateDelegate<ushort>(MemoryExtensions.TryGetNextUInt16));
-        yield return () => (static (Random random, int _) => random.Next(), CreateDelegate<int>(MemoryExtensions.TryGetNextInt32));
-        yield return () => (static (Random random, int _) => (uint)random.Next(), CreateDelegate<uint>(MemoryExtensions.TryGetNextUInt32));
-        yield return () => (static (Random random, int _) => (long)random.Next() + int.MaxValue, CreateDelegate<long>(MemoryExtensions.TryGetNextInt64));
-        yield return () => (static (Random random, int _) => (ulong)random.Next() + uint.MaxValue, CreateDelegate<ulong>(MemoryExtensions.TryGetNextUInt64));
+        yield return () => (static (random, _) => random.NextDouble(), CreateDelegate<double>(MemoryExtensions.TryGetNextDouble));
+        yield return () => (static (random, _) => (float)random.NextDouble(), CreateDelegate<float>(MemoryExtensions.TryGetNextSingle));
+        yield return () => (static (random, _) => (byte)random.Next(byte.MaxValue), CreateDelegate<byte>(MemoryExtensions.TryGetNextByte));
+        yield return () => (static (random, _) => (short)random.Next(short.MaxValue), CreateDelegate<short>(MemoryExtensions.TryGetNextInt16));
+        yield return () => (static (random, _) => (ushort)random.Next(ushort.MaxValue), CreateDelegate<ushort>(MemoryExtensions.TryGetNextUInt16));
+        yield return () => (static (random, _) => random.Next(), CreateDelegate<int>(MemoryExtensions.TryGetNextInt32));
+        yield return () => (static (random, _) => (uint)random.Next(), CreateDelegate<uint>(MemoryExtensions.TryGetNextUInt32));
+        yield return () => (static (random, _) => (long)random.Next() + int.MaxValue, CreateDelegate<long>(MemoryExtensions.TryGetNextInt64));
+        yield return () => (static (random, _) => (ulong)random.Next() + uint.MaxValue, CreateDelegate<ulong>(MemoryExtensions.TryGetNextUInt64));
 
         static TryGetDelegateObject CreateDelegate<T>(TryGetDelegate<T> @delegate)
         {
-            return new TryGetDelegateObject(TryGetDelegateFunc);
+            return TryGetDelegateFunc;
 
             bool TryGetDelegateFunc(
                 ReadOnlySpan<char> span,
@@ -463,7 +462,7 @@ public class MemoryExtensionsTests
         IFormatProvider? provider,
         [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object? value);
 
-    public delegate bool TryGetDelegate<T>(
+    private delegate bool TryGetDelegate<T>(
         ReadOnlySpan<char> span,
 #if NET9_0_OR_GREATER
         ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,
@@ -473,9 +472,9 @@ public class MemoryExtensionsTests
         IFormatProvider? provider,
         out T value);
 
-    public delegate TResult[] GetValuesSpanDelegate<TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider);
+    public delegate TResult[] GetValuesSpanDelegate<out TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider);
 
-    public delegate TResult[] GetValuesCharDelegate<TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider);
+    public delegate TResult[] GetValuesCharDelegate<out TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider);
 
     public delegate object? GetDelegateObject(
         ReadOnlySpan<char> span,
@@ -487,7 +486,7 @@ public class MemoryExtensionsTests
         System.Globalization.NumberStyles style,
         IFormatProvider? provider);
 
-    public delegate T GetDelegate<T>(
+    private delegate T GetDelegate<out T>(
         ReadOnlySpan<char> span,
 #if NET9_0_OR_GREATER
         ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator,

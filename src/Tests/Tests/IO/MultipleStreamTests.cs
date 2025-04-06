@@ -136,7 +136,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
+        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -144,7 +144,7 @@ public class MultipleStreamTests
         var second = new byte[SecondSize];
         random.NextBytes(second);
 
-        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
+        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
 
         stream.Reset();
 
@@ -164,7 +164,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
+        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -172,7 +172,7 @@ public class MultipleStreamTests
         var second = new byte[SecondSize];
         random.NextBytes(second);
 
-        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
+        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
 
         stream.Reset();
 
@@ -190,7 +190,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
+        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -198,7 +198,7 @@ public class MultipleStreamTests
         var second = new byte[SecondSize];
         random.NextBytes(second);
 
-        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
+        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
 
         stream.Reset();
 
@@ -215,7 +215,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
+        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -223,7 +223,7 @@ public class MultipleStreamTests
         var second = new byte[SecondSize];
         random.NextBytes(second);
 
-        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
+        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
 
         stream.Reset();
 
@@ -251,7 +251,7 @@ public class MultipleStreamTests
         var third = new byte[ThirdSize];
         random.NextBytes(third);
 
-        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
+        var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
         stream.Position = PositionToRead;
 
         var bytes = new byte[20];
@@ -262,7 +262,7 @@ public class MultipleStreamTests
 
         await Assert.That(bytes).IsEquivalentTo(expectedBytes);
 
-        stream.Dispose();
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -279,7 +279,7 @@ public class MultipleStreamTests
         var third = new byte[ThirdSize];
         random.NextBytes(third);
 
-        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
+        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
         stream.Reset();
 
         var destination = new byte[FirstSize + SecondSize + ThirdSize];
@@ -308,7 +308,7 @@ public class MultipleStreamTests
         var third = new byte[ThirdSize];
         random.NextBytes(third);
 
-        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
+        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
         stream.Reset();
 
         var destination = new byte[FirstSize + SecondSize + ThirdSize];

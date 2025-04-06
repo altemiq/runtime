@@ -2,8 +2,8 @@
 
 public class ScreamCipherTests
 {
-    const string Original = "Hello world!";
-    const string Encoded = "A̰áăăå ȁåȃăa̲!";
+    private const string Original = "Hello world!";
+    private const string Encoded = "A̰áăăå ȁåȃăa̲!";
 
     [Test]
     public async Task Encode()

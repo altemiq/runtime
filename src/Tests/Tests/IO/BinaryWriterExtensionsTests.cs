@@ -24,7 +24,7 @@ public class BinaryWriterExtensionsTests
     [Test]
     [Arguments(127, ByteOrder.LittleEndian)]
     [Arguments(127, ByteOrder.BigEndian)]
-    public Task WriteBytes(byte value, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, [value], new byte[] { value });
+    public Task WriteBytes(byte value, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, [value], new[] { value });
 
     [Test]
     [Arguments('A', 0x00, 0x41, ByteOrder.LittleEndian, null)]
@@ -97,7 +97,7 @@ public class BinaryWriterExtensionsTests
     [Arguments(-65504D, 0xFB, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(65504D, 0x7B, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(-65504D, 0xFB, ByteMaxValue, ByteOrder.BigEndian)]
-    public Task WriteHalf(Half value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, GetBytes(first, second, byteOrder), (Half)value);
+    public Task WriteHalf(Half value, byte first, byte second, ByteOrder byteOrder) => TestValue(BinaryWriterExtensions.Write, byteOrder, GetBytes(first, second, byteOrder), value);
 #endif
 
     [Test]
@@ -121,7 +121,7 @@ public class BinaryWriterExtensionsTests
         var writer = encoding is { } e
             ? new BinaryWriter(stream, System.Text.Encoding.GetEncoding(e), true)
             : new BinaryWriter(stream, System.Text.Encoding.UTF8, true);
-        using (writer)
+        await using (writer)
         {
             writeValue(writer, expected, byteOrder);
         }

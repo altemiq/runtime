@@ -18,10 +18,10 @@ public partial class BitConverterTests
 
     private const int ByteMaxValue = byte.MaxValue;
 
-    private readonly static ByteOrder DefaultByteOrder = BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian;
+    private static readonly ByteOrder DefaultByteOrder = BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian;
 
     [Test]
-    public async Task LittleEndianessShouldEqualDefault() => await Assert.That(BitConverter.IsLittleEndian).IsEqualTo(System.BitConverter.IsLittleEndian);
+    public async Task LittleEndiannessShouldEqualDefault() => await Assert.That(BitConverter.IsLittleEndian).IsEqualTo(System.BitConverter.IsLittleEndian);
 
     [Test]
     [Arguments(true, 1)]
@@ -65,7 +65,7 @@ public partial class BitConverterTests
     [Test]
     [Arguments(1, true)]
     [Arguments(0, false)]
-    public async Task ToBooleanBytes(byte value, bool expected) => await Assert.That(BitConverter.ToBoolean(new byte[] { value }, 0)).IsEqualTo(expected);
+    public async Task ToBooleanBytes(byte value, bool expected) => await Assert.That(BitConverter.ToBoolean(new[] { value }, 0)).IsEqualTo(expected);
 
     [Test]
     [Arguments(1, true, ByteOrder.LittleEndian)]
@@ -686,54 +686,54 @@ public partial class BitConverterTests
 
 #if NET5_0_OR_GREATER
     [Test]
-    [Arguments(2.0, (Int16MaxValue / 2) + 1)]
+    [Arguments(2.0, Int16MaxValue / 2 + 1)]
     public async Task HalfToInt16(Half input, short expected) => await Assert.That(BitConverter.HalfToInt16Bits(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments(2.0, (ushort.MaxValue / 4) + 1)]
+    [Arguments(2.0, ushort.MaxValue / 4 + 1)]
     public async Task HalfToUInt16(Half input, ushort expected) => await Assert.That(BitConverter.HalfToUInt16Bits(input)).IsEqualTo(expected);
 #endif
 
     [Test]
-    [Arguments(2.0, (int.MaxValue / 2) + 1)]
+    [Arguments(2.0, int.MaxValue / 2 + 1)]
     public async Task SingleToInt32(float input, int expected) => await Assert.That(BitConverter.SingleToInt32Bits(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments(2.0, (uint.MaxValue / 4) + 1)]
+    [Arguments(2.0, uint.MaxValue / 4 + 1)]
     public async Task SingleToUInt32(float input, uint expected) => await Assert.That(BitConverter.SingleToUInt32Bits(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments(2.0, (long.MaxValue / 2) + 1)]
+    [Arguments(2.0, long.MaxValue / 2 + 1)]
     public async Task DoubleToInt64(double input, long expected) => await Assert.That(BitConverter.DoubleToInt64Bits(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments(2.0, (ulong.MaxValue / 4) + 1)]
+    [Arguments(2.0, ulong.MaxValue / 4 + 1)]
     public async Task DoubleToUInt64(double input, ulong expected) => await Assert.That(BitConverter.DoubleToUInt64Bits(input)).IsEqualTo(expected);
 
 #if NET5_0_OR_GREATER
     [Test]
-    [Arguments((Int16MaxValue / 2) + 1, 2.0)]
+    [Arguments(Int16MaxValue / 2 + 1, 2.0)]
     public async Task Int16ToHalf(short input, Half expected) => await Assert.That(BitConverter.Int16BitsToHalf(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments((ushort.MaxValue / 4) + 1, 2.0)]
+    [Arguments(ushort.MaxValue / 4 + 1, 2.0)]
     public async Task UInt16ToHalf(ushort input, Half expected) => await Assert.That(BitConverter.UInt16BitsToHalf(input)).IsEqualTo(expected);
 #endif
 
     [Test]
-    [Arguments((int.MaxValue / 2) + 1, 2.0)]
+    [Arguments(int.MaxValue / 2 + 1, 2.0)]
     public async Task Int32ToSingle(int input, float expected) => await Assert.That(BitConverter.Int32BitsToSingle(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments((uint.MaxValue / 4) + 1, 2.0)]
+    [Arguments(uint.MaxValue / 4 + 1, 2.0)]
     public async Task UInt32ToSingle(uint input, float expected) => await Assert.That(BitConverter.UInt32BitsToSingle(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments((long.MaxValue / 2) + 1, 2.0)]
+    [Arguments(long.MaxValue / 2 + 1, 2.0)]
     public async Task Int64ToDouble(long input, double expected) => await Assert.That(BitConverter.Int64BitsToDouble(input)).IsEqualTo(expected);
 
     [Test]
-    [Arguments((ulong.MaxValue / 4) + 1, 2.0)]
+    [Arguments(ulong.MaxValue / 4 + 1, 2.0)]
     public async Task UInt64ToDouble(ulong input, double expected) => await Assert.That(BitConverter.UInt64BitsToDouble(input)).IsEqualTo(expected);
 
     private static byte[] GetBytes(byte first, byte second, ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? [second, first] : [first, second];
@@ -741,8 +741,4 @@ public partial class BitConverterTests
     private static byte[] GetBytes(byte first, byte second, byte third, byte forth, ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? [forth, third, second, first] : [first, second, third, forth];
 
     private static byte[] GetBytes(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? [eighth, seventh, sixth, fifth, forth, third, second, first] : [first, second, third, forth, fifth, sixth, seventh, eighth];
-
-    private static bool ShouldSwap(ByteOrder byteOrder) => BitConverter.IsLittleEndian
-        ? byteOrder is ByteOrder.LittleEndian
-        : byteOrder is ByteOrder.BigEndian;
 }

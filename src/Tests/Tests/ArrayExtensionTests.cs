@@ -11,7 +11,7 @@ public class ArrayExtensionTests
     [Test]
     public async Task PadLeft()
     {
-        var @array = new int[] { 1, 2, 3, 4 };
+        var @array = new[] { 1, 2, 3, 4 };
         var result = array.PadLeft(10);
         await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
     }
@@ -27,7 +27,7 @@ public class ArrayExtensionTests
     [Test]
     public async Task PadRight()
     {
-        var @array = new int[] { 1, 2, 3, 4 };
+        var @array = new[] { 1, 2, 3, 4 };
         var result = array.PadRight(10);
         await Assert.That(result).IsEquivalentTo([1, 2, 3, 4, 0, 0, 0, 0, 0, 0]);
     }

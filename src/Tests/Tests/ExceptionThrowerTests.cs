@@ -8,7 +8,7 @@ namespace Altemiq;
 
 using TUnit.Assertions.AssertConditions.Throws;
 
-public class ExceptionThrowerTests
+public static class ExceptionThrowerTests
 {
     public class ArgumentNullException
     {
@@ -261,11 +261,18 @@ public class ExceptionThrowerTests
             return method;
         }
 
-        private static void Run<T>(System.Reflection.MethodInfo methodInfo, params T[] values)
+        private static void Run<T>(System.Reflection.MethodInfo methodInfo, params T[]? values)
         {
             try
             {
-                methodInfo.Invoke(null, [.. values, nameof(values)]);
+                if (values is null)
+                {
+                    methodInfo.Invoke(null, [values, nameof(values)]);
+                }
+                else
+                {
+                    methodInfo.Invoke(null, [.. values, nameof(values)]);
+                }
             }
             catch (System.Reflection.TargetInvocationException ex) when (ex.InnerException is not null)
             {
@@ -273,11 +280,11 @@ public class ExceptionThrowerTests
             }
         }
 
-        private static void Run<T>(string name, Type type, params T[] values)
+        private static void Run<T>(string name, Type type, params T[]? values)
         {
             Run(GetMethod(name, type, GetValuesType(values)), values);
 
-            static Type GetValuesType(T[] values)
+            static Type GetValuesType(T[]? values)
             {
                 if (values is not null && values.FirstOrDefault(x => x is not null) is { } first)
                 {
@@ -308,20 +315,10 @@ public class ExceptionThrowerTests
             });
 
         [Test]
-        public Task ThrowOnNotNull() => Do<System.ObjectDisposedException>(
-            static () =>
-            {
-                var @null = new object();
-                ObjectDisposedExceptionThrower.ThrowIf(@null is not null, @null!);
-            });
+        public Task ThrowOnNotNull() => Do<System.ObjectDisposedException>(static () => ObjectDisposedExceptionThrower.ThrowIf(true, new object()));
 
         [Test]
-        public Task ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(
-            static () =>
-            {
-                var @null = string.Empty;
-                ObjectDisposedExceptionThrower.ThrowIf(@null is not null, default!);
-            });
+        public Task ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(static () => ObjectDisposedExceptionThrower.ThrowIf(true, typeof(string)));
 
         [Test]
         public Task NotThrowNotNull() => Do<System.ObjectDisposedException>(

@@ -6,7 +6,6 @@
 
 namespace Altemiq.Linq;
 
-using NSubstitute.Exceptions;
 using TUnit.Assertions.AssertConditions.Throws;
 
 public partial class ListTests
@@ -15,55 +14,49 @@ public partial class ListTests
     public async Task Cast()
     {
         IList<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        var cast = List.Cast<ISecond, IFirst>(list);
-        await Assert.That(cast).IsEquivalentTo(list);
+        await Assert.That(list.Cast<ISecond, IFirst>()).IsEquivalentTo(list);
     }
 
     [Test]
     public async Task CastList()
     {
         List<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        var cast = List.Cast<ISecond, IFirst>(list);
-        await Assert.That(cast).IsEquivalentTo(list);
+        await Assert.That(list.Cast<ISecond, IFirst>()).IsEquivalentTo(list);
     }
 
     [Test]
     public async Task CastListWithNoConstructors()
     {
         ListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        var cast = List.Cast<ISecond, IFirst>(list);
-        await Assert.That(cast).IsTypeOf<ListWithNoConstructors<IFirst>>().And.IsEquivalentTo(list);
+        await Assert.That(list.Cast<ISecond, IFirst>()).IsTypeOf<ListWithNoConstructors<IFirst>>().And.IsEquivalentTo(list);
     }
 
     [Test]
     public async Task CastNonListWithNoConstructors()
     {
         NonListWithNoConstructors<ISecond> list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        var cast = List.Cast<ISecond, IFirst>(list);
-        await Assert.That(cast).IsTypeOf<NonListWithNoConstructors<IFirst>>().And.IsEquivalentTo(list);
+        await Assert.That(list.Cast<ISecond, IFirst>()).IsTypeOf<NonListWithNoConstructors<IFirst>>().And.IsEquivalentTo(list);
     }
 
     [Test]
     public async Task CastNested()
     {
         NestedNonGenericList list = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        var cast = List.Cast<ISecond, IFirst>(list);
-        await Assert.That(cast).IsTypeOf<List<IFirst>>().And.IsEquivalentTo(list);
+        await Assert.That(list.Cast<ISecond, IFirst>()).IsTypeOf<List<IFirst>>().And.IsEquivalentTo(list);
     }
 
     [Test]
     public async Task CastArray()
     {
         ISecond[] array = [default(Third), default(Third), default(Third), default(Third), default(Third)];
-        var cast = List.Cast<ISecond, IFirst>(array);
-        await Assert.That(cast).IsTypeOf<IFirst[]>().And.IsEquivalentTo(array);
+        await Assert.That(array.Cast<ISecond, IFirst>()).IsTypeOf<IFirst[]>().And.IsEquivalentTo(array);
     }
 
     [Test]
     public async Task CastWithNull()
     {
         IList<ISecond>? list = default;
-        await Assert.That(List.Cast<ISecond, IFirst>(list!)).IsNull();
+        await Assert.That(list!.Cast<ISecond, IFirst>()).IsNull();
     }
 
     [Test]
@@ -150,8 +143,8 @@ public partial class ListTests
     {
         ISecond IList<ISecond>.this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        int ICollection<ISecond>.Count { get; }
-        bool ICollection<ISecond>.IsReadOnly { get; }
+        int ICollection<ISecond>.Count { get; } = 0;
+        bool ICollection<ISecond>.IsReadOnly { get; } = false;
 
         public void Add(ISecond item) { }
         void ICollection<ISecond>.Clear() => throw new NotImplementedException();

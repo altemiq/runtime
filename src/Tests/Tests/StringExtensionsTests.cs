@@ -52,7 +52,7 @@ public class StringExtensionsTests
         """;
 
 #if NET5_0_OR_GREATER
-    private static readonly string[] expectation = ["This", "is", "a"];
+    private static readonly string[] Expectation = ["This", "is", "a"];
 #endif
 
     [Test]
@@ -62,7 +62,7 @@ public class StringExtensionsTests
     public async Task EmptyString() => await Assert.That(string.Empty.SplitQuoted()).HasSingleItem();
 
     [Test]
-    public async Task EmptyStringWithOptions() => await Assert.That(string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries)!).IsEmpty();
+    public async Task EmptyStringWithOptions() => await Assert.That(string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries)).IsEmpty();
 
     [Test]
     [Arguments(SingleLineSimple, "3", 5, StringSplitOptions.None)]
@@ -73,8 +73,8 @@ public class StringExtensionsTests
     {
         var result = input.SplitQuoted(',', options);
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!).HasCount().EqualTo(length);
-        await Assert.That(result!.Skip(2).Take(1).Single()).IsEqualTo(value);
+        await Assert.That(result).HasCount().EqualTo(length);
+        await Assert.That(result.Skip(2).Take(1).Single()).IsEqualTo(value);
     }
 
     [Test]
@@ -91,7 +91,7 @@ public class StringExtensionsTests
     {
         var result = input.SplitQuoted(',');
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!).HasCount().EqualTo(length);
+        await Assert.That(result).HasCount().EqualTo(length);
     }
 
     [Test]
@@ -121,7 +121,7 @@ public class StringExtensionsTests
 
     [Test]
     [MethodDataSource(nameof(GetCharArrays))]
-    public async Task SplitQuotedWithEmptyDelimeter(char[]? chars)
+    public async Task SplitQuotedWithEmptyDelimiter(char[]? chars)
     {
         const string Value = "This is a string";
         await Assert.That(Value.SplitQuoted(chars, options: StringSplitOptions.None)).HasCount().EqualTo(4);
@@ -137,9 +137,9 @@ public class StringExtensionsTests
     public async Task Format()
     {
         const int Formattable = 123;
-        await Assert.That(Format(Formattable)).IsEqualTo(Formattable.ToString(default(IFormatProvider)));
+        await Assert.That(FormatValue(Formattable)).IsEqualTo(Formattable.ToString(default(IFormatProvider)));
 
-        static string? Format<T>(T value)
+        static string FormatValue<T>(T value)
             where T : IFormattable
         {
             return value.ToString(default);
@@ -148,6 +148,6 @@ public class StringExtensionsTests
 
 #if NET5_0_OR_GREATER
     [Test]
-    public async Task TrimEntries() => await Assert.That("This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries)).IsEquivalentTo(expectation);
+    public async Task TrimEntries() => await Assert.That("This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries)).IsEquivalentTo(Expectation);
 #endif
 }

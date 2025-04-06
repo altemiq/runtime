@@ -11,50 +11,50 @@ namespace Altemiq.Buffers.Compression;
 /// </summary>
 internal class ClusteredDataGenerator
 {
-    private readonly UniformDataGenerator unidg = new(123456);
+    private readonly UniformDataGenerator generator = new(123456);
 
     /// <summary>
     /// Generates clustered data.
     /// </summary>
-    /// <param name="n">The size.</param>
-    /// <param name="max">The maximum.</param>
+    /// <param name="size">The size.</param>
+    /// <param name="maximum">The maximum.</param>
     /// <returns>The clustered data.</returns>
-    public int[] GenerateClustered(int n, int max)
+    public int[] GenerateClustered(int size, int maximum)
     {
-        var array = new int[n];
-        FillClustered(array, 0, n, 0, max);
-        return array;
+        var clustered = new int[size];
+        FillClustered(clustered, 0, size, 0, maximum);
+        return clustered;
 
         void FillClustered(int[] array, int offset, int length, int min, int max)
         {
             var range = max - min;
-            if ((range == length) || (length <= 10))
+            if (range == length || length <= 10)
             {
-                FillUniform(array, offset, length, min, max);
+                FillUniform(this.generator, array, offset, length, min, max);
                 return;
             }
 
-            var cut = (length / 2) + ((range - length > 1) ? this.unidg.Random.Next(range - length - 1) : 0);
-            var p = this.unidg.Random.NextDouble();
+            var cut = length / 2 + (range - length > 1 ? this.generator.Random.Next(range - length - 1) : 0);
+            var p = this.generator.Random.NextDouble();
             if (p < 0.25)
             {
-                FillUniform(array, offset, length / 2, min, min + cut);
-                FillClustered(array, offset + (length / 2), length - (length / 2), min + cut, max);
+                FillUniform(this.generator, array, offset, length / 2, min, min + cut);
+                FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
             }
             else if (p < 0.5)
             {
                 FillClustered(array, offset, length / 2, min, min + cut);
-                FillUniform(array, offset + (length / 2), length - (length / 2), min + cut, max);
+                FillUniform(this.generator, array, offset + length / 2, length - length / 2, min + cut, max);
             }
             else
             {
                 FillClustered(array, offset, length / 2, min, min + cut);
-                FillClustered(array, offset + (length / 2), length - (length / 2), min + cut, max);
+                FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
             }
 
-            void FillUniform(int[] array, int offset, int length, int min, int max)
+            static void FillUniform(UniformDataGenerator generator, int[] array, int offset, int length, int min, int max)
             {
-                var v = this.unidg.GenerateUniform(length, max - min);
+                var v = generator.GenerateUniform(length, max - min);
                 for (var k = 0; k < v.Length; ++k)
                 {
                     array[k + offset] = min + v[k];

@@ -22,11 +22,11 @@ public class BoundaryTest
 
     private static async Task Around(IInt32Codec c, int value)
     {
-        await CompressAndUncompress(value - 1, c);
-        await CompressAndUncompress(value, c);
-        await CompressAndUncompress(value + 1, c);
+        await CompressAndDecompress(value - 1, c);
+        await CompressAndDecompress(value, c);
+        await CompressAndDecompress(value + 1, c);
 
-        static async Task CompressAndUncompress(int length, IInt32Codec c)
+        static async Task CompressAndDecompress(int length, IInt32Codec c)
         {
             // Initialize array.
             var source = new int[length];
@@ -37,19 +37,19 @@ public class BoundaryTest
 
             // Compress an array.
             var compressed = new int[length];
-            var c_inpos = 0;
-            var c_outpos = 0;
-            c.Compress(source, ref c_inpos, compressed, ref c_outpos, source.Length);
-            await Assert.That(c_outpos).IsLessThanOrEqualTo(length);
+            var compressedInputPosition = 0;
+            var compressedOutputPosition = 0;
+            c.Compress(source, ref compressedInputPosition, compressed, ref compressedOutputPosition, source.Length);
+            await Assert.That(compressedOutputPosition).IsLessThanOrEqualTo(length);
 
-            // Uncompress an array.
-            var uncompressed = new int[length];
-            var u_inpos = 0;
-            var u_outpos = 0;
-            c.Decompress(compressed, ref u_inpos, uncompressed, ref u_outpos, c_outpos);
+            // Decompress an array.
+            var decompressed = new int[length];
+            var decompressedInputPosition = 0;
+            var decompressedOutputPosition = 0;
+            c.Decompress(compressed, ref decompressedInputPosition, decompressed, ref decompressedOutputPosition, compressedOutputPosition);
 
-            // Compare between uncompressed and original arrays.
-            var target = TestUtils.CopyArray(uncompressed, u_outpos);
+            // Compare between decompressed and original arrays.
+            var target = TestUtils.CopyArray(decompressed, decompressedOutputPosition);
             await Assert.That(target).IsEquivalentTo(source);
         }
     }

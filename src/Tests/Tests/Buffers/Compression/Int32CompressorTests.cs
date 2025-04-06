@@ -2,7 +2,7 @@
 
 public class Int32CompressorTests
 {
-    private static readonly IEnumerable<Func<Int32Compressor>> ic =
+    private static readonly IEnumerable<Func<Int32Compressor>> IntegerCompressors =
         [
             () => new Int32Compressor<VariableByte>(),
             () => new Int32Compressor<HeadlessComposition<BinaryPacking, VariableByte>>()
@@ -10,7 +10,7 @@ public class Int32CompressorTests
 
     public static IEnumerable<Func<IntegerCompressor>> Data()
     {
-        return ic.Select(i => new Func<IntegerCompressor>(() => new IntegerCompressor { Compressor = i() }));
+        return IntegerCompressors.Select(i => new Func<IntegerCompressor>(() => new IntegerCompressor { Compressor = i() }));
     }
 
     [Test]
@@ -24,7 +24,7 @@ public class Int32CompressorTests
             var orig = new int[n];
             for (var k = 0; k < n; k++)
             {
-                orig[k] = (3 * k) + 5;
+                orig[k] = 3 * k + 5;
             }
 
             var comp = i.Compress(orig);
@@ -34,9 +34,9 @@ public class Int32CompressorTests
         }
     }
 
-    public class IntegerCompressor
+    public sealed class IntegerCompressor
     {
-        internal virtual Int32Compressor Compressor { get; init; } = null!;
+        internal Int32Compressor Compressor { get; init; } = null!;
 
         public override string? ToString()
         {

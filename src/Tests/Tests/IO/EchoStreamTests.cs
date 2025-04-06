@@ -15,7 +15,7 @@ public class EchoStreamTests
     public async Task ReadFromWrite()
     {
         const string Text = "text to read and write";
-        using var stream = new EchoStream();
+        var stream = new EchoStream();
 
         var task = Task.Run(
             () =>
@@ -30,6 +30,10 @@ public class EchoStreamTests
         var bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
+        await task;
+        
+        await stream.DisposeAsync();
+        
         await Assert.That(read).IsEqualTo(expectedLength);
         await Assert.That(Encoding.UTF8.GetString(bytes)).IsEqualTo(Text);
     }
@@ -41,7 +45,7 @@ public class EchoStreamTests
         const string Text2 = "ad an";
         const string Text3 = "d write";
         const string Text = Text1 + Text2 + Text3;
-        using var stream = new EchoStream();
+        var stream = new EchoStream();
 
         var task = Task.Run(
             () =>
@@ -62,6 +66,10 @@ public class EchoStreamTests
         var bytes = new byte[expectedLength];
         var read = stream.Read(bytes, 0, expectedLength);
 
+        await task;
+        
+        await stream.DisposeAsync();
+        
         await Assert.That(read).IsEqualTo(expectedLength);
         await Assert.That(Encoding.UTF8.GetString(bytes)).IsEqualTo(Text);
     }
@@ -73,7 +81,7 @@ public class EchoStreamTests
         const string Text2 = "ad an";
         const string Text3 = "d write";
         const string Text = Text1 + Text2 + Text3;
-        using var stream = new EchoStream { ReadTimeout = 1 };
+        await using var stream = new EchoStream { ReadTimeout = 1 };
 
         var bytes = Encoding.UTF8.GetBytes(Text1);
         stream.Write(bytes, 0, bytes.Length);

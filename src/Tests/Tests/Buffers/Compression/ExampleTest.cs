@@ -4,32 +4,31 @@ using System.Threading.Tasks;
 
 public class ExampleTest
 {
+    private readonly int[] data;
+    
+    public ExampleTest()
+    {
+        this.data = new int[2342351];
+        
+        // data should be sorted for best results
+        for (var k = 0; k < this.data.Length; ++k)
+        {
+            this.data[k] = k;
+        }
+    }
+    
     [Test]
     public async Task SuperSimpleExample()
     {
         var iic = new Differential.DifferentialInt32Compressor();
-        var data = new int[2342351];
-        for (var k = 0; k < data.Length; ++k)
-        {
-            data[k] = k;
-        }
-
         var compressed = iic.Compress(data);
-        var recov = iic.Uncompress(compressed);
-        await Assert.That(recov).IsEquivalentTo(data);
+        var decompressed = iic.Decompress(compressed);
+        await Assert.That(decompressed).IsEquivalentTo(data);
     }
 
     [Test]
     public async Task BasicExample()
     {
-        var data = new int[2342351];
-
-        // data should be sorted for best results
-        for (var k = 0; k < data.Length; ++k)
-        {
-            data[k] = k;
-        }
-
         // Very important: the data is in sorted order!!! If not, you
         // will get very poor compression with IntegratedBinaryPacking,
         // you should use another CODEC.
@@ -38,47 +37,36 @@ public class ExampleTest
         // will be done with binary packing, and leftovers will
         // be processed using variable byte
         var codec = new Differential.DifferentialComposition(new Differential.DifferentialBinaryPacking(), new Differential.DifferentialVariableByte());
+        
         // output vector should be large enough...
         var compressed = new int[data.Length + 1024];
+        
         // compressed might not be large enough in some cases
-        // if you get java.lang.ArrayIndexOutOfBoundsException, try
+        // if you get IndexOutOfBoundsException, try
         // allocating more memory
-        var inputoffset = 0;
-        var outputoffset = 0;
-        codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length);
-
+        var inputOffset = 0;
+        var outputOffset = 0;
+        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
+        
         // got it!
-        // inputoffset should be at data.Length but outputoffset tells us where we are...
+        // inputOffset should be at data.Length but outputOffset tells us where we are...
         // we can repack the data: (optional)
-        System.Array.Resize(ref compressed, outputoffset);
+        System.Array.Resize(ref compressed, outputOffset);
 
-        /**
-		     *
-		     * now uncompressing
-		     *
-		     * This assumes that we otherwise know how many integers have been
-		     * compressed. See basicExampleHeadless for a more general case.
-		     */
-        var recovered = new int[data.Length];
-        var recoffset = 0;
-        var inpos = 0;
-        codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        await Assert.That(recovered).IsEquivalentTo(data);
+        // now decompressing
+		// This assumes that we otherwise know how many integers have been
+		// compressed. See basicExampleHeadless for a more general case.
+        var decompressed = new int[data.Length];
+        var decompressedOffset = 0;
+        var decompressedPosition = 0;
+        codec.Decompress(compressed, ref decompressedPosition, decompressed, ref decompressedOffset, compressed.Length);
+        await Assert.That(decompressed).IsEquivalentTo(data);
     }
 
-    /**
-	     * Like the basicExample, but we store the input array size manually.
-	     */
+	// Like the BasicExample, but we store the input array size manually.
     [Test]
     public async Task BasicExampleHeadless()
     {
-        var data = new int[2342351];
-        // data should be sorted for best results
-        for (var k = 0; k < data.Length; ++k)
-        {
-            data[k] = k;
-        }
-
         // Very important: the data is in sorted order!!! If not, you
         // will get very poor compression with IntegratedBinaryPacking,
         // you should use another CODEC.
@@ -87,123 +75,118 @@ public class ExampleTest
         // will be done with binary packing, and leftovers will
         // be processed using variable byte
         var codec = new Differential.HeadlessDifferentialComposition(new Differential.DifferentialBinaryPacking(), new Differential.DifferentialVariableByte());
+        
         // output vector should be large enough...
         var compressed = new int[data.Length + 1024];
 
         // compressed might not be large enough in some cases
-        // if you get java.lang.ArrayIndexOutOfBoundsException, try
-        // allocating more memory
-        var inputoffset = 0;
-        var outputoffset = 1;
+        // if you get IndexOutOfBoundsException, try allocating more memory
+        var inputOffset = 0;
+        var outputOffset = 1;
         var initValue = 0;
         compressed[0] = data.Length; // we manually store how many integers we
-        codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length, ref initValue);
+        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length, ref initValue);
 
         // we can repack the data: (optional)
-        System.Array.Resize(ref compressed, outputoffset);
+        System.Array.Resize(ref compressed, outputOffset);
 
-        var howmany = compressed[0]; // we manually stored the number of compressed integers
-        var recovered = new int[howmany];
-        var recoffset = 0;
-        var inpos = 1;
+        var howMany = compressed[0]; // we manually stored the number of compressed integers
+        var decompressed = new int[howMany];
+        var decompressedOffset = 0;
+        var compressedOffset = 1;
         initValue = 0;
-        codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length, howmany, ref initValue);
-        await Assert.That(recovered).IsEquivalentTo(data);
+        codec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length, howMany, ref initValue);
+        await Assert.That(decompressed).IsEquivalentTo(data);
     }
 
     [Test]
     public async Task UnsortedExample()
     {
         const int N = 1333333;
-        var data = new int[N];
+        var unsortedData = new int[N];
 
         // initialize the data (most will be small)
         for (var k = 0; k < N; k += 1)
         {
-            data[k] = 3;
+            unsortedData[k] = 3;
         }
+        
         // throw some larger values
         for (var k = 0; k < N; k += 5)
         {
-            data[k] = 100;
+            unsortedData[k] = 100;
         }
 
         for (var k = 0; k < N; k += 533)
         {
-            data[k] = 10000;
+            unsortedData[k] = 10000;
         }
 
         var compressed = new int[N + 1024]; // could need more
         var codec = new Composition(new FastPatchingFrameOfReference256(), new VariableByte());
         // compressing
-        var inputoffset = 0;
-        var outputoffset = 0;
-        codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length);
+        var inputOffset = 0;
+        var compressedOffset = 0;
+        codec.Compress(unsortedData, ref inputOffset, compressed, ref compressedOffset, unsortedData.Length);
         // we can repack the data: (optional)
-        System.Array.Resize(ref compressed, outputoffset);
+        System.Array.Resize(ref compressed, compressedOffset);
 
-        var recovered = new int[N];
-        var recoffset = 0;
-        var inpos = 0;
-        codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-        await Assert.That(recovered).IsEquivalentTo(data);
+        var decompressed = new int[N];
+        var decompressedOffset = 0;
+        compressedOffset = 0;
+        codec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length);
+        await Assert.That(decompressed).IsEquivalentTo(unsortedData);
     }
 
     [Test]
     public async Task AdvancedExample()
     {
-        const int TotalSize = 2342351; // some arbitrary number
         const int ChunkSize = 16384; // size of each chunk, choose a multiple of 128
-        var data = new int[TotalSize];
-        // data should be sorted for best results
-        for (var k = 0; k < data.Length; ++k)
-        {
-            data[k] = k;
-        }
+        
         // next we compose a CODEC. Most of the processing
         // will be done with binary packing, and leftovers will
         // be processed using variable byte, using variable byte
         // only for the last chunk!
-        var regularcodec = new Differential.DifferentialBinaryPacking();
-        var ivb = new Differential.DifferentialVariableByte();
-        var lastcodec = new Differential.DifferentialComposition(regularcodec, ivb);
+        var regularCodec = new Differential.DifferentialBinaryPacking();
+        var variableByte = new Differential.DifferentialVariableByte();
+        var lastCodec = new Differential.DifferentialComposition(regularCodec, variableByte);
 
         // output vector should be large enough...
-        var compressed = new int[TotalSize + 1024];
+        var compressed = new int[data.Length + 1024];
 
-        var inputoffset = 0;
-        var outputoffset = 0;
-        for (var k = 0; k < TotalSize / ChunkSize; ++k)
+        var inputOffset = 0;
+        var outputOffset = 0;
+        for (var k = 0; k < data.Length / ChunkSize; ++k)
         {
-            regularcodec.Compress(data, ref inputoffset, compressed, ref outputoffset, ChunkSize);
+            regularCodec.Compress(data, ref inputOffset, compressed, ref outputOffset, ChunkSize);
         }
 
-        lastcodec.Compress(data, ref inputoffset, compressed, ref outputoffset, TotalSize % ChunkSize);
+        lastCodec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length % ChunkSize);
 
         // we can repack the data:
-        System.Array.Resize(ref compressed, outputoffset);
+        System.Array.Resize(ref compressed, outputOffset);
 
-        var recovered = new int[ChunkSize];
-        var compoff = 0;
-        var currentpos = 0;
+        var decompressed = new int[ChunkSize];
+        var compressedOffset = 0;
+        var currentPosition = 0;
 
-        while (compoff < compressed.Length)
+        while (compressedOffset < compressed.Length)
         {
-            var recoffset = 0;
-            regularcodec.Decompress(compressed, ref compoff, recovered, ref recoffset, compressed.Length - compoff);
+            var decompressedOffset = 0;
+            regularCodec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length - compressedOffset);
 
-            if (recoffset < ChunkSize)
+            if (decompressedOffset < ChunkSize)
             {
                 // last chunk detected
-                ivb.Decompress(compressed, ref compoff, recovered, ref recoffset, compressed.Length - compoff);
+                variableByte.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length - compressedOffset);
             }
 
-            for (var i = 0; i < recoffset; ++i)
+            for (var i = 0; i < decompressedOffset; ++i)
             {
-                await Assert.That(recovered[i]).IsEqualTo(data[currentpos + i]);
+                await Assert.That(decompressed[i]).IsEqualTo(data[currentPosition + i]);
             }
 
-            currentpos += recoffset;
+            currentPosition += decompressedOffset;
         }
     }
 
@@ -220,11 +203,10 @@ public class ExampleTest
         // compressing
         var inPos = 0;
         var outPos = 0;
-        var previous = 0;
 
         codec.Compress(uncompressed1, ref inPos, compressed, ref outPos, uncompressed1.Length);
-        var length1 = outPos - previous;
-        previous = outPos;
+        var length1 = outPos;
+        var previous = outPos;
         inPos = 0;
         codec.Compress(uncompressed2, ref inPos, compressed, ref outPos, uncompressed2.Length);
         var length2 = outPos - previous;

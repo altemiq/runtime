@@ -1,8 +1,8 @@
 namespace Altemiq.Buffers.Compression;
 
-public partial class BasicTests
+public class BasicTests
 {
-    private static readonly IEnumerable<Func<IInt32Codec>> codecs =
+    private static readonly IEnumerable<Func<IInt32Codec>> Codecs =
     [
         () => new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>(),
         () => new Copy(),
@@ -25,23 +25,23 @@ public partial class BasicTests
     [MethodDataSource(nameof(IntegerCodecs))]
     public async Task SaulTest(IntegerCodec codec)
     {
-        var ic = codec.Codec!;
+        var ic = codec.Codec;
 
-        for (var x = 0; x < 50; ++x)
+        for (var x = 0; x < 50; x++)
         {
-            int[] a = [2, 3, 4, 5];
-            var b = new int[90];
-            var c = new int[a.Length];
+            int[] data = [2, 3, 4, 5];
+            var compressed = new int[90];
+            var decompressed = new int[data.Length];
 
-            var aOffset = 0;
-            var bOffset = x;
-            ic.Compress(a, ref aOffset, b, ref bOffset, a.Length);
-            var len = bOffset - x;
+            var dataOffset = 0;
+            var compressedOffset = x;
+            ic.Compress(data, ref dataOffset, compressed, ref compressedOffset, data.Length);
+            var length = compressedOffset - x;
 
-            bOffset = x;
-            var cOffset = 0;
-            ic.Decompress(b, ref bOffset, c, ref cOffset, len);
-            await Assert.That(c).IsEquivalentTo(a);
+            compressedOffset = x;
+            var decompressedOffset = 0;
+            ic.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, length);
+            await Assert.That(decompressed).IsEquivalentTo(data);
         }
     }
 
@@ -56,22 +56,23 @@ public partial class BasicTests
             data[k] = k;
         }
 
-        var c = codec.Codec!;
+        var c = codec.Codec;
 
-        for (var L = 1; L <= 128; L++)
+        for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, L));
-            var answer = TestUtils.Uncompress(c, comp, L);
-            for (var k = 0; k < L; ++k)
+            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var answer = TestUtils.Decompress(c, comp, l);
+            for (var k = 0; k < l; ++k)
             {
                 await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
-        for (var L = 128; L <= N; L *= 2)
+        
+        for (var l = 128; l <= N; l *= 2)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, L));
-            var answer = TestUtils.Uncompress(c, comp, L);
-            for (var k = 0; k < L; ++k)
+            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var answer = TestUtils.Decompress(c, comp, l);
+            for (var k = 0; k < l; ++k)
             {
                 await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
@@ -85,22 +86,22 @@ public partial class BasicTests
         const int N = 128;
         var data = new int[N];
         data[127] = -1;
-        var c = codec.Codec!;
+        var c = codec.Codec;
 
-        for (var L = 1; L <= 128; L++)
+        for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, L));
-            var answer = TestUtils.Uncompress(c, comp, L);
-            for (var k = 0; k < L; ++k)
+            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var answer = TestUtils.Decompress(c, comp, l);
+            for (var k = 0; k < l; ++k)
             {
                 await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
-        for (var L = 128; L <= N; L *= 2)
+        for (var l = 128; l <= N; l *= 2)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, L));
-            var answer = TestUtils.Uncompress(c, comp, L);
-            for (var k = 0; k < L; ++k)
+            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var answer = TestUtils.Decompress(c, comp, l);
+            for (var k = 0; k < l; ++k)
             {
                 await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
@@ -109,12 +110,12 @@ public partial class BasicTests
 
     public static IEnumerable<Func<IntegerCodec>> IntegerCodecs()
     {
-        return codecs.Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c())));
+        return Codecs.Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c())));
     }
 
     public static IEnumerable<Func<IntegerCodec>> ComplexCodecs()
     {
-        return codecs.Select(c => c()).Where(c => c is not Simple9 and not Simple16).Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c)));
+        return Codecs.Select(c => c()).Where(c => c is not Simple9 and not Simple16).Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c)));
     }
 
     [Test]
@@ -146,10 +147,11 @@ public partial class BasicTests
     }
 
     [Test]
-    public async Task CheckDeltaZigzagUnsorted()
+    [MatrixDataSource]
+    public async Task CheckDeltaZigzagUnsorted([Matrix(133, 1026, 1333333)] int size)
     {
         IInt32Codec compo = new Composition(new DeltaZigzagBinaryPacking(), new VariableByte());
-        await TestUnsorted(compo);
+        await TestUnsorted(compo, size);
     }
 
     [Test]
@@ -176,9 +178,10 @@ public partial class BasicTests
     }
 
     [Test]
-    public Task CheckXorBinaryPacking2()
+    [MatrixDataSource]
+    public Task CheckXorBinaryPacking2([Matrix(133, 1026, 1333333)] int size)
     {
-        return TestUnsorted(new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte()));
+        return TestUnsorted(new Differential.DifferentialComposition(new Differential.XorBinaryPacking(), new Differential.DifferentialVariableByte()), size);
     }
 
     [Test]
@@ -198,14 +201,14 @@ public partial class BasicTests
         {
             return GetData(5, 10).Concat(GetData(5, 14)).Concat(GetData(2, 18));
 
-            static IEnumerable<int[][]> GetData(int N, int nbr)
+            static IEnumerable<int[][]> GetData(int n, int nbr)
             {
                 var cdg = new ClusteredDataGenerator();
                 for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
                 {
-                    var data = new int[N][];
+                    var data = new int[n][];
                     var max = 1 << (nbr + 9);
-                    for (var k = 0; k < N; ++k)
+                    for (var k = 0; k < n; ++k)
                     {
                         data[k] = cdg.GenerateClustered(1 << nbr, max);
                     }
@@ -274,7 +277,7 @@ public partial class BasicTests
     public async Task VerifyWithExceptions(int bit)
     {
         const int N = 32;
-        const int TIMES = 1000;
+        const int Times = 1000;
         var r = new Random();
         var data = new int[N];
         for (var k = 0; k < N; ++k)
@@ -284,7 +287,7 @@ public partial class BasicTests
 
         var compressed = new int[N];
         var uncompressed = new int[N];
-        for (var t = 0; t < TIMES; ++t)
+        for (var t = 0; t < Times; ++t)
         {
             BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
             BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
@@ -314,11 +317,11 @@ public partial class BasicTests
     {
         return AddData(5, 10).Concat(AddData(5, 14)).Concat(AddData(2, 18));
 
-        static IEnumerable<Func<(IntegerCodec, IntegerCodec, int[][])>> AddData(int N, int nbr)
+        static IEnumerable<Func<(IntegerCodec, IntegerCodec, int[][])>> AddData(int n, int nbr)
         {
             for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
             {
-                var generatedData = GenerateData(N, nbr, sparsity);
+                var generatedData = GenerateData(n, nbr, sparsity);
                 yield return () => (new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), new IntegerCodec(new Differential.DifferentialComposition<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), generatedData);
                 yield return () => (new IntegerCodec(new Copy()), new IntegerCodec(new Copy()), generatedData);
                 yield return () => (new IntegerCodec(new VariableByte()), new IntegerCodec(new VariableByte()), generatedData);
@@ -333,13 +336,13 @@ public partial class BasicTests
                 yield return () => (new IntegerCodec(new Simple9()), new IntegerCodec(new Simple9()), generatedData);
             }
 
-            static int[][] GenerateData(int N, int nbr, int sparsity)
+            static int[][] GenerateData(int n, int nbr, int sparsity)
             {
                 var cdg = new ClusteredDataGenerator();
 
-                var data = new int[N][];
+                var data = new int[n][];
                 var max = 1 << (nbr + sparsity);
-                for (var k = 0; k < N; ++k)
+                for (var k = 0; k < n; ++k)
                 {
                     data[k] = cdg.GenerateClustered(1 << nbr, max);
                 }
@@ -369,7 +372,7 @@ public partial class BasicTests
     [MethodDataSource(nameof(ZeroInZeroOutData))]
     public Task ZeroInZeroOut(IntegerCodec codec)
     {
-        return TestZeroInZeroOut(codec.Codec!);
+        return TestZeroInZeroOut(codec.Codec);
     }
 
     public static IEnumerable<Func<IntegerCodec>> ZeroInZeroOutData()
@@ -401,9 +404,9 @@ public partial class BasicTests
         int[] y = [];
         var i0 = 0;
         var i1 = 0;
-        for (var inlength = 0; inlength < 32; ++inlength)
+        for (var length = 0; length < 32; ++length)
         {
-            c.Compress(x, ref i0, y, ref i1, inlength);
+            c.Compress(x, ref i0, y, ref i1, length);
             await Assert.That(i1).IsEqualTo(0);
         }
     }
@@ -417,36 +420,17 @@ public partial class BasicTests
         c.Compress(x, ref i0, y, ref i1, 0);
         await Assert.That(i1).IsEqualTo(0);
 
-        int[] @out = [];
-        var outpos = 0;
-        c.Decompress(y, ref i1, @out, ref outpos, 0);
-        await Assert.That(outpos).IsEqualTo(0);
+        int[] output = [];
+        var outputPosition = 0;
+        c.Decompress(y, ref i1, output, ref outputPosition, 0);
+        await Assert.That(outputPosition).IsEqualTo(0);
     }
 
-    //private static void Test(IInt32Codec c, IInt32Codec co, int N, int nbr)
-    //{
-    //    var cdg = new ClusteredDataGenerator();
-    //    for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
-    //    {
-    //        var data = new int[N][];
-    //        var max = 1 << (nbr + 9);
-    //        for (var k = 0; k < N; ++k)
-    //        {
-    //            data[k] = cdg.GenerateClustered(1 << nbr, max);
-    //        }
-
-    //        TestCodec(c, co, data);
-    //    }
-    //}
-
-    private static async Task TestCodec(IInt32Codec? c, IInt32Codec? co, int[][] data)
+    private static async Task TestCodec(IInt32Codec c, IInt32Codec co, int[][] data)
     {
-        await Assert.That(c).IsNotNull();
-        await Assert.That(co).IsNotNull();
-
-        var N = data.Length;
+        var n = data.Length;
         var maxlength = 0;
-        for (var k = 0; k < N; ++k)
+        for (var k = 0; k < n; ++k)
         {
             if (data[k].Length > maxlength)
             {
@@ -457,49 +441,58 @@ public partial class BasicTests
         var buffer = new int[maxlength + 1024];
 
         // 4x + 1024 to account for the possibility of some negative compression.
-        var dataout = new int[(4 * maxlength) + 1024];
-        var inpos = 0;
-        var outpos = 0;
-        for (var k = 0; k < N; ++k)
+        var dataOutput = new int[4 * maxlength + 1024];
+        for (var k = 0; k < n; ++k)
         {
-            var backupdata = TestUtils.CopyArray(data[k], data[k].Length);
+            var backupData = TestUtils.CopyArray(data[k], data[k].Length);
 
-            inpos = 1;
-            outpos = 0;
+            var inputPosition = 1;
+            var outputPosition = 0;
 
             if (c is not Differential.IDifferentialInt32Codec)
             {
-                Differential.Delta.Forward(backupdata);
+                Differential.Delta.Forward(backupData);
             }
 
-            c!.Compress(backupdata, ref inpos, dataout, ref outpos, backupdata.Length - inpos);
+            c.Compress(backupData, ref inputPosition, dataOutput, ref outputPosition, backupData.Length - inputPosition);
 
-            var thiscompsize = outpos + 1;
-            inpos = 0;
-            outpos = 1;
-            buffer[0] = backupdata[0];
-            co!.Decompress(dataout, ref inpos, buffer, ref outpos, thiscompsize - 1);
+            var size = outputPosition + 1;
+            inputPosition = 0;
+            outputPosition = 1;
+            buffer[0] = backupData[0];
+            co.Decompress(dataOutput, ref inputPosition, buffer, ref outputPosition, size - 1);
 
             if (c is not Differential.IDifferentialInt32Codec)
             {
-                Differential.Delta.Inverse(buffer.AsSpan(0, outpos));
+                Differential.Delta.Inverse(buffer.AsSpan(0, outputPosition));
             }
 
             // Check assertions.
-            await Assert.That(data[k]).HasCount().EqualTo(outpos);
-            var bufferCutout = TestUtils.CopyArray(buffer, outpos);
+            await Assert.That(data[k]).HasCount().EqualTo(outputPosition);
+            var bufferCutout = TestUtils.CopyArray(buffer, outputPosition);
             await Assert.That(data[k]).IsEquivalentTo(bufferCutout);
         }
     }
 
     [Test]
-    [MethodDataSource(nameof(ExampleCodecs))]
-    public async Task TestUnsortedExample(IntegerCodec codec)
+    [MethodDataSource(nameof(ExampleCodecsWithSizes))]
+    public async Task TestUnsortedExample(IntegerCodec codec, int size)
     {
-        var c = codec.Codec!;
-        await TestUnsorted(c);
-        await TestUnsorted2(c);
-        await TestUnsorted3(c);
+        await TestUnsorted(codec.Codec, size);
+    }
+    
+    [Test]
+    [MethodDataSource(nameof(ExampleCodecs))]
+    public async Task TestUnsorted2Example(IntegerCodec codec)
+    {
+        await TestUnsorted2(codec.Codec);
+    }
+    
+    [Test]
+    [MethodDataSource(nameof(ExampleCodecs))]
+    public async Task TestUnsorted3Example(IntegerCodec codec)
+    {   
+        await TestUnsorted3(codec.Codec);
     }
 
     public static IEnumerable<Func<IntegerCodec>> ExampleCodecs()
@@ -517,43 +510,53 @@ public partial class BasicTests
         yield return () => new IntegerCodec(new Composition<FastPatchingFrameOfReference256, VariableByte>());
     }
 
-    private static async Task TestUnsorted(IInt32Codec codec)
+    public static IEnumerable<Func<(IntegerCodec, int)>> ExampleCodecsWithSizes()
     {
-        int[] lengths = [133, 1026, 1333333];
-        foreach (var N in lengths)
+        return ExampleCodecs().SelectMany(Create);
+
+        static IEnumerable<Func<(IntegerCodec, int)>> Create(Func<IntegerCodec> codec)
         {
-            var data = new int[N];
-            // initialize the data (most will be small)
-            for (var k = 0; k < N; k += 1)
-            {
-                data[k] = 3;
-            }
-            // throw some larger values
-            for (var k = 0; k < N; k += 5)
-            {
-                data[k] = 100;
-            }
-
-            for (var k = 0; k < N; k += 533)
-            {
-                data[k] = 10000;
-            }
-
-            data[5] = -311;
-            // could need more compressing
-            var compressed = new int[(int)Math.Ceiling(N * 1.01) + 1024];
-            var inputoffset = 0;
-            var outputoffset = 0;
-            codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length);
-            // we can repack the data: (optional)
-            compressed = TestUtils.CopyArray(compressed, outputoffset);
-
-            var recovered = new int[N];
-            var recoffset = 0;
-            var inpos = 0;
-            codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
-            await Assert.That(data).IsEquivalentTo(data);
+            yield return () => (codec(), 133);
+            yield return () => (codec(), 1026);
+            yield return () => (codec(), 1333333);
         }
+        
+    }
+
+    private static async Task TestUnsorted(IInt32Codec codec, int n)
+    {
+        var data = new int[n];
+        // initialize the data (most will be small)
+        for (var k = 0; k < n; k += 1)
+        {
+            data[k] = 3;
+        }
+
+        // throw some larger values
+        for (var k = 0; k < n; k += 5)
+        {
+            data[k] = 100;
+        }
+
+        for (var k = 0; k < n; k += 533)
+        {
+            data[k] = 10000;
+        }
+
+        data[5] = -311;
+        // could need more compressing
+        var compressed = new int[(int)Math.Ceiling(n * 1.01) + 1024];
+        var inputOffset = 0;
+        var outputOffset = 0;
+        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
+        // we can repack the data: (optional)
+        compressed = TestUtils.CopyArray(compressed, outputOffset);
+
+        var decompressed = new int[n];
+        var decompressedOffset = 0;
+        var compressedPosition = 0;
+        codec.Decompress(compressed, ref compressedPosition, decompressed, ref decompressedOffset, compressed.Length);
+        await Assert.That(data).IsEquivalentTo(data);
     }
 
     private static async Task TestUnsorted2(IInt32Codec codec)
@@ -561,16 +564,16 @@ public partial class BasicTests
         var data = new int[128];
         data[5] = -1;
         var compressed = new int[1024];
-        var inputoffset = 0;
-        var outputoffset = 0;
-        codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length);
+        var inputOffset = 0;
+        var outputOffset = 0;
+        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
         // we can repack the data: (optional)
-        compressed = TestUtils.CopyArray(compressed, outputoffset);
+        compressed = TestUtils.CopyArray(compressed, outputOffset);
 
-        var recovered = new int[128];
-        var recoffset = 0;
-        var inpos = 0;
-        codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
+        var decompressed = new int[128];
+        var decompressedPosition = 0;
+        var compressedPosition = 0;
+        codec.Decompress(compressed, ref compressedPosition, decompressed, ref decompressedPosition, compressed.Length);
         await Assert.That(data).IsEquivalentTo(data);
     }
 
@@ -579,16 +582,16 @@ public partial class BasicTests
         var data = new int[128];
         data[127] = -1;
         var compressed = new int[1024];
-        var inputoffset = 0;
-        var outputoffset = 0;
-        codec.Compress(data, ref inputoffset, compressed, ref outputoffset, data.Length);
+        var inputOffset = 0;
+        var outputOffset = 0;
+        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
         // we can repack the data: (optional)
-        compressed = TestUtils.CopyArray(compressed, outputoffset);
+        compressed = TestUtils.CopyArray(compressed, outputOffset);
 
         var recovered = new int[128];
-        var recoffset = 0;
-        var inpos = 0;
-        codec.Decompress(compressed, ref inpos, recovered, ref recoffset, compressed.Length);
+        var decompressedPosition = 0;
+        var compressedPosition = 0;
+        codec.Decompress(compressed, ref compressedPosition, recovered, ref decompressedPosition, compressed.Length);
         await Assert.That(data).IsEquivalentTo(data);
     }
 
@@ -600,14 +603,9 @@ public partial class BasicTests
         var codec2 = new FastPatchingFrameOfReference256();
         const int N = FastPatchingFrameOfReference256.BlockSize;
         var data = new int[N];
-        for (var i = 0; i < N; i++)
-        {
-            data[i] = 0;
-        }
-
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        await Assert.That(TestUtils.Uncompress(codec2, comp, N)).IsEquivalentTo(data);
+        await Assert.That(TestUtils.Decompress(codec2, comp, N)).IsEquivalentTo(data);
     }
 
     [Test]
@@ -618,24 +616,19 @@ public partial class BasicTests
         var codec2 = new FastPatchingFrameOfReference128();
         const int N = FastPatchingFrameOfReference128.BlockSize;
         var data = new int[N];
-        for (var i = 0; i < N; i++)
-        {
-            data[i] = 0;
-        }
-
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        await Assert.That(TestUtils.Uncompress(codec2, comp, N)).IsEquivalentTo(data);
+        await Assert.That(TestUtils.Decompress(codec2, comp, N)).IsEquivalentTo(data);
     }
 
-    public class IntegerCodec
+    public sealed class IntegerCodec
     {
         internal IntegerCodec(IInt32Codec codec)
         {
             Codec = codec;
         }
 
-        internal virtual IInt32Codec Codec { get; private set; }
+        internal IInt32Codec Codec { get; private set; }
 
         public override string? ToString()
         {

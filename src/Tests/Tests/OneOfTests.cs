@@ -9,10 +9,10 @@ namespace Altemiq;
 public class OneOfTests
 {
     [Test]
-    public async Task DefaultConstructorSetsValueToDefaultValueOfT0() => await Assert.That(new OneOf<int, bool>().Match(static n => n == default, static n => false)).IsTrue();
+    public async Task DefaultConstructorSetsValueToDefaultValueOfT0() => await Assert.That(new OneOf<int, bool>().Match(static n => n == default, static _ => false)).IsTrue();
 
     [Test]
-    public async Task DefaultSetsValueToDefaultValueOfT0() => await Assert.That(default(OneOf<int, bool>).Match(static n => n == default, static n => false)).IsTrue();
+    public async Task DefaultSetsValueToDefaultValueOfT0() => await Assert.That(default(OneOf<int, bool>).Match(static n => n == default, static _ => false)).IsTrue();
 
     [Test]
     public async Task AreEqual()
@@ -41,10 +41,10 @@ public class OneOfTests
         }
     }
 
-    private static readonly System.Text.Json.JsonSerializerOptions options = new() { Converters = { new OneOfJsonConverter() } };
+    private static readonly System.Text.Json.JsonSerializerOptions Options = new() { Converters = { new OneOfJsonConverter() } };
 
     [Test]
-    public async Task CanSerializeOneOfValueTransparently() => await Assert.That(System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, options)).IsEqualTo("{\"Value\":\"A string value\"}");
+    public async Task CanSerializeOneOfValueTransparently() => await Assert.That(System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, Options)).IsEqualTo("{\"Value\":\"A string value\"}");
 
     [Test]
     public async Task TheValueAndTypeNameAreFormattedCorrectly() => await Assert.That(OneOf.From<string, int, DateTime, decimal>(42).ToString()).IsEqualTo("System.Int32: 42");

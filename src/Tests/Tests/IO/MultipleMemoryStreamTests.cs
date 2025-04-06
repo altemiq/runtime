@@ -15,7 +15,6 @@ public class MultipleMemoryStreamTests
         var stream = new MultipleMemoryStream(dictionary);
         await Assert.That(stream.SwitchTo("first")).IsTrue();
         await Assert.That(stream.SwitchTo("second")).IsTrue();
-
         await Assert.That(dictionary.Values).All().Satisfy(x => x.IsTypeOf<MemoryStream>());
     }
 }
