@@ -144,7 +144,10 @@ public class MultipleStreamTests
         var second = new byte[SecondSize];
         random.NextBytes(second);
 
-        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
+#if NET
+        await
+#endif
+        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
 
         stream.Reset();
 
@@ -172,7 +175,10 @@ public class MultipleStreamTests
         var second = new byte[SecondSize];
         random.NextBytes(second);
 
-        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
+#if NET
+        await
+#endif
+        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second));
 
         stream.Reset();
 
@@ -262,7 +268,11 @@ public class MultipleStreamTests
 
         await Assert.That(bytes).IsEquivalentTo(expectedBytes);
 
+#if NET
         await stream.DisposeAsync();
+#else
+        stream.Dispose();
+#endif
     }
 
     [Test]
@@ -279,7 +289,10 @@ public class MultipleStreamTests
         var third = new byte[ThirdSize];
         random.NextBytes(third);
 
-        await using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
+#if NET
+        await
+#endif
+        using var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
         stream.Reset();
 
         var destination = new byte[FirstSize + SecondSize + ThirdSize];

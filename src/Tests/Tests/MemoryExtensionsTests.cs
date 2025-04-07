@@ -27,16 +27,6 @@ public class MemoryExtensionsTests
         }
     }
 
-    //#if !NET9_0_OR_GREATER
-    //    [Test]
-    //    public async Task MoveNextOnEmptyString()
-    //    {
-    //        var enumerator = string.Empty.AsSpan().Split();
-    //        await Assert.That(enumerator.MoveNext()).IsTrue();
-    //        await Assert.That(enumerator.MoveNext()).IsFalse();
-    //    }
-    //#endif
-
     [Test]
     public async Task MoveNextOrThrowOnEmptyString() => await Assert.That(() =>
     {
@@ -44,7 +34,7 @@ public class MemoryExtensionsTests
 #if NET9_0_OR_GREATER
             System.MemoryExtensions.Split(string.Empty.AsSpan(), ' ');
 #else
-                string.Empty.AsSpan().Split();
+            string.Empty.AsSpan().Split();
 #endif
         enumerator.MoveNextOrThrow();
         enumerator.MoveNextOrThrow();

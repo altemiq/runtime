@@ -182,7 +182,11 @@ public class NanoIds
 
         foreach (var distribution in chars.Select(c => c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize)))
         {
+#if NET7_0_OR_GREATER
+            await Assert.That(distribution).IsEqualTo(1.0).Within(0.05);
+#else
             await Assert.That(distribution).IsBetween(0.95, 1.05);
+#endif
         }
     }
 
@@ -213,10 +217,13 @@ public class NanoIds
             count--;
         }
 
-        foreach (var c in chars)
+        foreach (var distribution in chars.Select(c => c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize)))
         {
-            var distribution = c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize);
+#if NET7_0_OR_GREATER
+            await Assert.That(distribution).IsEqualTo(1.0).Within(0.05);
+#else
             await Assert.That(distribution).IsBetween(0.95, 1.05);
+#endif
         }
     }
 

@@ -121,7 +121,10 @@ public class BinaryWriterExtensionsTests
         var writer = encoding is { } e
             ? new BinaryWriter(stream, System.Text.Encoding.GetEncoding(e), true)
             : new BinaryWriter(stream, System.Text.Encoding.UTF8, true);
-        await using (writer)
+#if NET
+        await
+#endif
+        using (writer)
         {
             writeValue(writer, expected, byteOrder);
         }

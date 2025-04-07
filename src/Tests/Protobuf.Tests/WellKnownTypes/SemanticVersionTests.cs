@@ -79,7 +79,13 @@ public class SemanticVersionTests
         await Assert.That(() =>
         {
             Span<char> inputSpan = stackalloc char[input.Length * 2];
-            var result = version.TryFormat(inputSpan, out charsWritten, "F", default);
+			ReadOnlySpan<char> format =
+#if NETFRAMEWORK
+                new ReadOnlySpan<char>([ 'F' ]);
+#else
+                "F";
+#endif
+            var result = version.TryFormat(inputSpan, out charsWritten, format, default);
             Range range = new(new(0), new(charsWritten));
             output = inputSpan[range].ToString();
             return result;
