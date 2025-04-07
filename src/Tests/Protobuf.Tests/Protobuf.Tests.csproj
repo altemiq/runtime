@@ -3,10 +3,18 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0;net6.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);net472</TargetFrameworks>
+    <PolySharpIncludeGeneratedTypes>System.Index,System.Range</PolySharpIncludeGeneratedTypes>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Protobuf\Protobuf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PolySharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
