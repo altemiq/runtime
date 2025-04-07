@@ -40,8 +40,7 @@ public class SeekableStream : IO.SeekableStream
     private SeekableStream(System.IO.Compression.ZipArchive archive, Stream stream, long length, long initialPosition = 0L, bool leaveOpen = false)
         : base(stream, initialPosition, leaveOpen: false)
     {
-        ArgumentNullExceptionEx.ThrowIfNull(archive);
-        this.archive = archive;
+        this.archive = archive ?? throw new ArgumentNullException(nameof(archive));
         this.closeArchive = !leaveOpen;
         this.Length = length;
     }

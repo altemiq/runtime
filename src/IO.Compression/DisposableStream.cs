@@ -35,8 +35,7 @@ public class DisposableStream : Stream
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
     internal DisposableStream(System.IO.Compression.ZipArchive archive, Stream stream, bool leaveOpen = false)
     {
-        ArgumentNullExceptionEx.ThrowIfNull(archive);
-        this.archive = archive;
+        this.archive = archive ?? throw new ArgumentNullException(nameof(archive));
         this.stream = stream;
         this.closeArchive = !leaveOpen;
     }
