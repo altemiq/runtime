@@ -11,7 +11,7 @@ public class XorBinaryPackingTest
         var decompressed = TestUtils.Decompress(codec, compressed, data.Length);
         await Assert.That(decompressed).IsEquivalentTo(data);
     }
-    
+
     public static IEnumerable<Func<int[]>> Data()
     {
         yield return () => System.Linq.Enumerable

@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Coding Standards">
-    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.65" />
+    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.72" />
   </ItemGroup>
 
   <ItemGroup Label="Build">

@@ -67,7 +67,7 @@ public class BasicTests
                 await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
-        
+
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
@@ -480,18 +480,18 @@ public class BasicTests
     {
         await TestUnsorted(codec.Codec, size);
     }
-    
+
     [Test]
     [MethodDataSource(nameof(ExampleCodecs))]
     public async Task TestUnsorted2Example(IntegerCodec codec)
     {
         await TestUnsorted2(codec.Codec);
     }
-    
+
     [Test]
     [MethodDataSource(nameof(ExampleCodecs))]
     public async Task TestUnsorted3Example(IntegerCodec codec)
-    {   
+    {
         await TestUnsorted3(codec.Codec);
     }
 
@@ -520,7 +520,7 @@ public class BasicTests
             yield return () => (codec(), 1026);
             yield return () => (codec(), 1333333);
         }
-        
+
     }
 
     private static async Task TestUnsorted(IInt32Codec codec, int n)

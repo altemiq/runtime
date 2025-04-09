@@ -26,7 +26,7 @@ public sealed partial class Uuid :
 #endif
     IEquatable<Guid>
 {
-        /// <summary>
+    /// <summary>
     /// A read-only instance of the <see cref="Uuid"/> structure whose value is all zeros.
     /// </summary>
     public static readonly Uuid Empty = ForGuid(Guid.Empty);

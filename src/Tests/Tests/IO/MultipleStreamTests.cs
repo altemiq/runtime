@@ -257,8 +257,7 @@ public class MultipleStreamTests
         var third = new byte[ThirdSize];
         random.NextBytes(third);
 
-        var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third));
-        stream.Position = PositionToRead;
+        var stream = new BasicMultipleStream(new MemoryStream(first), new MemoryStream(second), new MemoryStream(third)) { Position = PositionToRead };
 
         var bytes = new byte[20];
         _ = stream.Read(bytes, 0, bytes.Length);

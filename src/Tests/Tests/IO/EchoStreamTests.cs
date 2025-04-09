@@ -37,7 +37,7 @@ public class EchoStreamTests
 #else
         stream.Dispose();
 #endif
-        
+
         await Assert.That(read).IsEqualTo(expectedLength);
         await Assert.That(Encoding.UTF8.GetString(bytes)).IsEqualTo(Text);
     }
@@ -77,7 +77,7 @@ public class EchoStreamTests
 #else
         stream.Dispose();
 #endif
-        
+
         await Assert.That(read).IsEqualTo(expectedLength);
         await Assert.That(Encoding.UTF8.GetString(bytes)).IsEqualTo(Text);
     }

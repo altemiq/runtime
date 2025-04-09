@@ -87,7 +87,7 @@ public class HeadlessBasicTest
         {
             return;
         }
-        
+
         const int Size = 128;
         var data = new int[Size];
         data[127] = -1;

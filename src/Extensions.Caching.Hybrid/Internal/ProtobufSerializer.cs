@@ -26,7 +26,7 @@ internal static class ProtobufSerializer
         {
             // assume anything that is an IMessage is also an IMessage<T>
             return Activator.CreateInstance<T>() is Google.Protobuf.IMessage message
-                ? Activator.CreateInstance(typeof(ProtobufSerializer<>).MakeGenericType(typeof(T)), [message.Descriptor.Parser])
+                ? Activator.CreateInstance(typeof(ProtobufSerializer<>).MakeGenericType(typeof(T)), message.Descriptor.Parser)
                 : default;
         }
     }
