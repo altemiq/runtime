@@ -40,15 +40,22 @@ public class VersionTests
     [Arguments("1.2.3.4", 1, 2, 3, 4)]
     public async Task Format(string input, int major, int minor, int build, int revision)
     {
+        var fieldCount = (build, revision) switch
+        {
+            ( < 0, _) => 2,
+            (_, < 0) => 3,
+            _ => 4,
+        };
         await Assert.That(Version.ForVersion(
-            (build, revision) switch
+            fieldCount switch
             {
-                (_, >= 0) => new(major, minor, build, revision),
-                ( >= 0, _) => new(major, minor, build),
+                4 => new(major, minor, build, revision),
+                3 => new(major, minor, build),
                 _ => new(major, minor),
-            }).ToString(default, default)).IsEqualTo(input);
+            }).ToString(fieldCount)).IsEqualTo(input);
     }
 
+#if NET7_0_OR_GREATER
     [Test]
     [Arguments("1.2", 1, 2, -1, -1)]
     [Arguments("1.2.3", 1, 2, 3, -1)]
@@ -59,19 +66,19 @@ public class VersionTests
         await Assert.That(() =>
         {
             Span<char> outputSpan = stackalloc char[input.Length];
-            var response = Version.ForVersion(
+            var response = ((ISpanFormattable)Version.ForVersion(
                 (build, revision) switch
                 {
                     (_, >= 0) => new(major, minor, build, revision),
                     ( >= 0, _) => new(major, minor, build),
                     _ => new(major, minor),
-                }).TryFormat(outputSpan, out var charsWritten, default, default);
-            Range range = new(Index.Start, new(charsWritten));
-            output = outputSpan[range].ToString();
+                })).TryFormat(outputSpan, out var charsWritten, default, default);
+            output = outputSpan[..charsWritten].ToString();
             return response;
         }).IsTrue();
         await Assert.That(output).IsEqualTo(input);
     }
+#endif
 
     [Test]
     [Arguments(1, 2, -1, -1, 1, 2, -1, -1, 0)]

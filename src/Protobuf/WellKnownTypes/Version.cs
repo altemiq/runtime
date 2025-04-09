@@ -46,13 +46,6 @@ public partial class Version :
     /// <inheritdoc cref="System.Version.MinorRevision" />
     public short MinorRevision => (short)(this.revision_ & 0xFFFF);
 
-    private int DefaultFormatFieldCount => (this.HasBuild, this.HasRevision) switch
-    {
-        (false, _) => 2,
-        (_, false) => 3,
-        _ => 4,
-    };
-
     /// <summary>
     /// Implements the equals operator.
     /// </summary>
@@ -108,51 +101,29 @@ public partial class Version :
     /// <param name="s">The string to parse.</param>
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
-    public static Version Parse(string s) => Parse(s, default);
+    public static Version Parse(string s) => new(System.Version.Parse(s));
 
-    /// <summary>
-    /// Parses a span of characters into a value.
-    /// </summary>
-    /// <param name="s">The span of characters to parse.</param>
-    /// <returns>The result of parsing <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
-    public static Version Parse(ReadOnlySpan<char> s) => Parse(s, default);
-
-#if NET7_0_OR_GREATER
-    /// <inheritdoc />
-#else
-    /// <summary>
-    /// Parses a string into a value.
-    /// </summary>
-    /// <param name="s">The string to parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
-    /// <returns>The result of parsing <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
-#endif
-    [SuppressMessage("Microsoft.Style", "IDE0060:Remove unused parameter", Justification = "This is required for implementing the interface")]
-    public static Version Parse(string s, IFormatProvider? provider) => new(System.Version.Parse(s));
-
-#if NET7_0_OR_GREATER
-    /// <inheritdoc />
-#else
-    /// <summary>
-    /// Parses a span of characters into a value.
-    /// </summary>
-    /// <param name="s">The span of characters to parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
-    /// <returns>The result of parsing <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
-#endif
-    public static Version Parse(ReadOnlySpan<char> s, IFormatProvider? provider) =>
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        new(System.Version.Parse(s));
-#else
-        new(System.Version.Parse(s.ToString()));
+    /// <summary>
+    /// Parses a span of characters into a value.
+    /// </summary>
+    /// <param name="s">The span of characters to parse.</param>
+    /// <returns>The result of parsing <paramref name="s"/>.</returns>
+    /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
+    public static Version Parse(ReadOnlySpan<char> s) => new(System.Version.Parse(s));
+#endif
+
+#if NET7_0_OR_GREATER
+    /// <inheritdoc />
+    static Version IParsable<Version>.Parse(string s, IFormatProvider? provider) => new(System.Version.Parse(s));
+
+    /// <inheritdoc />
+    static Version ISpanParsable<Version>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => new(System.Version.Parse(s));
 #endif
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc />
-    public static Version Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider) => Parse(System.Text.Encoding.UTF8.GetString(utf8Text), provider: default);
+    static Version IUtf8SpanParsable<Version>.Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider) => Parse(System.Text.Encoding.UTF8.GetString(utf8Text));
 #endif
 
     /// <summary>
@@ -161,29 +132,7 @@ public partial class Version :
     /// <param name="s">The string parse.</param>
     /// <param name="result">When this method returns, contains the result of successfully parsing <paramref name="s"/>, or an undefined value on failure.</param>
     /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
-    public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out Version result) => TryParse(s, provider: null, out result);
-
-    /// <summary>
-    /// Tries to parse a span of characters into a value.
-    /// </summary>
-    /// <param name="s">The span of characters to parse.</param>
-    /// <param name="result">When this method returns, contains the result of successfully parsing <paramref name="s"/>, or an undefined value on failure.</param>
-    /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
-    public static bool TryParse(ReadOnlySpan<char> s, [MaybeNullWhen(false)] out Version result) => TryParse(s, provider: null, out result);
-
-#if NET7_0_OR_GREATER
-    /// <inheritdoc />
-#else
-    /// <summary>
-    /// Tries to parse a string into a value.
-    /// </summary>
-    /// <param name="s">The string parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
-    /// <param name="result">When this method returns, contains the result of successfully parsing <paramref name="s"/>, or an undefined value on failure.</param>
-    /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
-#endif
-    [SuppressMessage("Microsoft.Style", "IDE0060:Remove unused parameter", Justification = "This is required for implementing the interface")]
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Version result)
+    public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out Version result)
     {
         if (s is not null && System.Version.TryParse(s, out var version))
         {
@@ -195,24 +144,31 @@ public partial class Version :
         return false;
     }
 
-#if NET7_0_OR_GREATER
-    /// <inheritdoc />
-#else
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
     /// <summary>
     /// Tries to parse a span of characters into a value.
     /// </summary>
     /// <param name="s">The span of characters to parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s"/>.</param>
     /// <param name="result">When this method returns, contains the result of successfully parsing <paramref name="s"/>, or an undefined value on failure.</param>
     /// <returns><see langword="true"/> if <paramref name="s"/> was successfully parsed; otherwise, <see langword="false"/>.</returns>
-#endif
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out Version result)
+    public static bool TryParse(ReadOnlySpan<char> s, [MaybeNullWhen(false)] out Version result)
     {
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         if (System.Version.TryParse(s, out var version))
-#else
-        if (System.Version.TryParse(s.ToString(), out var version))
+        {
+            result = new(version);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
 #endif
+
+#if NET7_0_OR_GREATER
+    /// <inheritdoc />
+    static bool IParsable<Version>.TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Version result)
+    {
+        if (s is not null && System.Version.TryParse(s, out var version))
         {
             result = new(version);
             return true;
@@ -222,9 +178,23 @@ public partial class Version :
         return false;
     }
 
+    /// <inheritdoc />
+    static bool ISpanParsable<Version>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out Version result)
+    {
+        if (System.Version.TryParse(s, out var version))
+        {
+            result = new(version);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+#endif
+
 #if NET8_0_OR_GREATER
     /// <inheritdoc />
-    public static bool TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider, [MaybeNullWhen(false)] out Version result) => TryParse(System.Text.Encoding.UTF8.GetString(utf8Text), provider: provider, out result);
+    static bool IUtf8SpanParsable<Version>.TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider, [MaybeNullWhen(false)] out Version result) => TryParse(System.Text.Encoding.UTF8.GetString(utf8Text), out result);
 #endif
 
     /// <summary>
@@ -288,48 +258,19 @@ public partial class Version :
     public string ToString(int fieldCount) => this.ToVersion().ToString(fieldCount);
 
     /// <inheritdoc />
-    public string ToString(string? format, IFormatProvider? formatProvider) => this.ToVersion().ToString();
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => this.ToVersion().ToString();
 
 #if NET7_0_OR_GREATER
     /// <inheritdoc />
-#else
-    /// <summary>
-    /// Tries to format the value of the current instance into the provided span of characters.
-    /// </summary>
-    /// <param name="destination">The span in which to write this instance's value formatted as a span of characters.</param>
-    /// <param name="charsWritten">When this method returns, contains the number of characters that were written in <paramref name="destination"/>.</param>
-    /// <param name="format">A span containing the characters that represent a standard or custom format string that defines the acceptable format for <paramref name="destination"/>.</param>
-    /// <param name="provider">An optional object that supplies culture-specific formatting information for <paramref name="destination"/>.</param>
-    /// <returns><see langword="true"/> if the formatting was successful; otherwise <see langword="false"/>.</returns>
-#endif
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        => this.ToVersion().TryFormat(destination, this.DefaultFormatFieldCount, out charsWritten);
-#else
-    {
-        var s = this.ToString(this.DefaultFormatFieldCount);
-        if (s.Length <= destination.Length)
-        {
-            for (int i = 0; i < s.Length; i++)
-            {
-                destination[i] = s[i];
-            }
-
-            charsWritten = s.Length;
-            return true;
-        }
-
-        charsWritten = 0;
-        return false;
-    }
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => TryFormatCore(this.ToVersion(), destination, out charsWritten, format, provider);
 #endif
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc />
-    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    bool IUtf8SpanFormattable.TryFormat(Span<byte> utf8Destination, out int bytesWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         Span<char> destination = stackalloc char[utf8Destination.Length * 2];
-        if (this.TryFormat(destination, out var charsWritten, format, provider))
+        if (TryFormatCore(this, destination, out var charsWritten, format, provider))
         {
             bytesWritten = System.Text.Encoding.UTF8.GetBytes(destination[..charsWritten], utf8Destination);
             return true;
@@ -338,5 +279,9 @@ public partial class Version :
         bytesWritten = 0;
         return false;
     }
+#endif
+
+#if NET7_0_OR_GREATER
+    private static bool TryFormatCore(ISpanFormattable formattable, Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider) => formattable.TryFormat(destination, out charsWritten, format, provider);
 #endif
 }

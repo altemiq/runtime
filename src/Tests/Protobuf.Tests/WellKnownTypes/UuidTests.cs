@@ -1,6 +1,6 @@
 namespace Altemiq.Protobuf.WellKnownTypes;
 
-public class UUidTests
+public class UuidTests
 {
     [Test]
     public async Task FromGuid()

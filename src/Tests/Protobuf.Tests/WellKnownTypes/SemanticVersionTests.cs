@@ -69,6 +69,7 @@ public class SemanticVersionTests
         await Assert.That(version.ToFullString()).IsEqualTo(input);
     }
 
+#if NET7_0_OR_GREATER
     [Test]
     [MethodDataSource(nameof(ParsingTestCases))]
     public async Task TryFormat(string input, int major, int minor, int patch, IEnumerable<string>? releaseLabels, string? metadata)
@@ -79,20 +80,14 @@ public class SemanticVersionTests
         await Assert.That(() =>
         {
             Span<char> inputSpan = stackalloc char[input.Length * 2];
-			ReadOnlySpan<char> format =
-#if NETFRAMEWORK
-                new ReadOnlySpan<char>([ 'F' ]);
-#else
-                "F";
-#endif
-            var result = version.TryFormat(inputSpan, out charsWritten, format, default);
-            Range range = new(new(0), new(charsWritten));
-            output = inputSpan[range].ToString();
+            var result = ((ISpanFormattable)version).TryFormat(inputSpan, out charsWritten, "F", default);
+            output = inputSpan[..charsWritten].ToString();
             return result;
         }).IsTrue();
         await Assert.That(charsWritten).IsEqualTo(input.Length);
         await Assert.That(output).IsEqualTo(input);
     }
+#endif
 
     [Test]
     [MethodDataSource(nameof(ToStringTestCases))]

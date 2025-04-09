@@ -26,6 +26,11 @@ public sealed partial class Uuid :
 #endif
     IEquatable<Guid>
 {
+        /// <summary>
+    /// A read-only instance of the <see cref="Uuid"/> structure whose value is all zeros.
+    /// </summary>
+    public static readonly Uuid Empty = ForGuid(Guid.Empty);
+
     /// <summary>
     /// Implements the equals operator.
     /// </summary>
@@ -179,19 +184,13 @@ public sealed partial class Uuid :
     {
         checked
         {
-            Span<byte> bytes = stackalloc byte[16];
-            System.Buffers.Binary.BinaryPrimitives.WriteUInt32LittleEndian(bytes[..4], this.TimeLow);
-            System.Buffers.Binary.BinaryPrimitives.WriteUInt16LittleEndian(bytes[4..6], (ushort)this.TimeMid);
-            System.Buffers.Binary.BinaryPrimitives.WriteUInt16LittleEndian(bytes[6..8], (ushort)this.TimeHiAndVersion);
-            System.Buffers.Binary.BinaryPrimitives.WriteUInt64BigEndian(bytes[8..], this.Node);
-            bytes[8] = (byte)this.ClockSeqHiAndReserved;
-            bytes[9] = (byte)this.ClockSeqLow;
-
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-            return new Guid(bytes);
+            Span<byte> bytes = stackalloc byte[16];
 #else
-            return new Guid(bytes.ToArray());
+            var bytes = new byte[16];
 #endif
+            _ = this.TryWriteBytesCore(bytes);
+            return new Guid(bytes);
         }
     }
 
@@ -199,50 +198,34 @@ public sealed partial class Uuid :
     public bool Equals(Guid other) => this.Equals(Uuid.ForGuid(other));
 
     /// <inheritdoc cref="Guid.ToString(string?)"/>
-    public string ToString([StringSyntax(StringSyntaxAttribute.GuidFormat)] string? format) => this.ToString(format, formatProvider: null);
+    public string ToString([StringSyntax(StringSyntaxAttribute.GuidFormat)] string? format) => this.ToGuid().ToString(format);
 
     /// <inheritdoc/>
-    public string ToString([StringSyntax(StringSyntaxAttribute.GuidFormat)] string? format, IFormatProvider? formatProvider) =>
-        this.ToGuid() is IFormattable formattable
-            ? formattable.ToString(format, formatProvider)
-            : this.ToString();
+    public string ToString([StringSyntax(StringSyntaxAttribute.GuidFormat)] string? format, IFormatProvider? formatProvider)
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK
+        => this.ToGuid().ToString(format, formatProvider);
+#else
+        => this.ToGuid().ToString(format);
+#endif
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     /// <inheritdoc cref="Guid.TryFormat(Span{char}, out int, ReadOnlySpan{char})"/>
-    public bool TryFormat(Span<char> destination, out int charsWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format)
-    {
-        var guid = this.ToGuid();
-        return guid.TryFormat(destination, out charsWritten, format);
-    }
-#endif
-
-#if NET7_0_OR_GREATER
-    /// <inheritdoc />
-    public bool TryFormat(Span<char> destination, out int charsWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        var guid = this.ToGuid();
-        return guid is ISpanFormattable formattable
-            ? formattable.TryFormat(destination, out charsWritten, format, provider)
-            : guid.TryFormat(destination, out charsWritten, format);
-    }
+    public bool TryFormat(Span<char> destination, out int charsWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format) => this.ToGuid().TryFormat(destination, out charsWritten, format);
 #endif
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Guid.TryFormat(Span{byte}, out int, ReadOnlySpan{char})" />
-    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format)
-    {
-        var guid = this.ToGuid();
-        return guid.TryFormat(utf8Destination, out bytesWritten, format);
-    }
+    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format) => this.ToGuid().TryFormat(utf8Destination, out bytesWritten, format);
+#endif
 
+#if NET7_0_OR_GREATER
     /// <inheritdoc />
-    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        var guid = this.ToGuid();
-        return guid is IUtf8SpanFormattable utf8SpanFormattable
-            ? utf8SpanFormattable.TryFormat(utf8Destination, out bytesWritten, format, provider)
-            : guid.TryFormat(utf8Destination, out bytesWritten, format);
-    }
+    bool ISpanFormattable.TryFormat(Span<char> destination, out int charsWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format, IFormatProvider? provider) => ((ISpanFormattable)this.ToGuid()).TryFormat(destination, out charsWritten, format, provider);
+#endif
+
+#if NET8_0_OR_GREATER
+    /// <inheritdoc />
+    bool IUtf8SpanFormattable.TryFormat(Span<byte> utf8Destination, out int bytesWritten, [StringSyntax(StringSyntaxAttribute.GuidFormat)] ReadOnlySpan<char> format, IFormatProvider? provider) => ((IUtf8SpanFormattable)this.ToGuid()).TryFormat(utf8Destination, out bytesWritten, format, provider);
 #endif
 
     /// <inheritdoc/>
@@ -297,4 +280,58 @@ public sealed partial class Uuid :
 
     /// <inheritdoc/>
     public int CompareTo(Guid other) => this.ToGuid().CompareTo(other);
+
+    /// <summary>
+    /// Returns a 16-element byte array that contains the value of this instance.
+    /// </summary>
+    /// <returns>A 16-element byte array.</returns>
+    public byte[] ToByteArray()
+    {
+        var byteArray = new byte[16];
+        _ = this.TryWriteBytesCore(byteArray);
+        return byteArray;
+    }
+
+#if NET8_OR_GREATER
+    /// <summary>
+    /// Returns a 16-element byte array that contains the value of this instance.
+    /// </summary>
+    /// <param name="bigEndian">Set to <see langword="true"/> to return a big endian byte array.</param>
+    /// <returns>A 16-element byte array.</returns>
+    public byte[] ToByteArray(bool bigEndian) => this.ToGuid().ToByteArray(bigEndian);
+#endif
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+    /// <summary>
+    /// Tries to write the current UUID instance into a span of bytes.
+    /// </summary>
+    /// <param name="destination">When this method returns, the UUID as a span of bytes.</param>
+    /// <returns><see langword="true"/> if the UUID is successfully written to the specified span; <see langword="false"/> otherwise.</returns>
+    public bool TryWriteBytes(Span<byte> destination) => this.TryWriteBytesCore(destination);
+#endif
+
+#if NET8_OR_GREATER
+    /// <inheritdoc cref="Guid.TryWriteBytes(Span<byte>,bool,int)"/>
+    public bool TryWriteBytes(Span<byte> destination, bool bigEndian, out int bytesWritten) => this.ToGuid().TryWriteBytes(destination, bigEndian, out bytesWritten);
+#endif
+
+    private bool TryWriteBytesCore(Span<byte> destination)
+    {
+        if (destination.Length < 16)
+        {
+            return false;
+        }
+
+        if (!System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32LittleEndian(destination[..4], this.timeLow_)
+            || !System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16LittleEndian(destination[4..6], (ushort)this.timeMid_)
+            || !System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16LittleEndian(destination[6..8], (ushort)this.timeHiAndVersion_)
+            || !System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64BigEndian(destination[8..], this.node_))
+        {
+            return false;
+        }
+
+        destination[8] = (byte)this.ClockSeqHiAndReserved;
+        destination[9] = (byte)this.ClockSeqLow;
+        return true;
+    }
 }
