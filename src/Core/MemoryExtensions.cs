@@ -60,7 +60,7 @@ public static partial class MemoryExtensions
     /// <exception cref="InvalidOperationException">The length of <paramref name="newValue"/> must be less than <paramref name="oldValue"/>.</exception>
     public static ReadOnlySpan<char> Replace(this ReadOnlySpan<char> input, ReadOnlySpan<char> oldValue, ReadOnlySpan<char> newValue)
     {
-        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(newValue.Length, oldValue.Length);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(newValue.Length, oldValue.Length);
 
         var oldLength = oldValue.Length;
         var newLength = newValue.Length;

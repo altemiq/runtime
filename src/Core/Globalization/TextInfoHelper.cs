@@ -14,13 +14,19 @@ namespace System.Globalization;
 public static class TextInfoHelper
 {
     /// <summary>
-    /// Gets the <see cref="TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.
+    /// The extensions for <see cref="TextInfo"/>.
     /// </summary>
-    /// <param name="formatProvider">The <see cref="IFormatProvider"/> used to get the <see cref="TextInfo"/>.</param>
-    /// <returns>The <see cref="TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.</returns>
-    public static TextInfo GetInstance(IFormatProvider? formatProvider) => formatProvider switch
+    extension(System.Globalization.TextInfo)
     {
-        CultureInfo cultureProvider => cultureProvider.TextInfo,
-        _ => CultureInfo.CurrentCulture.TextInfo,
-    };
+        /// <summary>
+        /// Gets the <see cref="TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.
+        /// </summary>
+        /// <param name="formatProvider">The <see cref="IFormatProvider"/> used to get the <see cref="TextInfo"/>.</param>
+        /// <returns>The <see cref="TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.</returns>
+        public static TextInfo GetInstance(IFormatProvider? formatProvider) => formatProvider switch
+        {
+            CultureInfo cultureProvider => cultureProvider.TextInfo,
+            _ => CultureInfo.CurrentCulture.TextInfo,
+        };
+    }
 }

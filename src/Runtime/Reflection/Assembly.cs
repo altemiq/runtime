@@ -28,16 +28,11 @@ internal sealed class Assembly
 
         static System.Reflection.Assembly? GetEntryAssemblyCore()
         {
-            if (System.Reflection.Assembly.GetEntryAssembly() is { } assembly)
+            if (System.Reflection.Assembly.GetEntryAssembly() is { FullName: { } fullName } assembly)
             {
-                if (assembly.FullName is { } fullName
-                    && IsTestAssembly(fullName)
-                    && GetTestAssembly() is { } testAssembly)
-                {
-                    return testAssembly;
-                }
-
-                return assembly;
+                return IsTestAssembly(fullName) && GetTestAssembly() is { } testAssembly
+                    ? testAssembly
+                    : assembly;
             }
             else if (System.Diagnostics.Process.GetCurrentProcess() is { } process
                 && IsTestAssembly(process.ProcessName)

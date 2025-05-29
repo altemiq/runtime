@@ -18,7 +18,7 @@ public static partial class BitArrayExtensions
     /// <returns>A byte value.</returns>
     public static byte GetByte(this System.Collections.BitArray bits)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(bits);
+        ArgumentNullException.ThrowIfNull(bits);
         return GetByte(bits, 0, bits.Length);
     }
 
@@ -31,10 +31,14 @@ public static partial class BitArrayExtensions
     /// <returns>A byte value.</returns>
     public static byte GetByte(this System.Collections.BitArray bits, int startIndex, int length)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(bits);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(length, 8);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(startIndex);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(startIndex + length, bits.Length);
+        ArgumentNullException.ThrowIfNull(bits);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(length, 8);
+#if NET7_0_OR_GREATER
+        ArgumentOutOfRangeException.ThrowIfNegative<int>(startIndex);
+#else
+        ArgumentOutOfRangeException.ThrowIfNegative(startIndex);
+#endif
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(startIndex + length, bits.Length);
 
         byte @byte = 0;
 

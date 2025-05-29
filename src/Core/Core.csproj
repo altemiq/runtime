@@ -7,6 +7,9 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PolySharpUsePublicAccessibilityForGeneratedTypes>true</PolySharpUsePublicAccessibilityForGeneratedTypes>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+    
+    <!-- turn off buggy analyzer -->
+    <NoWarn>$(NoWarn);S1117</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -18,9 +21,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="**\BitConverter.*.cs" DependentUpon="BitConverter.cs" />
-    <Compile Update="**\List.*.cs" DependentUpon="List.cs" />
-    <Compile Update="**\MemoryExtensions.*.cs" DependentUpon="MemoryExtensions.cs" />
+    <Compile Update="ArrayExtensions.*.cs;BitConverter.*.cs;Linq\List.*.cs;MemoryExtensions.*.cs">
+      <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)%(Extension)', '\.[^.]+\%(Extension)$', '%(Extension)'))</DependentUpon>
+    </Compile>
     <None Include="$([MSBuild]::GetPathOfFileAbove(README.md))" Pack="true" PackagePath="\" />
   </ItemGroup>
 
@@ -84,37 +87,6 @@
   <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0')) ">
     <Compile Remove="**\*.NET9.cs" />
   </ItemGroup>
-
-  <Choose>
-    <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-      <ItemGroup>
-        <Compile Remove="*ExceptionThrower*.cs" />
-
-        <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
-        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
-        <Using Include="System.ArgumentOutOfRangeException" Alias="ArgumentOutOfRangeExceptionThrower" />
-        <Using Include="System.ObjectDisposedException" Alias="ObjectDisposedExceptionThrower" />
-      </ItemGroup>
-    </When>
-    <When Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">
-      <ItemGroup>
-        <Compile Remove="ArgumentNullExceptionThrower.cs" />
-
-        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
-        <Using Include="System.ArgumentNullException" Alias="ArgumentNullExceptionThrower" />
-        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
-        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <Using Include="System.ArgumentExceptionEx" Alias="ArgumentExceptionThrower" />
-        <Using Include="System.ArgumentNullExceptionEx" Alias="ArgumentNullExceptionThrower" />
-        <Using Include="System.ArgumentOutOfRangeExceptionEx" Alias="ArgumentOutOfRangeExceptionThrower" />
-        <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
 
   <ItemGroup>
     <ProjectReference Include="..\OneOf.CodeGeneration\OneOf.CodeGeneration.csproj"

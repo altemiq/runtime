@@ -85,7 +85,7 @@ public static class StringExtensions
 
     private static string[] SplitQuotedInternal(string s, IList<char>? separator, StringSplitOptions options)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(s);
+        ArgumentNullException.ThrowIfNull(s);
         if (s.Length is 0)
         {
             return options.HasFlag(StringSplitOptions.RemoveEmptyEntries) ? [] : [s];

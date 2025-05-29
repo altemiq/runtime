@@ -134,7 +134,7 @@ public static partial class List
     /// <param name="comparer">The comparer.</param>
     public static void QuickSort<T>(this IList<T> values, IComparer<T> comparer)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(values);
 
         if (values is { Count: <= 1 })
         {
@@ -154,7 +154,7 @@ public static partial class List
         this IList<T> values,
         Comparison<T> comparison)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(values);
 
         if (values is { Count: <= 1 })
         {
@@ -185,7 +185,7 @@ public static partial class List
     /// <param name="comparer">The comparer.</param>
     public static void QuickSort<T>(this IList<T> values, int index, int length, IComparer<T>? comparer)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(values);
 
         if (values is { Count: <= 1 } || length <= 1)
         {
@@ -225,10 +225,15 @@ public static partial class List
         int length,
         Comparison<T> comparison)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(values);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(index);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(length);
-        ArgumentNullExceptionThrower.ThrowIfNull(comparison);
+        ArgumentNullException.ThrowIfNull(values);
+#if NET7_0_OR_GREATER
+        ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
+        ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
+#else
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+        ArgumentNullException.ThrowIfNull(comparison);
 
         if (values is T[] @array)
         {
@@ -342,7 +347,7 @@ public static partial class List
     public static void QuickSort<T>(this IList<T?> values)
         where T : IComparable<T>
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(values);
 
         if (values.Count <= 1)
         {
@@ -373,9 +378,14 @@ public static partial class List
     public static void QuickSort<T>(this IList<T?> values, int index, int length)
         where T : IComparable<T>
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(values);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(index);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(length);
+        ArgumentNullException.ThrowIfNull(values);
+#if NET7_0_OR_GREATER
+        ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
+        ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
+#else
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
 
         if (length is 0)
         {

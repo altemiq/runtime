@@ -6,6 +6,7 @@
 
 namespace Altemiq;
 
+using System;
 using TUnit.Assertions.AssertConditions.Throws;
 
 public static class ExceptionThrowerTests
@@ -16,40 +17,33 @@ public static class ExceptionThrowerTests
 #if !NET7_0_OR_GREATER
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0034:Simplify 'default' expression", Justification = "This is required for .NET 7.0")]
 #endif
-        public Task ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(default(object)));
+        public Task ThrowOnNull() => Do<System.ArgumentNullException>(static () => System.ArgumentNullException.ThrowIfNull(default(object)));
 
         [Test]
-        public Task NotThrowOnNotNull() => Do<System.ArgumentNullException>(static () => ArgumentNullExceptionThrower.ThrowIfNull(string.Empty), false);
+        public Task NotThrowOnNotNull() => Do<System.ArgumentNullException>(static () => System.ArgumentNullException.ThrowIfNull(string.Empty), false);
     }
 
     public class ArgumentException
     {
         [Test]
-        public Task ThrowOnNull() => Do<System.ArgumentNullException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(default));
+        public Task ThrowOnNull() => Do<System.ArgumentNullException>(static () => System.ArgumentException.ThrowIfNullOrEmpty(default));
 
         [Test]
-        public Task ThrowIfEmpty() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(string.Empty));
+        public Task ThrowIfEmpty() => Do<System.ArgumentException>(static () => System.ArgumentException.ThrowIfNullOrEmpty(string.Empty));
 
         [Test]
-        public Task ThrowIfEmptyOrWhiteSpace() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrWhiteSpace("    "));
+        public Task ThrowIfEmptyOrWhiteSpace() => Do<System.ArgumentException>(static () => System.ArgumentException.ThrowIfNullOrWhiteSpace("    "));
 
         [Test]
-        public Task NotThrow() => Do<System.ArgumentException>(static () => ArgumentExceptionThrower.ThrowIfNullOrEmpty(nameof(string.Empty)), false);
+        public Task NotThrow() => Do<System.ArgumentException>(static () => System.ArgumentException.ThrowIfNullOrEmpty(nameof(string.Empty)), false);
     }
 
     public class ArgumentOutOfRangeException
     {
-#if !NET8_0_OR_GREATER
-        [Test]
-        [Arguments(0, 1, 2, true)]
-        [Arguments(1, 0, 2, false)]
-        [Obsolete("This will be removed when the method is removed")]
-        public Task OnNotBetween(int value, int min, int max, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfNotBetween(value, min, max), @throw);
-#endif
 
         [Test]
         [MethodDataSource(nameof(NegativeData))]
-        public Task OnNegative(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegative), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
+        public Task OnNegative(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfNegative", typeof(ArgumentExceptionExtensions), value), @throw);
 
         public static IEnumerable<Func<(object, bool)>> NegativeData()
         {
@@ -71,7 +65,7 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(NegativeOrZeroData))]
-        public Task OnNegativeOrZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfNegativeOrZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
+        public Task OnNegativeOrZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfNegativeOrZero", typeof(ArgumentExceptionExtensions), value), @throw);
 
         public static IEnumerable<Func<(object, bool)>> NegativeOrZeroData()
         {
@@ -100,7 +94,7 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(ZeroData))]
-        public Task OnZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfZero), typeof(ArgumentOutOfRangeExceptionThrower), value), @throw);
+        public Task OnZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfZero", typeof(ArgumentExceptionExtensions), value), @throw);
 
         public static IEnumerable<Func<(object, bool)>> ZeroData()
         {
@@ -129,7 +123,7 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(LessThanData))]
-        public Task OnLessThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        public Task OnLessThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfLessThan", typeof(ArgumentExceptionExtensions), value, default), @throw);
 
         public static IEnumerable<Func<(object, bool)>> LessThanData()
         {
@@ -151,7 +145,7 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(LessThanOrEqualData))]
-        public Task OnLessThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        public Task OnLessThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfLessThanOrEqual", typeof(ArgumentExceptionExtensions), value, default), @throw);
 
         public static IEnumerable<Func<(object, bool)>> LessThanOrEqualData()
         {
@@ -180,7 +174,7 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(GreaterThanData))]
-        public Task OnGreaterThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        public Task OnGreaterThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfGreaterThan", typeof(ArgumentExceptionExtensions), value, default), @throw);
 
         public static IEnumerable<Func<(object, bool)>> GreaterThanData()
         {
@@ -202,7 +196,7 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(GreaterThanOrEqualData))]
-        public Task OnGreaterThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run(nameof(ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThanOrEqual), typeof(ArgumentOutOfRangeExceptionThrower), value, default), @throw);
+        public Task OnGreaterThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfGreaterThanOrEqual", typeof(ArgumentExceptionExtensions), value, default), @throw);
 
         public static IEnumerable<Func<(object, bool)>> GreaterThanOrEqualData()
         {
@@ -233,20 +227,20 @@ public static class ExceptionThrowerTests
         public Task OnValid() => Do<System.ArgumentOutOfRangeException>(
             static () =>
             {
-                ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan(1, 0);
-                ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(1, 2);
+                System.ArgumentOutOfRangeException.ThrowIfLessThan(1, 0);
+                System.ArgumentOutOfRangeException.ThrowIfGreaterThan(1, 2);
             },
             false);
 
         [Test]
         [Arguments(1, true)]
         [Arguments(-1, false)]
-        public Task OnEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfEqual(value, 1), @throw);
+        public Task OnEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => System.ArgumentOutOfRangeException.ThrowIfEqual(value, 1), @throw);
 
         [Test]
         [Arguments(1, false)]
         [Arguments(-1, true)]
-        public Task OnNotEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => ArgumentOutOfRangeExceptionThrower.ThrowIfNotEqual(value, 1), @throw);
+        public Task OnNotEqual(int value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => System.ArgumentOutOfRangeException.ThrowIfNotEqual(value, 1), @throw);
 
         private static System.Reflection.MethodInfo GetMethod(string name, Type type, Type parameterType)
         {
@@ -303,7 +297,7 @@ public static class ExceptionThrowerTests
             static () =>
             {
                 object? @null = default;
-                ObjectDisposedExceptionThrower.ThrowIf(@null is null, @null);
+                System.ObjectDisposedException.ThrowIf(@null is null, @null);
             });
 
         [Test]
@@ -311,21 +305,21 @@ public static class ExceptionThrowerTests
             static () =>
             {
                 string? @null = default;
-                ObjectDisposedExceptionThrower.ThrowIf(@null is null, typeof(string));
+                System.ObjectDisposedException.ThrowIf(@null is null, typeof(string));
             });
 
         [Test]
-        public Task ThrowOnNotNull() => Do<System.ObjectDisposedException>(static () => ObjectDisposedExceptionThrower.ThrowIf(true, new object()));
+        public Task ThrowOnNotNull() => Do<System.ObjectDisposedException>(static () => System.ObjectDisposedException.ThrowIf(true, new object()));
 
         [Test]
-        public Task ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(static () => ObjectDisposedExceptionThrower.ThrowIf(true, typeof(string)));
+        public Task ThrowOnNotNullWithType() => Do<System.ObjectDisposedException>(static () => System.ObjectDisposedException.ThrowIf(true, typeof(string)));
 
         [Test]
         public Task NotThrowNotNull() => Do<System.ObjectDisposedException>(
             static () =>
             {
                 var notNull = new object();
-                ObjectDisposedExceptionThrower.ThrowIf(notNull is null, notNull);
+                System.ObjectDisposedException.ThrowIf(notNull is null, notNull);
             },
             false);
 
@@ -334,7 +328,7 @@ public static class ExceptionThrowerTests
             static () =>
             {
                 var notNull = string.Empty;
-                ObjectDisposedExceptionThrower.ThrowIf(notNull is null, typeof(string));
+                System.ObjectDisposedException.ThrowIf(notNull is null, typeof(string));
             },
             false);
     }

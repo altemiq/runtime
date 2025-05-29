@@ -21,7 +21,7 @@ public class Random : System.Random
     /// <inheritdoc/>
     public override void NextBytes(byte[] buffer)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(buffer);
+        ArgumentNullException.ThrowIfNull(buffer);
         this.randomNumberGenerator.GetBytes(buffer);
     }
 
@@ -46,7 +46,7 @@ public class Random : System.Random
     /// <inheritdoc/>
     public override int Next(int minValue, int maxValue)
     {
-        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(minValue, maxValue);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(minValue, maxValue);
         return minValue == maxValue
             ? minValue
             : (int)Math.Floor(this.NextDouble() * (maxValue - minValue)) + minValue;
@@ -58,7 +58,11 @@ public class Random : System.Random
     /// <inheritdoc />
     public override int Next(int maxValue)
     {
-        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(maxValue);
+#if NET7_0_OR_GREATER
+        ArgumentOutOfRangeException.ThrowIfNegative<int>(maxValue);
+#else
+        ArgumentOutOfRangeException.ThrowIfNegative(maxValue);
+#endif
         return this.Next(0, maxValue);
     }
 }

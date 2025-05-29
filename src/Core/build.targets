@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
-  <Choose>
+  <!--<Choose>
     <When Condition=" '$(ImplicitUsingsForExceptionThrowers)' == 'true' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0')) ">
       <ItemGroup>
         <Using Include="System.ArgumentException" Alias="ArgumentExceptionThrower" />
@@ -34,6 +34,6 @@
         <Using Include="System.ObjectDisposedExceptionEx" Alias="ObjectDisposedExceptionThrower" />
       </ItemGroup>
     </When>
-  </Choose>
+  </Choose>-->
 
 </Project>

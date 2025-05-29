@@ -65,9 +65,13 @@ public static partial class List
     /// </returns>
     public static int IndexOfClosest<TSource, TValue>(this IReadOnlyList<TSource> source, int index, int length, TValue value, Func<TSource, TValue, int> comparison)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(source);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfNegative(index);
-        ArgumentNullExceptionThrower.ThrowIfNull(comparison);
+        ArgumentNullException.ThrowIfNull(source);
+#if NET7_0_OR_GREATER
+        ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
+#else
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+#endif
+        ArgumentNullException.ThrowIfNull(comparison);
 
         var low = index;
         var high = index + length - 1;

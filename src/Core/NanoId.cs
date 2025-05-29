@@ -134,10 +134,10 @@ public static class NanoId
 
     private static void Validate(string alphabet, int size)
     {
-        ArgumentNullExceptionThrower.ThrowIfNull(alphabet);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfLessThan(alphabet.Length, 1);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfGreaterThan(alphabet.Length, byte.MaxValue);
-        ArgumentOutOfRangeExceptionThrower.ThrowIfLessThanOrEqual(size, 0);
+        ArgumentNullException.ThrowIfNull(alphabet);
+        ArgumentOutOfRangeException.ThrowIfLessThan(alphabet.Length, 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(alphabet.Length, byte.MaxValue);
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(size, 0);
     }
 
     private static string GenerateImpl(System.Random random, string alphabet = Alphabets.Default, int size = 21)
