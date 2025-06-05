@@ -22,7 +22,7 @@ namespace Altemiq.Buffers.Compression;
 /// </remarks>
 /// <param name="first">The first codec.</param>
 /// <param name="second">The second codec.</param>
-internal class Composition(IInt32Codec first, IInt32Codec second) : IInt32Codec
+internal sealed class Composition(IInt32Codec first, IInt32Codec second) : IInt32Codec
 {
     private readonly IInt32Codec first = first;
     private readonly IInt32Codec second = second;

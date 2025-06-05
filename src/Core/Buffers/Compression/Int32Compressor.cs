@@ -10,7 +10,7 @@ namespace Altemiq.Buffers.Compression;
 /// The <see cref="int"/> compressor.
 /// </summary>
 /// <param name="codec">The codec.</param>
-internal class Int32Compressor(IHeadlessInt32Codec codec)
+internal sealed class Int32Compressor(IHeadlessInt32Codec codec)
 {
     private readonly IHeadlessInt32Codec codec = codec;
 

@@ -16,7 +16,7 @@ namespace Altemiq.Buffers.Compression;
 /// </remarks>
 /// <param name="first">The first codec.</param>
 /// <param name="second">The second codec.</param>
-internal class HeadlessComposition(IHeadlessInt32Codec first, IHeadlessInt32Codec second) : IHeadlessInt32Codec
+internal sealed class HeadlessComposition(IHeadlessInt32Codec first, IHeadlessInt32Codec second) : IHeadlessInt32Codec
 {
     private readonly IHeadlessInt32Codec first = first;
     private readonly IHeadlessInt32Codec second = second;

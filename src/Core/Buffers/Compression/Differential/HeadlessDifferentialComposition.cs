@@ -22,7 +22,7 @@ namespace Altemiq.Buffers.Compression.Differential;
 /// </remarks>
 /// <param name="first">first codec.</param>
 /// <param name="second">second codec.</param>
-internal class HeadlessDifferentialComposition(IHeadlessDifferentialInt32Codec first, IHeadlessDifferentialInt32Codec second) : IHeadlessDifferentialInt32Codec
+internal sealed class HeadlessDifferentialComposition(IHeadlessDifferentialInt32Codec first, IHeadlessDifferentialInt32Codec second) : IHeadlessDifferentialInt32Codec
 {
     private readonly IHeadlessDifferentialInt32Codec first = first;
     private readonly IHeadlessDifferentialInt32Codec second = second;
