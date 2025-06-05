@@ -4,9 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable IDE0130
+#pragma warning disable IDE0130, CheckNamespace
 namespace System;
-#pragma warning restore IDE0130
+#pragma warning restore IDE0130, CheckNamespace
 
 /// <summary>
 /// Extensions for <see cref="ArgumentException"/> and derived types.

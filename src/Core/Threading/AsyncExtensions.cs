@@ -4,9 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable IDE0130 // Namespace does not match folder structure
+#pragma warning disable IDE0130, CheckNamespace
 namespace System.Threading;
-#pragma warning restore IDE0130 // Namespace does not match folder structure
+#pragma warning restore IDE0130, CheckNamespace
 
 /// <summary>
 /// Async extensions.

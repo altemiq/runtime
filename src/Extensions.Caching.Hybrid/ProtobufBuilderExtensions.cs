@@ -4,9 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable IDE0130 // Namespace does not match folder structure
+#pragma warning disable IDE0130, CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
-#pragma warning restore IDE0130 // Namespace does not match folder structure
+#pragma warning restore IDE0130, CheckNamespace
 
 /// <summary>
 /// The <see cref="Google.Protobuf.IMessage{T}"/> serializer builder extensions.

@@ -59,6 +59,3 @@ dotnet_diagnostic.S1133.severity = suggestion
 
 # Add explicit 'return' or 'continue' before local functions
 resharper_separate_local_functions_with_jump_statement_highlighting = none
-
-# Namespace does not correspond to file location
-resharper_check_namespace_highlighting = none

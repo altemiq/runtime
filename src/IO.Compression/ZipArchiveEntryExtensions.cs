@@ -4,9 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable IDE0130
+#pragma warning disable IDE0130, CheckNamespace
 namespace System.IO.Compression;
-#pragma warning restore IDE0130
+#pragma warning restore IDE0130, CheckNamespace
 
 /// <summary>
 /// <see cref="ZipArchiveEntry"/> extension methods.
