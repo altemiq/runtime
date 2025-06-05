@@ -19,7 +19,7 @@ public static class Enumerable
     /// <returns>An <see cref="IEnumerable{T}"/> that contains elements from the input sequence that are not <see langword="null"/>.</returns>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
-    where T : class
+        where T : class
     {
         ArgumentNullException.ThrowIfNull(source);
         return WhereNotNullCore(source);

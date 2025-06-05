@@ -11,9 +11,6 @@ namespace Altemiq;
 /// </summary>
 public static partial class BitConverter
 {
-    /// <inheritdoc cref="System.BitConverter.IsLittleEndian" />
-    public static readonly bool IsLittleEndian = System.BitConverter.IsLittleEndian;
-
     /// <summary>
     /// Extension methods for <see cref="System.BitConverter"/>.
     /// </summary>
@@ -1090,4 +1087,7 @@ public static partial class BitConverter
         private static double ReverseEndianness(double value) => Int64BitsToDouble(Buffers.Binary.BinaryPrimitives.ReverseEndianness(DoubleToInt64Bits(value)));
 #pragma warning restore IDE0051, S1144, IDE0079, RCS1222
     }
+
+    /// <inheritdoc cref="System.BitConverter.IsLittleEndian" />
+    public static readonly bool IsLittleEndian = System.BitConverter.IsLittleEndian;
 }

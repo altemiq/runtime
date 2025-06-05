@@ -491,8 +491,7 @@ public static partial class List
 #if NETCOREAPP2_0_OR_GREATER || NET40_OR_GREATER || NETSTANDARD2_0_OR_GREATER
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
-    private readonly struct ComparisonWrapper<T>(Comparison<T> comparison)
-        : IComparer<T>
+    private readonly struct ComparisonWrapper<T>(Comparison<T> comparison) : IComparer<T>
     {
         public int Compare(T? x, T? y) => (x, y) switch
         {

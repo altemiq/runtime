@@ -466,14 +466,14 @@ public static class RuntimeEnvironment
     /// </summary>
     /// <param name="name">The name.</param>
     /// <returns>The module name.</returns>
-    public static string CreateModuleName(string name) => $"{RuntimeInformation.SharedLibraryPrefix}{name}{RuntimeInformation.SharedLibraryExtension}";
+    public static string CreateModuleName(string name) => RuntimeInformation.SharedLibraryPrefix + name + RuntimeInformation.SharedLibraryExtension;
 
     /// <summary>
     /// Creates the executable name.
     /// </summary>
     /// <param name="name">The name.</param>
     /// <returns>The executable name.</returns>
-    public static string CreateExecutableName(string name) => $"{name}{RuntimeInformation.ExecutableExtension}";
+    public static string CreateExecutableName(string name) => name + RuntimeInformation.ExecutableExtension;
 
     /// <summary>
     /// Gets the runtime config file name.

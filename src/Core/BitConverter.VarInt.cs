@@ -11,18 +11,6 @@ namespace Altemiq;
 /// </content>
 public static partial class BitConverter
 {
-    private const byte MostSignificantBit = 0x80;
-
-    private const
-#if NET7_0_OR_GREATER
-        byte
-#else
-        ulong
-#endif
-        ValueMask = 0x7F;
-
-    private const int BitShift = 7;
-
     /// <summary>
     /// Extension methods for <see cref="System.BitConverter"/> for variable integers.
     /// </summary>
@@ -744,4 +732,16 @@ public static partial class BitConverter
 #endif
 #pragma warning restore IDE0051, S1144, IDE0079, RCS1222
     }
+
+    private const byte MostSignificantBit = 0x80;
+
+    private const
+#if NET7_0_OR_GREATER
+        byte
+#else
+        ulong
+#endif
+        ValueMask = 0x7F;
+
+    private const int BitShift = 7;
 }

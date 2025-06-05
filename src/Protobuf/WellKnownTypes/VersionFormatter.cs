@@ -116,7 +116,7 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
                     if (digitFound || value >= divisor)
                     {
                         digitFound = true;
-                        int digit = value / divisor;
+                        var digit = value / divisor;
                         value -= digit * divisor;
 
                         // convert the digit to char by adding the value to '0'.
@@ -156,7 +156,7 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
     }
 
     /// <inheritdoc/>
-    public object? GetFormat(System.Type? formatType) => formatType == typeof(ICustomFormatter) || typeof(SemanticVersion).GetTypeInfo().IsAssignableFrom(formatType?.GetTypeInfo())
+    public object? GetFormat(System.Type? formatType) => formatType is not null && (formatType.Equals(typeof(ICustomFormatter)) || typeof(SemanticVersion).GetTypeInfo().IsAssignableFrom(formatType.GetTypeInfo()))
         ? this
         : default;
 }

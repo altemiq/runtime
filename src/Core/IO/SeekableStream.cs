@@ -163,9 +163,7 @@ public class SeekableStream : Stream
         }
 
         await base.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
-#pragma warning disable S3971 // "GC.SuppressFinalize" should not be called
         GC.SuppressFinalize(this);
-#pragma warning restore S3971 // "GC.SuppressFinalize" should not be called
     }
 #endif
 
@@ -217,11 +215,13 @@ public class SeekableStream : Stream
     public override bool Equals(object? obj) => this.stream.Equals(obj);
 
 #if NET5_0_OR_GREATER
-#pragma warning disable S1133 // Deprecated code should be removed
     /// <inheritdoc/>
+#pragma warning disable IDE0079
+#pragma warning disable RCS1222
+#pragma warning disable S1133
     [Obsolete($"This Remoting API is not supported and throws {nameof(PlatformNotSupportedException)}.")]
+#pragma warning restore S1133, RCS1222, IDE0079
     public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();
-#pragma warning restore S1133 // Deprecated code should be removed
 #elif NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <inheritdoc/>
     public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();

@@ -7,6 +7,7 @@
 namespace Altemiq.Runtime;
 
 using Microsoft.Extensions.DependencyModel;
+
 #if NET461_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 using System.Text.Json;
 #else
@@ -40,9 +41,7 @@ internal static class JsonRuntimeFormat
 #if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP
         return [.. Flatten([.. GetRuntimes(stream)])];
 #else
-#pragma warning disable IDE0305 // Simplify collection initialization
         return Flatten([.. GetRuntimes(stream)]).ToList().AsReadOnly();
-#pragma warning restore IDE0305 // Simplify collection initialization
 #endif
 
         static IEnumerable<Runtime> GetRuntimes(Stream stream)
