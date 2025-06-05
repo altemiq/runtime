@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.IO.Compression" />
+    <PackageReference Include="System.IO.Compression" VersionOverride="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

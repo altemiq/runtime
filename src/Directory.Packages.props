@@ -3,21 +3,11 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
+  
+  <Import Project="$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),$(MSBuildThisFileName.Replace('Packages', 'Versions'))$(MSBuildThisFileExtension)))" />
 
   <ItemGroup>
-    <PackageVersion Include="Grpc.Tools" Version="2.72.0" />
-    <PackageVersion Include="Humanizer.Core" Version="3.0.0-beta.96" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
-    <PackageVersion Include="Microsoft.DotNet.PlatformAbstractions" Version="3.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-    <PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="6.0.0" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0'))" />
-    <PackageVersion Include="PolySharp" Version="1.15.0" />
-    <PackageVersion Include="System.Collections.Concurrent" Version="4.3.0" />
-    <PackageVersion Include="System.Diagnostics.Contracts" Version="4.3.0" />
-    <PackageVersion Include="System.IO.Compression" Version="4.3.0" />
-    <PackageVersion Include="System.Memory" Version="4.5.0" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
-    <PackageVersion Include="System.Reflection.TypeExtensions" Version="4.1.0" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageVersion Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>

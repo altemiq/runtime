@@ -36,7 +36,7 @@
       </ItemGroup>
       
       <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.3')) ">
-        <PackageReference Include="System.ValueTuple" VersionOverride="4.3.0" />
+        <PackageReference Include="System.ValueTuple" />
       </ItemGroup>
     </When>
   </Choose>
