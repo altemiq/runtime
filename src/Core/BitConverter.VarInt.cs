@@ -730,7 +730,7 @@ public static partial class BitConverter
             throw new ArgumentException("Cannot decode variable integer from byte array.", nameof(bytes));
         }
 #endif
-#pragma warning restore IDE0051, S1144, IDE0079, RCS1222
+#pragma warning restore IDE0051, S1144, RCS1222, IDE0079
     }
 
     private const byte MostSignificantBit = 0x80;

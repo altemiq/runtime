@@ -9,6 +9,12 @@ namespace Altemiq.Runtime.InteropServices;
 public class RuntimeInformationTests
 {
     [Test]
+    public async Task SystemVsAltemiq()
+    {
+        await Assert.That(System.Runtime.InteropServices.RuntimeInformation.TargetFramework).IsEquivalentTo(RuntimeInformation.TargetFramework);
+    }
+
+    [Test]
     public async Task GetRuntimeIdentifier()
     {
         await Assert.That(RuntimeInformation.RuntimeIdentifier).IsNotNull().And.IsNotEmpty();

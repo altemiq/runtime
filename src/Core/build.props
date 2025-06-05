@@ -4,7 +4,6 @@
   <PropertyGroup>
     <_AltemiqImplicitUsings>false</_AltemiqImplicitUsings>
     <_AltemiqImplicitUsings Condition=" '$(ImplicitUsings)' == 'true' Or '$(ImplicitUsings)' == 'enable' ">true</_AltemiqImplicitUsings>
-    <ImplicitUsingsForExceptionThrowers Condition=" '$(ImplicitUsingsForExceptionThrowers)' == '' ">$(_AltemiqImplicitUsings)</ImplicitUsingsForExceptionThrowers>
   </PropertyGroup>
 
   <!-- Implicit imports -->

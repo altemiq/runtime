@@ -5,7 +5,7 @@
     <RootNamespace>$(Company).$(MSBuildProjectName)</RootNamespace>
     <RootNamespace Condition="$(RootNamespace.Contains('.Tests'))">$(RootNamespace.Replace('.Tests', ''))</RootNamespace>
     <AssemblyName>$(Company).$(MSBuildProjectName)</AssemblyName>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsNetOnCore>false</IsNetOnCore>
