@@ -22,8 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="BitConverterTests.*.cs" DependentUpon="BitConverterTests.cs" />
-    <Compile Update="Linq\ListTests.*.cs" DependentUpon="ListTests.cs" />
+    <Compile Update="BitConverterTests.*.cs;Linq\ListTests.*.cs">
+      <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)%(Extension)', '\.[^.]+\%(Extension)$', '%(Extension)'))</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <Import Project="..\..\Core\build.targets" />

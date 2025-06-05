@@ -21,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="SourceGenerator.*.cs" DependentUpon="SourceGenerator.cs" />
+    <Compile Update="SourceGenerator.*.cs">
+      <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)%(Extension)', '\.[^.]+\%(Extension)$', '%(Extension)'))</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <PropertyGroup>

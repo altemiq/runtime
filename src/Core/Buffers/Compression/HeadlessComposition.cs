@@ -21,6 +21,16 @@ internal class HeadlessComposition(IHeadlessInt32Codec first, IHeadlessInt32Code
     private readonly IHeadlessInt32Codec first = first;
     private readonly IHeadlessInt32Codec second = second;
 
+    /// <summary>
+    /// Creates a new instance using the specified codecs.
+    /// </summary>
+    /// <typeparam name="T1">The first type.</typeparam>
+    /// <typeparam name="T2">The second type.</typeparam>
+    /// <returns>The created composition.</returns>
+    public static HeadlessComposition Create<T1, T2>()
+        where T1 : IHeadlessInt32Codec, new()
+        where T2 : IHeadlessInt32Codec, new() => new(new T1(), new T2());
+
     /// <inheritdoc/>
     public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
     {

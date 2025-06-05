@@ -23,12 +23,22 @@ internal class Int32Compressor(IHeadlessInt32Codec codec)
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="Int32Compressor{T}"/> class.
+    /// Creates a new instance of the <see cref="Int32Compressor"/> class.
     /// </summary>
     /// <typeparam name="T">The type of compressor.</typeparam>
     /// <returns>The new instance.</returns>
-    public static Int32Compressor<T> Create<T>()
-        where T : IHeadlessInt32Codec, new() => new();
+    public static Int32Compressor Create<T>()
+        where T : IHeadlessInt32Codec, new() => new(new T());
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="Int32Compressor"/> class.
+    /// </summary>
+    /// <typeparam name="T1">The first type of compressor.</typeparam>
+    /// <typeparam name="T2">The second type of compressor.</typeparam>
+    /// <returns>The new instance.</returns>
+    public static Int32Compressor Create<T1, T2>()
+        where T1 : IHeadlessInt32Codec, new()
+        where T2 : IHeadlessInt32Codec, new() => new(HeadlessComposition.Create<T1, T2>());
 
     /// <summary>
     /// Compress an array and returns the compressed result as a new array.

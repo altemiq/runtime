@@ -17,6 +17,16 @@ namespace Altemiq.Buffers.Compression.Differential;
 /// <param name="second">The second codec.</param>
 internal class DifferentialComposition(IDifferentialInt32Codec first, IDifferentialInt32Codec second) : IDifferentialInt32Codec
 {
+    /// <summary>
+    /// Creates a new instance using the specified codecs.
+    /// </summary>
+    /// <typeparam name="T1">The first type.</typeparam>
+    /// <typeparam name="T2">The second type.</typeparam>
+    /// <returns>The created composition.</returns>
+    public static DifferentialComposition Create<T1, T2>()
+        where T1 : IDifferentialInt32Codec, new()
+        where T2 : IDifferentialInt32Codec, new() => new(new T1(), new T2());
+
     /// <inheritdoc/>
     public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
     {

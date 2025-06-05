@@ -6,13 +6,13 @@ public class HeadlessBasicTest
         [
             () => new Copy(),
             () => new VariableByte(),
-            () => new HeadlessComposition<BinaryPacking, VariableByte>(),
-            () => new HeadlessComposition<NewPfdS9, VariableByte>(),
-            () => new HeadlessComposition<NewPfdS16, VariableByte>(),
-            () => new HeadlessComposition<OptPfdS9, VariableByte>(),
-            () => new HeadlessComposition<OptPfdS16, VariableByte>(),
-            () => new HeadlessComposition<FastPatchingFrameOfReference128, VariableByte>(),
-            () => new HeadlessComposition<FastPatchingFrameOfReference256, VariableByte>(),
+            HeadlessComposition.Create<BinaryPacking, VariableByte>,
+            HeadlessComposition.Create<NewPfdS9, VariableByte>,
+            HeadlessComposition.Create<NewPfdS16, VariableByte>,
+            HeadlessComposition.Create<OptPfdS9, VariableByte>,
+            HeadlessComposition.Create<OptPfdS16, VariableByte>,
+            HeadlessComposition.Create<FastPatchingFrameOfReference128, VariableByte>,
+            HeadlessComposition.Create<FastPatchingFrameOfReference256, VariableByte>,
             () => new Simple9(),
             () => new Simple16()
         ];

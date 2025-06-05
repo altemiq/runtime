@@ -3,10 +3,10 @@
 public class Int32CompressorTests
 {
     private static readonly IEnumerable<Func<Int32Compressor>> IntegerCompressors =
-        [
-            () => new Int32Compressor<VariableByte>(),
-            () => new Int32Compressor<HeadlessComposition<BinaryPacking, VariableByte>>()
-        ];
+    [
+        Int32Compressor.Create<VariableByte>,
+        Int32Compressor.Create<BinaryPacking, VariableByte>,
+    ];
 
     public static IEnumerable<Func<IntegerCompressor>> Data()
     {
