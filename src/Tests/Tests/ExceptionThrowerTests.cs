@@ -43,7 +43,16 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(NegativeData))]
-        public Task OnNegative(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfNegative", typeof(ArgumentExceptionExtensions), value), @throw);
+        public Task OnNegative(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() =>
+            Run(
+                "ThrowIfNegative",
+#if NET8_0_OR_GREATER
+                typeof(System.ArgumentOutOfRangeException),
+#else
+                typeof(ArgumentExceptionExtensions),
+#endif
+                value),
+            @throw);
 
         public static IEnumerable<Func<(object, bool)>> NegativeData()
         {
@@ -65,7 +74,16 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(NegativeOrZeroData))]
-        public Task OnNegativeOrZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfNegativeOrZero", typeof(ArgumentExceptionExtensions), value), @throw);
+        public Task OnNegativeOrZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() =>
+            Run(
+                "ThrowIfNegativeOrZero",
+#if NET8_0_OR_GREATER
+                typeof(System.ArgumentOutOfRangeException),
+#else
+                typeof(ArgumentExceptionExtensions),
+#endif
+                value),
+            @throw);
 
         public static IEnumerable<Func<(object, bool)>> NegativeOrZeroData()
         {
@@ -94,7 +112,16 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(ZeroData))]
-        public Task OnZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfZero", typeof(ArgumentExceptionExtensions), value), @throw);
+        public Task OnZero(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() =>
+            Run(
+                "ThrowIfZero",
+#if NET8_0_OR_GREATER
+                typeof(System.ArgumentOutOfRangeException),
+#else
+                typeof(ArgumentExceptionExtensions),
+#endif
+                value),
+            @throw);
 
         public static IEnumerable<Func<(object, bool)>> ZeroData()
         {
@@ -123,7 +150,17 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(LessThanData))]
-        public Task OnLessThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfLessThan", typeof(ArgumentExceptionExtensions), value, default), @throw);
+        public Task OnLessThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() =>
+            Run(
+                "ThrowIfLessThan",
+#if NET8_0_OR_GREATER
+                typeof(System.ArgumentOutOfRangeException),
+#else
+                typeof(ArgumentExceptionExtensions),
+#endif
+                value,
+                default),
+            @throw);
 
         public static IEnumerable<Func<(object, bool)>> LessThanData()
         {
@@ -145,7 +182,17 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(LessThanOrEqualData))]
-        public Task OnLessThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfLessThanOrEqual", typeof(ArgumentExceptionExtensions), value, default), @throw);
+        public Task OnLessThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() =>
+            Run(
+                "ThrowIfLessThanOrEqual",
+#if NET8_0_OR_GREATER
+                typeof(System.ArgumentOutOfRangeException),
+#else
+                typeof(ArgumentExceptionExtensions),
+#endif
+                value,
+                default),
+            @throw);
 
         public static IEnumerable<Func<(object, bool)>> LessThanOrEqualData()
         {
@@ -174,7 +221,17 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(GreaterThanData))]
-        public Task OnGreaterThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfGreaterThan", typeof(ArgumentExceptionExtensions), value, default), @throw);
+        public Task OnGreaterThan(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() =>
+            Run(
+                "ThrowIfGreaterThan",
+#if NET8_0_OR_GREATER
+                typeof(System.ArgumentOutOfRangeException),
+#else
+                typeof(ArgumentExceptionExtensions),
+#endif
+                value,
+                default),
+            @throw);
 
         public static IEnumerable<Func<(object, bool)>> GreaterThanData()
         {
@@ -196,7 +253,17 @@ public static class ExceptionThrowerTests
 
         [Test]
         [MethodDataSource(nameof(GreaterThanOrEqualData))]
-        public Task OnGreaterThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() => Run("ThrowIfGreaterThanOrEqual", typeof(ArgumentExceptionExtensions), value, default), @throw);
+        public Task OnGreaterThanOrEqual(object value, bool @throw) => Do<System.ArgumentOutOfRangeException>(() =>
+            Run(
+                "ThrowIfGreaterThanOrEqual",
+#if NET8_0_OR_GREATER
+                typeof(System.ArgumentOutOfRangeException),
+#else
+                typeof(ArgumentExceptionExtensions),
+#endif
+                value,
+                default),
+            @throw);
 
         public static IEnumerable<Func<(object, bool)>> GreaterThanOrEqualData()
         {
