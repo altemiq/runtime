@@ -16,7 +16,7 @@ public class BitPackingBenchmarks
                 data[k] = r.Next(1 << bit);
             }
 
-            yield return new object[] { data, bit };
+            yield return [data, bit];
         }
     }
 

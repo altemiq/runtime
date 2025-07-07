@@ -36,20 +36,20 @@ internal class ClusteredDataGenerator
 
             var cut = length / 2 + (range - length > 1 ? this.generator.Random.Next(range - length - 1) : 0);
             var p = this.generator.Random.NextDouble();
-            if (p < 0.25)
+            switch (p)
             {
-                FillUniform(this.generator, array, offset, length / 2, min, min + cut);
-                FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
-            }
-            else if (p < 0.5)
-            {
-                FillClustered(array, offset, length / 2, min, min + cut);
-                FillUniform(this.generator, array, offset + length / 2, length - length / 2, min + cut, max);
-            }
-            else
-            {
-                FillClustered(array, offset, length / 2, min, min + cut);
-                FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
+                case < 0.25:
+                    FillUniform(this.generator, array, offset, length / 2, min, min + cut);
+                    FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
+                    break;
+                case < 0.5:
+                    FillClustered(array, offset, length / 2, min, min + cut);
+                    FillUniform(this.generator, array, offset + length / 2, length - length / 2, min + cut, max);
+                    break;
+                default:
+                    FillClustered(array, offset, length / 2, min, min + cut);
+                    FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
+                    break;
             }
 
             static void FillUniform(UniformDataGenerator generator, int[] array, int offset, int length, int min, int max)

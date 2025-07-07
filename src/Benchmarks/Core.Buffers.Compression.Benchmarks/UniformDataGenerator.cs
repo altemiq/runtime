@@ -9,29 +9,17 @@ namespace Altemiq.Buffers.Compression;
 /// <summary>
 /// The uniform data generator.
 /// </summary>
-internal class UniformDataGenerator
+/// <remarks>
+/// Initializes a new instance of the <see cref="UniformDataGenerator"/> class.
+/// </remarks>
+/// <param name="seed">The initial seed.</param>
+internal class UniformDataGenerator(int seed)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UniformDataGenerator"/> class.
-    /// </summary>
-    public UniformDataGenerator()
-    {
-        Random = new Random();
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UniformDataGenerator"/> class.
-    /// </summary>
-    /// <param name="seed">The initial seed.</param>
-    public UniformDataGenerator(int seed)
-    {
-        Random = new Random(seed);
-    }
 
     /// <summary>
     /// Gets the random number generator.
     /// </summary>
-    internal Random Random { get; }
+    internal Random Random { get; } = new Random(seed);
 
     /// <summary>
     /// Generates uniform data.
@@ -43,7 +31,7 @@ internal class UniformDataGenerator
     {
         return n switch
         {
-            var _ when n * 2 > max => Negate(GenerateUniform(max - n, max), max),
+            var _ when n * 2 > max => Negate(this.GenerateUniform(max - n, max), max),
             _ when 2048 * n > max => GenerateUniformBitmap(n, max),
             _ => GenerateUniformHash(n, max),
         };
@@ -83,7 +71,7 @@ internal class UniformDataGenerator
             var cardinality = 0;
             while (cardinality < size)
             {
-                var v = Random.Next(length);
+                var v = this.Random.Next(length);
                 if (!bs[v])
                 {
                     bs[v] = true;
@@ -124,7 +112,7 @@ internal class UniformDataGenerator
             HashSet<int> s = [];
             while (s.Count < size)
             {
-                _ = s.Add(Random.Next(length));
+                _ = s.Add(this.Random.Next(length));
             }
 
             var i = s.GetEnumerator();

@@ -13,22 +13,22 @@ internal class CodecRunner<T1, T2>
     public static IEnumerable<object[]> Data()
     {
         var cdg = new ClusteredDataGenerator();
-        IEnumerable<int> nbrs = [18];
+        IEnumerable<int> numbers = [18];
 
-        foreach (var nbr in nbrs)
+        foreach (var number in numbers)
         {
-            var maxSparsity = 31 - nbr;
+            var maxSparsity = 31 - number;
             for (var sparsity = 0; sparsity <= maxSparsity; sparsity += 8)
             {
-                var dataSize = 1 << (nbr + sparsity);
-                var data = cdg.GenerateClustered(1 << nbr, dataSize);
+                var dataSize = 1 << (number + sparsity);
+                var data = cdg.GenerateClustered(1 << number, dataSize);
 
                 if (typeof(T1).IsAssignableTo(typeof(Buffers.Compression.Differential.IDifferentialInt32Codec)))
                 {
                     Delta.Forward(data);
                 }
 
-                yield return new object[] { data, sparsity };
+                yield return [data, sparsity];
             }
         }
     }
@@ -61,18 +61,18 @@ internal class CodecRunner<T1, T2>
         var backupData = new int[data.Length];
         System.Array.Copy(data, backupData, data.Length);
 
-        var inpos = new Genbox.CSharpFastPFOR.IntWrapper();
-        var outpos = new Genbox.CSharpFastPFOR.IntWrapper();
+        var input = new Genbox.CSharpFastPFOR.IntWrapper();
+        var output = new Genbox.CSharpFastPFOR.IntWrapper();
 
-        inpos.set(1);
-        outpos.set(0);
-        this.genboxCodec.compress(backupData, inpos, backupData.Length - inpos.get(), compressBuffer, outpos);
+        input.set(1);
+        output.set(0);
+        this.genboxCodec.compress(backupData, input, backupData.Length - input.get(), compressBuffer, output);
 
-        var thiscompsize = outpos.get();
+        var size = output.get();
 
-        inpos.set(0);
-        outpos.set(1);
+        input.set(0);
+        output.set(1);
         decompressBuffer[0] = compressBuffer[0];
-        this.genboxCodec.uncompress(compressBuffer, inpos, thiscompsize, decompressBuffer, outpos);
+        this.genboxCodec.uncompress(compressBuffer, input, size, decompressBuffer, output);
     }
 }
