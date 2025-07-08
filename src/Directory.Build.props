@@ -5,6 +5,7 @@
 
     <Authors>Ross King</Authors>
     <Description>A collection of base classes.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <PackageTags>Core</PackageTags>
     <NeutralLanguage>en-AU</NeutralLanguage>
