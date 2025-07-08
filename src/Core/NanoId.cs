@@ -79,7 +79,7 @@ public static class NanoId
     /// <returns>A new string representing a random nanoid with the specified <paramref name="alphabet"/> and <paramref name="size"/>.</returns>
     /// <exception cref="ArgumentNullException">If any of the provided arguments are null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="alphabet"/>'s length is outside the range [0, 256] or if <paramref name="size"/> is less than or equal to 0.</exception>
-    public static string Generate(string alphabet = Alphabets.Default, int size = 21)
+    public static string Generate(string alphabet = Alphabets.Default, int size = DefaultIdSize)
     {
         Validate(alphabet, size);
 
@@ -95,7 +95,7 @@ public static class NanoId
     /// <returns>A new string representing a random nanoid with the specified <paramref name="alphabet"/> and <paramref name="size"/>.</returns>
     /// <exception cref="ArgumentNullException">If any of the provided arguments are null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="alphabet"/>'s length is outside the range [0, 256] or if <paramref name="size"/> is less than or equal to 0.</exception>
-    public static string Generate(System.Random random, string alphabet = Alphabets.Default, int size = 21)
+    public static string Generate(System.Random random, string alphabet = Alphabets.Default, int size = DefaultIdSize)
     {
         Validate(alphabet, size);
 
@@ -140,7 +140,7 @@ public static class NanoId
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(size, 0);
     }
 
-    private static string GenerateImpl(System.Random random, string alphabet = Alphabets.Default, int size = 21)
+    private static string GenerateImpl(System.Random random, string alphabet, int size)
     {
         // See https://github.com/ai/nanoid/blob/master/format.js for an explanation as to why masking with `random % alphabet` is a common mistake security-wise.
 #if USE_GENERIC_MATH
