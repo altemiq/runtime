@@ -29,7 +29,7 @@
 
   <PropertyGroup Label="Signing" Condition=" '$(Configuration)' != '' AND '$(Configuration)' != 'Debug' ">
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$([MSBuild]::GetPathOfFileAbove(Core.snk))</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$([MSBuild]::GetPathOfFileAbove(Runtime.snk))</AssemblyOriginatorKeyFile>
     <PublicKey>002400000480000094000000060200000024000052534131000400000100010095e864d575cc14c8873fc39f8497976caa11c567b8fb62208efc332418833e7902fd73655b8aa51611ae0b00c3e58ae0a9147978f62de10cc1620cc3e48bc6c12fd361fabb9dc1f4e72d4837e0d1a99aab45a9fb14332f65d427ba361f225ee672bb6857ace94005bb338034eb4c2c351b0e50f858f98b14148a2af99a0d7acd</PublicKey>
   </PropertyGroup>
 
