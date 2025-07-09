@@ -3,11 +3,6 @@
   <PropertyGroup>
     <VersionPrefix Condition="'$(VersionPrefix)' == ''">1.0</VersionPrefix>
 
-    <Authors>Ross King</Authors>
-    <Description>A collection of base classes.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-
-    <PackageTags>Core</PackageTags>
     <NeutralLanguage>en-AU</NeutralLanguage>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
@@ -19,6 +14,13 @@
 
     <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
     <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="Packaging">
+    <Authors>rsking;altemiq</Authors>
+    <Description>A collection of base classes.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>Core</PackageTags>    
   </PropertyGroup>
 
   <PropertyGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard' and $([MSBuild]::VersionLessThan($([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')), '2.0')) ">

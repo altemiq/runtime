@@ -7,8 +7,15 @@
     <ImplicitUsings>false</ImplicitUsings>
     <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
+  
+  <PropertyGroup Label="Packaging">
+    <PackageIcon>packageIcon.png</PackageIcon>
+    <PackageTags>gRPC;RPC;HTTP/2</PackageTags>
+    <Description>gRPC and Protocol Buffer extensions for C# projects</Description>
+  </PropertyGroup>
 
   <ItemGroup>
+    <None Include="packageIcon.png" Pack="true" PackagePath="\" />
     <None Include="**\*.proto" Pack="true" PackagePath="\build\" />
     <None Include="build.*" Pack="true" PackagePath="\build\$(PackageId)%(Extension)" />
   </ItemGroup>

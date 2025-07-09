@@ -6,6 +6,16 @@
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
     <PolySharpIncludeGeneratedTypes>System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute;System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute;System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute</PolySharpIncludeGeneratedTypes>
   </PropertyGroup>
+  
+  <PropertyGroup Label="Packaging">
+    <PackageIcon>Icon.png</PackageIcon>
+    <PackageTags>cache;distributedcache;hybridcache;protobuf</PackageTags>
+    <Description>Serialization implementations building on and extending IHybridCache</Description>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="Icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" VersionOverride="9.3.0" />
