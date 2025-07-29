@@ -35,7 +35,7 @@ internal sealed class DifferentialInt32Compressor(IHeadlessDifferentialInt32Code
         var destinationIndex = 1;
         var initValue = 0;
         this.codec.Compress(input, ref sourceIndex, compressed, ref destinationIndex, input.Length, ref initValue);
-        System.Array.Resize(ref compressed, destinationIndex);
+        Array.Resize(ref compressed, destinationIndex);
         return compressed;
     }
 

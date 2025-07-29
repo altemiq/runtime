@@ -21,27 +21,14 @@ public class StructConverter : System.Text.Json.Serialization.JsonConverter<Stru
     /// </summary>
     /// <param name="document">The <see cref="JsonDocument"/> instance.</param>
     /// <returns>The <see cref="Struct"/> instance.</returns>
-    public static Struct? ToStruct(JsonDocument? document)
-    {
-        if (document is null
-            || document.RootElement is { ValueKind: JsonValueKind.Null })
+    public static Struct? ToStruct(JsonDocument? document) =>
+        document switch
         {
-            return default;
-        }
-
-        if (document.RootElement.ValueKind is not JsonValueKind.Object)
-        {
-            // needs to be an object to do this
-            throw new JsonException();
-        }
-
-        // convert this to a `google.protobuf.Struct`
-        return document.RootElement.ToValue() switch
-        {
-            { StructValue: { } structValue } => structValue,
+            null or { RootElement.ValueKind: JsonValueKind.Null } => default,
+            { RootElement.ValueKind: not JsonValueKind.Object } => throw new JsonException(),
+            { RootElement: var element } when element.ToValue() is { StructValue: { } structValue } => structValue,
             _ => throw new JsonException(),
         };
-    }
 
     /// <summary>
     /// Creates a <see cref="JsonDocument"/> from a <see cref="Struct"/> instance.

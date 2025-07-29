@@ -259,11 +259,13 @@ internal sealed class RuntimeConfig(string path)
     /// </summary>
     /// <param name="path">The additional probing path to set.</param>
     /// <returns>This instance with the additional probing path set.</returns>
+#pragma warning disable ParameterHidesPrimaryConstructorParameter
     public RuntimeConfig WithAdditionalProbingPath(string path)
     {
         this.additionalProbingPaths.Add(path);
         return this;
     }
+#pragma warning restore ParameterHidesPrimaryConstructorParameter
 
     /// <summary>
     /// Sets the property.

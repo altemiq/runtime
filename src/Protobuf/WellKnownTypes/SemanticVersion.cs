@@ -569,18 +569,12 @@ public partial class SemanticVersion :
         }
     }
 
-    private static System.Version NormalizeVersionValue(System.Version version)
-    {
-        if (version.Build < 0
-            || version.Revision < 0)
-        {
-            return new(
+    private static System.Version NormalizeVersionValue(System.Version version) =>
+        version.Build < 0 || version.Revision < 0
+            ? new(
                 version.Major,
                 version.Minor,
                 Math.Max(version.Build, 0),
-                Math.Max(version.Revision, 0));
-        }
-
-        return version;
-    }
+                Math.Max(version.Revision, 0))
+            : version;
 }

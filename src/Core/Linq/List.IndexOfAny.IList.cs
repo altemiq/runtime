@@ -18,7 +18,7 @@ public static partial class List
     /// <param name="buffer">The buffer to search.</param>
     /// <param name="anyOf">The array of <typeparamref name="T"/> sequences to seek.</param>
     /// <returns>The zero-based index position of the first occurrence in this instance where any <typeparamref name="T"/> sequence in <paramref name="anyOf"/> was found; -1 if no byte sequence in <paramref name="anyOf"/> was found.</returns>
-    public static int IndexOfAny<T>(this IList<T> buffer, params IList<T>[] anyOf)
+    public static int IndexOfAny<T>(this IList<T>? buffer, params IList<T>[] anyOf)
         where T : IEquatable<T> => IndexOfAny(buffer, 0, anyOf);
 
     /// <summary>
@@ -30,7 +30,7 @@ public static partial class List
     /// <param name="startIndex">The search starting position.</param>
     /// <param name="anyOf">The array of <typeparamref name="T"/> sequences to seek.</param>
     /// <returns>The zero-based index position of the first occurrence in this instance where any <typeparamref name="T"/> sequence in <paramref name="anyOf"/> was found; -1 if no byte sequence in <paramref name="anyOf"/> was found.</returns>
-    public static int IndexOfAny<T>(this IList<T> buffer, int startIndex, params IList<T>[] anyOf)
+    public static int IndexOfAny<T>(this IList<T>? buffer, int startIndex, params IList<T>[] anyOf)
         where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? IndexOfAny(buffer, startIndex, buffer.Count - startIndex, anyOf) : -1;
 
     /// <summary>
@@ -43,7 +43,7 @@ public static partial class List
     /// <param name="count">The number of items to examine.</param>
     /// <param name="anyOf">The array of <typeparamref name="T"/> sequences to seek.</param>
     /// <returns>The zero-based index position of the first occurrence in this instance where any <typeparamref name="T"/> sequence in <paramref name="anyOf"/> was found; -1 if no byte sequence in <paramref name="anyOf"/> was found.</returns>
-    public static int IndexOfAny<T>(this IList<T> buffer, int startIndex, int count, params IList<T>[] anyOf)
+    public static int IndexOfAny<T>(this IList<T>? buffer, int startIndex, int count, params IList<T>[] anyOf)
         where T : IEquatable<T>
     {
         return (buffer, anyOf) switch

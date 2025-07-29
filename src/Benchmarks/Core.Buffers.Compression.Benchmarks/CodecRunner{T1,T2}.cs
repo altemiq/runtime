@@ -23,7 +23,7 @@ internal class CodecRunner<T1, T2>
                 var dataSize = 1 << (number + sparsity);
                 var data = cdg.GenerateClustered(1 << number, dataSize);
 
-                if (typeof(T1).IsAssignableTo(typeof(Buffers.Compression.Differential.IDifferentialInt32Codec)))
+                if (typeof(T1).IsAssignableTo(typeof(IDifferentialInt32Codec)))
                 {
                     Delta.Forward(data);
                 }
@@ -39,7 +39,7 @@ internal class CodecRunner<T1, T2>
         var compressBuffer = new int[(4 * data.Length) + 1024];
         var decompressBuffer = new int[data.Length + 1024];
         var backupData = new int[data.Length];
-        System.Array.Copy(data, backupData, data.Length);
+        Array.Copy(data, backupData, data.Length);
 
         var input = 1;
         var output = 0;
@@ -59,7 +59,7 @@ internal class CodecRunner<T1, T2>
         var compressBuffer = new int[(4 * data.Length) + 1024];
         var decompressBuffer = new int[data.Length + 1024];
         var backupData = new int[data.Length];
-        System.Array.Copy(data, backupData, data.Length);
+        Array.Copy(data, backupData, data.Length);
 
         var input = new Genbox.CSharpFastPFOR.IntWrapper();
         var output = new Genbox.CSharpFastPFOR.IntWrapper();

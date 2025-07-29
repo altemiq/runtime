@@ -21,7 +21,7 @@ public static partial class BitArrayExtensions
     /// <param name="bitArray">The bit array to copy from.</param>
     /// <param name="array">The one-dimensional <see cref="ArrayExtensions"/> that is the destination of the elements copied from <see cref="System.Collections.BitArray"/>. The <see cref="ArrayExtensions"/> must have zero-based indexing.</param>
     /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
-    public static void CopyTo(this System.Collections.BitArray bitArray, System.Array array, int index)
+    public static void CopyTo(this System.Collections.BitArray bitArray, Array array, int index)
     {
         const int BitShiftPerInt32 = 5;
 
@@ -43,14 +43,14 @@ public static partial class BitArrayExtensions
             if (extraBits is 0)
             {
                 // we have perfect bit alignment, no need to sanitize, just copy
-                System.Array.Copy(arrayFromBitArray, 0, intArray, index, arrayFromBitArray.Length);
+                Array.Copy(arrayFromBitArray, 0, intArray, index, arrayFromBitArray.Length);
             }
             else
             {
                 var last = (bitArray.Length - 1) >> BitShiftPerInt32;
 
                 // do not copy the last int, as it is not completely used
-                System.Array.Copy(arrayFromBitArray, 0, intArray, index, last);
+                Array.Copy(arrayFromBitArray, 0, intArray, index, last);
 
                 // the last int needs to be masked
                 intArray[index + last] = arrayFromBitArray[last] & unchecked((1 << extraBits) - 1);

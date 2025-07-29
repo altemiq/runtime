@@ -14,6 +14,7 @@ public static partial class BitConverter
     /// <summary>
     /// Extension methods for <see cref="System.BitConverter"/>.
     /// </summary>
+#pragma warning disable SA1137, SA1400, S1144
     extension(System.BitConverter)
     {
         /// <inheritdoc cref="System.BitConverter.GetBytes(bool)" />
@@ -1088,6 +1089,8 @@ public static partial class BitConverter
 #pragma warning restore IDE0051, S1144, IDE0079, RCS1222
     }
 
+#pragma warning disable SA1201
     /// <inheritdoc cref="System.BitConverter.IsLittleEndian" />
     public static readonly bool IsLittleEndian = System.BitConverter.IsLittleEndian;
+#pragma warning restore SA1137, SA1201, SA1400, S1144
 }

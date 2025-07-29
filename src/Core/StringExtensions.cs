@@ -160,7 +160,7 @@ public static class StringExtensions
             // resize the array
             if (values.Length != returnIndex)
             {
-                System.Array.Resize(ref values, returnIndex);
+                Array.Resize(ref values, returnIndex);
             }
 
             return values;

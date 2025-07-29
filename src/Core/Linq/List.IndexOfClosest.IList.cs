@@ -21,7 +21,7 @@ public static partial class List
     /// The index of the specified <paramref name="value"/> in the specified <paramref name="source"/>, if <paramref name="value"/> is found; otherwise if <paramref name="value"/> is not found and value is less than one or more elements in array, the index of the first element that is larger than value.
     /// </returns>
     public static int IndexOfClosest<T>(this IList<T> source, T value)
-        where T : IComparable => IndexOfClosest(source, 0, source?.Count ?? 0, value);
+        where T : IComparable => IndexOfClosest(source, 0, source.Count, value);
 
     /// <summary>
     /// Searches an entire one-dimensional sorted <see cref="IList{T}"/> for a specific element, using the <see cref="IComparable{T}"/> generic interface implemented by each element of the <see cref="IList{T}"/> and by the specified <typeparamref name="T"/>.
@@ -48,7 +48,7 @@ public static partial class List
     /// <returns>
     /// The index of the specified <paramref name="value"/> in the specified <paramref name="source"/>, if <paramref name="value"/> is found; otherwise if <paramref name="value"/> is not found and value is less than one or more elements in array, the index of the first element that is larger than value.
     /// </returns>
-    public static int IndexOfClosest<TSource, TValue>(this IList<TSource> source, TValue value, Func<TSource, TValue, int> comparison) => IndexOfClosest(source, 0, source?.Count ?? 0, value, comparison);
+    public static int IndexOfClosest<TSource, TValue>(this IList<TSource> source, TValue value, Func<TSource, TValue, int> comparison) => IndexOfClosest(source, 0, source.Count, value, comparison);
 
     /// <summary>
     /// Searches an entire one-dimensional sorted <see cref="IList{TSource}"/> for the closest value to the specified <typeparamref name="TValue"/>, using the specified <paramref name="comparison"/> function.
@@ -66,7 +66,7 @@ public static partial class List
     public static int IndexOfClosest<TSource, TValue>(this IList<TSource> source, int index, int length, TValue value, Func<TSource, TValue, int> comparison)
     {
         ArgumentNullException.ThrowIfNull(source);
-#if NET7_0_OR_GREATER
+#if NET7_0
         ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
 #else
         ArgumentOutOfRangeException.ThrowIfNegative(index);

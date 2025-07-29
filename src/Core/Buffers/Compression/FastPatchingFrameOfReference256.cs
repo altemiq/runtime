@@ -116,7 +116,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
             var temporaryDestinationIndex = destinationPageIndex;
 
             // Clear working area.
-            System.Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
+            Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
             this.byteContainer.Clear();
 
             var temporarySourceIndex = sourcePageIndex;
@@ -139,7 +139,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                         // make sure it is a multiple of 32
                         newSize = Util.GreatestMultiple(newSize + 31, 32);
                         var temp = this.dataTobePacked[dataIndex];
-                        System.Array.Resize(ref temp, newSize);
+                        Array.Resize(ref temp, newSize);
                         this.dataTobePacked[dataIndex] = temp;
                     }
 
@@ -208,7 +208,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
 
             void GetBestBFromData(int[] input, int index)
             {
-                System.Array.Clear(this.frequencies, 0, this.frequencies.Length);
+                Array.Clear(this.frequencies, 0, this.frequencies.Length);
                 int end = index + BlockSize;
                 for (var k = index; k < end; k++)
                 {
@@ -310,7 +310,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                     {
                         var buf = new int[roundedUp / 32 * k];
                         var initialExcept = exceptIndex;
-                        System.Array.Copy(sourcePage, exceptIndex, buf, 0, sourcePage.Length - exceptIndex);
+                        Array.Copy(sourcePage, exceptIndex, buf, 0, sourcePage.Length - exceptIndex);
 
                         var j = 0;
                         for (; j < currentSize; j += 32)
@@ -325,7 +325,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                 }
             }
 
-            System.Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
+            Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
             var temporaryDestinationIndex = destinationPageIndex;
             var temporarySourceIndex = sourcePageIndex;
 

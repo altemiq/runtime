@@ -6,6 +6,7 @@
 
 namespace Altemiq;
 
+using SystemRandom = System.Random;
 #if NETSTANDARD1_3_OR_GREATER || NET || NETFRAMEWORK
 using Random = Altemiq.Security.Cryptography.Random;
 #endif
@@ -64,7 +65,7 @@ public static class NanoId
     /// </returns>
     /// <exception cref="ArgumentNullException">If any of the provided arguments are null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="alphabet"/>'s length is outside the range [0, 256] or if <paramref name="size"/> is less than or equal to 0.</exception>
-    public static Task<string> GenerateAsync(System.Random random, string alphabet = Alphabets.Default, int size = DefaultIdSize)
+    public static Task<string> GenerateAsync(SystemRandom random, string alphabet = Alphabets.Default, int size = DefaultIdSize)
     {
         Validate(alphabet, size);
 
@@ -95,7 +96,7 @@ public static class NanoId
     /// <returns>A new string representing a random nanoid with the specified <paramref name="alphabet"/> and <paramref name="size"/>.</returns>
     /// <exception cref="ArgumentNullException">If any of the provided arguments are null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">If <paramref name="alphabet"/>'s length is outside the range [0, 256] or if <paramref name="size"/> is less than or equal to 0.</exception>
-    public static string Generate(System.Random random, string alphabet = Alphabets.Default, int size = DefaultIdSize)
+    public static string Generate(SystemRandom random, string alphabet = Alphabets.Default, int size = DefaultIdSize)
     {
         Validate(alphabet, size);
 
@@ -140,7 +141,7 @@ public static class NanoId
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(size, 0);
     }
 
-    private static string GenerateImpl(System.Random random, string alphabet, int size)
+    private static string GenerateImpl(SystemRandom random, string alphabet, int size)
     {
         // See https://github.com/ai/nanoid/blob/master/format.js for an explanation as to why masking with `random % alphabet` is a common mistake security-wise.
 #if USE_GENERIC_MATH
@@ -164,7 +165,7 @@ public static class NanoId
         var bytes = new byte[step];
 #endif
 
-        var cnt = 0;
+        var count = 0;
 
         while (true)
         {
@@ -179,8 +180,8 @@ public static class NanoId
                     continue;
                 }
 
-                builder[cnt] = alphabet[alphabetIndex];
-                if (++cnt == size)
+                builder[count] = alphabet[alphabetIndex];
+                if (++count == size)
                 {
                     return new string(builder);
                 }

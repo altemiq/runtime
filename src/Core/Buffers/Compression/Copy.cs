@@ -28,14 +28,14 @@ internal sealed class Copy : IInt32Codec, IHeadlessInt32Codec
 
     private static void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
     {
-        System.Array.Copy(source, sourceIndex, destination, destinationIndex, length);
+        Array.Copy(source, sourceIndex, destination, destinationIndex, length);
         sourceIndex += length;
         destinationIndex += length;
     }
 
     private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
     {
-        System.Array.Copy(source, sourceIndex, destination, destinationIndex, number);
+        Array.Copy(source, sourceIndex, destination, destinationIndex, number);
         sourceIndex += number;
         destinationIndex += number;
     }

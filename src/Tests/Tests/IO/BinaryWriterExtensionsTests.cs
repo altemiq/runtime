@@ -134,7 +134,7 @@ public class BinaryWriterExtensionsTests
         var streamArray = stream.ToArray();
         if (streamArray.Length < buffer.Length)
         {
-            System.Array.Resize(ref streamArray, buffer.Length);
+            Array.Resize(ref streamArray, buffer.Length);
         }
 
         await Assert.That(streamArray).IsEquivalentTo(buffer);

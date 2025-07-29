@@ -5,10 +5,9 @@
 // -----------------------------------------------------------------------
 
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK
-
 #pragma warning disable IDE0079
 #pragma warning disable RCS1222
-#pragma warning disable CA1050, MA0047, RCS1110
+#pragma warning disable CA1050, MA0047, RCS1110, CheckNamespace
 
 /// <summary>
 /// <see cref="System.Runtime.InteropServices.RuntimeEnvironment"/> extensions.
@@ -18,6 +17,7 @@ public static class RuntimeEnvironmentExtensions
     /// <summary>
     /// <see cref="System.Runtime.InteropServices.RuntimeEnvironment"/> extensions.
     /// </summary>
+#pragma warning disable SA1137, SA1400, S1144
     extension(System.Runtime.InteropServices.RuntimeEnvironment)
     {
         /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeNativeDirectory()" />
@@ -110,7 +110,7 @@ public static class RuntimeEnvironmentExtensions
         /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.CreateExecutableName" />
         public static string CreateExecutableName(string name) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.CreateExecutableName(name);
     }
+#pragma warning restore SA1137, SA1400, S1144
 }
-
-#pragma warning restore CA1050, MA0047, RCS1110, RCS1222, IDE0079
+#pragma warning restore CA1050, MA0047, RCS1110, RCS1222, IDE0079, CheckNamespace
 #endif

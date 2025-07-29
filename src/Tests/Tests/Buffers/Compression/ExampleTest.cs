@@ -51,7 +51,7 @@ public class ExampleTest
         // got it!
         // inputOffset should be at data.Length but outputOffset tells us where we are...
         // we can repack the data: (optional)
-        System.Array.Resize(ref compressed, outputOffset);
+        Array.Resize(ref compressed, outputOffset);
 
         // now decompressing
         // This assumes that we otherwise know how many integers have been
@@ -88,7 +88,7 @@ public class ExampleTest
         codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length, ref initValue);
 
         // we can repack the data: (optional)
-        System.Array.Resize(ref compressed, outputOffset);
+        Array.Resize(ref compressed, outputOffset);
 
         var howMany = compressed[0]; // we manually stored the number of compressed integers
         var decompressed = new int[howMany];
@@ -129,7 +129,7 @@ public class ExampleTest
         var compressedOffset = 0;
         codec.Compress(unsortedData, ref inputOffset, compressed, ref compressedOffset, unsortedData.Length);
         // we can repack the data: (optional)
-        System.Array.Resize(ref compressed, compressedOffset);
+        Array.Resize(ref compressed, compressedOffset);
 
         var decompressed = new int[N];
         var decompressedOffset = 0;
@@ -164,7 +164,7 @@ public class ExampleTest
         lastCodec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length % ChunkSize);
 
         // we can repack the data:
-        System.Array.Resize(ref compressed, outputOffset);
+        Array.Resize(ref compressed, outputOffset);
 
         var decompressed = new int[ChunkSize];
         var compressedOffset = 0;
@@ -211,7 +211,7 @@ public class ExampleTest
         codec.Compress(uncompressed2, ref inPos, compressed, ref outPos, uncompressed2.Length);
         var length2 = outPos - previous;
 
-        System.Array.Resize(ref compressed, length1 + length2);
+        Array.Resize(ref compressed, length1 + length2);
 
         var recovered1 = new int[uncompressed1.Length];
         var recovered2 = new int[uncompressed1.Length];

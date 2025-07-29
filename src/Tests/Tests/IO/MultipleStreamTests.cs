@@ -263,7 +263,7 @@ public class MultipleStreamTests
         _ = stream.Read(bytes, 0, bytes.Length);
 
         var expectedBytes = new byte[20];
-        System.Array.Copy(second, PositionToRead - FirstSize, expectedBytes, 0, expectedBytes.Length);
+        Array.Copy(second, PositionToRead - FirstSize, expectedBytes, 0, expectedBytes.Length);
 
         await Assert.That(bytes).IsEquivalentTo(expectedBytes);
 

@@ -17,7 +17,8 @@ public static class ArgumentExceptionExtensions
     /// <summary>
     /// The <see cref="ArgumentException"/> extensions.
     /// </summary>
-    extension(System.ArgumentException)
+#pragma warning disable SA1137, SA1400, S1144
+    extension(ArgumentException)
     {
 #if !NET7_0_OR_GREATER
         /// <summary>
@@ -27,7 +28,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="paramName">The name of the parameter with which <paramref name="argument"/> corresponds.</param>
         /// <exception cref="ArgumentNullException"><paramref name="argument"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="argument"/> is empty.</exception>
-        public static void ThrowIfNullOrEmpty([System.Diagnostics.CodeAnalysis.NotNull] string? argument, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(argument))] string? paramName = null)
+        public static void ThrowIfNullOrEmpty([Diagnostics.CodeAnalysis.NotNull] string? argument, [Runtime.CompilerServices.CallerArgumentExpression(nameof(argument))] string? paramName = null)
         {
 #if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
             if (string.IsNullOrEmpty(argument))
@@ -50,7 +51,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="paramName">The name of the parameter with which <paramref name="argument"/> corresponds.</param>
         /// <exception cref="ArgumentNullException"><paramref name="argument"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="argument"/> is empty or consists only of white-space characters.</exception>
-        public static void ThrowIfNullOrWhiteSpace([System.Diagnostics.CodeAnalysis.NotNull] string? argument, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(argument))] string? paramName = null)
+        public static void ThrowIfNullOrWhiteSpace([Diagnostics.CodeAnalysis.NotNull] string? argument, [Runtime.CompilerServices.CallerArgumentExpression(nameof(argument))] string? paramName = null)
         {
 #if NET5_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
             if (string.IsNullOrWhiteSpace(argument))
@@ -67,7 +68,7 @@ public static class ArgumentExceptionExtensions
 
 #pragma warning disable IDE0051, S3236
 #if !NET7_0_OR_GREATER
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowNullOrEmptyException(string? argument, string? paramName)
         {
             ArgumentNullException.ThrowIfNull(argument, paramName);
@@ -75,7 +76,7 @@ public static class ArgumentExceptionExtensions
         }
 #endif
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowNullOrWhiteSpaceException(string? argument, string? paramName)
         {
             ArgumentNullException.ThrowIfNull(argument, paramName);
@@ -89,14 +90,14 @@ public static class ArgumentExceptionExtensions
     /// <summary>
     /// The <see cref="ArgumentNullException"/> extensions.
     /// </summary>
-    extension(System.ArgumentNullException)
+    extension(ArgumentNullException)
     {
         /// <summary>
         /// Throws an <see cref="ArgumentNullException"/> if <paramref name="argument"/> is null.
         /// </summary>
         /// <param name="argument">The reference type argument to validate as non-null.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="argument"/> corresponds.</param>
-        public static void ThrowIfNull([System.Diagnostics.CodeAnalysis.NotNull] object? argument, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(argument))] string? paramName = null)
+        public static void ThrowIfNull([Diagnostics.CodeAnalysis.NotNull] object? argument, [Runtime.CompilerServices.CallerArgumentExpression(nameof(argument))] string? paramName = null)
         {
             if (argument is null)
             {
@@ -105,7 +106,7 @@ public static class ArgumentExceptionExtensions
         }
 
 #pragma warning disable IDE0051
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void Throw(string? paramName) => throw new ArgumentNullException(paramName);
 #pragma warning restore IDE0051
     }
@@ -115,7 +116,7 @@ public static class ArgumentExceptionExtensions
     /// <summary>
     /// The <see cref="ArgumentOutOfRangeException"/> extensions.
     /// </summary>
-    extension(System.ArgumentOutOfRangeException)
+    extension(ArgumentOutOfRangeException)
     {
         /// <summary>
         /// Throws an <see cref="ArgumentOutOfRangeException"/> if <paramref name="value"/> is equal to <paramref name="other"/>.
@@ -124,7 +125,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as not equal to <paramref name="other"/>.</param>
         /// <param name="other">The value to compare with <paramref name="value"/>.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
-        public static void ThrowIfEqual<T>(T value, T other, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfEqual<T>(T value, T other, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
             where T : IEquatable<T>?
         {
             if (EqualityComparer<T>.Default.Equals(value, other))
@@ -140,7 +141,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as not equal to <paramref name="other"/>.</param>
         /// <param name="other">The value to compare with <paramref name="value"/>.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
-        public static void ThrowIfGreaterThan<T>(T value, T other, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfGreaterThan<T>(T value, T other, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
             where T : IComparable<T>
         {
             if (value.CompareTo(other) > 0)
@@ -156,7 +157,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as not equal to <paramref name="other"/>.</param>
         /// <param name="other">The value to compare with <paramref name="value"/>.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
-        public static void ThrowIfGreaterThanOrEqual<T>(T value, T other, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfGreaterThanOrEqual<T>(T value, T other, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
             where T : IComparable<T>
         {
             if (value.CompareTo(other) >= 0)
@@ -172,7 +173,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as not equal to <paramref name="other"/>.</param>
         /// <param name="other">The value to compare with <paramref name="value"/>.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
-        public static void ThrowIfLessThan<T>(T value, T other, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfLessThan<T>(T value, T other, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
             where T : IComparable<T>
         {
             if (value.CompareTo(other) < 0)
@@ -188,7 +189,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as not equal to <paramref name="other"/>.</param>
         /// <param name="other">The value to compare with <paramref name="value"/>.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
-        public static void ThrowIfLessThanOrEqual<T>(T value, T other, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfLessThanOrEqual<T>(T value, T other, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
             where T : IComparable<T>
         {
             if (value.CompareTo(other) <= 0)
@@ -205,8 +206,8 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegative<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
-            where T : System.Numerics.INumberBase<T>
+        public static void ThrowIfNegative<T>(T value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+            where T : Numerics.INumberBase<T>
         {
             if (T.IsNegative(value))
             {
@@ -221,7 +222,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
         [CLSCompliant(false)]
-        public static void ThrowIfNegative(sbyte value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegative(sbyte value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             const sbyte Zero = 0;
             if (value < Zero)
@@ -236,7 +237,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegative(short value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegative(short value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             const short Zero = 0;
             if (value < Zero)
@@ -251,7 +252,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegative(int value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegative(int value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value < 0)
             {
@@ -265,7 +266,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegative(long value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegative(long value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value < 0L)
             {
@@ -279,7 +280,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegative(float value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegative(float value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value < 0F)
             {
@@ -293,7 +294,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegative(double value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegative(double value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value < 0D)
             {
@@ -307,7 +308,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegative(decimal value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegative(decimal value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value < 0M)
             {
@@ -324,8 +325,8 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegativeOrZero<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
-            where T : System.Numerics.INumberBase<T>
+        public static void ThrowIfNegativeOrZero<T>(T value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+            where T : Numerics.INumberBase<T>
         {
             if (T.IsNegative(value) || T.IsZero(value))
             {
@@ -340,7 +341,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
         [CLSCompliant(false)]
-        public static void ThrowIfNegativeOrZero(sbyte value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegativeOrZero(sbyte value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             const short Zero = 0;
             if (value <= Zero)
@@ -355,7 +356,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegativeOrZero(short value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegativeOrZero(short value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             const short Zero = 0;
             if (value <= Zero)
@@ -370,7 +371,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegativeOrZero(int value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegativeOrZero(int value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value <= 0)
             {
@@ -384,7 +385,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegativeOrZero(long value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegativeOrZero(long value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value <= 0L)
             {
@@ -398,7 +399,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegativeOrZero(float value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegativeOrZero(float value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value <= 0F)
             {
@@ -412,7 +413,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegativeOrZero(double value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegativeOrZero(double value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value <= 0D)
             {
@@ -426,7 +427,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
-        public static void ThrowIfNegativeOrZero(decimal value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNegativeOrZero(decimal value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value <= 0M)
             {
@@ -442,8 +443,8 @@ public static class ArgumentExceptionExtensions
         /// <typeparam name="T">The type of the object to validate.</typeparam>
         /// <param name="value">The argument to validate as non-zero.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
-        public static void ThrowIfZero<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
-            where T : System.Numerics.INumberBase<T>
+        public static void ThrowIfZero<T>(T value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+            where T : Numerics.INumberBase<T>
         {
             if (T.IsZero(value))
             {
@@ -458,7 +459,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
         [CLSCompliant(false)]
-        public static void ThrowIfZero(sbyte value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfZero(sbyte value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             const sbyte Zero = 0;
             if (value is Zero)
@@ -473,7 +474,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
-        public static void ThrowIfZero(short value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfZero(short value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             const short Zero = 0;
             if (value is Zero)
@@ -488,7 +489,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
-        public static void ThrowIfZero(int value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfZero(int value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value is 0)
             {
@@ -502,7 +503,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
-        public static void ThrowIfZero(long value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfZero(long value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value is 0L)
             {
@@ -516,7 +517,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
-        public static void ThrowIfZero(float value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfZero(float value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value is 0F)
             {
@@ -530,7 +531,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
-        public static void ThrowIfZero(double value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfZero(double value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value is 0D)
             {
@@ -544,7 +545,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as non-negative.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is zero.</exception>
-        public static void ThrowIfZero(decimal value, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfZero(decimal value, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
             if (value is 0M)
             {
@@ -560,7 +561,7 @@ public static class ArgumentExceptionExtensions
         /// <param name="value">The argument to validate as not equal to <paramref name="other"/>.</param>
         /// <param name="other">The value to compare with <paramref name="value"/>.</param>
         /// <param name="paramName">The name of the parameter with which <paramref name="value"/> corresponds.</param>
-        public static void ThrowIfNotEqual<T>(T value, T other, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
+        public static void ThrowIfNotEqual<T>(T value, T other, [Runtime.CompilerServices.CallerArgumentExpression(nameof(value))] string? paramName = null)
             where T : IEquatable<T>?
         {
             if (!EqualityComparer<T>.Default.Equals(value, other))
@@ -570,34 +571,31 @@ public static class ArgumentExceptionExtensions
         }
 
 #pragma warning disable IDE0051
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
-        private static void ThrowOutOfRange(string? paramName, int value, int minimum, int maximum) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeBetween, paramName, value, minimum, maximum));
-
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowEqual<T>(T value, T other, string? paramName) => throw new ArgumentOutOfRangeException(paramName, value, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNotEqual, paramName, (object?)value ?? "null", (object?)other ?? "null"));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowGreater<T>(T value, T other, string? paramName) => throw new ArgumentOutOfRangeException(paramName, value, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeLessOrEqual, paramName, (object?)value ?? "null", (object?)other ?? "null"));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowGreaterThanOrEqual<T>(T value, T other, string? paramName) => throw new ArgumentOutOfRangeException(paramName, value, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeLess, paramName, (object?)value ?? "null", (object?)other ?? "null"));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowLess<T>(T value, T other, string? paramName) => throw new ArgumentOutOfRangeException(paramName, value, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeGreaterOrEqual, paramName, (object?)value ?? "null", (object?)other ?? "null"));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowLessThanOrEqual<T>(T value, T other, string? paramName) => throw new ArgumentOutOfRangeException(paramName, value, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeGreater, paramName, (object?)value ?? "null", (object?)other ?? "null"));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowNegative<T>(T value, string? paramName) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNonNegative, paramName, value));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowNegativeOrZero<T>(T value, string? paramName) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNonNegativeNonZero, paramName, value));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowZero<T>(T value, string? paramName) => throw new ArgumentOutOfRangeException(paramName, value, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNonZero, paramName, value));
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowNotEqual<T>(T value, T other, string? paramName) => throw new ArgumentOutOfRangeException(paramName, value, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeEqual, paramName, (object?)value ?? "null", (object?)other ?? "null"));
 #pragma warning restore IDE0051
     }
@@ -616,9 +614,9 @@ public static class ArgumentExceptionExtensions
         /// <param name="instance">The object whose type's full name should be included in any resulting <see cref="ObjectDisposedException"/>.</param>
         /// <exception cref="ObjectDisposedException">The <paramref name="condition"/> is <see langword="true"/>.</exception>
 #if NET6_0_OR_GREATER
-        [System.Diagnostics.StackTraceHidden]
+        [Diagnostics.StackTraceHidden]
 #endif
-        public static void ThrowIf([System.Diagnostics.CodeAnalysis.DoesNotReturnIf(true)] bool condition, object instance)
+        public static void ThrowIf([Diagnostics.CodeAnalysis.DoesNotReturnIf(true)] bool condition, object instance)
         {
             if (condition)
             {
@@ -633,9 +631,9 @@ public static class ArgumentExceptionExtensions
         /// <param name="type">The type whose full name should be included in any resulting <see cref="ObjectDisposedException"/>.</param>
         /// <exception cref="ObjectDisposedException">The <paramref name="condition"/> is <see langword="true"/>.</exception>
 #if NET6_0_OR_GREATER
-        [System.Diagnostics.StackTraceHidden]
+        [Diagnostics.StackTraceHidden]
 #endif
-        public static void ThrowIf([System.Diagnostics.CodeAnalysis.DoesNotReturnIf(true)] bool condition, Type type)
+        public static void ThrowIf([Diagnostics.CodeAnalysis.DoesNotReturnIf(true)] bool condition, Type type)
         {
             if (condition)
             {
@@ -644,12 +642,13 @@ public static class ArgumentExceptionExtensions
         }
 
 #pragma warning disable IDE0051
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowObjectDisposedException(object? instance) => ThrowObjectDisposedException(instance?.GetType());
 
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowObjectDisposedException(Type? type) => throw new ObjectDisposedException(type?.FullName);
 #pragma warning restore IDE0051
     }
+#pragma warning restore SA1137, SA1400, S1144
 #endif
 }

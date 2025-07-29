@@ -163,7 +163,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            System.Array.Sort(array, comparison);
+            Array.Sort(array, comparison);
         }
         else if (values is List<T> list)
         {
@@ -194,7 +194,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            System.Array.Sort(array, index, length, comparer);
+            Array.Sort(array, index, length, comparer);
         }
         else if (values is List<T> list)
         {
@@ -226,7 +226,7 @@ public static partial class List
         Comparison<T> comparison)
     {
         ArgumentNullException.ThrowIfNull(values);
-#if NET7_0_OR_GREATER
+#if NET7
         ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
         ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
 #else
@@ -237,7 +237,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            System.Array.Sort(array, index, length, new ComparisonWrapper<T>(comparison));
+            Array.Sort(array, index, length, new ComparisonWrapper<T>(comparison));
         }
         else if (values is List<T> list)
         {
@@ -356,7 +356,7 @@ public static partial class List
 
         if (values is T[] @array)
         {
-            System.Array.Sort(array);
+            Array.Sort(array);
         }
         else if (values is List<T> list)
         {
@@ -379,7 +379,7 @@ public static partial class List
         where T : IComparable<T>
     {
         ArgumentNullException.ThrowIfNull(values);
-#if NET7_0_OR_GREATER
+#if NET7
         ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
         ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
 #else

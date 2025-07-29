@@ -125,14 +125,14 @@ public sealed partial class Uuid :
     }
 
     /// <inheritdoc cref="Guid.Parse(string)"/>
-    public static Uuid Parse(string s) => Uuid.ForGuid(Guid.Parse(s));
+    public static Uuid Parse(string s) => ForGuid(Guid.Parse(s));
 
 #if NET7_0_OR_GREATER
     /// <inheritdoc/>
-    public static Uuid Parse(string s, IFormatProvider? provider) => Uuid.ForGuid(Guid.Parse(s, provider));
+    public static Uuid Parse(string s, IFormatProvider? provider) => ForGuid(Guid.Parse(s, provider));
 
     /// <inheritdoc/>
-    public static Uuid Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => Uuid.ForGuid(Guid.Parse(s, provider));
+    public static Uuid Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => ForGuid(Guid.Parse(s, provider));
 #endif
 
     /// <inheritdoc cref="Guid.TryParse(string?, out Guid)"/>
@@ -140,7 +140,7 @@ public sealed partial class Uuid :
     {
         if (Guid.TryParse(s, out var guid))
         {
-            result = Uuid.ForGuid(guid);
+            result = ForGuid(guid);
             return true;
         }
 
@@ -154,7 +154,7 @@ public sealed partial class Uuid :
     {
         if (Guid.TryParse(s, provider, out var guid))
         {
-            result = Uuid.ForGuid(guid);
+            result = ForGuid(guid);
             return true;
         }
 
@@ -167,7 +167,7 @@ public sealed partial class Uuid :
     {
         if (Guid.TryParse(s, provider, out var guid))
         {
-            result = Uuid.ForGuid(guid);
+            result = ForGuid(guid);
             return true;
         }
 
@@ -182,20 +182,17 @@ public sealed partial class Uuid :
     /// <returns>The created <see cref="Guid"/>.</returns>
     public Guid ToGuid()
     {
-        checked
-        {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-            Span<byte> bytes = stackalloc byte[16];
+        Span<byte> bytes = stackalloc byte[16];
 #else
-            var bytes = new byte[16];
+        var bytes = new byte[16];
 #endif
-            _ = this.TryWriteBytesCore(bytes);
-            return new Guid(bytes);
-        }
+        _ = this.TryWriteBytesCore(bytes);
+        return new Guid(bytes);
     }
 
     /// <inheritdoc/>
-    public bool Equals(Guid other) => this.Equals(Uuid.ForGuid(other));
+    public bool Equals(Guid other) => this.Equals(ForGuid(other));
 
     /// <inheritdoc cref="Guid.ToString(string?)"/>
     public string ToString([StringSyntax(StringSyntaxAttribute.GuidFormat)] string? format) => this.ToGuid().ToString(format);
@@ -317,12 +314,8 @@ public sealed partial class Uuid :
 
     private bool TryWriteBytesCore(Span<byte> destination)
     {
-        if (destination.Length < 16)
-        {
-            return false;
-        }
-
-        if (!System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32LittleEndian(destination[..4], this.timeLow_)
+        if (destination.Length < 16
+            || !System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32LittleEndian(destination[..4], this.timeLow_)
             || !System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16LittleEndian(destination[4..6], (ushort)this.timeMid_)
             || !System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16LittleEndian(destination[6..8], (ushort)this.timeHiAndVersion_)
             || !System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64BigEndian(destination[8..], this.node_))

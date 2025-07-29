@@ -52,7 +52,7 @@ internal sealed class Int32Compressor(IHeadlessInt32Codec codec)
         var sourceIndex = 0;
         var destinationIndex = 1;
         this.codec.Compress(input, ref sourceIndex, compressed, ref destinationIndex, input.Length);
-        System.Array.Resize(ref compressed, destinationIndex);
+        Array.Resize(ref compressed, destinationIndex);
         return compressed;
     }
 

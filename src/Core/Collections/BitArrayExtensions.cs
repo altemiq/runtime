@@ -33,7 +33,7 @@ public static partial class BitArrayExtensions
     {
         ArgumentNullException.ThrowIfNull(bits);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(length, 8);
-#if NET7_0_OR_GREATER
+#if NET7_0
         ArgumentOutOfRangeException.ThrowIfNegative<int>(startIndex);
 #else
         ArgumentOutOfRangeException.ThrowIfNegative(startIndex);

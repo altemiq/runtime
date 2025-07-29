@@ -152,7 +152,7 @@ public partial class ListTests
 
             public double Value { get; private set; } = value;
 
-            public readonly int CompareTo(SimpleStruct other) => this.Index.CompareTo(other.Index);
+            public readonly int CompareTo(SimpleStruct other) => Index.CompareTo(other.Index);
         }
 
         public class SimpleClass

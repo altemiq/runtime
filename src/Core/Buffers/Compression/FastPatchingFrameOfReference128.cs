@@ -110,7 +110,7 @@ internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessIn
             var temporaryDestinationIndex = destinationPageIndex;
 
             // Clear working area.
-            System.Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
+            Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
             this.byteContainer.Clear();
 
             var temporarySourceIndex = sourcePageIndex;
@@ -133,7 +133,7 @@ internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessIn
                         // make sure it is a multiple of 32
                         newSize = Util.GreatestMultiple(newSize + 31, 32);
                         var temp = this.dataTobePacked[dataIndex];
-                        System.Array.Resize(ref temp, newSize);
+                        Array.Resize(ref temp, newSize);
                         this.dataTobePacked[dataIndex] = temp;
                     }
 
@@ -202,7 +202,7 @@ internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessIn
 
             void GetBestBFromData(int[] input, int position)
             {
-                System.Array.Clear(this.frequencies, 0, this.frequencies.Length);
+                Array.Clear(this.frequencies, 0, this.frequencies.Length);
                 var end = position + BlockSize;
                 for (var k = position; k < end; k++)
                 {
@@ -303,7 +303,7 @@ internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessIn
                     {
                         var buffer = new int[roundedUp / 32 * k];
                         var initialExceptIndex = exceptIndex;
-                        System.Array.Copy(sourcePage, exceptIndex, buffer, 0, sourcePage.Length - exceptIndex);
+                        Array.Copy(sourcePage, exceptIndex, buffer, 0, sourcePage.Length - exceptIndex);
 
                         var j = 0;
                         for (; j < currentSize; j += 32)
@@ -318,7 +318,7 @@ internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessIn
                 }
             }
 
-            System.Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
+            Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
             var temporaryDestinationIndex = destinationPageIndex;
             var temporarySourceIndex = sourcePageIndex;
 

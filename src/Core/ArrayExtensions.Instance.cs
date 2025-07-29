@@ -29,7 +29,7 @@ public static class ArrayExtensions
 
         var length = Math.Min(array.Length, newArray.Length);
         var start = totalWidth - length;
-        System.Array.Copy(array, 0, newArray, start, length);
+        Array.Copy(array, 0, newArray, start, length);
         return newArray;
     }
 
@@ -49,7 +49,7 @@ public static class ArrayExtensions
             return newArray;
         }
 
-        System.Array.Copy(array, 0, newArray, 0, Math.Min(array.Length, newArray.Length));
+        Array.Copy(array, 0, newArray, 0, Math.Min(array.Length, newArray.Length));
         return newArray;
     }
 }

@@ -27,7 +27,7 @@ internal static class TestUtils
         codec.Decompress(compressed, ref decompressedInputPosition, decompressed, ref decompressedOutputPosition, compressedOutputPosition);
 
         // Compare between uncompressed and orig arrays.
-        System.Array.Resize(ref decompressed, decompressedOutputPosition);
+        Array.Resize(ref decompressed, decompressedOutputPosition);
         await Assert.That(orig).IsEquivalentTo(decompressed);
     }
 
@@ -37,7 +37,7 @@ internal static class TestUtils
         var inputPosition = 0;
         var outputPosition = 0;
         codec.Compress(data, ref inputPosition, output, ref outputPosition, data.Length);
-        System.Array.Resize(ref output, outputPosition);
+        Array.Resize(ref output, outputPosition);
         return output;
     }
 
@@ -47,7 +47,7 @@ internal static class TestUtils
         var inputPosition = 0;
         var outputPosition = 0;
         codec.Decompress(data, ref inputPosition, output, ref outputPosition, data.Length);
-        System.Array.Resize(ref output, outputPosition);
+        Array.Resize(ref output, outputPosition);
         return output;
     }
 
@@ -57,7 +57,7 @@ internal static class TestUtils
         var inputPosition = 0;
         var outputPosition = 0;
         codec.Compress(data, ref inputPosition, output, ref outputPosition, data.Length);
-        System.Array.Resize(ref output, outputPosition);
+        Array.Resize(ref output, outputPosition);
         return output;
     }
 
@@ -67,7 +67,7 @@ internal static class TestUtils
         var inputPosition = 0;
         var outputPosition = 0;
         codec.Decompress(data, ref inputPosition, output, ref outputPosition, data.Length);
-        System.Array.Resize(ref output, outputPosition);
+        Array.Resize(ref output, outputPosition);
         return output;
     }
 
@@ -77,7 +77,7 @@ internal static class TestUtils
         var inputPosition = 0;
         var outputPosition = 0;
         codec.Compress(data, ref inputPosition, output, ref outputPosition, data.Length);
-        System.Array.Resize(ref output, outputPosition);
+        Array.Resize(ref output, outputPosition);
         return output;
     }
 
@@ -88,14 +88,14 @@ internal static class TestUtils
         var outputPosition = 0;
         codec.Decompress(data, ref inputPosition, output, ref outputPosition, data.Length, length);
         await Assert.That(outputPosition).IsGreaterThanOrEqualTo(length);
-        System.Array.Resize(ref output, outputPosition);
+        Array.Resize(ref output, outputPosition);
         return output;
     }
 
     public static T[] CopyArray<T>(T[] array, int size)
     {
         var copy = new T[size];
-        System.Array.Copy(array, 0, copy, 0, Math.Min(array.Length, size));
+        Array.Copy(array, 0, copy, 0, Math.Min(array.Length, size));
         return copy;
     }
 

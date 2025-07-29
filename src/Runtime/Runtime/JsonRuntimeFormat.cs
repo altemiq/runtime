@@ -98,7 +98,7 @@ internal static class JsonRuntimeFormat
                 }
             }
 
-            yield return new RuntimeFallbacks(runtime.Name, fallbacks.Values.Distinct(StringComparer.Ordinal));
+            yield return new(runtime.Name, fallbacks.Values.Distinct(StringComparer.Ordinal));
 
             static IEnumerable<KeyValuePair<int, string>> GetImports(string import, List<Runtime> runtimes, int depth)
             {

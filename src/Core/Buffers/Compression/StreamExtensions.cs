@@ -19,7 +19,7 @@ internal static class StreamExtensions
     {
 #if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
         var buffer = stream.GetBuffer();
-        System.Array.Clear(buffer, 0, buffer.Length);
+        Array.Clear(buffer, 0, buffer.Length);
         stream.Position = 0;
 #else
         var length = stream.Length;

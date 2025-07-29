@@ -16,7 +16,8 @@ public static class TextInfoHelper
     /// <summary>
     /// The extensions for <see cref="TextInfo"/>.
     /// </summary>
-    extension(System.Globalization.TextInfo)
+#pragma warning disable SA1137, SA1400, S1144
+    extension(TextInfo)
     {
         /// <summary>
         /// Gets the <see cref="TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.
@@ -29,4 +30,5 @@ public static class TextInfoHelper
             _ => CultureInfo.CurrentCulture.TextInfo,
         };
     }
+#pragma warning restore SA1137, SA1400, S1144
 }

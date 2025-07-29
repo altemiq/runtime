@@ -35,14 +35,14 @@ public static class ArrayExtensions
 
             if (totalWidth < array.Length)
             {
-                System.Array.Resize(ref array, totalWidth);
+                Array.Resize(ref array, totalWidth);
                 return;
             }
 
             var newArray = new T[totalWidth];
             var length = Math.Min(array.Length, newArray.Length);
             var start = totalWidth - length;
-            System.Array.Copy(array, 0, newArray, start, length);
+            Array.Copy(array, 0, newArray, start, length);
             array = newArray;
         }
 
@@ -61,7 +61,7 @@ public static class ArrayExtensions
                 return;
             }
 
-            System.Array.Resize(ref array, totalWidth);
+            Array.Resize(ref array, totalWidth);
         }
 
 #if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP2_0_OR_GREATER

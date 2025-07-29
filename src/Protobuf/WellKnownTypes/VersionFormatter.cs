@@ -156,7 +156,7 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
     }
 
     /// <inheritdoc/>
-    public object? GetFormat(System.Type? formatType) => formatType is not null && (formatType.Equals(typeof(ICustomFormatter)) || typeof(SemanticVersion).GetTypeInfo().IsAssignableFrom(formatType.GetTypeInfo()))
+    public object? GetFormat(System.Type? formatType) => formatType is not null && (formatType == typeof(ICustomFormatter) || typeof(SemanticVersion).GetTypeInfo().IsAssignableFrom(formatType.GetTypeInfo()))
         ? this
         : default;
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 /// </summary>
 public static class BinaryWriterExtensions
 {
-    private static readonly FieldInfo EncodingFieldInfo = typeof(BinaryWriter).GetTypeInfo().DeclaredFields.Single(static f => f.FieldType.Equals(typeof(System.Text.Encoding)));
+    private static readonly FieldInfo EncodingFieldInfo = typeof(BinaryWriter).GetTypeInfo().DeclaredFields.Single(static f => f.FieldType == typeof(System.Text.Encoding));
 
 #if NET5_0
     /// <summary>
