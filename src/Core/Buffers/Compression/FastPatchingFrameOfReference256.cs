@@ -18,7 +18,7 @@ namespace Altemiq.Buffers.Compression;
 /// </remarks>
 /// <see href="http://onlinelibrary.wiley.com/doi/10.1002/spe.2203/abstract"/>
 /// <see href="http://arxiv.org/abs/1209.2137"/>
-internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessInt32Codec
+internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessInt32Codec, IDisposable
 {
     /// <summary>
     /// The block size.
@@ -97,6 +97,9 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
 
     /// <inheritdoc/>
     public override string ToString() => nameof(FastPatchingFrameOfReference256);
+
+    /// <inheritdoc/>
+    public void Dispose() => this.byteContainer.Dispose();
 
     private void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
     {

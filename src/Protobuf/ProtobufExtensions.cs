@@ -34,6 +34,7 @@ public static class ProtobufExtensions
 #endif
 
     /// <inheritdoc cref="WellKnownTypes.Uuid.ForGuid"/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "Checked")]
     public static WellKnownTypes.Uuid ToUuid(this Guid guid) => WellKnownTypes.Uuid.ForGuid(guid);
 
     /// <inheritdoc cref="WellKnownTypes.Version.ForVersion" />

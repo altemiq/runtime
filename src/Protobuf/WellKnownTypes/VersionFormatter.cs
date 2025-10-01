@@ -156,6 +156,7 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0169:Use Equals method instead of operator", Justification = "This does not work using Equals method")]
     public object? GetFormat(System.Type? formatType) => formatType is not null && (formatType == typeof(ICustomFormatter) || typeof(SemanticVersion).GetTypeInfo().IsAssignableFrom(formatType.GetTypeInfo()))
         ? this
         : default;

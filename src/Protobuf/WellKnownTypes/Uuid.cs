@@ -105,6 +105,7 @@ public sealed partial class Uuid :
     /// </summary>
     /// <param name="guid">The guid.</param>
     /// <returns>A newly-created <see cref="Uuid"/> message with the given value.</returns>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "Checked")]
     public static Uuid ForGuid(Guid guid)
     {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER

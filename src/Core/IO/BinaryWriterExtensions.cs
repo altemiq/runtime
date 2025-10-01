@@ -13,7 +13,9 @@ using System.Reflection;
 /// </summary>
 public static class BinaryWriterExtensions
 {
+#pragma warning disable MA0169
     private static readonly FieldInfo EncodingFieldInfo = typeof(BinaryWriter).GetTypeInfo().DeclaredFields.Single(static f => f.FieldType == typeof(System.Text.Encoding));
+#pragma warning restore MA0169
 
 #if NET5_0
     /// <summary>

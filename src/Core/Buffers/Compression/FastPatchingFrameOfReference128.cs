@@ -9,7 +9,7 @@ namespace Altemiq.Buffers.Compression;
 /// <summary>
 /// This class is similar to <see cref="FastPatchingFrameOfReference256"/> but uses a small block size.
 /// </summary>
-internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessInt32Codec
+internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessInt32Codec, IDisposable
 {
     /// <summary>
     /// The block size.
@@ -90,6 +90,9 @@ internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessIn
 
     /// <inheritdoc/>
     public override string ToString() => nameof(FastPatchingFrameOfReference128);
+
+    /// <inheritdoc/>
+    public void Dispose() => this.byteContainer.Dispose();
 
     private void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
     {
