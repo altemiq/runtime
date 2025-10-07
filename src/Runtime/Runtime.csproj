@@ -4,7 +4,13 @@
     <TargetFrameworks>net6.0;net5.0;netstandard2.0;netstandard1.6;net47;net451</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Runtime'))">$(RootNamespace.Replace('.Runtime', ''))</RootNamespace>
     <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
-    <PolySharpIncludeGeneratedTypes>System.Diagnostics.CodeAnalysis.MaybeNullAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute</PolySharpIncludeGeneratedTypes>
+    <PolySharpIncludeGeneratedTypes>
+      $(PolySharpIncludeGeneratedTypes);
+      System.Diagnostics.CodeAnalysis.MaybeNullAttribute;
+      System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute;
+      System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;
+      System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute;
+    </PolySharpIncludeGeneratedTypes>
   </PropertyGroup>
   
   <PropertyGroup Label="Packaging">
@@ -46,7 +52,9 @@
   </Choose>
 
   <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">
+    <PackageReference Include="System.Memory" VersionOverride="4.5.0" />
     <PackageReference Include="System.Net.Http" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" VersionOverride="4.5.0" />
     <PackageReference Include="System.Text.RegularExpressions" />
   </ItemGroup>
 
