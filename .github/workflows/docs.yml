@@ -12,20 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - uses: actions/configure-pages@v5
 
-    - uses: actions/setup-dotnet@v4
+    - uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - run: dotnet tool update -g docfx
 
     - run: docfx docs/docfx.json
       continue-on-error: false
       
-    - uses: actions/upload-pages-artifact@v3
+    - uses: actions/upload-pages-artifact@v4
       with:
         path: ${{ github.workspace }}/docs/_site
 
