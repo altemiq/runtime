@@ -7,6 +7,10 @@ public class StringExtensionTests
     public async Task ToCamelCase(string input, string expected) => await Assert.That(input.ToCamelCase()).IsEqualTo(expected);
     
     [Test]
+    [Data.PascalCaseDataGenerator]
+    public async Task ToPascalCase(string input, string expected) => await Assert.That(input.ToPascalCase()).IsEqualTo(expected);
+    
+    [Test]
     [Data.SnakeCaseDataGenerator]
     public async Task ToSnakeCase(string input, string expected) => await Assert.That(input.ToSnakeCase()).IsEqualTo(expected);
 

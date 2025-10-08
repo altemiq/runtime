@@ -42,64 +42,40 @@ public static class TextInfoExtensions
     /// <param name="source">The source span.</param>
     /// <param name="destination">The destination span which contains the transformed characters.</param>
     /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
-    public static int ToCamelCase(this System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source, Span<char> destination)
+    public static int ToCamelCase(this System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source, Span<char> destination) => ToCamelPascalCase(source, destination, textInfo.ToLower, textInfo.ToUpper);
+
+    /// <summary>
+    /// Converts the specified string to pascal case.
+    /// </summary>
+    /// <param name="textInfo">The text info.</param>
+    /// <param name="str">The string to convert to pascal case.</param>
+    /// <returns>The specified string converted to pascal case.</returns>
+    [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(str))]
+    public static string? ToPascalCase(this System.Globalization.TextInfo textInfo, string? str)
     {
-        if (destination.Length < source.Length)
+        return str switch
         {
-            return -1;
-        }
+            null => default,
+            { Length: 0 } => string.Empty,
+            _ => ToPascalCaseCore(textInfo, str),
+        };
 
-        if (source.Length is 0)
+        static string ToPascalCaseCore(System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source)
         {
-            return default;
+            Span<char> destination = stackalloc char[source.Length];
+            var used = ToPascalCase(textInfo, source, destination);
+            return destination.Slice(0, used).AsString();
         }
-
-        // find the first non-whitespace/punctation
-        var start = -1;
-        for (var i = 0; i < source.Length; i++)
-        {
-            var chr = source[i];
-            if (char.IsWhiteSpace(chr) || char.IsPunctuation(chr))
-            {
-                continue;
-            }
-
-            start = i;
-            break;
-        }
-
-        if (start is -1)
-        {
-            return 0;
-        }
-
-        destination[0] = textInfo.ToLower(source[start]);
-
-        // go through the rest of the characters, making sure we title case
-        var current = 1;
-        var previousWhiteSpaceOrPunctuation = false;
-        foreach (var chr in source.Slice(start + 1))
-        {
-            var whiteSpaceOrPunctuation = char.IsWhiteSpace(chr) || char.IsPunctuation(chr);
-            if (!whiteSpaceOrPunctuation)
-            {
-                if (previousWhiteSpaceOrPunctuation)
-                {
-                    destination[current] = textInfo.ToUpper(chr);
-                }
-                else
-                {
-                    destination[current] = chr;
-                }
-
-                current++;
-            }
-
-            previousWhiteSpaceOrPunctuation = whiteSpaceOrPunctuation;
-        }
-
-        return current;
     }
+
+    /// <summary>
+    /// Copies the characters from the source span into the destination, converting each character to pascal case.
+    /// </summary>
+    /// <param name="textInfo">The text info.</param>
+    /// <param name="source">The source span.</param>
+    /// <param name="destination">The destination span which contains the transformed characters.</param>
+    /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
+    public static int ToPascalCase(this System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source, Span<char> destination) => ToCamelPascalCase(source, destination, textInfo.ToUpper, textInfo.ToUpper);
 
     /// <summary>
     /// Converts the specified string to kebab case.
@@ -178,6 +154,65 @@ public static class TextInfoExtensions
                 destination[current] = separator;
                 current++;
                 previousUpper = false;
+            }
+
+            previousWhiteSpaceOrPunctuation = whiteSpaceOrPunctuation;
+        }
+
+        return current;
+    }
+
+    private static int ToCamelPascalCase(ReadOnlySpan<char> source, Span<char> destination, Func<char, char> firstCharConvert, Func<char, char> toUpper)
+    {
+        if (destination.Length < source.Length)
+        {
+            return -1;
+        }
+
+        if (source.Length is 0)
+        {
+            return default;
+        }
+
+        // find the first non-whitespace/punctation
+        var start = -1;
+        for (var i = 0; i < source.Length; i++)
+        {
+            var chr = source[i];
+            if (char.IsWhiteSpace(chr) || char.IsPunctuation(chr))
+            {
+                continue;
+            }
+
+            start = i;
+            break;
+        }
+
+        if (start is -1)
+        {
+            return 0;
+        }
+
+        destination[0] = firstCharConvert(source[start]);
+
+        // go through the rest of the characters, making sure we title case
+        var current = 1;
+        var previousWhiteSpaceOrPunctuation = false;
+        foreach (var chr in source.Slice(start + 1))
+        {
+            var whiteSpaceOrPunctuation = char.IsWhiteSpace(chr) || char.IsPunctuation(chr);
+            if (!whiteSpaceOrPunctuation)
+            {
+                if (previousWhiteSpaceOrPunctuation)
+                {
+                    destination[current] = toUpper(chr);
+                }
+                else
+                {
+                    destination[current] = chr;
+                }
+
+                current++;
             }
 
             previousWhiteSpaceOrPunctuation = whiteSpaceOrPunctuation;

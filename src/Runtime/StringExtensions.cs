@@ -42,6 +42,31 @@ public static class StringExtensions
     public static int ToCamelCase(this ReadOnlySpan<char> source, Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToCamelCase(source, destination);
 
     /// <summary>
+    /// Converts the specified string to pascal case.
+    /// </summary>
+    /// <param name="input">The string to convert to pascal case.</param>
+    /// <returns>The specified string converted to pascal case.</returns>
+    public static string ToPascalCase(this string input) => ToPascalCase(input, default);
+
+    /// <summary>
+    /// Converts the specified string to pascal case, using the casing rules of the specified culture.
+    /// </summary>
+    /// <param name="input">The string to convert to pascal case.</param>
+    /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+    /// <returns>The specified string converted to pascal case.</returns>
+    public static string ToPascalCase(this string input, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToPascalCase(input);
+
+    /// <summary>
+    /// Copies the characters from the source span into the destination, converting each character to pascal case, using the casing rules of the specified culture.
+    /// </summary>
+    /// <param name="source">The source span.</param>
+    /// <param name="destination">The destination span which contains the transformed characters.</param>
+    /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+    /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
+    // ReSharper disable once ConvertToExtensionBlock
+    public static int ToPascalCase(this ReadOnlySpan<char> source, Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToPascalCase(source, destination);
+
+    /// <summary>
     /// Converts the specified string to kebab case.
     /// </summary>
     /// <param name="input">The string to convert to kebab case.</param>
