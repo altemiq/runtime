@@ -13,6 +13,7 @@ using Altemiq.Globalization;
 /// <summary>
 /// The <see cref="string"/> extensions.
 /// </summary>
+[Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "ConvertToExtensionBlock", Justification = "This is valid here")]
 public static class StringExtensions
 {
     /// <summary>
@@ -37,6 +38,7 @@ public static class StringExtensions
     /// <param name="destination">The destination span which contains the transformed characters.</param>
     /// <param name="culture">An object that supplies culture-specific casing rules.</param>
     /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
+    // ReSharper disable once ConvertToExtensionBlock
     public static int ToCamelCase(this ReadOnlySpan<char> source, Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToCamelCase(source, destination);
 
     /// <summary>
@@ -87,12 +89,43 @@ public static class StringExtensions
     /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
     public static int ToSnakeCase(this ReadOnlySpan<char> source, Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToSnakeCase(source, destination);
 
-    private static Globalization.TextInfo GetTextInfo(Globalization.CultureInfo? culture)
+    /// <summary>
+    /// Removes the specified suffix from the input if found.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <param name="suffix">The suffix to remove.</param>
+    /// <returns><paramref name="source"/> with <paramref name="suffix"/> removed.</returns>
+    public static string RemoveSuffix(this string source, string suffix) =>
+        RemoveSuffix(source.AsSpan(), suffix.AsSpan()) switch
+        {
+            -1 => source,
+            0 => string.Empty,
+            var length => source.Substring(0, length),
+        };
+
+    /// <summary>
+    /// Removes the specified suffix from the input if found.
+    /// </summary>
+    /// <param name="source">The source.</param>
+    /// <param name="suffix">The suffix to remove.</param>
+    /// <returns>The new length of <paramref name="source"/> if <paramref name="suffix"/> was found; otherwise -1.</returns>
+    public static int RemoveSuffix(this ReadOnlySpan<char> source, ReadOnlySpan<char> suffix)
     {
-        return culture switch
+        for (var i = 0; i < suffix.Length; i++)
+        {
+            if (suffix[suffix.Length - i - 1] != source[source.Length - i - 1])
+            {
+                return -1;
+            }
+        }
+
+        return source.Length - suffix.Length;
+    }
+
+    private static Globalization.TextInfo GetTextInfo(Globalization.CultureInfo? culture) =>
+        culture switch
         {
             { TextInfo: var textInfo } => textInfo,
             _ => Globalization.CultureInfo.CurrentCulture.TextInfo,
         };
-    }
 }
