@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" GeneratePathProperty="true" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
   <ItemGroup>
