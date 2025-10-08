@@ -58,8 +58,10 @@ public class EchoStream : Stream
     /// <inheritdoc/>
     public override bool CanRead { get; } = true;
 
+#pragma warning disable CA1805
     /// <inheritdoc/>
     public override bool CanSeek { get; } = false;
+#pragma warning restore CA1805
 
     /// <inheritdoc/>
     public override bool CanWrite { get; } = true;

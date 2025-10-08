@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\Core\build.props" />
+  <Import Project="..\..\src\Core\build.props" />
 
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0;net6.0</TargetFrameworks>
@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\Benchmarks\Core.Buffers.Compression.Benchmarks\ClusteredDataGenerator.cs" Link="Buffers\Compression\ClusteredDataGenerator.cs" />
-    <Compile Include="..\..\Benchmarks\Core.Buffers.Compression.Benchmarks\UniformDataGenerator.cs" Link="Buffers\Compression\UniformDataGenerator.cs" />
+    <Compile Include="..\..\benchmarks\Core.Buffers.Compression.Benchmarks\ClusteredDataGenerator.cs" Link="Buffers\Compression\ClusteredDataGenerator.cs" />
+    <Compile Include="..\..\benchmarks\Core.Buffers.Compression.Benchmarks\UniformDataGenerator.cs" Link="Buffers\Compression\UniformDataGenerator.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core.csproj" />
+    <ProjectReference Include="..\..\src\Core\Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,5 +27,5 @@
     </Compile>
   </ItemGroup>
 
-  <Import Project="..\..\Core\build.targets" />
+  <Import Project="..\..\src\Core\build.targets" />
 </Project>

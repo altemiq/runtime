@@ -1,6 +1,6 @@
 dotnet tool update altemiq.semanticversioning --global
-dotnet build src
-dotnet semver diff solution src^
+dotnet build
+dotnet semver diff solution^
   --output BreakingChanges^
   --direct-download^
   --version-suffix personal^

@@ -5,7 +5,7 @@ if (Test-Path -Path $results -Type Container) {
 }
 
 # Run dotnet test
-dotnet test $PSScriptRoot\src --no-build --results-directory $results --settings "$PSScriptRoot/src/Tests/coverage.runsettings"
+dotnet test $PSScriptRoot --no-build --results-directory $results --settings "$PSScriptRoot/tests/coverage.runsettings"
 
 # install the report generator
 if ((Get-Command 'reportGenerator' -errorAction SilentlyContinue) -eq $null) {

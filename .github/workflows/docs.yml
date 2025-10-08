@@ -22,7 +22,15 @@ jobs:
 
     - run: dotnet tool update -g docfx
 
-    - run: docfx docs/docfx.json
+    - name: Run local/dotnet-restore@v1
+      run: dotnet restore
+      
+    - name: Run local/dotnet-build@v1
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run local/docfx@v1
+      working-directory: docs
+      run: docfx metadata --property LangVersion=preview --noRestore
       continue-on-error: false
       
     - uses: actions/upload-pages-artifact@v4

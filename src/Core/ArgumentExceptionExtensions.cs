@@ -8,6 +8,7 @@
 namespace System;
 #pragma warning restore IDE0130, CheckNamespace
 
+#pragma warning disable CA1708
 /// <summary>
 /// Extensions for <see cref="ArgumentException"/> and derived types.
 /// </summary>
@@ -652,3 +653,4 @@ public static class ArgumentExceptionExtensions
 #pragma warning restore SA1137, SA1400, S1144
 #endif
 }
+#pragma warning restore CA1708

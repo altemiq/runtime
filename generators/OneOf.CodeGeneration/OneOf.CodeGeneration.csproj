@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Core\Properties\Resources.Designer.cs" Link="Properties\Resources.Designer.cs" />
+    <Compile Include="..\..\src\Core\Properties\Resources.Designer.cs" Link="Properties\Resources.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

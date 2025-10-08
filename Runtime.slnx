@@ -1,0 +1,62 @@
+<Solution>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/docs.yml" />
+  </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/Core.Buffers.Compression.Benchmarks/Core.Buffers.Compression.Benchmarks.csproj" />
+    <Project Path="benchmarks/Protobuf.Benchmarks/Protobuf.Benchmarks.csproj" />
+    <File Path="benchmarks/Directory.Build.props" />
+    <File Path="benchmarks/Directory.Build.targets" />
+    <File Path="benchmarks/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/generators/">
+    <Project Path="generators/OneOf.CodeGeneration/OneOf.CodeGeneration.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Directory.Versions.props" />
+    <File Path="exclusion.dic" />
+    <File Path="nuget.config" />
+    <File Path="stylecop.json" />
+    <File Path="testenvironments.json" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Core/Core.csproj" />
+    <Project Path="src/Extensions.Caching.Hybrid/Extensions.Caching.Hybrid.csproj" />
+    <Project Path="src/Grpc.Tools/Grpc.Tools.csproj" />
+    <Project Path="src/IO.Compression/IO.Compression.csproj" />
+    <Project Path="src/Protobuf/Protobuf.csproj" />
+    <Project Path="src/Runtime/Runtime.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Dummy/Dummy.csproj" />
+    <Project Path="tests/Extensions.Caching.Hybrid.Tests/Extensions.Caching.Hybrid.Tests.csproj">
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="tests/Grpc.Tools.Tests/Grpc.Tools.Tests.csproj">
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="tests/IO.Compression.Tests/IO.Compression.Tests.csproj">
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="tests/Protobuf.Tests/Protobuf.Tests.csproj">
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="tests/Runtime.Tests/Runtime.Tests.csproj">
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <Project Path="tests/Tests/Tests.csproj">
+      <Build Solution="Release|Any CPU" Project="false" />
+    </Project>
+    <File Path="tests/.editorconfig" />
+    <File Path="tests/Directory.Build.props" />
+    <File Path="tests/Directory.Build.targets" />
+    <File Path="tests/Directory.Packages.props" />
+  </Folder>
+</Solution>

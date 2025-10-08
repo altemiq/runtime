@@ -57,7 +57,7 @@ public class ProcessStartInfoBuilder
         this.ErrorDialog = startInfo.ErrorDialog;
         this.ErrorDialogParentHandle = startInfo.ErrorDialogParentHandle;
         this.Verb = startInfo.Verb;
-        this.Verbs = [..startInfo.Verbs];
+        this.Verbs = [.. startInfo.Verbs];
         this.WindowStyle = startInfo.WindowStyle;
 #endif
 #if NETSTANDARD1_4_OR_GREATER || NET46_OR_GREATER || NETCOREAPP1_0_OR_GREATER
@@ -131,7 +131,7 @@ public class ProcessStartInfoBuilder
     public IDictionary<string, string?> Environment { get; }
 #else
     /// <inheritdoc cref="ProcessStartInfo.EnvironmentVariables"/>
-    public System.Collections.Specialized.StringDictionary EnvironmentVariables { get; } = new();
+    public System.Collections.Specialized.StringDictionary EnvironmentVariables { get; } = [];
 #endif
 
     /// <summary>

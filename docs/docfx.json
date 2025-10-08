@@ -3,13 +3,9 @@
     {
       "src": [
         {
-          "src": "../src/",
+          "src": "../",
           "files": [
-            "**/bin/**/Altemiq*.dll"
-          ],
-          "exclude": [
-			"**/*.CodeGeneration*/**",
-			"**/*.Tests/**"
+            "src/**/bin/**/Altemiq*.dll"
           ]
         }
       ],
