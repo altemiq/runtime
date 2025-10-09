@@ -156,22 +156,19 @@ public static partial class List
     {
         ArgumentNullException.ThrowIfNull(values);
 
-        if (values is { Count: <= 1 })
+        switch (values)
         {
-            return;
-        }
-
-        if (values is T[] @array)
-        {
-            Array.Sort(array, comparison);
-        }
-        else if (values is List<T> list)
-        {
-            list.Sort(comparison);
-        }
-        else
-        {
-            QuickSort(values, 0, values.Count, comparison);
+            case { Count: <= 1 }:
+                return;
+            case T[] array:
+                Array.Sort(array, comparison);
+                break;
+            case List<T> list:
+                list.Sort(comparison);
+                break;
+            default:
+                QuickSort(values, 0, values.Count, comparison);
+                break;
         }
     }
 
@@ -226,27 +223,28 @@ public static partial class List
         Comparison<T> comparison)
     {
         ArgumentNullException.ThrowIfNull(values);
-#if NET7
+#if NET7_0
+#pragma warning disable RedundantTypeArgumentsOfMethod
         ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
         ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
+#pragma warning restore RedundantTypeArgumentsOfMethod
 #else
         ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 #endif
         ArgumentNullException.ThrowIfNull(comparison);
 
-        if (values is T[] @array)
+        switch (values)
         {
-            Array.Sort(array, index, length, new ComparisonWrapper<T>(comparison));
-        }
-        else if (values is List<T> list)
-        {
-            list.Sort(index, length, new ComparisonWrapper<T>(comparison));
-        }
-        else
-        {
-            var end = Math.Min(index + length, values.Count) - 1;
-            QuickSortCore(values, index, end, comparison);
+            case T[] array:
+                Array.Sort(array, index, length, new ComparisonWrapper<T>(comparison));
+                break;
+            case List<T> list:
+                list.Sort(index, length, new ComparisonWrapper<T>(comparison));
+                break;
+            default:
+                QuickSortCore(values, index, Math.Min(index + length, values.Count) - 1, comparison);
+                break;
         }
 
         static void QuickSortCore(IList<T> values, int left, int right, Comparison<T> comparer)
@@ -349,22 +347,19 @@ public static partial class List
     {
         ArgumentNullException.ThrowIfNull(values);
 
-        if (values.Count <= 1)
+        switch (values)
         {
-            return;
-        }
-
-        if (values is T[] @array)
-        {
-            Array.Sort(array);
-        }
-        else if (values is List<T> list)
-        {
-            list.Sort();
-        }
-        else
-        {
-            QuickSort(values, 0, values.Count);
+            case { Count: <= 1 }:
+                return;
+            case T[] array:
+                Array.Sort(array);
+                break;
+            case List<T> list:
+                list.Sort();
+                break;
+            default:
+                QuickSort(values, 0, values.Count);
+                break;
         }
     }
 
@@ -379,9 +374,11 @@ public static partial class List
         where T : IComparable<T>
     {
         ArgumentNullException.ThrowIfNull(values);
-#if NET7
+#if NET7_0
+#pragma warning disable RedundantTypeArgumentsOfMethod
         ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
         ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
+#pragma warning restore RedundantTypeArgumentsOfMethod
 #else
         ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
