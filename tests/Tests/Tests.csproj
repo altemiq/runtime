@@ -9,8 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\benchmarks\Core.Buffers.Compression.Benchmarks\ClusteredDataGenerator.cs" Link="Buffers\Compression\ClusteredDataGenerator.cs" />
-    <Compile Include="..\..\benchmarks\Core.Buffers.Compression.Benchmarks\UniformDataGenerator.cs" Link="Buffers\Compression\UniformDataGenerator.cs" />
+    <Compile Include="..\..\benchmarks\Core.Buffers.Compression.Benchmarks\*DataGenerator.cs" Link="Buffers\Compression\%(FileName)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

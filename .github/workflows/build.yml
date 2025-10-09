@@ -42,7 +42,6 @@ jobs:
     - name: Run local/dotnet-test@v1
       run: >
         dotnet test
-        --logger GitHubActions
         --
         --results-directory ${{ github.workspace }}/coverage/results
         --coverage

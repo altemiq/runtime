@@ -8,5 +8,24 @@
   <PropertyGroup Condition=" ('$(IsTestProject)' == 'true') and ($([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework') ">
     <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
   </PropertyGroup>
+  
+  <Choose>
+    <When Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0')) ">
+      <PropertyGroup>
+        <EnableTUnitPolyfills>false</EnableTUnitPolyfills>
+        <PolySharpIncludeGeneratedTypes>
+          $(PolySharpIncludeGeneratedTypes);
+          System.Runtime.CompilerServices.ModuleInitializerAttribute;
+        </PolySharpIncludeGeneratedTypes>
+      </PropertyGroup>
+
+      <ItemGroup>
+        <PackageReference Include="PolySharp">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+      </ItemGroup>
+    </When>
+  </Choose>
 
 </Project>

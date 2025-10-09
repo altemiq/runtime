@@ -19,8 +19,4 @@
     <PackageVersion Include="TUnit" Version="0.67.10" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
-    <GlobalPackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
-  </ItemGroup>
-
 </Project>
