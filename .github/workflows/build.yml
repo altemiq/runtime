@@ -90,7 +90,7 @@ jobs:
       run: dotnet restore
 
     - name: Run local/dotnet-build@v1
-      working-directory: ${{ github.workspace }}/src/OneOf.CodeGeneration
+      working-directory: ${{ github.workspace }}/generators/OneOf.CodeGeneration
       run: dotnet build --no-restore -maxCpuCount:1
 
     - name: Run local/dotnet-build@v1
