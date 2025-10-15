@@ -28,7 +28,7 @@ public class StructConverterBenchmarks
                 {
                     "Nested",
                     Value.ForStruct(
-                        new Struct
+                        new()
                         {
                             Fields =
                             {

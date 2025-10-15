@@ -112,12 +112,12 @@ public class BasicTests
 
     public static IEnumerable<Func<IntegerCodec>> IntegerCodecs()
     {
-        return Codecs.Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c())));
+        return Codecs.Select(c => new Func<IntegerCodec>(() => new(c())));
     }
 
     public static IEnumerable<Func<IntegerCodec>> ComplexCodecs()
     {
-        return Codecs.Select(c => c()).Where(c => c is not Simple9 and not Simple16).Select(c => new Func<IntegerCodec>(() => new IntegerCodec(c)));
+        return Codecs.Select(c => c()).Where(c => c is not Simple9 and not Simple16).Select(c => new Func<IntegerCodec>(() => new(c)));
     }
 
     [Test]
@@ -324,18 +324,18 @@ public class BasicTests
             for (var sparsity = 1; sparsity < 31 - nbr; sparsity += 4)
             {
                 var generatedData = GenerateData(n, nbr, sparsity);
-                yield return () => (new IntegerCodec(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), new IntegerCodec(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(new Copy()), new IntegerCodec(new Copy()), generatedData);
-                yield return () => (new IntegerCodec(new VariableByte()), new IntegerCodec(new VariableByte()), generatedData);
-                yield return () => (new IntegerCodec(new Differential.DifferentialVariableByte()), new IntegerCodec(new Differential.DifferentialVariableByte()), generatedData);
-                yield return () => (new IntegerCodec(Composition.Create<BinaryPacking, VariableByte>()), new IntegerCodec(Composition.Create<BinaryPacking, VariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(Composition.Create<NewPfdS9, VariableByte>()), new IntegerCodec(Composition.Create<NewPfdS9, VariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(Composition.Create<NewPfdS16, VariableByte>()), new IntegerCodec(Composition.Create<NewPfdS16, VariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(Composition.Create<OptPfdS9, VariableByte>()), new IntegerCodec(Composition.Create<OptPfdS9, VariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(Composition.Create<OptPfdS16, VariableByte>()), new IntegerCodec(Composition.Create<OptPfdS16, VariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(Composition.Create<FastPatchingFrameOfReference128, VariableByte>()), new IntegerCodec(Composition.Create<FastPatchingFrameOfReference128, VariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(Composition.Create<FastPatchingFrameOfReference256, VariableByte>()), new IntegerCodec(Composition.Create<FastPatchingFrameOfReference256, VariableByte>()), generatedData);
-                yield return () => (new IntegerCodec(new Simple9()), new IntegerCodec(new Simple9()), generatedData);
+                yield return () => (new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>()), generatedData);
+                yield return () => (new(new Copy()), new(new Copy()), generatedData);
+                yield return () => (new(new VariableByte()), new(new VariableByte()), generatedData);
+                yield return () => (new(new Differential.DifferentialVariableByte()), new(new Differential.DifferentialVariableByte()), generatedData);
+                yield return () => (new(Composition.Create<BinaryPacking, VariableByte>()), new(Composition.Create<BinaryPacking, VariableByte>()), generatedData);
+                yield return () => (new(Composition.Create<NewPfdS9, VariableByte>()), new(Composition.Create<NewPfdS9, VariableByte>()), generatedData);
+                yield return () => (new(Composition.Create<NewPfdS16, VariableByte>()), new(Composition.Create<NewPfdS16, VariableByte>()), generatedData);
+                yield return () => (new(Composition.Create<OptPfdS9, VariableByte>()), new(Composition.Create<OptPfdS9, VariableByte>()), generatedData);
+                yield return () => (new(Composition.Create<OptPfdS16, VariableByte>()), new(Composition.Create<OptPfdS16, VariableByte>()), generatedData);
+                yield return () => (new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>()), new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>()), generatedData);
+                yield return () => (new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>()), new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>()), generatedData);
+                yield return () => (new(new Simple9()), new(new Simple9()), generatedData);
             }
 
             static int[][] GenerateData(int n, int nbr, int sparsity)
@@ -379,25 +379,25 @@ public class BasicTests
 
     public static IEnumerable<Func<IntegerCodec>> ZeroInZeroOutData()
     {
-        yield return () => new IntegerCodec(new Differential.DifferentialBinaryPacking());
-        yield return () => new IntegerCodec(new Differential.DifferentialVariableByte());
-        yield return () => new IntegerCodec(new BinaryPacking());
-        yield return () => new IntegerCodec(new NewPfdS9());
-        yield return () => new IntegerCodec(new NewPfdS16());
-        yield return () => new IntegerCodec(new OptPfdS9());
-        yield return () => new IntegerCodec(new OptPfdS16());
-        yield return () => new IntegerCodec(new FastPatchingFrameOfReference128());
-        yield return () => new IntegerCodec(new FastPatchingFrameOfReference256());
-        yield return () => new IntegerCodec(new VariableByte());
-        yield return () => new IntegerCodec(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<BinaryPacking, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<NewPfdS9, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<NewPfdS16, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<OptPfdS9, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<OptPfdS16, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
-        yield return () => new IntegerCodec(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
+        yield return () => new(new Differential.DifferentialBinaryPacking());
+        yield return () => new(new Differential.DifferentialVariableByte());
+        yield return () => new(new BinaryPacking());
+        yield return () => new(new NewPfdS9());
+        yield return () => new(new NewPfdS16());
+        yield return () => new(new OptPfdS9());
+        yield return () => new(new OptPfdS16());
+        yield return () => new(new FastPatchingFrameOfReference128());
+        yield return () => new(new FastPatchingFrameOfReference256());
+        yield return () => new(new VariableByte());
+        yield return () => new(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
+        yield return () => new(Composition.Create<BinaryPacking, VariableByte>());
+        yield return () => new(Composition.Create<NewPfdS9, VariableByte>());
+        yield return () => new(Composition.Create<NewPfdS16, VariableByte>());
+        yield return () => new(Composition.Create<OptPfdS9, VariableByte>());
+        yield return () => new(Composition.Create<OptPfdS16, VariableByte>());
+        yield return () => new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
+        yield return () => new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
+        yield return () => new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
     }
 
     private static async Task TestSpurious(IInt32Codec c)
@@ -499,17 +499,17 @@ public class BasicTests
 
     public static IEnumerable<Func<IntegerCodec>> ExampleCodecs()
     {
-        yield return () => new IntegerCodec(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
-        yield return () => new IntegerCodec(new VariableByte());
-        yield return () => new IntegerCodec(new Differential.DifferentialVariableByte());
-        yield return () => new IntegerCodec(Composition.Create<BinaryPacking, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<NewPfdS9, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<NewPfdS16, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<OptPfdS9, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<OptPfdS16, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
-        yield return () => new IntegerCodec(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
+        yield return () => new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
+        yield return () => new(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
+        yield return () => new(new VariableByte());
+        yield return () => new(new Differential.DifferentialVariableByte());
+        yield return () => new(Composition.Create<BinaryPacking, VariableByte>());
+        yield return () => new(Composition.Create<NewPfdS9, VariableByte>());
+        yield return () => new(Composition.Create<NewPfdS16, VariableByte>());
+        yield return () => new(Composition.Create<OptPfdS9, VariableByte>());
+        yield return () => new(Composition.Create<OptPfdS16, VariableByte>());
+        yield return () => new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
+        yield return () => new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
     }
 
     public static IEnumerable<Func<(IntegerCodec, int)>> ExampleCodecsWithSizes()

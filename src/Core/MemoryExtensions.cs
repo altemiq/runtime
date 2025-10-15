@@ -98,7 +98,7 @@ public static partial class MemoryExtensions
         {
             if (span is { Length: 0 })
             {
-                span = new Span<char>(new char[initLength - (oldLength - newLength)]);
+                span = new(new char[initLength - (oldLength - newLength)]);
             }
         }
     }

@@ -48,7 +48,7 @@ public class StructConverterTests
             {
                 "Nested",
                 Google.Protobuf.WellKnownTypes.Value.ForStruct(
-                    new Google.Protobuf.WellKnownTypes.Struct
+                    new()
                     {
                         Fields =
                         {

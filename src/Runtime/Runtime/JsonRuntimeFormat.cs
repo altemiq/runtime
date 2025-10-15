@@ -49,7 +49,7 @@ internal static class JsonRuntimeFormat
 #if NET461_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
             foreach (var json in JsonDocument.Parse(stream).RootElement.GetProperty("runtimes").EnumerateObject())
             {
-                yield return new Runtime(
+                yield return new(
                     json.Name,
                     [.. json.Value.GetProperty("#import").EnumerateArray().Select(static p => p.GetString()!)]);
             }
@@ -69,7 +69,7 @@ internal static class JsonRuntimeFormat
                 var imports = json.Value["#import"] is JArray import
                     ? import.Select(static s => s.Value<string>()).ToArray()
                     : [];
-                yield return new Runtime(json.Key, imports);
+                yield return new(json.Key, imports);
             }
 
             static IEnumerable<KeyValuePair<string, JToken>> EachProperty(JToken json)
@@ -106,7 +106,7 @@ internal static class JsonRuntimeFormat
                 {
                     foreach (var runtimeImport in runtime.Imports)
                     {
-                        yield return new KeyValuePair<int, string>(depth, runtimeImport);
+                        yield return new(depth, runtimeImport);
                         foreach (var other in GetImports(runtimeImport, runtimes, depth + 1))
                         {
                             yield return other;

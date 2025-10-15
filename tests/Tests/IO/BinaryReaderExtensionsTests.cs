@@ -112,7 +112,7 @@ public class BinaryReaderExtensionsTests
         stream.Position = 0;
 
         var reader = encoding is { } e
-            ? new BinaryReader(stream, System.Text.Encoding.GetEncoding(e))
+            ? new(stream, System.Text.Encoding.GetEncoding(e))
             : new BinaryReader(stream);
         using (reader)
         {

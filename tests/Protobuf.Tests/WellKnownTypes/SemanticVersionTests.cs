@@ -65,7 +65,7 @@ public class SemanticVersionTests
     public async Task ToFullString(string input, int major, int minor, int patch, IEnumerable<string>? releaseLabels,
         string? metadata)
     {
-        var version = new SemanticVersion(new System.Version(major, minor, patch), releaseLabels, metadata);
+        var version = new SemanticVersion(new(major, minor, patch), releaseLabels, metadata);
         await Assert.That(version.ToFullString()).IsEqualTo(input);
     }
 
@@ -74,7 +74,7 @@ public class SemanticVersionTests
     [MethodDataSource(nameof(ParsingTestCases))]
     public async Task TryFormat(string input, int major, int minor, int patch, IEnumerable<string>? releaseLabels, string? metadata)
     {
-        var version = new SemanticVersion(new System.Version(major, minor, patch), releaseLabels, metadata);
+        var version = new SemanticVersion(new(major, minor, patch), releaseLabels, metadata);
         int charsWritten = -1;
         string? output = default;
         await Assert.That(() =>
@@ -93,7 +93,7 @@ public class SemanticVersionTests
     [MethodDataSource(nameof(ToStringTestCases))]
     public async Task ToString(int major, int minor, int patch, IEnumerable<string>? releaseLabels, string? metadata, string? expected)
     {
-        var version = SemanticVersion.ForVersion(new System.Version(major, minor, patch), releaseLabels, metadata);
+        var version = SemanticVersion.ForVersion(new(major, minor, patch), releaseLabels, metadata);
         await Assert.That(version.ToString()).IsEqualTo(expected);
     }
 

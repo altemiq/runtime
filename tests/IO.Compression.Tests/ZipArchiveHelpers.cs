@@ -32,6 +32,6 @@ internal class ZipArchiveHelpers
 
         memoryStream.Position = 0;
 
-        return new ZipArchiveShim(memoryStream, mode);
+        return new(memoryStream, mode);
     }
 }

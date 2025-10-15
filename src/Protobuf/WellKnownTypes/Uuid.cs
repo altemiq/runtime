@@ -114,7 +114,7 @@ public sealed partial class Uuid :
 #else
         Span<byte> bytes = guid.ToByteArray();
 #endif
-        return new Uuid
+        return new()
         {
             TimeLow = System.Buffers.Binary.BinaryPrimitives.ReadUInt32LittleEndian(bytes[..4]),
             TimeMid = System.Buffers.Binary.BinaryPrimitives.ReadUInt16LittleEndian(bytes[4..6]),
@@ -189,7 +189,7 @@ public sealed partial class Uuid :
         var bytes = new byte[16];
 #endif
         _ = this.TryWriteBytesCore(bytes);
-        return new Guid(bytes);
+        return new(bytes);
     }
 
     /// <inheritdoc/>

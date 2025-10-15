@@ -43,7 +43,7 @@ public static class AssemblyExtensions
 
         static CheckValue<T> IsNullOr<T>(T? value, Func<T, T?, bool> check)
         {
-            return value is null ? CheckValue<T>.True : new CheckValue<T>(value, check);
+            return value is null ? CheckValue<T>.True : new(value, check);
         }
     }
 

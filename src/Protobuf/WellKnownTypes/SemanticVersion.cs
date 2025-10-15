@@ -241,7 +241,7 @@ public partial class SemanticVersion :
 
         var version = NormalizeVersionValue(systemVersion);
 
-        result = new SemanticVersion(
+        result = new(
             version: version,
             releaseLabels: releaseLabels,
             metadata: buildMetadata);

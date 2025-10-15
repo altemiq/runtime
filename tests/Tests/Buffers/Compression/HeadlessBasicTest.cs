@@ -19,7 +19,7 @@ public class HeadlessBasicTest
 
     public static IEnumerable<Func<HeadlessIntegerCodec>> Data()
     {
-        return Codecs.Select(c => new Func<HeadlessIntegerCodec>(() => new HeadlessIntegerCodec { Codec = c() }));
+        return Codecs.Select(c => new Func<HeadlessIntegerCodec>(() => new() { Codec = c() }));
     }
 
     [Test]

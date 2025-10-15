@@ -167,7 +167,7 @@ internal sealed class RuntimeConfig(string path)
     /// <param name="name">The name to set.</param>
     /// <param name="version">The version to set.</param>
     /// <returns>This instance with the framework set.</returns>
-    public RuntimeConfig WithFramework(string name, string version) => this.WithFramework(new Framework(name, version));
+    public RuntimeConfig WithFramework(string name, string version) => this.WithFramework(new(name, version));
 
     /// <summary>
     /// Removes the framework.
@@ -208,7 +208,7 @@ internal sealed class RuntimeConfig(string path)
     /// <param name="name">The name to set.</param>
     /// <param name="version">The version to set.</param>
     /// <returns>This instance with the included framework set.</returns>
-    public RuntimeConfig WithIncludedFramework(string name, string version) => this.WithIncludedFramework(new Framework(name, version));
+    public RuntimeConfig WithIncludedFramework(string name, string version) => this.WithIncludedFramework(new(name, version));
 
     /// <summary>
     /// Sets the roll forward.
@@ -275,7 +275,7 @@ internal sealed class RuntimeConfig(string path)
     /// <returns>This instance with the property set.</returns>
     public RuntimeConfig WithProperty(string name, string? value)
     {
-        this.properties.Add(new Tuple<string, string?>(name, value));
+        this.properties.Add(new(name, value));
         return this;
     }
 
@@ -284,7 +284,7 @@ internal sealed class RuntimeConfig(string path)
     {
 #if NET461_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         using var stream = new MemoryStream();
-        using (var writer = new System.Text.Json.Utf8JsonWriter(stream, new System.Text.Json.JsonWriterOptions { Indented = true }))
+        using (var writer = new System.Text.Json.Utf8JsonWriter(stream, new() { Indented = true }))
         {
             writer.WriteStartObject();
             writer.WritePropertyName("runtimeOptions");

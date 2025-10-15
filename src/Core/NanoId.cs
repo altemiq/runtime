@@ -30,9 +30,9 @@ public static class NanoId
     public static Random GlobalRandom
         => field ??=
 #if NETSTANDARD1_3_OR_GREATER || NET || NETFRAMEWORK
-            new Random();
+            new();
 #else
-            new Random((int)DateTime.UtcNow.Ticks);
+            new((int)DateTime.UtcNow.Ticks);
 #endif
 
     /// <summary>
@@ -183,7 +183,7 @@ public static class NanoId
                 builder[count] = alphabet[alphabetIndex];
                 if (++count == size)
                 {
-                    return new string(builder);
+                    return new(builder);
                 }
             }
         }

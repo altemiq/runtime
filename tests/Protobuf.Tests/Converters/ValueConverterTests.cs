@@ -76,7 +76,7 @@ public class ValueConverterTests
                 element => element.EnumerateArray().Select(e => e.GetInt32()),
                 intArray);
             yield return () => (
-                Google.Protobuf.WellKnownTypes.Value.ForStruct(new Google.Protobuf.WellKnownTypes.Struct { Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } } }),
+                Google.Protobuf.WellKnownTypes.Value.ForStruct(new() { Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } } }),
                 System.Text.Json.JsonValueKind.Object,
                 element => element.ToString(),
                 """{ "Id": 1 }""");
@@ -144,12 +144,12 @@ public class ValueConverterTests
                 doubleArray);
             yield return () => (
                 Google.Protobuf.WellKnownTypes.Value.ForStruct(
-                    new Google.Protobuf.WellKnownTypes.Struct
+                    new()
                     {
                         Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } }
                     }),
                 System.Text.Json.JsonValueKind.Object,
-                node => node.AsObject().ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = false }),
+                node => node.AsObject().ToJsonString(new() { WriteIndented = false }),
                 """{"Id":1}""");
         }
     }

@@ -85,6 +85,6 @@ public static class Resolve
     }
 
     [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Types and members the loaded assembly depends on might be removed")]
-    private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args) => ResolveRuntimeAssembly(new System.Reflection.AssemblyName(args.Name));
+    private static System.Reflection.Assembly? ResolveRuntimeAssembliesHandler(object? sender, ResolveEventArgs args) => ResolveRuntimeAssembly(new(args.Name));
 #endif
 }

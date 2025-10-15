@@ -19,7 +19,7 @@ internal class UniformDataGenerator(int seed)
     /// <summary>
     /// Gets the random number generator.
     /// </summary>
-    internal Random Random { get; } = new Random(seed);
+    internal Random Random { get; } = new(seed);
 
     /// <summary>
     /// Generates uniform data.

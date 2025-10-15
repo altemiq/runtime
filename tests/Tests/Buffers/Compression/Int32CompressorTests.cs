@@ -10,7 +10,7 @@ public class Int32CompressorTests
 
     public static IEnumerable<Func<IntegerCompressor>> Data()
     {
-        return IntegerCompressors.Select(i => new Func<IntegerCompressor>(() => new IntegerCompressor { Compressor = i() }));
+        return IntegerCompressors.Select(i => new Func<IntegerCompressor>(() => new() { Compressor = i() }));
     }
 
     [Test]

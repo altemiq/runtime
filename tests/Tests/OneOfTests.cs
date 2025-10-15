@@ -54,11 +54,11 @@ public class OneOfTests
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString)).IsEqualTo(expectedResult);
+    public async Task LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString)).IsEqualTo(expectedResult);
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new System.Globalization.CultureInfo(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString)).IsEqualTo(expectedResult);
+    public async Task RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString)).IsEqualTo(expectedResult);
 
     [Test]
     [MethodDataSource(nameof(DateData))]
@@ -66,8 +66,8 @@ public class OneOfTests
 
     public static IEnumerable<Func<(string, DateTime, string)>> DateData()
     {
-        yield return () => Create(new System.Globalization.CultureInfo("en-NZ"), new DateTime(2019, 1, 2, 1, 2, 3));
-        yield return () => Create(new System.Globalization.CultureInfo("en-US"), new DateTime(2019, 1, 2, 1, 2, 3));
+        yield return () => Create(new("en-NZ"), new(2019, 1, 2, 1, 2, 3));
+        yield return () => Create(new("en-US"), new(2019, 1, 2, 1, 2, 3));
 
         static (string, DateTime, string) Create(System.Globalization.CultureInfo culture, DateTime dateTime)
         {
