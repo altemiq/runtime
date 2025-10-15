@@ -8,12 +8,12 @@ public class SemanticVersionTests
     {
         var version = SemanticVersion.Parse(input);
         await Assert.That(version)
-            .Satisfies(x => x.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null))
-            .Satisfies(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
+            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
+            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
+            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]
@@ -22,13 +22,13 @@ public class SemanticVersionTests
     {
         await Assert.That(SemanticVersion.TryParse(input, out var version)).IsTrue();
         await Assert.That(version)
-            .IsNotNull()
-            .Satisfies(x => x.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null))
-            .Satisfies(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+            .IsNotNull().And
+            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
+            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
+            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
+            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]
@@ -37,12 +37,12 @@ public class SemanticVersionTests
     {
         var version = SemanticVersion.Parse(input.AsSpan());
         await Assert.That(version)
-            .Satisfies(x => x.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null))
-            .Satisfies(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
+            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
+            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
+            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]
@@ -51,13 +51,13 @@ public class SemanticVersionTests
     {
         await Assert.That(SemanticVersion.TryParse(input.AsSpan(), out var version)).IsTrue();
         await Assert.That(version)
-            .IsNotNull()
-            .Satisfies(x => x.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null))
-            .Satisfies(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+            .IsNotNull().And
+            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
+            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
+            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
+            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]

@@ -6,8 +6,6 @@
 
 namespace Altemiq;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public class MemoryExtensionsTests
 {
     [Test]

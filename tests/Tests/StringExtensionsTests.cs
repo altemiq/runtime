@@ -6,8 +6,6 @@
 
 namespace Altemiq;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public class StringExtensionsTests
 {
     private const string SingleLineSimple = "1,2,3,4,5";

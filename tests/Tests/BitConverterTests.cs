@@ -6,8 +6,6 @@
 
 namespace Altemiq;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public partial class BitConverterTests
 {
     private const int PositiveByte = 0x7F;

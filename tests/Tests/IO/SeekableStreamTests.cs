@@ -6,8 +6,6 @@
 
 namespace Altemiq.IO;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public class SeekableStreamTests
 {
     [Test]

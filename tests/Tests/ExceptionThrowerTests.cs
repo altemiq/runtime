@@ -6,9 +6,6 @@
 
 namespace Altemiq;
 
-using System;
-using TUnit.Assertions.AssertConditions.Throws;
-
 public static class ExceptionThrowerTests
 {
     public class ArgumentNullException

@@ -6,8 +6,6 @@
 
 namespace Altemiq.Security.Cryptography;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public class RandomTests
 {
     [Test]

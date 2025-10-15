@@ -1,7 +1,5 @@
 ﻿namespace Altemiq.Threading;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public class AsyncExtensionsTests
 {
     [Test]

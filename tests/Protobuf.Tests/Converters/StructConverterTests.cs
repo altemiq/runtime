@@ -1,7 +1,5 @@
 ﻿namespace Altemiq.Protobuf.Converters;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public class StructConverterTests
 {
     private static readonly string Json =
@@ -102,8 +100,8 @@ public class StructConverterTests
     public async Task CreateFromEmptyDocument()
     {
         await Assert.That(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")))
-            .IsTypeOf<Google.Protobuf.WellKnownTypes.Struct>()
-            .And.Satisfies(a => (IEnumerable<KeyValuePair<string, Google.Protobuf.WellKnownTypes.Value>>)a.Fields, fields => fields.IsEmpty());
+            .IsTypeOf<Google.Protobuf.WellKnownTypes.Struct>().And
+            .Satisfies(IEnumerable<KeyValuePair<string, Google.Protobuf.WellKnownTypes.Value>> (a) => a!.Fields, fields => fields.IsEmpty());
     }
 
     [Test]

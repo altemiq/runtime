@@ -6,8 +6,6 @@
 
 namespace Altemiq.Runtime;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 #if DEBUG
 public class JsonRuntimeFormatTests
 {
@@ -26,10 +24,9 @@ public class JsonRuntimeFormatTests
     {
         using var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(name), System.IO.Compression.CompressionMode.Decompress, false);
         var json = JsonRuntimeFormat.ReadRuntimeGraph(stream!);
-        await Assert.That(json).IsNotNull().And
-            .HasCount().GreaterThan(10).And
-            .HasCount().LessThan(int.MaxValue).And
-            .Satisfies(static j => j.Select(static x => x.Runtime), runtimes => runtimes.Contains("linux"));
+        await Assert.That(json)
+            .Satisfies(static j => j!.Select(static x => x.Runtime), runtimes => runtimes.Contains("linux")).And
+            .HasCount().Between(10, int.MaxValue);
     }
 
     private static Stream GetManifestStreamFromAssembly(string name) => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();

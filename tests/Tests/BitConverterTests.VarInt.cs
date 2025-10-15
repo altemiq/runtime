@@ -1,7 +1,5 @@
 ﻿namespace Altemiq;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public partial class BitConverterTests
 {
     public class VarInt

@@ -6,8 +6,6 @@
 
 namespace Altemiq.Linq;
 
-using TUnit.Assertions.AssertConditions.Throws;
-
 public partial class ListTests
 {
     [Test]

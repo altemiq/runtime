@@ -59,12 +59,12 @@ public class ValueConverterTests
 
         public static IEnumerable<Func<(Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.JsonElement, object?>, object?)>> GetElementData()
         {
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, (element) => element.GetUInt32(), 1U);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, (element) => element.GetDouble(), 123.456);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, (element) => element.GetBoolean(), false);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, (element) => element.GetBoolean(), true);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, (element) => null, null);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, (element) => element.GetString(), "value");
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, element => element.GetUInt32(), 1U);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, element => element.GetDouble(), 123.456);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, element => element.GetBoolean(), false);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, element => element.GetBoolean(), true);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, _ => null, null);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, element => element.GetString(), "value");
             yield return () => (
                 Google.Protobuf.WellKnownTypes.Value.ForList(
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(1),
@@ -111,9 +111,13 @@ public class ValueConverterTests
             {
                 await Assert.That(node.GetValueKind()).IsEqualTo(valueKind);
                 var nodeValue = getValue(node);
-                if (nodeValue is System.Collections.IEnumerable enumberable && expected is not null)
+                if (nodeValue is System.Collections.IEnumerable enumerable && expected is not null)
                 {
-                    await IsEquivalentTo(enumberable, expected);
+                    await IsEquivalentTo(enumerable, expected);
+                }
+                else if (expected is null)
+                {
+                    await Assert.That(nodeValue).IsNull();
                 }
                 else
                 {
@@ -122,16 +126,16 @@ public class ValueConverterTests
             }
         }
 
-        private static readonly double[] doubleArray = [1D, 2D, 3D, 4D, 5D];
+        private static readonly double[] DoubleArray = [1D, 2D, 3D, 4D, 5D];
 
         public static IEnumerable<Func<(Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.Nodes.JsonNode, object?>, object?)>> GetElementData()
         {
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, (node) => (int)node.GetValue<double>(), 1);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, (node) => node.GetValue<double>(), 123.456);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, (node) => node.GetValue<bool>(), false);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, (node) => node.GetValue<bool>(), true);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, (node) => null, null);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, (node) => node.GetValue<string>(), "value");
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, node => (int)node.GetValue<double>(), 1);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, node => node.GetValue<double>(), 123.456);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, node => node.GetValue<bool>(), false);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, node => node.GetValue<bool>(), true);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, _ => null, null);
+            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, node => node.GetValue<string>(), "value");
             yield return () => (
                 Google.Protobuf.WellKnownTypes.Value.ForList(
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(1),
@@ -141,7 +145,7 @@ public class ValueConverterTests
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(5)),
                 System.Text.Json.JsonValueKind.Array,
                 node => node.AsArray().Select(i => i!.GetValue<double>()),
-                doubleArray);
+                DoubleArray);
             yield return () => (
                 Google.Protobuf.WellKnownTypes.Value.ForStruct(
                     new()
