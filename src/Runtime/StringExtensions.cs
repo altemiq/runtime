@@ -125,7 +125,11 @@ public static class StringExtensions
         {
             -1 => source,
             0 => string.Empty,
+#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            var length => source[..length],
+#else
             var length => source.Substring(0, length),
+#endif
         };
 
     /// <summary>

@@ -7,14 +7,14 @@ public class ProcessStartInfoBuilderTests
     private const string MyStringValue = "value";
     private const string FileName = "notepad.exe";
     private static readonly string Arguments = $"--{nameof(MyProcessStartInfoBuilder.MySwitch).ToKebabCase()} --{nameof(MyProcessStartInfoBuilder.MyString).ToKebabCase()} {MyStringValue}";
-    
+
     [Test]
     public async Task SetFromProcessStartInfo()
     {
         var builder = new MyProcessStartInfoBuilder(new(FileName, Arguments));
         await Assert.That(ProcessStartInfoBuilder.GetArguments(builder.ProcessStartInfo)).IsEqualTo(Arguments);
     }
-    
+
     [Test]
     public async Task SetFromProperties()
     {
@@ -23,7 +23,7 @@ public class ProcessStartInfoBuilderTests
             MySwitch = true,
             MyString = MyStringValue,
         };
-        
+
         await Assert.That(ProcessStartInfoBuilder.GetArguments(builder.ProcessStartInfo)).IsEqualTo(Arguments);
     }
 
@@ -32,9 +32,9 @@ public class ProcessStartInfoBuilderTests
         public MyProcessStartInfoBuilder()
             : base(FileName)
         {
-            
+
         }
-    
+
 
         public MyProcessStartInfoBuilder(ProcessStartInfo processStartInfo)
             : base(processStartInfo)
@@ -49,11 +49,11 @@ public class ProcessStartInfoBuilderTests
             this.MyString = parseResult.GetValue(myStringOption);
             this.MySecondString = parseResult.GetValue(mySecondStringOption);
         }
-        
+
         public bool MySwitch { get; set; }
-        
+
         public string? MyString { get; set; }
-        
+
         public string? MySecondString { get; set; }
 
         protected override IEnumerable<string> GetArguments()
@@ -73,7 +73,7 @@ public class ProcessStartInfoBuilderTests
                 yield return $"--{nameof(this.MyString).ToKebabCase()}";
                 yield return this.MyString;
             }
-             
+
             if (this.MySecondString is not null)
             {
                 yield return $"--{nameof(this.MySecondString).ToKebabCase()}";

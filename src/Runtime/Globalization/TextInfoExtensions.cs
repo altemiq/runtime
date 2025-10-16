@@ -31,7 +31,11 @@ public static class TextInfoExtensions
         {
             Span<char> destination = stackalloc char[source.Length];
             var used = ToCamelCase(textInfo, source, destination);
+#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            return destination[..used].AsString();
+#else
             return destination.Slice(0, used).AsString();
+#endif
         }
     }
 
@@ -64,7 +68,11 @@ public static class TextInfoExtensions
         {
             Span<char> destination = stackalloc char[source.Length];
             var used = ToPascalCase(textInfo, source, destination);
+#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            return destination[..used].AsString();
+#else
             return destination.Slice(0, used).AsString();
+#endif
         }
     }
 
@@ -122,8 +130,12 @@ public static class TextInfoExtensions
 
         ReadOnlySpan<char> source = str.AsSpan();
         Span<char> destination = stackalloc char[source.Length * 2];
-        var current = InsertAndConvert(source, destination, separator, convert);
-        return destination.Slice(0, current).AsString();
+        var used = InsertAndConvert(source, destination, separator, convert);
+#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        return destination[..used].AsString();
+#else
+        return destination.Slice(0, used).AsString();
+#endif
     }
 
     private static int InsertAndConvert(ReadOnlySpan<char> source, Span<char> destination, char separator, Func<char, char> convert)
@@ -198,7 +210,12 @@ public static class TextInfoExtensions
         // go through the rest of the characters, making sure we title case
         var current = 1;
         var previousWhiteSpaceOrPunctuation = false;
-        foreach (var chr in source.Slice(start + 1))
+#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        source = source[(start + 1)..];
+#else
+        source = source.Slice(start + 1);
+#endif
+        foreach (var chr in source)
         {
             var whiteSpaceOrPunctuation = char.IsWhiteSpace(chr) || char.IsPunctuation(chr);
             if (!whiteSpaceOrPunctuation)

@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 namespace Altemiq.Collections;
+
 public class BitArrayExtensionsTests
 {
     [Test]
