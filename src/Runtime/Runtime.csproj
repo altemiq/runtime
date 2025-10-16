@@ -52,9 +52,8 @@
   </Choose>
 
   <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) ">
-    <PackageReference Include="System.Memory" VersionOverride="4.5.0" />
+    <PackageReference Include="System.Memory" VersionOverride="4.5.4" />
     <PackageReference Include="System.Net.Http" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" VersionOverride="4.5.0" />
     <PackageReference Include="System.Text.RegularExpressions" />
   </ItemGroup>
 

@@ -29,13 +29,11 @@ public static class TextInfoExtensions
 
         static string ToCamelCaseCore(System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source)
         {
-            Span<char> destination = stackalloc char[source.Length];
+            var destination = System.Buffers.ArrayPool<char>.Shared.Rent(source.Length);
             var used = ToCamelCase(textInfo, source, destination);
-#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-            return destination[..used].AsString();
-#else
-            return destination.Slice(0, used).AsString();
-#endif
+            var returnString = destination.AsSpan(0, used).AsString();
+            System.Buffers.ArrayPool<char>.Shared.Return(destination);
+            return returnString;
         }
     }
 
@@ -66,13 +64,11 @@ public static class TextInfoExtensions
 
         static string ToPascalCaseCore(System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source)
         {
-            Span<char> destination = stackalloc char[source.Length];
+            var destination = System.Buffers.ArrayPool<char>.Shared.Rent(source.Length);
             var used = ToPascalCase(textInfo, source, destination);
-#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-            return destination[..used].AsString();
-#else
-            return destination.Slice(0, used).AsString();
-#endif
+            var returnString = destination.AsSpan(0, used).AsString();
+            System.Buffers.ArrayPool<char>.Shared.Return(destination);
+            return returnString;
         }
     }
 
@@ -129,13 +125,11 @@ public static class TextInfoExtensions
         }
 
         ReadOnlySpan<char> source = str.AsSpan();
-        Span<char> destination = stackalloc char[source.Length * 2];
+        var destination = System.Buffers.ArrayPool<char>.Shared.Rent(source.Length * 2);
         var used = InsertAndConvert(source, destination, separator, convert);
-#if NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        return destination[..used].AsString();
-#else
-        return destination.Slice(0, used).AsString();
-#endif
+        var returnString = destination.AsSpan(0, used).AsString();
+        System.Buffers.ArrayPool<char>.Shared.Return(destination);
+        return returnString;
     }
 
     private static int InsertAndConvert(ReadOnlySpan<char> source, Span<char> destination, char separator, Func<char, char> convert)

@@ -103,10 +103,11 @@ public class ScreamCipher
 
         return stringBuider.ToString();
 #else
-        var source = input.AsSpan();
-        Span<char> destination = stackalloc char[source.Length * 2];
-        Encode(source, destination, out var charsWritten);
-        return destination[..charsWritten].ToString();
+        var destination = System.Buffers.ArrayPool<char>.Shared.Rent(input.Length * 2);
+        Encode(input, destination, out var charsWritten);
+        var returnString = destination.AsSpan(0, charsWritten).ToString();
+        System.Buffers.ArrayPool<char>.Shared.Return(destination);
+        return returnString;
 #endif
     }
 
@@ -144,12 +145,7 @@ public class ScreamCipher
     /// <returns>The decoded string.</returns>
     public static string Decode(string input)
     {
-#if !NETSTANDARD1_0
-        var source = input.AsSpan();
-        Span<char> destination = stackalloc char[source.Length];
-        Decode(source, destination, out var charsWritten);
-        return destination[..charsWritten].ToString();
-#else
+#if NETSTANDARD1_0
         var stringBuilder = new System.Text.StringBuilder();
         for (var i = 0; i < input.Length; i++)
         {
@@ -184,6 +180,12 @@ public class ScreamCipher
         }
 
         return stringBuilder.ToString();
+#else
+        var destination = System.Buffers.ArrayPool<char>.Shared.Rent(input.Length * 2);
+        Decode(input, destination, out var charsWritten);
+        var returnString = destination.AsSpan(0, charsWritten).ToString();
+        System.Buffers.ArrayPool<char>.Shared.Return(destination);
+        return returnString;
 #endif
     }
 

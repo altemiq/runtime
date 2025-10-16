@@ -56,30 +56,21 @@
     <PackageReference Include="System.Reflection.TypeExtensions" VersionOverride="4.1.0" />
   </ItemGroup>
 
-  <Choose>
-    <When Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net2.0')) ">
-      <ItemGroup>
-        <!-- this is to update the vunerable version -->
-        <PackageReference Include="System.Text.RegularExpressions" />
+  <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net2.0')) ">
+    <!-- this is to update the vunerable version -->
+    <PackageReference Include="System.Text.RegularExpressions" />
 
-        <PackageReference Include="System.ValueTuple" />
-      </ItemGroup>
-    </When>
-  </Choose>
+    <PackageReference Include="System.ValueTuple" />
+  </ItemGroup>
 
-  <Choose>
-    <When Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.1')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1')) ">
-      <!-- NOT .NET Framework -->
-      <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework' ">
-        <!-- this is to update the vunerable version -->
-        <PackageReference Include="System.Net.Http" />
-      </ItemGroup>
+  <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.1')) and !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1')) ">
+    <!-- this is to update the vunerable version -->
+    <PackageReference Include="System.Net.Http" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework' " />
 
-      <ItemGroup>
-        <PackageReference Include="System.Memory" VersionOverride="4.5.0" />
-      </ItemGroup>
-    </When>
-  </Choose>
+    <PackageReference Include="System.ValueTuple" Condition=" $([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' " />
+
+    <PackageReference Include="System.Memory" VersionOverride="4.5.4" />
+  </ItemGroup>
 
   <ItemGroup Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.1')) ">
     <Compile Remove="Buffers\Compression\**\*.cs" />
