@@ -136,8 +136,10 @@ public static class NanoId
     private static void Validate(string alphabet, int size)
     {
         ArgumentNullException.ThrowIfNull(alphabet);
-        ArgumentOutOfRangeException.ThrowIfLessThan(alphabet.Length, 1);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(alphabet.Length, byte.MaxValue);
+#pragma warning disable S3236
+        ArgumentOutOfRangeException.ThrowIfLessThan(alphabet.Length, 1, nameof(alphabet));
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(alphabet.Length, byte.MaxValue, nameof(alphabet));
+#pragma warning restore S3236
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(size, 0);
     }
 

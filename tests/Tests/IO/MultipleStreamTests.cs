@@ -60,7 +60,7 @@ public class MultipleStreamTests
         multipleStream.Add(nameof(second), second);
         multipleStream.Add(nameof(third), third);
 
-        var cancellationToken = TestContext.Current?.CancellationToken ?? CancellationToken.None;
+        var cancellationToken = TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None;
         await multipleStream.FlushAsync(cancellationToken);
 
         Received.InOrder(async () =>
@@ -184,7 +184,7 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        await Assert.That(await stream.ReadAsync(third, 0, ReadSize, TestContext.Current?.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
+        await Assert.That(await stream.ReadAsync(third, 0, ReadSize, TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
 
         await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
         await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
@@ -235,7 +235,7 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        await Assert.That(await stream.ReadAsync(third.AsMemory(), TestContext.Current?.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
+        await Assert.That(await stream.ReadAsync(third.AsMemory(), TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
 
         await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
         await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
@@ -326,7 +326,7 @@ public class MultipleStreamTests
         var destination = new byte[FirstSize + SecondSize + ThirdSize];
         using (var memoryStream = new MemoryStream(destination))
         {
-            await stream.CopyToAsync(memoryStream, TestContext.Current?.CancellationToken ?? CancellationToken.None);
+            await stream.CopyToAsync(memoryStream, TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None);
         }
 
         await Assert.That(new ArraySegment<byte>(destination, 0, FirstSize)).IsEquivalentTo(first);
@@ -335,7 +335,7 @@ public class MultipleStreamTests
     }
 #endif
 
-    private sealed class BasicMultipleStream(params Stream[] streams) : MultipleStream(streams.Select(static (s, i) => (s, i)).ToDictionary(static x => x.i.ToString(), static x => x.s))
+    private sealed class BasicMultipleStream(params IEnumerable<Stream> streams) : MultipleStream(streams.Select(static (s, i) => (s, i)).ToDictionary(static x => x.i.ToString(), static x => x.s))
     {
         protected override Stream CreateStream(string name) => throw new NotImplementedException();
     }

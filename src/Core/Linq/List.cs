@@ -189,7 +189,7 @@ public static partial class List
             return;
         }
 
-        if (values is T[] @array)
+        if (values is T[] array)
         {
             Array.Sort(array, index, length, comparer);
         }

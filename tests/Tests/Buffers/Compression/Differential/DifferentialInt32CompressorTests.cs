@@ -1,4 +1,6 @@
-﻿namespace Altemiq.Buffers.Compression.Differential;
+﻿using Enumerable = System.Linq.Enumerable;
+
+namespace Altemiq.Buffers.Compression.Differential;
 
 public class DifferentialInt32CompressorTests
 {
@@ -12,13 +14,8 @@ public class DifferentialInt32CompressorTests
     public async Task SuperSimpleExample()
     {
         var iic2 = new DifferentialInt32Compressor();
-        var data = new int[2342351];
-        for (var k = 0; k < data.Length; ++k)
-        {
-            data[k] = k;
-        }
-
-        await Assert.That(iic2.Decompress(iic2.Compress(data))).HasCount().EqualTo(data.Length).And.IsEquivalentTo(data);
+        var data = Enumerable.Range(0, ushort.MaxValue).ToArray();
+        await Assert.That(iic2.Decompress(iic2.Compress(data))).IsEquivalentTo(data);
     }
 
     [Test]
@@ -32,7 +29,7 @@ public class DifferentialInt32CompressorTests
                 orig[k] = 3 * k + 5;
             }
 
-            foreach (var i in iic.Select(c => c()))
+            foreach (var i in this.iic.Select(c => c()))
             {
                 await Assert.That(i.Decompress(i.Compress(orig))).IsEquivalentTo(orig);
             }

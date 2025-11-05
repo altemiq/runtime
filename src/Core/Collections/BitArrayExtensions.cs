@@ -38,7 +38,9 @@ public static partial class BitArrayExtensions
 #else
         ArgumentOutOfRangeException.ThrowIfNegative(startIndex);
 #endif
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(startIndex + length, bits.Length);
+#pragma warning disable S3236
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(startIndex + length, bits.Length, nameof(startIndex));
+#pragma warning restore S3236
 
         byte @byte = 0;
 

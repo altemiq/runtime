@@ -14,9 +14,7 @@ public class RandomTests
         var random = new Random();
         var first = random.NextDouble();
         await Assert.That(first).IsBetween(0D, 1D);
-        var second = random.NextDouble();
-        await Assert.That(first).IsBetween(0D, 1D);
-        await Assert.That(first).IsNotEqualTo(second);
+        await Assert.That(random.NextDouble()).IsBetween(0D, 1D).And.IsNotEqualTo(first);
     }
 
     [Test]
@@ -25,9 +23,7 @@ public class RandomTests
         var random = new Random();
         var first = random.Next();
         await Assert.That(first).IsBetween(0, int.MaxValue);
-        var second = random.Next();
-        await Assert.That(first).IsBetween(0, int.MaxValue);
-        await Assert.That(first).IsNotEqualTo(second);
+        await Assert.That(random.Next()).IsBetween(0, int.MaxValue).And.IsNotEqualTo(first);
     }
 
     [Test]
@@ -37,9 +33,7 @@ public class RandomTests
         var random = new Random();
         var first = random.Next(Max);
         await Assert.That(first).IsBetween(0, Max);
-        var second = random.Next(Max);
-        await Assert.That(second).IsBetween(0, Max);
-        await Assert.That(first).IsNotEqualTo(second);
+        await Assert.That(random.Next(Max)).IsBetween(0, Max).And.IsNotEqualTo(first);
     }
 
     [Test]
@@ -50,9 +44,7 @@ public class RandomTests
         var random = new Random();
         var first = random.Next(Min, Max);
         await Assert.That(first).IsBetween(Min, Max);
-        var second = random.Next(Min, Max);
-        await Assert.That(second).IsBetween(Min, Max);
-        await Assert.That(first).IsNotEqualTo(second);
+        await Assert.That(random.Next(Min, Max)).IsBetween(Min, Max).And.IsNotEqualTo(first);
     }
 
     [Test]

@@ -9,12 +9,12 @@ public class VersionTests
     public async Task Parse(string input, int major, int minor, int build, int revision)
     {
         await Assert.That(Version.Parse(input))
-            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x!.HasBuild, m => m.IsEqualTo(build >= 0)).And
-            .Satisfies(x => x!.Build, m => build >= 0 ? m.IsEqualTo(build) : m.IsEqualTo(0)).And
-            .Satisfies(x => x!.HasRevision, m => m.IsEqualTo(revision >= 0)).And
-            .Satisfies(x => x!.Revision, m => revision >= 0 ? m.IsEqualTo(revision) : m.IsEqualTo(0));
+            .Member(x => x.Major, m => m.IsEqualTo(major)).And
+            .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
+            .Member(x => x.HasBuild, m => m.IsEqualTo(build >= 0)).And
+            .Member(x => x.Build, m => build >= 0 ? m.IsEqualTo(build) : m.IsEqualTo(0)).And
+            .Member(x => x.HasRevision, m => m.IsEqualTo(revision >= 0)).And
+            .Member(x => x.Revision, m => revision >= 0 ? m.IsEqualTo(revision) : m.IsEqualTo(0));
     }
 
     [Test]
@@ -26,12 +26,12 @@ public class VersionTests
         await Assert.That(Version.TryParse(input, out var output)).IsTrue();
         await Assert.That(output)
             .IsNotNull().And
-            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x!.HasBuild, m => m.IsEqualTo(build >= 0)).And
-            .Satisfies(x => x!.Build, m => build >= 0 ? m.IsEqualTo(build) : m.IsEqualTo(0)).And
-            .Satisfies(x => x!.HasRevision, m => m.IsEqualTo(revision >= 0)).And
-            .Satisfies(x => x!.Revision, m => revision >= 0 ? m.IsEqualTo(revision) : m.IsEqualTo(0));
+            .Member(x => x.Major, m => m.IsEqualTo(major)).And
+            .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
+            .Member(x => x.HasBuild, m => m.IsEqualTo(build >= 0)).And
+            .Member(x => x.Build, m => build >= 0 ? m.IsEqualTo(build) : m.IsEqualTo(0)).And
+            .Member(x => x.HasRevision, m => m.IsEqualTo(revision >= 0)).And
+            .Member(x => x.Revision, m => revision >= 0 ? m.IsEqualTo(revision) : m.IsEqualTo(0));
     }
 
     [Test]

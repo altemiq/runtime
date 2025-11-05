@@ -44,8 +44,9 @@ public class SeekableStreamTests
     public async Task ShouldBeAbleToSeekForward()
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim(fillData: true);
-        using var stream = new SeekableStream(archive.Entries[0], false);
-        await Assert.That(stream.Length).IsEqualTo(1024);
-        await Assert.That(stream.Seek(512, SeekOrigin.Begin)).IsEqualTo(512);
+        using var stream = new SeekableStream(archive.Entries[0]);
+        await Assert.That(stream)
+            .Member(s => s.Length, length => length.IsEqualTo(1024))
+            .And.Member(s => s.Seek(512, SeekOrigin.Begin), position => position.IsEqualTo(512));
     }
 }

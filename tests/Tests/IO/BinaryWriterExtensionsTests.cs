@@ -118,8 +118,8 @@ public class BinaryWriterExtensionsTests
     {
         using var stream = new MemoryStream();
 
-        var writer = encoding is { } e
-            ? new(stream, System.Text.Encoding.GetEncoding(e), true)
+        var writer = encoding is not null
+            ? new(stream, System.Text.Encoding.GetEncoding(encoding), true)
             : new BinaryWriter(stream, System.Text.Encoding.UTF8, true);
 #if NET
         await

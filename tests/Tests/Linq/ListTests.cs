@@ -101,18 +101,18 @@ public partial class ListTests
         }
     }
 
-    private static IEnumerable<IReadOnlyList<T>> CreateReadOnlyLists<T>(params T[] a) => CreateReadOnlyListsCore(a);
+    private static IEnumerable<IReadOnlyList<T>> CreateReadOnlyLists<T>(params IReadOnlyList<T> a) => CreateReadOnlyListsCore(a);
 
-    private static IEnumerable<IList<T>> CreateLists<T>(params T[] a) => CreateListsCore(a);
+    private static IEnumerable<IList<T>> CreateLists<T>(params IList<T> a) => CreateListsCore(a);
 
-    private static IEnumerable<IReadOnlyList<T>> CreateReadOnlyListsCore<T>(params T[] a)
+    private static IEnumerable<IReadOnlyList<T>> CreateReadOnlyListsCore<T>(params IReadOnlyList<T> a)
     {
         yield return a;
         yield return new List<T>(a);
         yield return new List<T>(a).AsReadOnly();
     }
 
-    private static IEnumerable<IList<T>> CreateListsCore<T>(params T[] a)
+    private static IEnumerable<IList<T>> CreateListsCore<T>(params IList<T> a)
     {
         yield return a;
         yield return new List<T>(a);
@@ -127,10 +127,6 @@ public partial class ListTests
 
     private readonly struct Third : ISecond;
 
-    private static TResult? TestListList<T, TResult>(object first, object second, Func<IList<T>, IList<T>, TResult> func, TResult? defaultResult = default) => first is IList<T> f && second is IList<T> s ? func(f, s) : defaultResult;
-
-    private static TResult? TestReadOnlyListReadOnlyList<T, TResult>(object first, object second, Func<IReadOnlyList<T>, IReadOnlyList<T>, TResult> func, TResult? defaultResult = default) => first is IReadOnlyList<T> f && second is IReadOnlyList<T> s ? func(f, s) : defaultResult;
-
     private sealed class ListWithNoConstructors<T> : List<T>;
 
     private sealed class NonListWithNoConstructors<T> : System.Collections.ObjectModel.Collection<T>;
@@ -141,8 +137,8 @@ public partial class ListTests
     {
         ISecond IList<ISecond>.this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        int ICollection<ISecond>.Count { get; } = 0;
-        bool ICollection<ISecond>.IsReadOnly { get; } = false;
+        int ICollection<ISecond>.Count => 0;
+        bool ICollection<ISecond>.IsReadOnly => false;
 
         public void Add(ISecond item) { }
         void ICollection<ISecond>.Clear() => throw new NotImplementedException();

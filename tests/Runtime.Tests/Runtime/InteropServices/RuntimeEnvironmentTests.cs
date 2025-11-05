@@ -15,11 +15,7 @@ public class RuntimeEnvironmentTests
     public async Task GetRuntimeLibraryDirectory() => await Assert.That(RuntimeEnvironment.GetRuntimeLibraryDirectory()).IsNotNull();
 
     [Test]
-    public async Task GetToolsDirectories()
-    {
-        var toolsDirectories = RuntimeEnvironment.GetToolsDirectories();
-        await Assert.That(toolsDirectories).IsNotNull().And.IsNotEmpty();
-    }
+    public async Task GetToolsDirectories() => await Assert.That(RuntimeEnvironment.GetToolsDirectories()).IsNotEmpty();
 
     [Test]
     public async Task GetToolsDirectory() => await Assert.That(RuntimeEnvironment.GetToolsDirectory()).IsNotNull();

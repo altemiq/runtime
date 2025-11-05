@@ -24,7 +24,7 @@ public class EchoStreamTests
                 var bytes = Encoding.UTF8.GetBytes(Text);
                 stream.Write(bytes, 0, bytes.Length);
             },
-            TestContext.Current?.CancellationToken ?? CancellationToken.None);
+            TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None);
 
         var expectedLength = Encoding.UTF8.GetByteCount(Text);
         var bytes = new byte[expectedLength];
@@ -64,7 +64,7 @@ public class EchoStreamTests
                     stream.Write(bytes, 0, bytes.Length);
                 }
             },
-            TestContext.Current?.CancellationToken ?? CancellationToken.None);
+            TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None);
 
         var expectedLength = Encoding.UTF8.GetByteCount(Text);
         var bytes = new byte[expectedLength];

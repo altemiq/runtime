@@ -311,15 +311,12 @@ public static class ExceptionThrowerTests
             var method = type.GetMethod(name, [parameterType, typeof(string)])
                 ?? type.GetMethod(name)
                 ?? throw new InvalidOperationException();
-            if (method.IsGenericMethod)
-            {
-                method = method.MakeGenericMethod(parameterType);
-            }
-
-            return method;
+            return method.IsGenericMethod
+                ? method.MakeGenericMethod(parameterType)
+                : method;
         }
 
-        private static void Run<T>(System.Reflection.MethodInfo methodInfo, params T[]? values)
+        private static void Run<T>(System.Reflection.MethodInfo methodInfo, params IEnumerable<T>? values)
         {
             try
             {
@@ -338,11 +335,11 @@ public static class ExceptionThrowerTests
             }
         }
 
-        private static void Run<T>(string name, Type type, params T[]? values)
+        private static void Run<T>(string name, Type type, params ICollection<T>? values)
         {
             Run(GetMethod(name, type, GetValuesType(values)), values);
 
-            static Type GetValuesType(T[]? values)
+            static Type GetValuesType(IEnumerable<T>? values)
             {
                 if (values is not null && values.FirstOrDefault(x => x is not null) is { } first)
                 {

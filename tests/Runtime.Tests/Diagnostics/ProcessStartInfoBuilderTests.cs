@@ -50,9 +50,9 @@ public class ProcessStartInfoBuilderTests
             this.MySecondString = parseResult.GetValue(mySecondStringOption);
         }
 
-        public bool MySwitch { get; set; }
+        public bool MySwitch { get; init; }
 
-        public string? MyString { get; set; }
+        public string? MyString { get; init; }
 
         public string? MySecondString { get; set; }
 

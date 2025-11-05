@@ -25,13 +25,13 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
     {
         return element switch
         {
-            { ValueKind: JsonValueKind.Array } @array => ToList(@array),
+            { ValueKind: JsonValueKind.Array } array => ToList(array),
             { ValueKind: JsonValueKind.Object } @object => ToStruct(@object),
             { ValueKind: JsonValueKind.String } @string => Value.ForString(@string.GetString()),
             { ValueKind: JsonValueKind.Null } => Value.ForNull(),
             { ValueKind: JsonValueKind.True } => Value.ForBool(value: true),
             { ValueKind: JsonValueKind.False } => Value.ForBool(value: false),
-            { ValueKind: JsonValueKind.Number } @number => Value.ForNumber(@number.GetDouble()),
+            { ValueKind: JsonValueKind.Number } number => Value.ForNumber(number.GetDouble()),
             _ => throw new InvalidCastException(),
         };
 

@@ -40,9 +40,8 @@ public partial class BitConverterTests
     {
         byte[] span = new byte[sizeof(byte)];
         var result = BitConverter.TryWriteBytes(span, value);
-        var spanArray = span;
         await Assert.That(result).IsTrue();
-        await Assert.That(spanArray).IsEquivalentTo([expected]);
+        await Assert.That(span).IsEquivalentTo([expected]);
     }
 
     [Test]

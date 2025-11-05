@@ -10,8 +10,10 @@ public class HybridCacheTests
     {
         var services = new ServiceCollection();
         _ = services.AddHybridCache().AddProtobufSerializerFactory();
-        var factory = await Assert.That(services.BuildServiceProvider().GetService<IHybridCacheSerializerFactory>()).IsAssignableTo<IHybridCacheSerializerFactory>();
-        await Assert.That(factory!.TryCreateSerializer<Tests.SomeProtobufMessage>(out var serializer)).IsTrue();
+        IHybridCacheSerializer<Tests.SomeProtobufMessage>? serializer = default;
+        _ = await Assert.That(services.BuildServiceProvider().GetService<IHybridCacheSerializerFactory>())
+            .IsAssignableTo<IHybridCacheSerializerFactory>()
+            .And.Satisfies(f => f!.TryCreateSerializer(out serializer), v => v.IsTrue());
         await Assert.That(serializer).IsNotNull();
     }
 

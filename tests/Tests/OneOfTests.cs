@@ -18,7 +18,7 @@ public class OneOfTests
     public async Task AreEqual()
     {
         var a = OneOf.From(1);
-        var b = a;
+        OneOf<int> b = a;
         await Assert.That(a).IsEqualTo(b);
     }
 

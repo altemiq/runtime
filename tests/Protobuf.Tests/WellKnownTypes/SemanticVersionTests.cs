@@ -6,14 +6,13 @@ public class SemanticVersionTests
     [MethodDataSource(nameof(ParsingTestCases))]
     public async Task Parse(string input, int major, int minor, int patch, IEnumerable<string>? releaseLabels, string? metadata)
     {
-        var version = SemanticVersion.Parse(input);
-        await Assert.That(version)
-            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
-            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+        await Assert.That(SemanticVersion.Parse(input))
+            .Member(x => x.Major, m => m.IsEqualTo(major)).And
+            .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
+            .Member(x => x.Patch, m => m.IsEqualTo(patch)).And
+            .Member(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Member(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Member(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]
@@ -23,26 +22,25 @@ public class SemanticVersionTests
         await Assert.That(SemanticVersion.TryParse(input, out var version)).IsTrue();
         await Assert.That(version)
             .IsNotNull().And
-            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
-            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+            .Member(x => x.Major, m => m.IsEqualTo(major)).And
+            .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
+            .Member(x => x.Patch, m => m.IsEqualTo(patch)).And
+            .Member(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Member(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Member(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]
     [MethodDataSource(nameof(ParsingTestCases))]
     public async Task SpanParse(string input, int major, int minor, int patch, IEnumerable<string>? releaseLabels, string? metadata)
     {
-        var version = SemanticVersion.Parse(input.AsSpan());
-        await Assert.That(version)
-            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
-            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+        await Assert.That(SemanticVersion.Parse(input.AsSpan()))
+            .Member(x => x.Major, m => m.IsEqualTo(major)).And
+            .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
+            .Member(x => x.Patch, m => m.IsEqualTo(patch)).And
+            .Member(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Member(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Member(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]
@@ -52,12 +50,12 @@ public class SemanticVersionTests
         await Assert.That(SemanticVersion.TryParse(input.AsSpan(), out var version)).IsTrue();
         await Assert.That(version)
             .IsNotNull().And
-            .Satisfies(x => x!.Major, m => m.IsEqualTo(major)).And
-            .Satisfies(x => x!.Minor, m => m.IsEqualTo(minor)).And
-            .Satisfies(x => x!.Patch, m => m.IsEqualTo(patch)).And
-            .Satisfies(IEnumerable<string> (x) => x!.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
-            .Satisfies(x => x!.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
-            .Satisfies(x => x!.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
+            .Member(x => x.Major, m => m.IsEqualTo(major)).And
+            .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
+            .Member(x => x.Patch, m => m.IsEqualTo(patch)).And
+            .Member(IEnumerable<string> (x) => x.ReleaseLabels, m => releaseLabels is null ? m.IsEmpty() : m.IsEquivalentTo(releaseLabels)).And
+            .Member(x => x.HasMetadata, m => m.IsEqualTo(metadata is not null)).And
+            .Member(x => x.Metadata, m => metadata is null ? m.IsEmpty() : m.IsEqualTo(metadata));
     }
 
     [Test]

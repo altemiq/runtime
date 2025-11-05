@@ -101,7 +101,7 @@ public class StructConverterTests
     {
         await Assert.That(StructConverter.ToStruct(System.Text.Json.JsonDocument.Parse("{}")))
             .IsTypeOf<Google.Protobuf.WellKnownTypes.Struct>().And
-            .Satisfies(IEnumerable<KeyValuePair<string, Google.Protobuf.WellKnownTypes.Value>> (a) => a!.Fields, fields => fields.IsEmpty());
+            .Member(IEnumerable<KeyValuePair<string, Google.Protobuf.WellKnownTypes.Value>> (a) => a.Fields, fields => fields.IsEmpty());
     }
 
     [Test]

@@ -289,7 +289,7 @@ public class MemoryExtensionsTests
 
     [Test]
     [MethodDataSource(nameof(GetData))]
-    public async Task Get(Func<Random, int, object> creator, GetDelegateObject parser, System.Globalization.NumberStyles style)
+    public async Task Get(Func<Random, int, object?> creator, GetDelegateObject parser, System.Globalization.NumberStyles style)
     {
         var random = new Random();
 
@@ -320,7 +320,7 @@ public class MemoryExtensionsTests
         await Assert.That(values).HasCount().EqualTo(10).And.IsEquivalentTo(randomValues);
     }
 
-    public static IEnumerable<Func<(Func<Random, int, object>, GetDelegateObject, System.Globalization.NumberStyles)>> GetData()
+    public static IEnumerable<Func<(Func<Random, int, object?>, GetDelegateObject, System.Globalization.NumberStyles)>> GetData()
     {
         yield return () => (static (random, _) => random.NextDouble(), CreateDelegate(MemoryExtensions.GetNextDouble), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
         yield return () => (static (random, _) => (float)random.NextDouble(), CreateDelegate(MemoryExtensions.GetNextSingle), System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float);
@@ -372,8 +372,7 @@ public class MemoryExtensionsTests
         {
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
-            var span = string.Join("|", randomValues).AsSpan();
-            await Assert.That(getValues(span, "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
+            await Assert.That(getValues(string.Join("|", randomValues).AsSpan(), "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
             await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
 

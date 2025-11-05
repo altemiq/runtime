@@ -4,25 +4,21 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Altemiq.Linq;
 
 public partial class ListTests
 {
+    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public class IndexOf
     {
         [Test]
         [MethodDataSource(typeof(ListTests), nameof(GetLists))]
         public async Task Int32(IEnumerable<int> first, IEnumerable<int> second)
         {
-            await Assert.That(TestListList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1)).IsEqualTo(1);
-            await Assert.That(TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOf(s), 1)).IsEqualTo(1);
-        }
-
-        [Test]
-        public async Task WithNulls()
-        {
-            await Assert.That(((IList<int>)null!).IndexOf(null!)).IsEqualTo(-1);
-            await Assert.That(((IReadOnlyList<int>)null!).IndexOf(null!)).IsEqualTo(-1);
+            await Assert.That(first).HasIndexOf(second).EqualTo(1);
+            await Assert.That(first).HasIndexOf(second).EqualTo(1, true, true);
         }
 
         [Test]
@@ -33,30 +29,32 @@ public partial class ListTests
         [MethodDataSource(typeof(ListTests), nameof(GetLists))]
         public async Task Any(IEnumerable<int> first, IEnumerable<int> second)
         {
-            await Assert.That(TestListList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1)).IsEqualTo(1);
-            await Assert.That(TestReadOnlyListReadOnlyList<int, int>(first, second, static (f, s) => f.IndexOfAny(s), 1)).IsEqualTo(1);
+            await Assert.That(first).HasIndexOfAny(second).EqualTo(1);
+            await Assert.That(first).HasIndexOfAny(second).EqualTo(1, true, true);
         }
 
         [Test]
         [MethodDataSource(typeof(ListTests), nameof(GetLists))]
         public async Task Lists(IEnumerable<int> first, IEnumerable<int> second)
         {
-            if (first is IList<int> firstList)
+            switch (first)
             {
-                await Assert.That(firstList.IndexOf(2, 0)).IsEqualTo(1);
-            }
-            else if (first is IReadOnlyList<int> firstReadOnlyList)
-            {
-                await Assert.That(firstReadOnlyList.IndexOf(2, 0)).IsEqualTo(1);
+                case IList<int> firstList:
+                    await Assert.That(firstList.IndexOf(2, 0)).IsEqualTo(1);
+                    break;
+                case IReadOnlyList<int> firstReadOnlyList:
+                    await Assert.That(firstReadOnlyList.IndexOf(2, 0)).IsEqualTo(1);
+                    break;
             }
 
-            if (second is IList<int> secondList)
+            switch (second)
             {
-                await Assert.That(secondList.IndexOf(2, 0)).IsEqualTo(0);
-            }
-            else if (second is IReadOnlyList<int> secondReadOnlyList)
-            {
-                await Assert.That(secondReadOnlyList.IndexOf(2, 0)).IsEqualTo(0);
+                case IList<int> secondList:
+                    await Assert.That(secondList.IndexOf(2, 0)).IsEqualTo(0);
+                    break;
+                case IReadOnlyList<int> secondReadOnlyList:
+                    await Assert.That(secondReadOnlyList.IndexOf(2, 0)).IsEqualTo(0);
+                    break;
             }
         }
     }

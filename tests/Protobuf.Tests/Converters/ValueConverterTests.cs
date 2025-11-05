@@ -28,7 +28,7 @@ public class ValueConverterTests
 
     public class JsonElement
     {
-        private static readonly int[] intArray = [1, 2, 3, 4, 5];
+        private static readonly int[] Int32Array = [1, 2, 3, 4, 5];
 
         [Test]
         public async Task CreateFromJson()
@@ -74,7 +74,7 @@ public class ValueConverterTests
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(5)),
                 System.Text.Json.JsonValueKind.Array,
                 element => element.EnumerateArray().Select(e => e.GetInt32()),
-                intArray);
+                Int32Array);
             yield return () => (
                 Google.Protobuf.WellKnownTypes.Value.ForStruct(new() { Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } } }),
                 System.Text.Json.JsonValueKind.Object,
@@ -124,6 +124,31 @@ public class ValueConverterTests
                     await Assert.That(nodeValue).IsEqualTo(expected);
                 }
             }
+
+            static async Task IsEquivalentTo(System.Collections.IEnumerable actual, object expected)
+            {
+                // get the type
+                var type = GetGenericIEnumerable(actual);
+                var innerType = GetGenericIEnumerable(expected);
+
+                var method = await Assert.That(typeof(ValueConverterTests).GetMethod(nameof(AssertIsEquivalentTo), BindingFlags.Static | BindingFlags.NonPublic)).IsNotNull();
+                var genericMethod = method.MakeGenericMethod(type, innerType);
+
+                if (genericMethod.Invoke(null, [actual, expected]) is Task task)
+                {
+                    await task;
+                }
+
+                static Type GetGenericIEnumerable(object o)
+                {
+                    return o
+                        .GetType()
+                        .GetInterfaces()
+                        .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                        .Select(t => t.GetGenericArguments()[0])
+                        .Single();
+                }
+            }
         }
 
         private static readonly double[] DoubleArray = [1D, 2D, 3D, 4D, 5D];
@@ -160,30 +185,7 @@ public class ValueConverterTests
 
 
 
-    static async Task IsEquivalentTo(System.Collections.IEnumerable actual, object expected)
-    {
-        // get the type
-        var type = GetGenericIEnumerables(actual);
-        var innerType = GetGenericIEnumerables(expected);
 
-        var method = await Assert.That(typeof(ValueConverterTests).GetMethod(nameof(AssertIsEquivalentTo), BindingFlags.Static | BindingFlags.NonPublic)).IsNotNull();
-        var genericMethod = method!.MakeGenericMethod(type, innerType);
-
-        if (genericMethod.Invoke(null, [actual, expected]) is Task task)
-        {
-            await task;
-        }
-
-        static Type GetGenericIEnumerables(object o)
-        {
-            return o
-                .GetType()
-                .GetInterfaces()
-                .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                .Select(t => t.GetGenericArguments()[0])
-                .Single();
-        }
-    }
 
     private static async Task AssertIsEquivalentTo<T, TInner>(IEnumerable<T> actual, IEnumerable<TInner> expected)
     {

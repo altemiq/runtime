@@ -102,7 +102,7 @@ public static class RuntimeInformation
                         : default;
 #else
                     return assembly?.GetCustomAttributes().FirstOrDefault(static a => a.GetType().Name.Contains("TargetPlatformAttribute")) is { } customAttribute
-                        ? customAttribute.GetType().GetTypeInfo().GetProperty("PlatformName").GetValue(customAttribute) as string
+                        ? customAttribute.GetType().GetTypeInfo().GetProperty("PlatformName")?.GetValue(customAttribute) as string
                         : default;
 #endif
                 }

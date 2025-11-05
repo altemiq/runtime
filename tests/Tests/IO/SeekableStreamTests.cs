@@ -11,20 +11,25 @@ public class SeekableStreamTests
     [Test]
     public async Task ShouldBeAbleToSeekForward()
     {
+        var stream = new SeekableStream(new ForwardOnlyStream());
+        await Assert.That(stream)
+            .Member(static s => s.Length, length => length.IsEqualTo(1024))
+            .And.Member(static s => s.Seek(512, SeekOrigin.Begin), position => position.IsEqualTo(512));
 #if NET
-        await
+        await stream.DisposeAsync();
+#else
+        stream.Dispose();
 #endif
-        using var stream = new SeekableStream(new ForwardOnlyStream());
-        await Assert.That(stream.Length).IsEqualTo(1024);
-        await Assert.That(stream.Seek(512, SeekOrigin.Begin)).IsEqualTo(512);
     }
 
     [Test]
     public async Task ShouldNotBeAbleToSeekBackwards()
     {
         var stream = new SeekableStream(new ForwardOnlyStream());
-        await Assert.That(stream.Length).IsEqualTo(1024);
-        await Assert.That(stream.Seek(-512, SeekOrigin.End)).IsEqualTo(512);
+
+        await Assert.That(stream)
+            .Member(static s => s.Length, length => length.IsEqualTo(1024))
+            .And.Member(static s => s.Seek(512, SeekOrigin.Begin), position => position.IsEqualTo(512));
         await Assert.That(() => stream.Seek(-10, SeekOrigin.Current)).Throws<InvalidOperationException>();
 #if NET
         await stream.DisposeAsync();

@@ -69,10 +69,9 @@ public class StringExtensionsTests
     [Arguments(SingleLineWithNullValues, "4", 4, StringSplitOptions.RemoveEmptyEntries)]
     public async Task ReadSimple(string input, string? value, int length, StringSplitOptions options)
     {
-        var result = input.SplitQuoted(',', options);
-        await Assert.That(result).IsNotNull();
-        await Assert.That(result).HasCount().EqualTo(length);
-        await Assert.That(result.Skip(2).Take(1).Single()).IsEqualTo(value);
+        await Assert.That(input.SplitQuoted(',', options))
+            .HasCount().EqualTo(length)
+            .And.Member(r => r.Skip(2).Take(1).Single(), v => v.IsEqualTo(value));
     }
 
     [Test]
@@ -87,9 +86,7 @@ public class StringExtensionsTests
     [Arguments(SingleLineNewLineCommaEmbeddedQuotes, 5)]
     public async Task ReadLength(string input, int length)
     {
-        var result = input.SplitQuoted(',');
-        await Assert.That(result).IsNotNull();
-        await Assert.That(result).HasCount().EqualTo(length);
+        await Assert.That(input.SplitQuoted(',')).HasCount().EqualTo(length);
     }
 
     [Test]

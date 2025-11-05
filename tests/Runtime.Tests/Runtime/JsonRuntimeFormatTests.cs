@@ -22,11 +22,17 @@ public class JsonRuntimeFormatTests
     [Arguments("runtime.json.gz")]
     public async Task ReadJsonFromAssembly(string name)
     {
-        using var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(name), System.IO.Compression.CompressionMode.Decompress, false);
-        var json = JsonRuntimeFormat.ReadRuntimeGraph(stream!);
-        await Assert.That(json)
-            .Satisfies(static j => j!.Select(static x => x.Runtime), runtimes => runtimes.Contains("linux")).And
-            .HasCount().Between(10, int.MaxValue);
+        var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(name), System.IO.Compression.CompressionMode.Decompress, false);
+        await using (stream.ConfigureAwait(false))
+        {
+            var json = JsonRuntimeFormat.ReadRuntimeGraph(stream);
+            await Assert.That(json)
+                .Member(
+                    static j => j.Select(static x => x.Runtime),
+                    static runtimes => runtimes
+                        .Contains("linux")
+                        .And.HasCount().Between(10, int.MaxValue));
+        }
     }
 
     private static Stream GetManifestStreamFromAssembly(string name) => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();
