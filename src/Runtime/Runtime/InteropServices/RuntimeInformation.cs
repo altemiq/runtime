@@ -159,80 +159,141 @@ public static class RuntimeInformation
 #if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
-    internal static string GetNaïveRid()
+    internal static string GetNaïveRid() => $"{GetNaïveRidFront()}-{GetNaïveRidBack()}";
+
+    /// <summary>
+    /// Gets the possible naïve RIDs.
+    /// </summary>
+    /// <returns>The possible naïve RIDs.</returns>
+    internal static IEnumerable<string> GetNaïveRids()
     {
-        return $"{GetRidFront()}-{GetRidBack()}";
+        var back = GetNaïveRidBack();
+        return GetNaïveRidFronts().Select(front => $"{front}-{back}");
+    }
 
-        static string GetRidFront()
-        {
+    private static IEnumerable<string> GetNaïveRidFronts()
+    {
 #if NET5_0_OR_GREATER
-            if (OperatingSystem.IsWindows())
+        if (OperatingSystem.IsLinux())
+        {
+            foreach (var variant in GetLinuxVariant())
             {
-                return "win";
+                yield return variant;
             }
-
-            if (OperatingSystem.IsLinux())
-            {
-                return "linux";
-            }
-
-            if (OperatingSystem.IsMacOS())
-            {
-                return "osx";
-            }
+        }
 #else
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            foreach (var variant in GetLinuxVariant())
             {
-                return "win";
+                yield return variant;
             }
-
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-            {
-                return "linux";
-            }
-
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
-            {
-                return "osx";
-            }
+        }
 #endif
 
-            throw new InvalidOperationException();
+        yield return GetNaïveRidFront();
+
+#if NET5_0_OR_GREATER
+        [System.Runtime.Versioning.SupportedOSPlatform("linux")]
+#endif
+        static IEnumerable<string> GetLinuxVariant()
+        {
+            const string FilePath = "/etc/os-release";
+
+            if (!File.Exists(FilePath))
+            {
+                yield break;
+            }
+
+            using var reader = new StreamReader(File.OpenRead(FilePath));
+            while (reader.ReadLine() is { } line)
+            {
+                if (line.StartsWith("ID", StringComparison.Ordinal)
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+                    && line.IndexOf('=', StringComparison.Ordinal) is > 0 and var equalsPosition)
+#else
+                    && line.IndexOf('=') is > 0 and var equalsPosition)
+#endif
+                {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_0_OR_GREATER
+                    yield return line[(equalsPosition + 1)..];
+#else
+                    yield return line.Substring(equalsPosition + 1);
+#endif
+                }
+            }
+        }
+    }
+
+    private static string GetNaïveRidFront()
+    {
+#if NET5_0_OR_GREATER
+        if (OperatingSystem.IsWindows())
+        {
+            return "win";
         }
 
-        static string GetRidBack()
+        if (OperatingSystem.IsLinux())
         {
-            const string Arm = "arm";
-            const string Arm64 = "arm64";
-            const string X86 = "x86";
-            const string X64 = "x64";
+            return "linux";
+        }
+
+        if (OperatingSystem.IsMacOS())
+        {
+            return "osx";
+        }
+#else
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            return "win";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            return "linux";
+        }
+
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
+        {
+            return "osx";
+        }
+#endif
+
+        throw new InvalidOperationException();
+    }
+
+    private static string GetNaïveRidBack()
+    {
+        const string Arm = "arm";
+        const string Arm64 = "arm64";
+        const string X86 = "x86";
+        const string X64 = "x64";
 #if NET5_0_OR_GREATER
-            const string Wasm = "wasm";
+        const string Wasm = "wasm";
 #endif
 
 #if NETCOREAPP1_0_OR_GREATER || NET471_OR_GREATER || NETSTANDARD1_1_OR_GREATER
-            return System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture switch
-            {
-                System.Runtime.InteropServices.Architecture.Arm => Arm,
-                System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
-                System.Runtime.InteropServices.Architecture.X86 => X86,
-                System.Runtime.InteropServices.Architecture.X64 => X64,
+        return System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture switch
+        {
+            System.Runtime.InteropServices.Architecture.Arm => Arm,
+            System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
+            System.Runtime.InteropServices.Architecture.X86 => X86,
+            System.Runtime.InteropServices.Architecture.X64 => X64,
 #if NET5_0_OR_GREATER
-                System.Runtime.InteropServices.Architecture.Wasm => Wasm,
+            System.Runtime.InteropServices.Architecture.Wasm => Wasm,
 #endif
-                _ => throw new InvalidOperationException(),
-            };
+            _ => throw new InvalidOperationException(),
+        };
 #else
-            return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
-            {
-                System.Runtime.InteropServices.Architecture.Arm or System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size is 4 => Arm,
-                System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
-                System.Runtime.InteropServices.Architecture.X86 or System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size is 4 => X86,
-                System.Runtime.InteropServices.Architecture.X64 => X64,
-                _ => throw new InvalidOperationException(),
-            };
+        return System.Runtime.InteropServices.RuntimeInformation.OSArchitecture switch
+        {
+            System.Runtime.InteropServices.Architecture.Arm or System.Runtime.InteropServices.Architecture.Arm64 when IntPtr.Size is 4 => Arm,
+            System.Runtime.InteropServices.Architecture.Arm64 => Arm64,
+            System.Runtime.InteropServices.Architecture.X86 or System.Runtime.InteropServices.Architecture.X64 when IntPtr.Size is 4 => X86,
+            System.Runtime.InteropServices.Architecture.X64 => X64,
+            _ => throw new InvalidOperationException(),
+        };
 #endif
-        }
     }
 
 #if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
