@@ -15,7 +15,7 @@ public class DifferentialInt32CompressorTests
     {
         var iic2 = new DifferentialInt32Compressor();
         var data = Enumerable.Range(0, ushort.MaxValue).ToArray();
-        await Assert.That(iic2.Decompress(iic2.Compress(data))).IsEquivalentTo(data);
+        await Assert.That(iic2.Decompress(iic2.Compress(data))).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -31,7 +31,7 @@ public class DifferentialInt32CompressorTests
 
             foreach (var i in this.iic.Select(c => c()))
             {
-                await Assert.That(i.Decompress(i.Compress(orig))).IsEquivalentTo(orig);
+                await Assert.That(i.Decompress(i.Compress(orig))).HasSameSequenceAs(orig);
             }
         }
     }

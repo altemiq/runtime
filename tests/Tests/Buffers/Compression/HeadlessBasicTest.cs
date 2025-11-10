@@ -47,7 +47,7 @@ public class HeadlessBasicTest
             c.Decompress(outBuf, ref decompressedInputPosition, rev, ref decompressedOutputPosition, outputPosition, n);
             await Assert.That(decompressedOutputPosition).IsEqualTo(n);
             await Assert.That(decompressedInputPosition).IsEqualTo(outputPosition);
-            await Assert.That(rev.Take(n)).IsEquivalentTo(data.Take(n));
+            await Assert.That(rev.Take(n)).HasSameSequenceAs(data.Take(n));
         }
     }
 
@@ -68,13 +68,13 @@ public class HeadlessBasicTest
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
         for (var l = 128; l <= Size; l *= 2)
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
 
@@ -96,14 +96,14 @@ public class HeadlessBasicTest
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= Size; l *= 2)
         {
             var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
 

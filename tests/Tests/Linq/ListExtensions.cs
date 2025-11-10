@@ -84,33 +84,5 @@ public static partial class ListExtensions
 
         throw new InvalidOperationException();
     }
-    // [EditorBrowsable(EditorBrowsableState.Never)]
-    // [GenerateAssertion(ExpectationMessage = "to equal")]
-    // public static bool IsLinqEqualTo<T>(this IEnumerable<T> first, int firstIndex, IEnumerable<T> second, int secondIndex, int count)
-    //     where T : IEquatable<T>
-    // {
-    //     return (first, second) switch
-    //     {
-    //         (IList<T> f, IReadOnlyList<T> s) => f.Equals(firstIndex, s, secondIndex, count),
-    //         (IList<T> f, IList<T> s) => f.Equals(firstIndex, s, secondIndex, count),
-    //         (IReadOnlyList<T> f, IReadOnlyList<T> s) => f.Equals(firstIndex, s, secondIndex, count),
-    //         (IReadOnlyList<T> f, IList<T> s) => f.Equals(firstIndex, s, secondIndex, count),
-    //         _ => false,
-    //     };
-    // }
-    // [EditorBrowsable(EditorBrowsableState.Never)]
-    // [GenerateAssertion(ExpectationMessage = "to equal")]
-    // public static bool IsLinqNotEqualTo<T>(this IEnumerable<T> first, int firstIndex, IEnumerable<T> second, int secondIndex, int count)
-    //     where T : IEquatable<T>
-    // {
-    //     return (first, second) switch
-    //     {
-    //         (IList<T> f, IReadOnlyList<T> s) => !f.Equals(firstIndex, s, secondIndex, count),
-    //         (IList<T> f, IList<T> s) => !f.Equals(firstIndex, s, secondIndex, count),
-    //         (IReadOnlyList<T> f, IReadOnlyList<T> s) => !f.Equals(firstIndex, s, secondIndex, count),
-    //         (IReadOnlyList<T> f, IList<T> s) => !f.Equals(firstIndex, s, secondIndex, count),
-    //         _ => true,
-    //     };
-    // }
 
 }

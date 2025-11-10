@@ -7,9 +7,7 @@ public class XorBinaryPackingTest
     public async Task CheckCompressAndDecompress(int[] data)
     {
         var codec = new XorBinaryPacking();
-        var compressed = TestUtils.Compress(codec, data);
-        var decompressed = TestUtils.Decompress(codec, compressed, data.Length);
-        await Assert.That(decompressed).IsEquivalentTo(data);
+        await Assert.That(TestUtils.Decompress(codec, TestUtils.Compress(codec, data), data.Length)).HasSameSequenceAs(data);
     }
 
     public static IEnumerable<Func<int[]>> Data()

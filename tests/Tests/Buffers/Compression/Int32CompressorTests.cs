@@ -30,7 +30,7 @@ public class Int32CompressorTests
             var comp = i.Compress(orig);
             var back = i.Decompress(comp);
 
-            await Assert.That(back).IsEquivalentTo(orig);
+            await Assert.That(back).HasSameSequenceAs(orig);
         }
     }
 

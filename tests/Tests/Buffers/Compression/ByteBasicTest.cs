@@ -26,7 +26,7 @@ public class ByteBasicTest
             compressedOffset = x;
             var decompressedOffset = 0;
             c.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, len);
-            await Assert.That(decompressed).IsEquivalentTo(data);
+            await Assert.That(decompressed).HasSameSequenceAs(data);
         }
     }
 
@@ -42,14 +42,14 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
 
@@ -66,14 +66,14 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
             var answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).IsEquivalentTo(data.Take(l));
+            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
 

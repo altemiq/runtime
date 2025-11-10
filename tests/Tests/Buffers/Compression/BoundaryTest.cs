@@ -50,7 +50,7 @@ public class BoundaryTest
 
             // Compare between decompressed and original arrays.
             var target = TestUtils.CopyArray(decompressed, decompressedOutputPosition);
-            await Assert.That(target).IsEquivalentTo(source);
+            await Assert.That(target).HasSameSequenceAs(source);
         }
     }
 }

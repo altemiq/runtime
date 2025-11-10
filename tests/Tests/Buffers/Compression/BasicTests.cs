@@ -43,7 +43,7 @@ public class BasicTests
             compressedOffset = x;
             var decompressedOffset = 0;
             ic.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, length);
-            await Assert.That(decompressed).IsEquivalentTo(data);
+            await Assert.That(decompressed).HasSameSequenceAs(data);
         }
     }
 
@@ -243,7 +243,7 @@ public class BasicTests
         BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
         BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-        await Assert.That(data).IsEquivalentTo(data);
+        await Assert.That(data).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -267,7 +267,7 @@ public class BasicTests
         BitPacking.PackWithoutMask(data.AsSpan(0), compressed.AsSpan(0), bit);
         BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
 
-        await Assert.That(data).IsEquivalentTo(data);
+        await Assert.That(data).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -296,7 +296,7 @@ public class BasicTests
 
             // Check assertions.
             MaskArray(data, (1 << bit) - 1);
-            await Assert.That(uncompressed).IsEquivalentTo(data);
+            await Assert.That(uncompressed).HasSameSequenceAs(data);
         }
 
         static void MaskArray(int[] array, int mask)
@@ -471,8 +471,7 @@ public class BasicTests
 
             // Check assertions.
             await Assert.That(data[k]).HasCount().EqualTo(outputPosition);
-            var bufferCutout = TestUtils.CopyArray(buffer, outputPosition);
-            await Assert.That(data[k]).IsEquivalentTo(bufferCutout);
+            await Assert.That(data[k]).HasSameSequenceAs(TestUtils.CopyArray(buffer, outputPosition));
         }
     }
 
@@ -558,7 +557,7 @@ public class BasicTests
         var decompressedOffset = 0;
         var compressedPosition = 0;
         codec.Decompress(compressed, ref compressedPosition, decompressed, ref decompressedOffset, compressed.Length);
-        await Assert.That(decompressed).IsEquivalentTo(data);
+        await Assert.That(decompressed).HasSameSequenceAs(data);
     }
 
     private static async Task TestUnsorted2(IInt32Codec codec)
@@ -576,7 +575,7 @@ public class BasicTests
         var decompressedPosition = 0;
         var compressedPosition = 0;
         codec.Decompress(compressed, ref compressedPosition, decompressed, ref decompressedPosition, compressed.Length);
-        await Assert.That(data).IsEquivalentTo(data);
+        await Assert.That(data).HasSameSequenceAs(data);
     }
 
     private static async Task TestUnsorted3(IInt32Codec codec)
@@ -594,7 +593,7 @@ public class BasicTests
         var decompressedPosition = 0;
         var compressedPosition = 0;
         codec.Decompress(compressed, ref compressedPosition, recovered, ref decompressedPosition, compressed.Length);
-        await Assert.That(data).IsEquivalentTo(data);
+        await Assert.That(data).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -607,7 +606,7 @@ public class BasicTests
         var data = new int[N];
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        await Assert.That(TestUtils.Decompress(codec2, comp, N)).IsEquivalentTo(data);
+        await Assert.That(TestUtils.Decompress(codec2, comp, N)).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -620,7 +619,7 @@ public class BasicTests
         var data = new int[N];
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        await Assert.That(TestUtils.Decompress(codec2, comp, N)).IsEquivalentTo(data);
+        await Assert.That(TestUtils.Decompress(codec2, comp, N)).HasSameSequenceAs(data);
     }
 
     public sealed class IntegerCodec

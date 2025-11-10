@@ -6,29 +6,27 @@ using TUnit.Assertions.Sources;
 public class LinqIndexOfWrapper<T>(AssertionContext<IEnumerable<T>> context, IEnumerable<T> other) : CollectionAssertionBase<IEnumerable<T>, T>(context)
     where T : IEquatable<T>
 {
-    public LinqIndexOfAssertion<T> EqualTo(
-        int expectedIndex,
-        bool sourceReadOnly = false,
-        bool otherReadOnly = false,
-        [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expectedIndex))] string? expression = null)
+    public LinqIndexOfAssertion<T> EqualTo(int expectedIndex,
+        bool readOnly = false,
+        [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expectedIndex))]
+        string? expression = null)
     {
         this.Context.ExpressionBuilder.Append($".EqualTo({expression})");
-        return new(this.Context, other, expectedIndex, sourceReadOnly, otherReadOnly);
+        return new(this.Context, other, expectedIndex, readOnly);
     }
 }
 
-public class LinqIndexOfAssertion<T>(AssertionContext<IEnumerable<T>> context, IEnumerable<T> other, int expectedIndex, bool sourceReadOnly, bool otherReadOnly) : CollectionAssertionBase<IEnumerable<T>, T>(context)
+public class LinqIndexOfAssertion<T>(AssertionContext<IEnumerable<T>> context, IEnumerable<T> other, int expectedIndex, bool readOnly) : CollectionAssertionBase<IEnumerable<T>, T>(context)
     where T : IEquatable<T>
 {
     protected override Task<AssertionResult> CheckAsync(EvaluationMetadata<IEnumerable<T>> metadata)
     {
-        var value = metadata.Value;
-        if (value is null)
+        if (metadata.Value is not { } value)
         {
             return Task.FromResult(AssertionResult.Failed($"{nameof(value)} was null"));
         }
 
-        if (sourceReadOnly)
+        if (readOnly)
         {
             if (value is IReadOnlyList<T> s)
             {
@@ -75,29 +73,27 @@ public class LinqIndexOfAssertion<T>(AssertionContext<IEnumerable<T>> context, I
 public class LinqIndexOfAnyWrapper<T>(AssertionContext<IEnumerable<T>> context, IEnumerable<T> other) : CollectionAssertionBase<IEnumerable<T>, T>(context)
     where T : IEquatable<T>
 {
-    public LinqIndexOfAnyAssertion<T> EqualTo(
-        int expectedIndex,
-        bool sourceReadOnly = false,
-        bool otherReadOnly = false,
-        [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expectedIndex))] string? expression = null)
+    public LinqIndexOfAnyAssertion<T> EqualTo(int expectedIndex,
+        bool readOnly = false,
+        [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expectedIndex))]
+        string? expression = null)
     {
         this.Context.ExpressionBuilder.Append($".EqualTo({expression})");
-        return new(this.Context, other, expectedIndex, sourceReadOnly, otherReadOnly);
+        return new(this.Context, other, expectedIndex, readOnly);
     }
 }
 
-public class LinqIndexOfAnyAssertion<T>(AssertionContext<IEnumerable<T>> context, IEnumerable<T> other, int expectedIndex, bool sourceReadOnly, bool otherReadOnly) : CollectionAssertionBase<IEnumerable<T>, T>(context)
+public class LinqIndexOfAnyAssertion<T>(AssertionContext<IEnumerable<T>> context, IEnumerable<T> other, int expectedIndex, bool readOnly) : CollectionAssertionBase<IEnumerable<T>, T>(context)
     where T : IEquatable<T>
 {
     protected override Task<AssertionResult> CheckAsync(EvaluationMetadata<IEnumerable<T>> metadata)
     {
-        var value = metadata.Value;
-        if (value is null)
+        if (metadata.Value is not { } value)
         {
             return Task.FromResult(AssertionResult.Failed($"{nameof(value)} was null"));
         }
 
-        if (sourceReadOnly)
+        if (readOnly)
         {
             if (value is IReadOnlyList<T> s)
             {
@@ -148,8 +144,7 @@ public class LinqEqualsAssertion<T>(AssertionContext<IEnumerable<T>> context, IE
 
     protected override Task<AssertionResult> CheckAsync(EvaluationMetadata<IEnumerable<T>> metadata)
     {
-        var value = metadata.Value;
-        if (value is null)
+        if (metadata.Value is not { } value)
         {
             return Task.FromResult(AssertionResult.Failed($"{nameof(value)} was null"));
         }

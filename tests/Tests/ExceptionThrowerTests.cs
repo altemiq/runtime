@@ -335,11 +335,11 @@ public static class ExceptionThrowerTests
             }
         }
 
-        private static void Run<T>(string name, Type type, params ICollection<T>? values)
+        private static void Run<T>(string name, Type type, params ICollection<T?>? values)
         {
             Run(GetMethod(name, type, GetValuesType(values)), values);
 
-            static Type GetValuesType(IEnumerable<T>? values)
+            static Type GetValuesType(IEnumerable<T?>? values)
             {
                 if (values is not null && values.FirstOrDefault(x => x is not null) is { } first)
                 {

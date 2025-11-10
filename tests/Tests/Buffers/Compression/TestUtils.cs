@@ -28,7 +28,7 @@ internal static class TestUtils
 
         // Compare between uncompressed and orig arrays.
         Array.Resize(ref decompressed, decompressedOutputPosition);
-        await Assert.That(orig).IsEquivalentTo(decompressed);
+        await Assert.That(orig).HasSameSequenceAs(decompressed);
     }
 
     public static int[] Compress(IInt32Codec codec, int[] data)

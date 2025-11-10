@@ -18,7 +18,7 @@ public partial class ListTests
         public async Task Int32(IEnumerable<int> first, IEnumerable<int> second)
         {
             await Assert.That(first).HasIndexOf(second).EqualTo(1);
-            await Assert.That(first).HasIndexOf(second).EqualTo(1, true, true);
+            await Assert.That(first).HasIndexOf(second).EqualTo(1, true);
         }
 
         [Test]
@@ -30,7 +30,7 @@ public partial class ListTests
         public async Task Any(IEnumerable<int> first, IEnumerable<int> second)
         {
             await Assert.That(first).HasIndexOfAny(second).EqualTo(1);
-            await Assert.That(first).HasIndexOfAny(second).EqualTo(1, true, true);
+            await Assert.That(first).HasIndexOfAny(second).EqualTo(1, true);
         }
 
         [Test]

@@ -21,9 +21,9 @@ public class ExampleTest
     public async Task SuperSimpleExample()
     {
         var iic = new Differential.DifferentialInt32Compressor();
-        var compressed = iic.Compress(data);
+        var compressed = iic.Compress(this.data);
         var decompressed = iic.Decompress(compressed);
-        await Assert.That(decompressed).IsEquivalentTo(data);
+        await Assert.That(decompressed).HasSameSequenceAs(this.data);
     }
 
     [Test]
@@ -39,14 +39,14 @@ public class ExampleTest
         var codec = new Differential.DifferentialComposition(new Differential.DifferentialBinaryPacking(), new Differential.DifferentialVariableByte());
 
         // output vector should be large enough...
-        var compressed = new int[data.Length + 1024];
+        var compressed = new int[this.data.Length + 1024];
 
         // compressed might not be large enough in some cases
         // if you get IndexOutOfBoundsException, try
         // allocating more memory
         var inputOffset = 0;
         var outputOffset = 0;
-        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
+        codec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, this.data.Length);
 
         // got it!
         // inputOffset should be at data.Length but outputOffset tells us where we are...
@@ -56,11 +56,11 @@ public class ExampleTest
         // now decompressing
         // This assumes that we otherwise know how many integers have been
         // compressed. See basicExampleHeadless for a more general case.
-        var decompressed = new int[data.Length];
+        var decompressed = new int[this.data.Length];
         var decompressedOffset = 0;
         var decompressedPosition = 0;
         codec.Decompress(compressed, ref decompressedPosition, decompressed, ref decompressedOffset, compressed.Length);
-        await Assert.That(decompressed).IsEquivalentTo(data);
+        await Assert.That(decompressed).HasSameSequenceAs(this.data);
     }
 
     // Like the BasicExample, but we store the input array size manually.
@@ -77,15 +77,15 @@ public class ExampleTest
         var codec = new Differential.HeadlessDifferentialComposition(new Differential.DifferentialBinaryPacking(), new Differential.DifferentialVariableByte());
 
         // output vector should be large enough...
-        var compressed = new int[data.Length + 1024];
+        var compressed = new int[this.data.Length + 1024];
 
         // compressed might not be large enough in some cases
         // if you get IndexOutOfBoundsException, try allocating more memory
         var inputOffset = 0;
         var outputOffset = 1;
         var initValue = 0;
-        compressed[0] = data.Length; // we manually store how many integers we
-        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length, ref initValue);
+        compressed[0] = this.data.Length; // we manually store how many integers we
+        codec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, this.data.Length, ref initValue);
 
         // we can repack the data: (optional)
         Array.Resize(ref compressed, outputOffset);
@@ -96,7 +96,7 @@ public class ExampleTest
         var compressedOffset = 1;
         initValue = 0;
         codec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length, howMany, ref initValue);
-        await Assert.That(decompressed).IsEquivalentTo(data);
+        await Assert.That(decompressed).HasSameSequenceAs(this.data);
     }
 
     [Test]
@@ -135,7 +135,7 @@ public class ExampleTest
         var decompressedOffset = 0;
         compressedOffset = 0;
         codec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length);
-        await Assert.That(decompressed).IsEquivalentTo(unsortedData);
+        await Assert.That(decompressed).HasSameSequenceAs(unsortedData);
     }
 
     [Test]
@@ -152,16 +152,16 @@ public class ExampleTest
         var lastCodec = new Differential.DifferentialComposition(regularCodec, variableByte);
 
         // output vector should be large enough...
-        var compressed = new int[data.Length + 1024];
+        var compressed = new int[this.data.Length + 1024];
 
         var inputOffset = 0;
         var outputOffset = 0;
-        for (var k = 0; k < data.Length / ChunkSize; ++k)
+        for (var k = 0; k < this.data.Length / ChunkSize; ++k)
         {
-            regularCodec.Compress(data, ref inputOffset, compressed, ref outputOffset, ChunkSize);
+            regularCodec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, ChunkSize);
         }
 
-        lastCodec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length % ChunkSize);
+        lastCodec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, this.data.Length % ChunkSize);
 
         // we can repack the data:
         Array.Resize(ref compressed, outputOffset);
@@ -183,7 +183,7 @@ public class ExampleTest
 
             for (var i = 0; i < decompressedOffset; ++i)
             {
-                await Assert.That(decompressed[i]).IsEqualTo(data[currentPosition + i]);
+                await Assert.That(decompressed[i]).IsEqualTo(this.data[currentPosition + i]);
             }
 
             currentPosition += decompressedOffset;
@@ -222,7 +222,7 @@ public class ExampleTest
 
         outPos = 0;
         codec.Decompress(compressed, ref inPos, recovered2, ref outPos, compressed.Length, uncompressed2.Length);
-        await Assert.That(recovered1).IsEquivalentTo(uncompressed1);
-        await Assert.That(recovered2).IsEquivalentTo(uncompressed2);
+        await Assert.That(recovered1).HasSameSequenceAs(uncompressed1);
+        await Assert.That(recovered2).HasSameSequenceAs(uncompressed2);
     }
 }
