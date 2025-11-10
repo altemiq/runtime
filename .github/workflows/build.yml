@@ -26,15 +26,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-      
-      # Install .NET
+
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: |
             6.0.x
             8.0.x
             9.0.x
-            10.0.x
+
+      # Install .NET
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+          dotnet-quality: preview
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -81,6 +85,7 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
+          dotnet-quality: preview
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -127,8 +132,13 @@ jobs:
   push:
     runs-on: ubuntu-latest
     permissions:
-      packages: write
       actions: write
+      
+      # enabled GitHub packages writing
+      packages: write
+      
+      # enable GitHub OIDC token issuance for this job
+      id-token: write
     needs: [ create-nuget, run-tests ]
 
     env:
@@ -147,11 +157,16 @@ jobs:
         working-directory: ${{ github.workspace }}/nupkg
         run: dotnet nuget push *.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
+      - uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Run local/dotnet-nuget-push-nuget@v1
         id: push-nuget
         if: ${{ github.event_name == 'push' }}
         working-directory: ${{ github.workspace }}/nupkg
-        run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_TOKEN }} --skip-duplicate
+        run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
       
       # delete-artifact
       - uses: GeekyEggo/delete-artifact@v5
