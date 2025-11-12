@@ -18,7 +18,7 @@ public class ProcessStartInfoBuilderTests
     [Test]
     public async Task SetFromProperties()
     {
-        var builder = new MyProcessStartInfoBuilder()
+        var builder = new MyProcessStartInfoBuilder
         {
             MySwitch = true,
             MyString = MyStringValue,
