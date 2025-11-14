@@ -27,18 +27,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # Install .NET
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: |
             6.0.x
             8.0.x
             9.0.x
-
-      # Install .NET
-      - uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-          dotnet-quality: preview
+            10.0.x
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,7 +81,6 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
-          dotnet-quality: preview
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
