@@ -33,11 +33,7 @@ public static partial class BitArrayExtensions
     {
         ArgumentNullException.ThrowIfNull(bits);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(length, 8);
-#if NET7_0
-        ArgumentOutOfRangeException.ThrowIfNegative<int>(startIndex);
-#else
         ArgumentOutOfRangeException.ThrowIfNegative(startIndex);
-#endif
 #pragma warning disable S3236
         ArgumentOutOfRangeException.ThrowIfGreaterThan(startIndex + length, bits.Length, nameof(startIndex));
 #pragma warning restore S3236
@@ -75,11 +71,7 @@ public static partial class BitArrayExtensions
     /// <returns>The hexadecimal string for <paramref name="bits"/>.</returns>
     public static string ToHexString(this System.Collections.BitArray bits, IFormatProvider? provider)
     {
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
         const char Space = ' ';
-#else
-        const string Space = " ";
-#endif
         return string.Join(Space, GetHexStringParts(GetBytes(bits).Reverse(), provider));
 
         static IEnumerable<string> GetHexStringParts(IEnumerable<byte> bytes, IFormatProvider? provider = default)

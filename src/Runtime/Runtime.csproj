@@ -3,7 +3,23 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netstandard2.0;netstandard1.6;net47;net451</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Runtime'))">$(RootNamespace.Replace('.Runtime', ''))</RootNamespace>
-    <MeziantouPolyfill_IncludedPolyfills>$(MeziantouPolyfill_IncludedPolyfills)|T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute|T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute|T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|T:System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute</MeziantouPolyfill_IncludedPolyfills>
+    <MeziantouPolyfill_IncludedPolyfills>
+      $(MeziantouPolyfill_IncludedPolyfills)|
+      T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute|
+      T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute|
+      T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|
+      T:System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute|
+      T:System.Runtime.Versioning.SupportedOSPlatformAttribute|
+      M:System.String.IndexOf(System.Char,System.StringComparison)|
+      M:System.String.Contains(System.String,System.StringComparison)
+    </MeziantouPolyfill_IncludedPolyfills>
+    <MeziantouPolyfill_IncludedPolyfills Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp2.0')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11')) ">
+      $(MeziantouPolyfill_IncludedPolyfills)|
+      M:System.OperatingSystem.IsLinux|
+      M:System.OperatingSystem.IsMacOS|
+      M:System.OperatingSystem.IsWindows
+    </MeziantouPolyfill_IncludedPolyfills>
+    <EmitCompilerGeneratedFiles>True</EmitCompilerGeneratedFiles>
   </PropertyGroup>
   
   <PropertyGroup Label="Packaging">

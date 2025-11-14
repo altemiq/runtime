@@ -55,14 +55,7 @@ public static class YamlConfigurationExtensions
     /// <returns>The <see cref="IConfigurationBuilder"/>.</returns>
     public static IConfigurationBuilder AddYamlFile(this IConfigurationBuilder builder, FileProviders.IFileProvider? provider, string path, bool optional, bool reloadOnChange)
     {
-#if NET6_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(builder);
-#else
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-#endif
 
         if (string.IsNullOrEmpty(path))
         {
@@ -95,12 +88,8 @@ public static class YamlConfigurationExtensions
     /// <param name="stream">The <see cref="Stream"/> to read the yaml configuration data from.</param>
     /// <returns>The <see cref="IConfigurationBuilder"/>.</returns>
     public static IConfigurationBuilder AddYamlStream(this IConfigurationBuilder builder, Stream stream)
-#if NET6_0_OR_GREATER
     {
         ArgumentNullException.ThrowIfNull(builder);
         return builder.Add<Altemiq.Extensions.Configuration.Yaml.YamlStreamConfigurationSource>(s => s.Stream = stream);
     }
-#else
-        => builder is not null ? builder.Add<Altemiq.Extensions.Configuration.Yaml.YamlStreamConfigurationSource>(s => s.Stream = stream) : throw new ArgumentNullException(nameof(builder));
-#endif
 }

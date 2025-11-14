@@ -58,11 +58,7 @@ public class Random : System.Random
     /// <inheritdoc />
     public override int Next(int maxValue)
     {
-#if NET7_0
-        ArgumentOutOfRangeException.ThrowIfNegative<int>(maxValue);
-#else
         ArgumentOutOfRangeException.ThrowIfNegative(maxValue);
-#endif
         return this.Next(0, maxValue);
     }
 }

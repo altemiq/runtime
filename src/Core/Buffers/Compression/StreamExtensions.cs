@@ -90,13 +90,15 @@ internal static class StreamExtensions
         var read = stream.Read(bytes);
         count = read / 4;
 
-        if (BitConverter.IsLittleEndian && byteOrder is ByteOrder.BigEndian)
+        if (!BitConverter.IsLittleEndian || byteOrder is not ByteOrder.BigEndian)
         {
-            var end = offset + count;
-            for (var i = offset; i < end; i++)
-            {
-                buffer[i] = System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(buffer[i]);
-            }
+            return count;
+        }
+
+        var end = offset + count;
+        for (var i = offset; i < end; i++)
+        {
+            buffer[i] = System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(buffer[i]);
         }
 
         return count;

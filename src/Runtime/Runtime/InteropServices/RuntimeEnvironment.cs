@@ -162,7 +162,7 @@ public static class RuntimeEnvironment
 
                 static IEqualityComparer<string?> GetComparer()
                 {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
                     return OperatingSystem.IsWindows()
 #else
                     return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
@@ -313,11 +313,7 @@ public static class RuntimeEnvironment
     {
         if (Environment.GetEnvironmentVariable(variable, target) is { } path)
         {
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
             if (path.Contains(directory, StringComparison.Ordinal))
-#else
-            if (path.Contains(directory))
-#endif
             {
                 return;
             }
@@ -519,12 +515,7 @@ public static class RuntimeEnvironment
     private static bool DirectoryExists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? directory) => Directory.Exists(directory);
 
 #if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
-    private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        && data.Contains(value, StringComparison.Ordinal);
-#else
-        && data.Contains(value);
-#endif
+    private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data && data.Contains(value, StringComparison.Ordinal);
 #else
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for a common API")]
     private static bool IsAlreadyInAppContext(string value, string variable) => false;
@@ -561,7 +552,7 @@ public static class RuntimeEnvironment
 
     private static StringComparer GetPathComparer()
     {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
         return OperatingSystem.IsWindows()
 #else
         return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
@@ -621,12 +612,7 @@ public static class RuntimeEnvironment
                 static Stream GetManifestStream(string name)
                 {
                     var assembly = typeof(RuntimeEnvironment).GetTypeInfo().Assembly;
-                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames()
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                        .First(n => n.Contains(name, StringComparison.Ordinal)))!;
-#else
-                        .First(n => n.Contains(name)))!;
-#endif
+                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.Contains(name, StringComparison.Ordinal)))!;
                 }
             }
         }
@@ -647,15 +633,9 @@ public static class RuntimeEnvironment
     }
 
 #if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
-    private static bool EnvironmentVariableContains(string variable, EnvironmentVariableTarget target, string value) =>
-        Environment.GetEnvironmentVariable(variable, target) is { } variableValue
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-            && variableValue.Contains(value, StringComparison.Ordinal);
+    private static bool EnvironmentVariableContains(string variable, EnvironmentVariableTarget target, string value) => Environment.GetEnvironmentVariable(variable, target) is { } variableValue && variableValue.Contains(value, StringComparison.Ordinal);
 #else
-            && variableValue.Contains(value);
-#endif
-#else
-    private static bool EnvironmentVariableContains(string variable, string value) => Environment.GetEnvironmentVariable(variable) is { } variableValue && variableValue.Contains(value);
+    private static bool EnvironmentVariableContains(string variable, string value) => Environment.GetEnvironmentVariable(variable) is { } variableValue && variableValue.Contains(value, StringComparison.Ordinal);
 #endif
 
     private static IEnumerable<string> GetFrameworkDirectories(string directory)

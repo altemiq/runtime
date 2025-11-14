@@ -12,13 +12,7 @@ namespace Altemiq.IO;
 [System.Runtime.CompilerServices.TypeForwardedFrom("Altemiq.IO")]
 public class EchoStream : Stream
 {
-    private readonly
-#if NET9_0_OR_GREATER
-        Lock
-#else
-        object
-#endif
-        lockObject = new();
+    private readonly Lock lockObject = new();
 
     // Default underlying mechanism for BlockingCollection is ConcurrentQueue<T>, which is what we want
     private readonly System.Collections.Concurrent.BlockingCollection<byte[]> buffers;

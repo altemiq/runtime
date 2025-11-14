@@ -45,13 +45,7 @@ internal sealed class Assembly
 
             static bool IsTestAssembly(string name)
             {
-                const string TestHost = "testhost";
-
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                return name.Contains(TestHost, StringComparison.OrdinalIgnoreCase);
-#else
-                return name.IndexOf(TestHost, StringComparison.OrdinalIgnoreCase) >= 0;
-#endif
+                return name.Contains("testhost", StringComparison.OrdinalIgnoreCase);
             }
 
             static System.Reflection.Assembly? GetTestAssembly()

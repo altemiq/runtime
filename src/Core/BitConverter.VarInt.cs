@@ -27,7 +27,7 @@ public static partial class BitConverter
 #if NET7_0_OR_GREATER
             GetVarBytesCore(EncodeZigZag<sbyte, byte>(value, sizeof(sbyte) * 8));
 #else
-        GetVarBytesCore((ulong)EncodeZigZag(value, sizeof(sbyte) * 8));
+            GetVarBytesCore((ulong)EncodeZigZag(value, sizeof(sbyte) * 8));
 #endif
 
         /// <summary>

@@ -47,7 +47,7 @@ public sealed class BitArrayEqualityComparer : EqualityComparer<System.Collectio
     /// <inheritdoc/>
     public override int GetHashCode(System.Collections.BitArray obj)
     {
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NETFRAMEWORK
         var hashCode = default(HashCode);
         for (var i = 0; i < obj.Length; i++)
         {

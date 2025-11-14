@@ -60,11 +60,7 @@ public partial class SemanticVersion :
     public string Release => this.releaseLabels_ switch
     {
         { Count: 1 } => this.releaseLabels_[0],
-#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         not null => string.Join('.', this.releaseLabels_),
-#else
-        not null => string.Join(".", this.releaseLabels_),
-#endif
         _ => string.Empty,
     };
 

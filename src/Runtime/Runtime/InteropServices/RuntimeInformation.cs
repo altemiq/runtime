@@ -101,7 +101,7 @@ public static class RuntimeInformation
                         ? attribute.PlatformName
                         : default;
 #else
-                    return assembly?.GetCustomAttributes().FirstOrDefault(static a => a.GetType().Name.Contains("TargetPlatformAttribute")) is { } customAttribute
+                    return assembly?.GetCustomAttributes().FirstOrDefault(static a => a.GetType().Name.Contains("TargetPlatformAttribute", StringComparison.Ordinal)) is { } customAttribute
                         ? customAttribute.GetType().GetTypeInfo().GetProperty("PlatformName")?.GetValue(customAttribute) as string
                         : default;
 #endif
@@ -173,7 +173,7 @@ public static class RuntimeInformation
 
     private static IEnumerable<string> GetNaïveRidFronts()
     {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
         if (OperatingSystem.IsLinux())
         {
             foreach (var variant in GetLinuxVariant())
@@ -193,9 +193,7 @@ public static class RuntimeInformation
 
         yield return GetNaïveRidFront();
 
-#if NET5_0_OR_GREATER
         [System.Runtime.Versioning.SupportedOSPlatform("linux")]
-#endif
         static IEnumerable<string> GetLinuxVariant()
         {
             const string FilePath = "/etc/os-release";
@@ -208,12 +206,7 @@ public static class RuntimeInformation
             using var reader = new StreamReader(File.OpenRead(FilePath));
             while (reader.ReadLine() is { } line)
             {
-                if (line.StartsWith("ID", StringComparison.Ordinal)
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-                    && line.IndexOf('=', StringComparison.Ordinal) is > 0 and var equalsPosition)
-#else
-                    && line.IndexOf('=') is > 0 and var equalsPosition)
-#endif
+                if (line.StartsWith("ID", StringComparison.Ordinal) && line.IndexOf('=', StringComparison.Ordinal) is > 0 and var equalsPosition)
                 {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_0_OR_GREATER
                     yield return line[(equalsPosition + 1)..];
@@ -227,7 +220,7 @@ public static class RuntimeInformation
 
     private static string GetNaïveRidFront()
     {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
         if (OperatingSystem.IsWindows())
         {
             return "win";
@@ -301,7 +294,7 @@ public static class RuntimeInformation
 #endif
     private static string GetPathVariable()
     {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
         if (OperatingSystem.IsWindows())
         {
             return "PATH";
@@ -341,7 +334,7 @@ public static class RuntimeInformation
 #endif
     private static string GetSharedLibraryExtension()
     {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
         if (OperatingSystem.IsWindows())
         {
             return ".dll";
@@ -381,7 +374,7 @@ public static class RuntimeInformation
 #endif
     private static string GetExecutableExtension()
     {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
         if (OperatingSystem.IsWindows())
         {
             return ".exe";
@@ -421,7 +414,7 @@ public static class RuntimeInformation
 #endif
     private static string GetSharedLibraryPrefix()
     {
-#if NET5_0_OR_GREATER
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
         if (OperatingSystem.IsWindows())
         {
             return string.Empty;

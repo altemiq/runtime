@@ -295,10 +295,5 @@ public static class StringExtensions
         }
     }
 
-    private static string QuoteReturnString(string value) =>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
-         QuoteString + value.Replace(QuoteString, EscapedQuoteString, StringComparison.Ordinal) + QuoteString;
-#else
-         QuoteString + value.Replace(QuoteString, EscapedQuoteString) + QuoteString;
-#endif
+    private static string QuoteReturnString(string value) => QuoteString + value.Replace(QuoteString, EscapedQuoteString, StringComparison.Ordinal) + QuoteString;
 }

@@ -223,15 +223,8 @@ public static partial class List
         Comparison<T> comparison)
     {
         ArgumentNullException.ThrowIfNull(values);
-#if NET7_0
-#pragma warning disable RedundantTypeArgumentsOfMethod
-        ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
-        ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
-#pragma warning restore RedundantTypeArgumentsOfMethod
-#else
         ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
-#endif
         ArgumentNullException.ThrowIfNull(comparison);
 
         switch (values)
@@ -374,15 +367,8 @@ public static partial class List
         where T : IComparable<T>
     {
         ArgumentNullException.ThrowIfNull(values);
-#if NET7_0
-#pragma warning disable RedundantTypeArgumentsOfMethod
-        ArgumentOutOfRangeException.ThrowIfNegative<int>(index);
-        ArgumentOutOfRangeException.ThrowIfNegative<int>(length);
-#pragma warning restore RedundantTypeArgumentsOfMethod
-#else
         ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
-#endif
 
         if (length is 0)
         {
