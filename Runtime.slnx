@@ -29,7 +29,7 @@
   <Folder Name="/src/">
     <Project Path="src/Core/Core.csproj" />
     <Project Path="src/Extensions.Caching.Hybrid/Extensions.Caching.Hybrid.csproj" />
-    <Project Path="src/Extensions.Configuration.Yaml/Extensions.Configuration.Yaml.csproj" Type="C#" />
+    <Project Path="src/Extensions.Configuration.Yaml/Extensions.Configuration.Yaml.csproj" />
     <Project Path="src/Grpc.Tools/Grpc.Tools.csproj" />
     <Project Path="src/IO.Compression/IO.Compression.csproj" />
     <Project Path="src/Protobuf/Protobuf.csproj" />
@@ -40,7 +40,9 @@
     <Project Path="tests/Extensions.Caching.Hybrid.Tests/Extensions.Caching.Hybrid.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
-    <Project Path="tests/Extensions.Configuration.Yaml.Tests/Extensions.Configuration.Yaml.Tests.csproj" Type="C#" />
+    <Project Path="tests/Extensions.Configuration.Yaml.Tests/Extensions.Configuration.Yaml.Tests.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
     <Project Path="tests/Grpc.Tools.Tests/Grpc.Tools.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
