@@ -6,6 +6,8 @@ namespace Altemiq.Extensions.Configuration.Yaml;
 
 public class YamlConfigurationFileParserTests
 {
+    private const string PathParameterName = "path";
+    
     private static YamlConfigurationProvider LoadProvider(string yaml)
     {
         var p = new YamlConfigurationProvider(new YamlConfigurationSource { Optional = true });
@@ -118,7 +120,7 @@ public class YamlConfigurationFileParserTests
     [Test]
     public async Task ThrowExceptionWhenPassingNullAsFilePath()
     {
-        var expectedMsg = new ArgumentException(Properties.Resources.Error_InvalidFilePath, "path").Message;
+        var expectedMsg = new ArgumentException(Properties.Resources.Error_InvalidFilePath, PathParameterName).Message;
 
         await Assert.That(() => new ConfigurationBuilder().AddYamlFile(path: null!)).Throws<ArgumentException>().WithMessage(expectedMsg);
     }
@@ -126,7 +128,7 @@ public class YamlConfigurationFileParserTests
     [Test]
     public async Task ThrowExceptionWhenPassingEmptyStringAsFilePath()
     {
-        var expectedMsg = new ArgumentException(Properties.Resources.Error_InvalidFilePath, "path").Message;
+        var expectedMsg = new ArgumentException(Properties.Resources.Error_InvalidFilePath, PathParameterName).Message;
 
         await Assert.That(() => new ConfigurationBuilder().AddYamlFile(path: string.Empty)).Throws<ArgumentException>().WithMessage(expectedMsg);
     }
@@ -163,19 +165,25 @@ public class YamlConfigurationFileParserTests
         builder.AddYamlFile(filePath, optional: false);
 
         FileConfigurationSource fileConfigurationSource = (FileConfigurationSource)builder.Sources.Last();
-        PhysicalFileProvider fileProvider = (PhysicalFileProvider)fileConfigurationSource.FileProvider;
+        PhysicalFileProvider? fileProvider = fileConfigurationSource.FileProvider as PhysicalFileProvider;
 
-        await Assert.That(GetIsDisposed(fileProvider)).IsFalse();
+        await Assert.That(fileConfigurationSource.FileProvider)
+            .IsTypeOf<PhysicalFileProvider>()
+            .And.Satisfies(GetIsDisposed, disposed => disposed.IsFalse());
 
         builder.Properties.Add("simplest", "repro");
 
-        await Assert.That(GetIsDisposed(fileProvider)).IsFalse();
+        await Assert.That(fileConfigurationSource.FileProvider)
+            .IsTypeOf<PhysicalFileProvider>()
+            .And.Satisfies(GetIsDisposed, disposed => disposed.IsFalse());
 
-        fileProvider.Dispose();
-        await Assert.That(GetIsDisposed(fileProvider)).IsTrue();
+        fileProvider?.Dispose();
+        await Assert.That(fileConfigurationSource.FileProvider)
+            .IsTypeOf<PhysicalFileProvider>()
+            .And.Satisfies(GetIsDisposed, disposed => disposed.IsTrue());
     }
 
-    private static bool GetIsDisposed(PhysicalFileProvider fileProvider)
+    private static bool GetIsDisposed(PhysicalFileProvider? fileProvider)
     {
         var isDisposedField = typeof(PhysicalFileProvider).GetField("_disposed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
         return (bool)isDisposedField!.GetValue(fileProvider)!;
