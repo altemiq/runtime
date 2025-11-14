@@ -5,19 +5,8 @@
     <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
     <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
 
-    <PolySharpIncludeGeneratedTypes>
-      $(PolySharpIncludeGeneratedTypes);
-      System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute;
-      System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute;
-      System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute;
-      System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
-      System.Diagnostics.CodeAnalysis.MaybeNullAttribute;
-      System.Diagnostics.CodeAnalysis.NotNullAttribute;
-      System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;
-      System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute;
-      System.Runtime.CompilerServices.CallerArgumentExpressionAttribute;
-    </PolySharpIncludeGeneratedTypes>
-    
+    <MeziantouPolyfill_IncludedPolyfills>$(MeziantouPolyfill_IncludedPolyfills)|T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute|T:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute|T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute|T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes|T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute|T:System.Diagnostics.CodeAnalysis.NotNullAttribute|T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute|T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute</MeziantouPolyfill_IncludedPolyfills>
+
     <!-- turn off buggy analyzer -->
     <NoWarn>$(NoWarn);S1117</NoWarn>
   </PropertyGroup>
@@ -46,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PolySharp">
+    <PackageReference Include="Meziantou.Polyfill">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

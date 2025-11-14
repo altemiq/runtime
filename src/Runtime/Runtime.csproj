@@ -3,14 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netstandard2.0;netstandard1.6;net47;net451</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Runtime'))">$(RootNamespace.Replace('.Runtime', ''))</RootNamespace>
-    <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
-    <PolySharpIncludeGeneratedTypes>
-      $(PolySharpIncludeGeneratedTypes);
-      System.Diagnostics.CodeAnalysis.MaybeNullAttribute;
-      System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute;
-      System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;
-      System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute;
-    </PolySharpIncludeGeneratedTypes>
+    <MeziantouPolyfill_IncludedPolyfills>$(MeziantouPolyfill_IncludedPolyfills)|T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute|T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute|T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|T:System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute</MeziantouPolyfill_IncludedPolyfills>
   </PropertyGroup>
   
   <PropertyGroup Label="Packaging">
@@ -29,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net5.0')) " VersionOverride="3.0.0" />
-    <PackageReference Include="PolySharp">
+    <PackageReference Include="Meziantou.Polyfill">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

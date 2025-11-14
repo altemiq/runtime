@@ -2,18 +2,14 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net6.0;netstandard2.1;netstandard2.0;net47</TargetFrameworks>
-    <PolySharpIncludeGeneratedTypes>
-      $(PolySharpIncludeGeneratedTypes);
-      System.Runtime.CompilerServices.UnsafeAccessorAttribute;
-      System.Runtime.CompilerServices.UnsafeAccessorKind
-    </PolySharpIncludeGeneratedTypes>
+    <MeziantouPolyfill_IncludedPolyfills>$(MeziantouPolyfill_IncludedPolyfills)|T:System.Runtime.CompilerServices.UnsafeAccessorAttribute|T:System.Runtime.CompilerServices.UnsafeAccessorKind</MeziantouPolyfill_IncludedPolyfills>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="YamlDotNet" VersionOverride="16.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" VersionOverride="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" VersionOverride="6.0.0" />
-    <PackageReference Include="PolySharp">
+    <PackageReference Include="Meziantou.Polyfill">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0;netcoreapp3.1;netstandard2.1;netstandard2.0;netstandard1.1;net462;net461;net45</TargetFrameworks>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <PolySharpIncludeGeneratedTypes>System.Index,System.Range,System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute,System.Diagnostics.CodeAnalysis.StringSyntaxAttribute;System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute;System.Diagnostics.CodeAnalysis.NotNullWhenAttribute,System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute</PolySharpIncludeGeneratedTypes>
+    <MeziantouPolyfill_IncludedPolyfills>$(MeziantouPolyfill_IncludedPolyfills)|T:System.Index|T:System.Range|T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute|T:System.Diagnostics.CodeAnalysis.StringSyntaxAttribute|T:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute|T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute</MeziantouPolyfill_IncludedPolyfills>
     <_ProtoRoot>..\Grpc.Tools\native\include</_ProtoRoot>
     </PropertyGroup>
   
@@ -19,7 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="PolySharp">
+    <PackageReference Include="Meziantou.Polyfill">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

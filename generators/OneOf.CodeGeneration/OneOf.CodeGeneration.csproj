@@ -17,7 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" GeneratePathProperty="true" VersionOverride="3.0.0-beta.96"  />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" VersionOverride="4.14.0" />
-    <PackageReference Include="PolySharp" PrivateAssets="all" />
+    <PackageReference Include="Meziantou.Polyfill" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

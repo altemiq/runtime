@@ -13,14 +13,11 @@
     <When Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0')) ">
       <PropertyGroup>
         <EnableTUnitPolyfills>false</EnableTUnitPolyfills>
-        <PolySharpIncludeGeneratedTypes>
-          $(PolySharpIncludeGeneratedTypes);
-          System.Runtime.CompilerServices.ModuleInitializerAttribute;
-        </PolySharpIncludeGeneratedTypes>
+        <MeziantouPolyfill_IncludedPolyfills>$(MeziantouPolyfill_IncludedPolyfills)|T:System.Runtime.CompilerServices.ModuleInitializerAttribute</MeziantouPolyfill_IncludedPolyfills>
       </PropertyGroup>
 
       <ItemGroup>
-        <PackageReference Include="PolySharp">
+        <PackageReference Include="Meziantou.Polyfill">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
