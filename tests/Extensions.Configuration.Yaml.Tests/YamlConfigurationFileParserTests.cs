@@ -157,7 +157,7 @@ public class YamlConfigurationFileParserTests
     [Test]
     public async Task AddYamlFile_FileProvider_Is_Not_Disposed_When_SourcesGetReloaded()
     {
-        string filePath = Path.Combine(Path.GetTempPath(), $"{nameof(this.AddYamlFile_FileProvider_Is_Not_Disposed_When_SourcesGetReloaded)}.yaml");
+        string filePath = Path.GetTempFileName();
         File.WriteAllText(filePath, "some: value");
 
         IConfigurationBuilder builder = new ConfigurationManager();
@@ -181,6 +181,8 @@ public class YamlConfigurationFileParserTests
         await Assert.That(fileConfigurationSource.FileProvider)
             .IsTypeOf<PhysicalFileProvider>()
             .And.Satisfies(GetIsDisposed, disposed => disposed.IsTrue());
+        
+        File.Delete(filePath);
     }
 
     private static bool GetIsDisposed(PhysicalFileProvider? fileProvider)
