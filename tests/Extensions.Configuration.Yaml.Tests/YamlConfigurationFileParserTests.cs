@@ -7,7 +7,7 @@ namespace Altemiq.Extensions.Configuration.Yaml;
 public class YamlConfigurationFileParserTests
 {
     private const string PathParameterName = "path";
-    
+
     private static YamlConfigurationProvider LoadProvider(string yaml)
     {
         var p = new YamlConfigurationProvider(new YamlConfigurationSource { Optional = true });
@@ -181,7 +181,7 @@ public class YamlConfigurationFileParserTests
         await Assert.That(fileConfigurationSource.FileProvider)
             .IsTypeOf<PhysicalFileProvider>()
             .And.Satisfies(GetIsDisposed, disposed => disposed.IsTrue());
-        
+
         File.Delete(filePath);
     }
 
