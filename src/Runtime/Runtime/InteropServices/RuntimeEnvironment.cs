@@ -518,35 +518,38 @@ public static class RuntimeEnvironment
     private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data && data.Contains(value, StringComparison.Ordinal);
 #else
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for a common API")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "This is required for a common API")]
     private static bool IsAlreadyInAppContext(string value, string variable) => false;
 #endif
 
     private static IEnumerable<string> GetRuntimeDirectories(string name)
     {
-        if (RuntimeInformation.GetBaseDirectories().Select(static baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is { } runtimesDirectory)
+        if (RuntimeInformation.GetBaseDirectories().Select(static baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is not { } runtimesDirectory)
         {
-            // get the rids
-            if (Directory.GetDirectories(runtimesDirectory)
+            yield break;
+        }
+
+        // get the rids
+        if (Directory.GetDirectories(runtimesDirectory)
                 .Select(Path.GetFileName)
                 .WhereNotNull()
                 .ToList() is { Count: not 0 } availableRids)
+        {
+            if (GetRuntimeRids().Intersect(availableRids, GetPathComparer()).ToList() is { Capacity: not 0 } rids)
             {
-                if (GetRuntimeRids().Intersect(availableRids, GetPathComparer()).ToList() is { Capacity: not 0 } rids)
+                foreach (var path in rids.Select(rid => Path.Combine(runtimesDirectory, rid, name)).Where(Directory.Exists))
                 {
-                    foreach (var path in rids.Select(rid => Path.Combine(runtimesDirectory, rid, name)).Where(Directory.Exists))
-                    {
-                        yield return path;
-                    }
-
-                    yield break;
+                    yield return path;
                 }
 
-                yield return Path.Combine(runtimesDirectory, name);
+                yield break;
             }
-            else
-            {
-                yield return runtimesDirectory;
-            }
+
+            yield return Path.Combine(runtimesDirectory, name);
+        }
+        else
+        {
+            yield return runtimesDirectory;
         }
     }
 
