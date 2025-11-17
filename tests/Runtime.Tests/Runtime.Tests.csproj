@@ -5,17 +5,22 @@
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);net9.0-windows;net8.0-windows;net6.0-windows;net472</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Runtime'))">$(RootNamespace.Replace('.Runtime', ''))</RootNamespace>
   </PropertyGroup>
+  
+  <Choose>
+    <When Condition=" $([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework))) == '.NETFramework' ">
+      <ItemGroup>
+        <RuntimeHostConfigurationOption Include="System.Runtime.Loader.UseRidGraph" Value="true" />
+      </ItemGroup>
 
-  <ItemGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework))) == '.NETFramework' ">
-    <RuntimeHostConfigurationOption Include="System.Runtime.Loader.UseRidGraph" Value="true" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" $([MSBuild]::GetTargetFrameworkIdentifier($(TargetFramework))) == '.NETFramework' ">
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-  </PropertyGroup>
+      <PropertyGroup>
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+        <MeziantouPolyfill_IncludedPolyfills>T:System.Runtime.CompilerServices.IsExternalInit</MeziantouPolyfill_IncludedPolyfills>
+      </PropertyGroup>    
+    </When>
+  </Choose>
 
   <ItemGroup>
-    <PackageReference Include="SourceGear.sqlite3" GeneratePathProperty="true" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" GeneratePathProperty="true" />
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
@@ -44,7 +49,7 @@
 
   <Target Name="_CopyAllSqliteToOutput" BeforeTargets="PrepareForRun">
     <ItemGroup>
-      <_CopyAllSqliteToOutput Include="$(PkgSourceGear_sqlite3)\runtimes\**" />
+      <_CopyAllSqliteToOutput Include="$(PkgSQLitePCLRaw_lib_e_sqlite3)\runtimes\**" />
     </ItemGroup>
 
     <Copy SourceFiles="@(_CopyAllSqliteToOutput)" DestinationFolder="$(OutputPath)runtimes\%(RecursiveDir)" SkipUnchangedFiles="true" />

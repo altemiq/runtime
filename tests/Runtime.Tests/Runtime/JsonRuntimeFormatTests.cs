@@ -23,7 +23,11 @@ public class JsonRuntimeFormatTests
     public async Task ReadJsonFromAssembly(string name)
     {
         var stream = new System.IO.Compression.GZipStream(GetManifestStreamFromAssembly(name), System.IO.Compression.CompressionMode.Decompress, false);
+#if NETCOREAPP3_0_OR_GREATER
         await using (stream.ConfigureAwait(false))
+#else
+        using (stream)
+#endif
         {
             var json = JsonRuntimeFormat.ReadRuntimeGraph(stream);
             await Assert.That(json)

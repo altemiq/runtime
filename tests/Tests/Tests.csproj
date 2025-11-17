@@ -7,10 +7,7 @@
     <NoWarn>$(NoWarn);CA1861</NoWarn>
     <LangVersion>preview</LangVersion>
 
-    <PolySharpIncludeGeneratedTypes>
-      $(PolySharpIncludeGeneratedTypes);
-      System.Runtime.CompilerServices.IsExternalInit;
-    </PolySharpIncludeGeneratedTypes>
+    <MeziantouPolyfill_IncludedPolyfills>T:System.Runtime.CompilerServices.IsExternalInit</MeziantouPolyfill_IncludedPolyfills>
   </PropertyGroup>
 
   <ItemGroup>

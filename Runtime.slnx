@@ -36,7 +36,9 @@
     <Project Path="src/Runtime/Runtime.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Dummy/Dummy.csproj" />
+    <Project Path="tests/Dummy/Dummy.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
     <Project Path="tests/Extensions.Caching.Hybrid.Tests/Extensions.Caching.Hybrid.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
