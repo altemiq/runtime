@@ -16,10 +16,10 @@ public static partial class BitArrayExtensions
     private static readonly FieldInfo ArrayFieldInfo = typeof(System.Collections.BitArray).GetTypeInfo().DeclaredFields.FirstOrDefault(static field => field.FieldType.Equals(typeof(int[]))) ?? throw new InvalidOperationException();
 
     /// <summary>
-    /// Copies the entire <see cref="System.Collections.BitArray"/> to a compatible one-dimensional <see cref="ArrayExtensions"/>, starting at the specified index of the target array.
+    /// Copies the entire <see cref="System.Collections.BitArray"/> to a compatible one-dimensional <see cref="Array"/>, starting at the specified index of the target array.
     /// </summary>
     /// <param name="bitArray">The bit array to copy from.</param>
-    /// <param name="array">The one-dimensional <see cref="ArrayExtensions"/> that is the destination of the elements copied from <see cref="System.Collections.BitArray"/>. The <see cref="ArrayExtensions"/> must have zero-based indexing.</param>
+    /// <param name="array">The one-dimensional <see cref="Array"/> that is the destination of the elements copied from <see cref="System.Collections.BitArray"/>. The <see cref="ArrayExtensions"/> must have zero-based indexing.</param>
     /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
     public static void CopyTo(this System.Collections.BitArray bitArray, Array array, int index)
     {

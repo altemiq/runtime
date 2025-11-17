@@ -58,7 +58,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="ArrayExtensions.*.cs;BitConverter.*.cs;Linq\List.*.cs;MemoryExtensions.*.cs">
+    <Compile Update="ArrayExtensions.*.cs;Collections\BitArrayExtensions.*.cs;BitConverter.*.cs;Linq\List.*.cs;MemoryExtensions.*.cs">
       <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)%(Extension)', '\.[^.]+\%(Extension)$', '%(Extension)'))</DependentUpon>
     </Compile>
     <None Include="icon.png" Pack="true" PackagePath="\" />

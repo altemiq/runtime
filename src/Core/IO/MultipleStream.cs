@@ -9,9 +9,6 @@ namespace Altemiq.IO;
 /// <summary>
 /// A stream that is backed by multiple <see cref="Stream"/> instances.
 /// </summary>
-/// <remarks>
-/// Initialises a new instance of the <see cref="MultipleStream"/> class.
-/// </remarks>
 /// <param name="dictionary">The <see cref="IDictionary{TKey,TValue}"/> to use to back this instance.</param>
 [System.Runtime.CompilerServices.TypeForwardedFrom("Altemiq.IO")]
 public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : Stream
