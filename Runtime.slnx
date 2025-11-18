@@ -68,6 +68,7 @@
     <File Path="tests/Directory.Packages.props" />
   </Folder>
   <Folder Name="/tools/">
+    <File Path="tools\Directory.Build.props" />
     <File Path="tools\Directory.Packages.props" />
     <Project Path="tools\Lzma.Cli\Lzma.Cli.csproj" />
   </Folder>
