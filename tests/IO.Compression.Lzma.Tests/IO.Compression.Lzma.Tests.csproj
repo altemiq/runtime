@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="*.lzma;*.txt" />
+    <EmbeddedResource Include="*.lzma" />
   </ItemGroup>
 
-<!--  <ItemGroup>-->
-<!--    <_TxtEmbeddedResource Include="*.txt" />-->
-<!--  </ItemGroup>-->
+  <ItemGroup>
+    <_TxtEmbeddedResource Include="*.txt" Link="%(FileName)%(Extension)" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\IO.Compression.Lzma\IO.Compression.Lzma.csproj" />
@@ -35,21 +35,20 @@ if (Files.Length > 0)
     for (var i = 0; i < Files.Length; i++)
     {
         var item = Files[i];
-        var link = item.GetMetadata("Link");
         var sourceItemSpec = item.ItemSpec;
 
         var destinationItemSpec = Path.Combine(DestinationFolder.ItemSpec, Path.GetFileName(item.ItemSpec));
 
         if (!File.Exists(destinationItemSpec))
         {
+            Log.LogMessage(MessageImportance.Normal, "_TxtEmbeddedResource Src: " + sourceItemSpec);
             File.WriteAllText(destinationItemSpec, File.ReadAllText(sourceItemSpec).Replace("\r\n", "\n"));
         }
 
         var destinationItem = new TaskItem(destinationItemSpec);
-        if (link != null)
-        {
-            destinationItem.SetMetadata("Link", link);
-        }
+        item.CopyMetadataTo(destinationItem);
+
+        Log.LogMessage(MessageImportance.Normal, "_TxtEmbeddedResource Dst: " + destinationItem.ItemSpec);
 
         Result[i] = destinationItem;
     }
@@ -59,18 +58,12 @@ if (Files.Length > 0)
     </Task>
   </UsingTask>
 
-
-
-  <Target Name="_UpdateEmbeddedResources" BeforeTargets="AssignTargetPaths">
-
+  <Target Name="_UpdateEmbeddedResources"
+          BeforeTargets="AssignTargetPaths"
+          Condition=" @(_TxtEmbeddedResource) != '' ">
     <ChangeLineEndings Files="@(_TxtEmbeddedResource)" DestinationFolder="$(IntermediateOutputPath)">
-      <Output ItemName="TxtEmbeddedResource" TaskParameter="Result" />
+      <Output ItemName="EmbeddedResource" TaskParameter="Result" />
     </ChangeLineEndings>
-
-    <ItemGroup>
-      <EmbeddedResource Include="@(TxtEmbeddedResource)" />
-    </ItemGroup>
-
   </Target>
 
 </Project>
