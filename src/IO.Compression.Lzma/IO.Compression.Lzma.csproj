@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <RootNamespace>System.IO.Compression</RootNamespace>
+
+    <MeziantouPolyfill_IncludedPolyfills>
+      $(MeziantouPolyfill_IncludedPolyfills)|
+      M:System.ArgumentNullException.ThrowIfNull(System.Object,System.String)|
+      M:System.ArgumentOutOfRangeException.ThrowIfGreaterThan``1(``0,``0,System.String)|
+      T:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute|
+      T:System.Diagnostics.CodeAnalysis.NotNullAttribute|
+      T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute
+    </MeziantouPolyfill_IncludedPolyfills>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meziantou.Polyfill">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="lzma" />
+  </ItemGroup>
+
+</Project>

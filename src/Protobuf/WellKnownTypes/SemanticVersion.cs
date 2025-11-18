@@ -48,7 +48,7 @@ public partial class SemanticVersion :
         this.patch_ = normalizedVersion.Build;
         this.metadata_ = metadata;
 
-        if (releaseLabels != null)
+        if (releaseLabels is not null)
         {
             this.releaseLabels_.AddRange(releaseLabels);
         }

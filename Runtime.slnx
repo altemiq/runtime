@@ -31,6 +31,7 @@
     <Project Path="src/Extensions.Caching.Hybrid/Extensions.Caching.Hybrid.csproj" />
     <Project Path="src/Extensions.Configuration.Yaml/Extensions.Configuration.Yaml.csproj" />
     <Project Path="src/Grpc.Tools/Grpc.Tools.csproj" />
+    <Project Path="src/IO.Compression.Lzma/IO.Compression.Lzma.csproj" />
     <Project Path="src/IO.Compression/IO.Compression.csproj" />
     <Project Path="src/Protobuf/Protobuf.csproj" />
     <Project Path="src/Runtime/Runtime.csproj" />
@@ -48,6 +49,7 @@
     <Project Path="tests/Grpc.Tools.Tests/Grpc.Tools.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
+    <Project Path="tests/IO.Compression.Lzma.Tests/IO.Compression.Lzma.Tests.csproj" />
     <Project Path="tests/IO.Compression.Tests/IO.Compression.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
@@ -64,5 +66,9 @@
     <File Path="tests/Directory.Build.props" />
     <File Path="tests/Directory.Build.targets" />
     <File Path="tests/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/tools/">
+    <File Path="tools\Directory.Packages.props" />
+    <Project Path="tools\Lzma.Cli\Lzma.Cli.csproj" />
   </Folder>
 </Solution>

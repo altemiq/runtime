@@ -1,0 +1,5 @@
+# Set LZMA files to be binary
+*.lzma			binary
+
+# Set TXT files to be LF
+*.txt			text=lf
