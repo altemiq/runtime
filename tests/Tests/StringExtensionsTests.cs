@@ -70,8 +70,8 @@ public class StringExtensionsTests
     public async Task ReadSimple(string input, string? value, int length, StringSplitOptions options)
     {
         await Assert.That(input.SplitQuoted(',', options))
-            .HasCount().EqualTo(length)
-            .And.Member(r => r.Skip(2).Take(1).Single(), v => v.IsEqualTo(value));
+            .And.Member(static r => r, r => r.Count().IsEqualTo(length))
+            .And.Member(static r => r.Skip(2).Take(1).Single(), v => v.IsEqualTo(value));
     }
 
     [Test]
@@ -86,7 +86,7 @@ public class StringExtensionsTests
     [Arguments(SingleLineNewLineCommaEmbeddedQuotes, 5)]
     public async Task ReadLength(string input, int length)
     {
-        await Assert.That(input.SplitQuoted(',')).HasCount().EqualTo(length);
+        await Assert.That(input.SplitQuoted(',')).Count().IsEqualTo(length);
     }
 
     [Test]
@@ -119,7 +119,7 @@ public class StringExtensionsTests
     public async Task SplitQuotedWithEmptyDelimiter(char[]? chars)
     {
         const string Value = "This is a string";
-        await Assert.That(Value.SplitQuoted(chars, options: StringSplitOptions.None)).HasCount().EqualTo(4);
+        await Assert.That(Value.SplitQuoted(chars, options: StringSplitOptions.None)).Count().IsEqualTo(4);
     }
 
     public static IEnumerable<Func<char[]?>> GetCharArrays()

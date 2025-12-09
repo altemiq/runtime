@@ -470,7 +470,7 @@ public class BasicTests
             }
 
             // Check assertions.
-            await Assert.That(data[k]).HasCount().EqualTo(outputPosition);
+            await Assert.That(data[k]).Count().IsEqualTo(outputPosition);
             await Assert.That(data[k]).HasSameSequenceAs(TestUtils.CopyArray(buffer, outputPosition));
         }
     }

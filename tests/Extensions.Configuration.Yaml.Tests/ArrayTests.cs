@@ -94,7 +94,7 @@ public class ArrayTests
         configurationBuilder.Add(yamlConfigSource2);
         var config = configurationBuilder.Build();
 
-        await Assert.That(config.GetSection("ip").GetChildren()).HasCount().EqualTo(3);
+        await Assert.That(config.GetSection("ip").GetChildren()).Count().IsEqualTo(3);
         await Assert.That(config["ip:0"]).IsEqualTo("15.16.17.18");
         await Assert.That(config["ip:1"]).IsEqualTo("7.8.9.10");
         await Assert.That(config["ip:2"]).IsEqualTo("11.12.13.14");
@@ -125,7 +125,7 @@ public class ArrayTests
         configurationBuilder.Add(yamlConfigSource2);
         var config = configurationBuilder.Build();
 
-        await Assert.That(config.GetSection("ip").GetChildren()).HasCount().EqualTo(3);
+        await Assert.That(config.GetSection("ip").GetChildren()).Count().IsEqualTo(3);
         await Assert.That(config["ip:0"]).IsEqualTo("1.2.3.4");
         await Assert.That(config["ip:1"]).IsEqualTo("15.16.17.18");
         await Assert.That(config["ip:2"]).IsEqualTo("11.12.13.14");
@@ -157,7 +157,7 @@ public class ArrayTests
         var config = configurationBuilder.Build();
 
 
-        await Assert.That(config.GetSection("ip").GetChildren()).HasCount().EqualTo(4);
+        await Assert.That(config.GetSection("ip").GetChildren()).Count().IsEqualTo(4);
         await Assert.That(config["ip:0"]).IsEqualTo("1.2.3.4");
         await Assert.That(config["ip:1"]).IsEqualTo("7.8.9.10");
         await Assert.That(config["ip:2"]).IsEqualTo("11.12.13.14");
@@ -184,7 +184,7 @@ public class ArrayTests
         var configurationSection = config.GetSection("setting");
         var indexConfigurationSections = configurationSection.GetChildren().ToArray();
 
-        await Assert.That(indexConfigurationSections).HasCount().EqualTo(3);
+        await Assert.That(indexConfigurationSections).Count().IsEqualTo(3);
         await Assert.That(indexConfigurationSections[0].Value).IsEqualTo("b");
         await Assert.That(indexConfigurationSections[1].Value).IsEqualTo("a");
         await Assert.That(indexConfigurationSections[2].Value).IsEqualTo("2");
@@ -213,7 +213,7 @@ public class ArrayTests
         var configurationSection = config.GetSection("setting");
         var indexConfigurationSections = configurationSection.GetChildren().ToArray();
 
-        await Assert.That(indexConfigurationSections).HasCount().EqualTo(6);
+        await Assert.That(indexConfigurationSections).Count().IsEqualTo(6);
         await Assert.That(indexConfigurationSections[0].Key).IsEqualTo("4");
         await Assert.That(indexConfigurationSections[1].Key).IsEqualTo("10");
         await Assert.That(indexConfigurationSections[2].Key).IsEqualTo("42");
@@ -242,8 +242,8 @@ public class ArrayTests
 
         var ipSectionChildren = configurationSection.GetChildren().ToArray();
 
-        await Assert.That(config.GetChildren()).HasCount().EqualTo(1);
-        await Assert.That(ipSectionChildren).HasCount().EqualTo(2);
+        await Assert.That(config.GetChildren()).Count().IsEqualTo(1);
+        await Assert.That(ipSectionChildren).Count().IsEqualTo(2);
         await Assert.That(ipSectionChildren[0].Key).IsEqualTo("array");
         await Assert.That(ipSectionChildren[0].Value).IsEqualTo(string.Empty);
         await Assert.That(ipSectionChildren[1].Key).IsEqualTo("object");

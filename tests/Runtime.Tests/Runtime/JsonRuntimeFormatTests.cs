@@ -35,7 +35,7 @@ public class JsonRuntimeFormatTests
                     static j => j.Select(static x => x.Runtime),
                     static runtimes => runtimes
                         .Contains("linux")
-                        .And.HasCount().Between(10, int.MaxValue));
+                        .And.Count().IsBetween(10, int.MaxValue));
         }
     }
 

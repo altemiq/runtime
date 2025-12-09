@@ -12,50 +12,50 @@ public class NanoIds
     private const string DefaultAlphabet = "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     [Test]
-    public async Task Default() => await Assert.That(NanoId.Generate()).HasLength().EqualTo(DefaultSize);
+    public async Task Default() => await Assert.That(NanoId.Generate()).Length().IsEqualTo(DefaultSize);
 
     [Test]
-    public async Task DefaultAsync() => await Assert.That(await NanoId.GenerateAsync()).HasLength().EqualTo(DefaultSize);
+    public async Task DefaultAsync() => await Assert.That(await NanoId.GenerateAsync()).Length().IsEqualTo(DefaultSize);
 
     [Test]
     public async Task CustomSize()
     {
         const int Size = 10;
-        await Assert.That(NanoId.Generate(size: Size)).HasLength().EqualTo(Size);
+        await Assert.That(NanoId.Generate(size: Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
     public async Task CustomSizeAsync()
     {
         const int Size = 10;
-        await Assert.That(await NanoId.GenerateAsync(size: Size)).HasLength().EqualTo(Size);
+        await Assert.That(await NanoId.GenerateAsync(size: Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
-    public async Task CustomAlphabet() => await Assert.That(NanoId.Generate("1234abcd")).HasLength().EqualTo(DefaultSize);
+    public async Task CustomAlphabet() => await Assert.That(NanoId.Generate("1234abcd")).Length().IsEqualTo(DefaultSize);
 
     [Test]
-    public async Task CustomAlphabetAsync() => await Assert.That(await NanoId.GenerateAsync("1234abcd")).HasLength().EqualTo(DefaultSize);
+    public async Task CustomAlphabetAsync() => await Assert.That(await NanoId.GenerateAsync("1234abcd")).Length().IsEqualTo(DefaultSize);
 
     [Test]
     public async Task CustomAlphabetAndSize()
     {
         const int Size = 7;
-        await Assert.That(NanoId.Generate("1234abcd", Size)).HasLength().EqualTo(Size);
+        await Assert.That(NanoId.Generate("1234abcd", Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
     public async Task CustomAlphabetAndSizeAsync()
     {
         const int Size = 7;
-        await Assert.That(await NanoId.GenerateAsync("1234abcd", Size)).HasLength().EqualTo(Size);
+        await Assert.That(await NanoId.GenerateAsync("1234abcd", Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
-    public async Task CustomRandom() => await Assert.That(NanoId.Generate(new Random(10))).HasLength().EqualTo(DefaultSize);
+    public async Task CustomRandom() => await Assert.That(NanoId.Generate(new Random(10))).Length().IsEqualTo(DefaultSize);
 
     [Test]
-    public async Task CustomRandomAsync() => await Assert.That(await NanoId.GenerateAsync(new Random(10))).HasLength().EqualTo(DefaultSize);
+    public async Task CustomRandomAsync() => await Assert.That(await NanoId.GenerateAsync(new Random(10))).Length().IsEqualTo(DefaultSize);
 
     [Test]
     public async Task SingleLetterAlphabet() => await Assert.That(NanoId.Generate("a", 5)).IsEqualTo("aaaaa");
@@ -89,7 +89,7 @@ public class NanoIds
         while (count > 0)
         {
             var result = NanoId.Generate();
-            await Assert.That(result).HasLength().EqualTo(DefaultSize);
+            await Assert.That(result).Length().IsEqualTo(DefaultSize);
 
             foreach (var c in result)
             {
@@ -108,7 +108,7 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            await Assert.That(result).HasLength().EqualTo(DefaultSize);
+            await Assert.That(result).Length().IsEqualTo(DefaultSize);
 
             foreach (var c in result)
             {
@@ -265,16 +265,26 @@ public class NanoIds
 
         private IEnumerable<byte> GetSequence(int size)
         {
-            var result = sequence.AsEnumerable();
+            var count = size / sequence.Length;
 
-            // Update the sequence to match nanoid.js tests and implementation
-            // which takes random bytes in reverse order (as of 3489e1e3b0dd7678b72c30f5fb00b806c8ce4fef).
-            for (var i = 0; i < size / sequence.Length; i++)
+            var remainder = size % sequence.Length;
+
+            // do the remainder first
+            for (int i = remainder - 1; i >= 0; i--)
             {
-                result = result.Concat(result);
+                yield return sequence[i];
             }
 
-            return result.Take(size).Reverse();
+            // return the number of full counts.
+            while (count > 0)
+            {
+                for (int i = sequence.Length - 1; i >= 0; i--)
+                {
+                    yield return sequence[i];
+                }
+
+                count--;
+            }
         }
     }
 }

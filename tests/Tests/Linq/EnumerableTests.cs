@@ -12,11 +12,11 @@ public class EnumerableTests
     {
         [Test]
         [MethodDataSource(typeof(EnumerableTests), nameof(GetClassSequences))]
-        public async Task Class(string?[] sequence, int count) => await Assert.That(sequence.WhereNotNull()).HasCount().EqualTo(sequence.Length - count);
+        public async Task Class(string?[] sequence, int count) => await Assert.That(sequence.WhereNotNull()).Count().IsEqualTo(sequence.Length - count);
 
         [Test]
         [MethodDataSource(nameof(GetStructSequences))]
-        public async Task Struct(int?[] sequence, int count) => await Assert.That(sequence.WhereNotNull()).HasCount().EqualTo(count);
+        public async Task Struct(int?[] sequence, int count) => await Assert.That(sequence.WhereNotNull()).Count().IsEqualTo(count);
 
         public static IEnumerable<Func<(int?[], int)>> GetStructSequences()
         {
@@ -28,7 +28,7 @@ public class EnumerableTests
 
     [Test]
     [MethodDataSource(nameof(GetClassSequences))]
-    public async Task WhereNull(string?[] sequence, int count) => await Assert.That(sequence.WhereNull()).HasCount().EqualTo(count);
+    public async Task WhereNull(string?[] sequence, int count) => await Assert.That(sequence.WhereNull()).Count().IsEqualTo(count);
 
     public static IEnumerable<Func<(string?[], int)>> GetClassSequences()
     {

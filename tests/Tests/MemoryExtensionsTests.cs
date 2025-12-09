@@ -317,7 +317,8 @@ public class MemoryExtensionsTests
 
         await Assert.That(enumerator.MoveNext()).IsFalse();
         await Assert.That(exceptions).IsEmpty();
-        await Assert.That(values).HasCount().EqualTo(10).And.IsEquivalentTo(randomValues);
+        await Assert.That(values).Count().IsEqualTo(10);
+        await Assert.That(values).IsEquivalentTo(randomValues);
     }
 
     public static IEnumerable<Func<(Func<Random, int, object?>, GetDelegateObject, System.Globalization.NumberStyles)>> GetData()
@@ -399,7 +400,8 @@ public class MemoryExtensionsTests
         }
 
         await Assert.That(enumerator.MoveNext()).IsFalse();
-        await Assert.That(values).HasCount().EqualTo(10).And.IsEquivalentTo(randomValues);
+        await Assert.That(values).Count().IsEqualTo(10);
+        await Assert.That(values).IsEquivalentTo(randomValues);
     }
 
     public static IEnumerable<Func<(Func<Random, int, object>, TryGetDelegateObject)>> TryGetData()
