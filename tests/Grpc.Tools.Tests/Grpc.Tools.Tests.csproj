@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Grpc.Tools\Grpc.Tools.csproj" />
     <ProjectReference Include="..\..\src\Protobuf\Protobuf.csproj" />
   </ItemGroup>
 
