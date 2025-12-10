@@ -70,7 +70,7 @@ public class StringExtensionsTests
     public async Task ReadSimple(string input, string? value, int length, StringSplitOptions options)
     {
         await Assert.That(input.SplitQuoted(',', options))
-            .And.Member(static r => r, r => r.Count().IsEqualTo(length))
+            .Count().IsEqualTo(length)
             .And.Member(static r => r.Skip(2).Take(1).Single(), v => v.IsEqualTo(value));
     }
 
