@@ -8,13 +8,17 @@
       "commandName": "Project",
       "commandLineArgs": "encode $(SolutionDir)/tests/IO.Compression.Lzma.Tests/lorem-ipsum.txt $(SolutionDir)/output/lorem-ipsum.lzma"
     },
+    "encode --help": {
+      "commandName": "Project",
+      "commandLineArgs": "encode --help"
+    },
     "decode": {
       "commandName": "Project",
       "commandLineArgs": "decode $(SolutionDir)/output/lorem-ipsum.lzma $(SolutionDir)/output/lorem-ipsum.txt"
     },
     "benchmark": {
       "commandName": "Project",
-      "commandLineArgs": "benchmarks"
+      "commandLineArgs": "benchmark"
     }
   }
 }

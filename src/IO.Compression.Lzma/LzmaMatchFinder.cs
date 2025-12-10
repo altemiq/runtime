@@ -9,15 +9,18 @@ namespace System.IO.Compression;
 /// <summary>
 /// The LZMA match finders.
 /// </summary>
+[NetEscapades.EnumGenerators.EnumExtensions]
 public enum LzmaMatchFinder
 {
     /// <summary>
-    /// Binary Tree with 2.
+    /// Binary Tree with 2 hash bytes.
     /// </summary>
+    [Runtime.Serialization.EnumMember(Value = "bt2")]
     BinaryTree2,
 
     /// <summary>
-    /// Binary Tree with 4.
+    /// Binary Tree with 4 hash bytes.
     /// </summary>
+    [Runtime.Serialization.EnumMember(Value = "bt4")]
     BinaryTree4,
 }

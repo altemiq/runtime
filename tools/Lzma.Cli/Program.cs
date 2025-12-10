@@ -45,13 +45,14 @@ var posBitsOption = new Option<int>("-pb")
     Validators = { CreateNumberValidator(0, 4) },
 };
 
-var matchFinderOption = new Option<string>("-mf")
+var possibleMatchFinders = Enum.GetValues<LzmaMatchFinder>().Select(l => l.ToStringFast(useMetadataAttributes: true)).ToArray();
+var matchFinderOption = new Option<LzmaMatchFinder>("-mf")
 {
     HelpName = "MF_ID",
-    Description = "set Match Finder: [bt2, bt4]",
-    DefaultValueFactory = _ => "bt4",
+    Description = $"set Match Finder: [{string.Join(", ", possibleMatchFinders)}]",
+    DefaultValueFactory = _ => LzmaMatchFinder.BinaryTree4,
 };
-matchFinderOption.AcceptOnlyFromAmong("bt2", "bt4");
+matchFinderOption.AcceptOnlyFromAmong(possibleMatchFinders);
 
 var eosOption = new Option<bool>("-eos")
 {
@@ -83,7 +84,7 @@ encodeCommand.SetAction(parseResult =>
     var literalPositionBits = parseResult.GetValue(litPosBitsOptions);
     const int Algorithm = 2;
     var fastBytes = parseResult.GetValue(numFastBytesOption);
-    var matchFinder = parseResult.GetValue(matchFinderOption)!;
+    var matchFinder = parseResult.GetValue(matchFinderOption);
     var eos = parseResult.GetValue(eosOption);
 
     var properties = new Dictionary<CoderPropId, object>
@@ -130,7 +131,7 @@ decodeCommand.SetAction(parseResult =>
     using var input = parseResult.GetValue(inputArgument)!.OpenRead();
 
     var properties = new byte[5];
-    if (input.Read(properties, 0, 5) != 5)
+    if (input.Read(properties, 0, 5) is not 5)
     {
         throw new InvalidDataException("input .lzma is too short");
     }
@@ -176,6 +177,8 @@ var rootCommand = new RootCommand
     benchmarkCommand,
 };
 
+SetHelpCustomSource(rootCommand, matchFinderOption, LzmaMatchFinder.BinaryTree4.ToStringFast(useMetadataAttributes: true));
+
 await rootCommand.Parse(args).InvokeAsync().ConfigureAwait(false);
 
 static Action<System.CommandLine.Parsing.OptionResult> CreateNumberValidator<T>(T minimum, T maximum)
@@ -190,4 +193,15 @@ static Action<System.CommandLine.Parsing.OptionResult> CreateNumberValidator<T>(
             result.AddError($"Value must be between {minimum} and {maximum}");
         }
     };
+}
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields", Justification = "This is required")]
+static void SetHelpCustomSource(Command command, Symbol symbol, string defaultValue)
+{
+    if (command.Options.OfType<System.CommandLine.Help.HelpOption>().FirstOrDefault() is { Action: System.CommandLine.Help.HelpAction helpAction }
+        && helpAction.GetType().GetProperty("Builder", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)?.GetValue(helpAction) is { } builder
+        && builder.GetType().GetMethod("CustomizeSymbol", [typeof(Symbol), typeof(string), typeof(string), typeof(string)]) is { } method)
+    {
+        method.Invoke(builder, [symbol, default(string), default(string), defaultValue]);
+    }
 }

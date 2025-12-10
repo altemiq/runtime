@@ -20,12 +20,6 @@ public class LzmaEncoder
 
     private static readonly byte[] FastPos = CreatePosSlots();
 
-    private static readonly string[] MatchFinderIDs =
-    [
-        "BT2",
-        "BT4",
-    ];
-
     private readonly uint[] repDistances = new uint[RegisteredDistances];
 
     private readonly Optimal[] optimum = new Optimal[OptimalCount];
@@ -66,7 +60,7 @@ public class LzmaEncoder
     private readonly int literalPositionStateBits;
     private readonly int literalContextBits = 3;
 
-    private readonly EMatchFinderType matchFinderType = EMatchFinderType.Bt4;
+    private readonly LzmaMatchFinder matchFinderType = LzmaMatchFinder.BinaryTree4;
 
     private readonly uint dictionarySize = 1U << DefaultDictionarySize;
 
@@ -131,13 +125,15 @@ public class LzmaEncoder
                     break;
                 case CoderPropId.Algorithm:
                     break;
-                case CoderPropId.MatchFinder when prop is string stringProperty && FindMatchFinder(stringProperty) is >= 0 and var match:
-                    var matchFinderIndexPrevious = this.matchFinderType;
-                    this.matchFinderType = (EMatchFinderType)match;
-                    if (this.matchFinder is not null && matchFinderIndexPrevious != this.matchFinderType)
+                case CoderPropId.MatchFinder when prop is string stringProperty && LzmaMatchFinderExtensions.TryParse(stringProperty, out var match, ignoreCase: false, allowMatchingMetadataAttribute: true):
+                    if (this.matchFinderType != match)
                     {
-                        this.previousDictionarySize = uint.MaxValue;
-                        this.matchFinder = null;
+                        this.matchFinderType = match;
+                        if (this.matchFinder is not null)
+                        {
+                            this.previousDictionarySize = uint.MaxValue;
+                            this.matchFinder = null;
+                        }
                     }
 
                     break;
@@ -170,26 +166,7 @@ public class LzmaEncoder
                 default:
                     throw new InvalidDataException();
             }
-
-            static int FindMatchFinder(string s)
-            {
-                for (var m = 0; m < MatchFinderIDs.Length; m++)
-                {
-                    if (string.Equals(s, MatchFinderIDs[m], StringComparison.OrdinalIgnoreCase))
-                    {
-                        return m;
-                    }
-                }
-
-                return -1;
-            }
         }
-    }
-
-    private enum EMatchFinderType
-    {
-        Bt2,
-        Bt4,
     }
 
     /// <summary>
@@ -211,7 +188,7 @@ public class LzmaEncoder
             {
                 var numHashBytes = this.matchFinderType switch
                 {
-                    EMatchFinderType.Bt2 => 2,
+                    LzmaMatchFinder.BinaryTree2 => 2,
                     _ => 4,
                 };
 
