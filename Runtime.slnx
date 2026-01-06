@@ -27,6 +27,7 @@
     <File Path="testenvironments.json" />
   </Folder>
   <Folder Name="/src/">
+    <File Path="src\Directory.Packages.props" />
     <Project Path="src/Core/Core.csproj" />
     <Project Path="src/Extensions.Caching.Hybrid/Extensions.Caching.Hybrid.csproj" />
     <Project Path="src/Extensions.Configuration.Yaml/Extensions.Configuration.Yaml.csproj" />
@@ -35,6 +36,7 @@
     <Project Path="src/IO.Compression/IO.Compression.csproj" />
     <Project Path="src/Protobuf/Protobuf.csproj" />
     <Project Path="src/Runtime/Runtime.csproj" />
+    <Project Path="src\Math.Matrices\Math.Matrices.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Dummy/Dummy.csproj">
@@ -66,6 +68,9 @@
     <File Path="tests/Directory.Build.props" />
     <File Path="tests/Directory.Build.targets" />
     <File Path="tests/Directory.Packages.props" />
+    <Project Path="tests\Math.Matrices.Tests\Math.Matrices.Tests.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
   </Folder>
   <Folder Name="/tools/">
     <File Path="tools\Directory.Build.props" />

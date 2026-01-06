@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>$(RootNamespace.Replace('.Matrices', ''))</RootNamespace>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.HighPerformance" VersionOverride="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ReadOnlySpan2DExtensions.*.cs">
+      <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)%(Extension)', '\.[^.]+\%(Extension)$', '%(Extension)'))</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="CommunityToolkit.HighPerformance" />
+  </ItemGroup>
+
+</Project>

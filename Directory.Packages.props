@@ -13,11 +13,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Coding Standards">
-    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.138" />
-  </ItemGroup>
-
-  <ItemGroup Label="Build">
-    <GlobalPackageReference Include="Altemiq.SemanticVersioning.MSBuild" Version="2.1.9" />
+    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.154" />
   </ItemGroup>
 
 </Project>
