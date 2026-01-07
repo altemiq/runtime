@@ -5,12 +5,10 @@ if (Test-Path -Path $results -Type Container) {
 }
 
 # Run dotnet test
-dotnet test $PSScriptRoot --no-build --results-directory $results --settings "$PSScriptRoot/tests/coverage.runsettings"
+dotnet test --solution $PSScriptRoot --results-directory $results --coverage --coverage-output-format cobertura
 
 # install the report generator
-if ((Get-Command 'reportGenerator' -errorAction SilentlyContinue) -eq $null) {
-	dotnet tool install -g dotnet-reportgenerator-globaltool
-}
+dotnet tool install -g dotnet-reportgenerator-globaltool
 
 $reports = "$PSScriptRoot/coverage/reports"
 if (Test-Path -Path $reports -Type Container) {
@@ -18,4 +16,4 @@ if (Test-Path -Path $reports -Type Container) {
 }
 
 # run the report generator
-reportGenerator -reports:"$results/*/*.cobertura.xml" -targetdir:$reports -reporttypes:'Html_Dark;Cobertura;MarkdownSummary' -verbosity:Verbose
+reportgenerator -reports:"$results/*/*.cobertura.xml" -targetdir:$reports -reporttypes:'Html_Dark;Cobertura;MarkdownSummary' -verbosity:Verbose

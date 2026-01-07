@@ -91,7 +91,7 @@ public sealed class LzmaCompressionOptions
     /// </summary>
     public int PositionStateBits
     {
-        get => field;
+        get;
         set
         {
             ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);

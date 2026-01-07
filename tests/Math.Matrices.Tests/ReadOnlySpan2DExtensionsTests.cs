@@ -10,20 +10,20 @@ public class ReadOnlySpan2DExtensionsTests
         var matrix = new ReadOnlySpan2D<double>([1D, 0D, 0D, 1D], 2, 2);
         await Assert.That(matrix.IsIdentity).IsTrue();
     }
-    
+
     [Test]
     [MethodDataSource(nameof(GetNotIdentityData))]
     public async Task IsNotIdentity(double[,] matrix)
     {
         await Assert.That(new ReadOnlySpan2D<double>(matrix).IsIdentity).IsFalse();
     }
-    
+
     [Test]
     public async Task IsNotSquare()
     {
         await Assert.That(new ReadOnlySpan2D<double>([0, 0, 0, 0, 0, 0], 3, 2).IsSquare).IsFalse();
     }
-    
+
     [Test]
     public async Task Add()
     {
@@ -36,10 +36,10 @@ public class ReadOnlySpan2DExtensionsTests
             { 6, 8 },
             { 10, 12 },
         };
-        
+
         await Assert.That(first.Add(second).ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task Subtract()
     {
@@ -52,7 +52,7 @@ public class ReadOnlySpan2DExtensionsTests
             { -1, 1 },
             { 3, 5 },
         };
-        
+
         await Assert.That(first.Subtract(second).ToArray()).IsEquivalentTo(expected);
     }
 
@@ -68,10 +68,10 @@ public class ReadOnlySpan2DExtensionsTests
             { 19, 26, 33 },
             { 29, 40, 51 },
         };
-        
+
         await Assert.That(first.Multiply(second).ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task Scale()
     {
@@ -82,7 +82,7 @@ public class ReadOnlySpan2DExtensionsTests
             { 6, 8 },
             { 10, 12 },
         };
-        
+
         await Assert.That(first.Scale(2D).ToArray()).IsEquivalentTo(expected);
     }
 
@@ -91,7 +91,7 @@ public class ReadOnlySpan2DExtensionsTests
     {
         var first = new ReadOnlySpan2D<double>([1, 2, 3, 4, 5, 6], 3, 2);
         var expected = new ReadOnlySpan2D<double>([1, 3, 5, 2, 4, 6], 2, 3);
-        
+
         await Assert.That(first.Transpose().ToArray()).IsEquivalentTo(expected.ToArray());
     }
 
@@ -113,9 +113,10 @@ public class ReadOnlySpan2DExtensionsTests
             { 0, 1, -1 },
             { -1, 0, 1 },
         };
-        await Assert.That(matrix.Invert().ToArray()).IsEquivalentTo(expected);
+
+        await Assert.That((matrix ^ -1).ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task InvertGaussian()
     {
@@ -126,7 +127,40 @@ public class ReadOnlySpan2DExtensionsTests
             { 0, 1, -1 },
             { -1, 0, 1 },
         };
-        await Assert.That(matrix.InvertGaussian().ToArray()).IsEquivalentTo(expected);
+
+        await Assert.That(matrix.Invert<double, GaussianInverter>().ToArray()).IsEquivalentTo(expected);
+    }
+
+    [Test]
+    public async Task InvertCholesky()
+    {
+        var matrix = new ReadOnlySpan2D<double>([4, 12, -16, 12, 37, -43, -16, -43, 98], 3, 3);
+        double[,] expected =
+        {
+            { 49.361, -13.556, 2.111 },
+            { -13.556, 3.778, -0.556 },
+            { 2.111, -0.556, 0.111 },
+        };
+
+        await Assert.That(Round(matrix.Invert(CholeskyInverter.Instance).ToArray(), 3)).IsEquivalentTo(expected);
+    }
+
+    [Test]
+    public async Task InvertCayleyHamilton()
+    {
+        var input = new ReadOnlySpan2D<double>(
+            new[,]
+            {
+                { 1.0, 2.0, 3.0, 1.0, 5.0 },
+                { 0.0, 5.0, 4.0, 1.0, 4.0 },
+                { 6.0, 1.0, 0.0, 2.0, 2.0 },
+                { 1.0, 4.0, 5.0, 3.0, 2.0 },
+                { 0.0, 2.0, 4.0, 0.0, 1.0 },
+            });
+
+        var check = new ReadOnlySpan2D<double>(Round((CayleyHamiltonInverter.Instance.Invert(input) * input).ToArray(), 10));
+
+        await Assert.That(check.IsIdentity).IsTrue();
     }
 
     public static IEnumerable<Func<double[,]>> GetNotIdentityData()
@@ -139,5 +173,21 @@ public class ReadOnlySpan2DExtensionsTests
     {
         yield return () => (new double[,] { { 3, 2 }, { 1, 4 } }, 10);
         yield return () => (new double[,] { { 1, 2, 3 }, { 0, 4, 5 }, { 1, 0, 6 } }, 22);
+    }
+
+    private static double[,] Round(double[,] matrix, int decimals)
+    {
+        var height = matrix.GetUpperBound(0) + 1;
+        var width = matrix.GetUpperBound(1) + 1;
+
+        for (var row = matrix.GetLowerBound(0); row < height; row++)
+        {
+            for (var column = matrix.GetLowerBound(1); column < width; column++)
+            {
+                matrix[row, column] = System.Math.Round(matrix[row, column], decimals);
+            }
+        }
+
+        return matrix;
     }
 }

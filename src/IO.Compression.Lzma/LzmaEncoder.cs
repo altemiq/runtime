@@ -20,7 +20,7 @@ public class LzmaEncoder
 
     private readonly uint[] repDistances = new uint[RegisteredDistances];
 
-    private readonly Optimal[] optimum = Enumerable.Range(0, (int)OptimalCount).Select(_ => new Optimal()).ToArray();
+    private readonly Optimal[] optimum = [.. Enumerable.Range(0, (int)OptimalCount).Select(_ => new Optimal())];
     private readonly RangeCoder.RangeEncoder rangeEncoder = new();
 
     private readonly RangeCoder.BitEncoder[] matchEncoders = new RangeCoder.BitEncoder[States << PositionStatesBitsMaximum];

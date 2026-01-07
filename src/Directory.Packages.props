@@ -2,7 +2,7 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('$(MSBuildThisFile)', '$(MSBuildThisFileDirectory)../'))" />
   
   <ItemGroup Label="Build">
-    <GlobalPackageReference Include="Altemiq.SemanticVersioning.MSBuild" Version="2.1.9" />
+    <GlobalPackageReference Include="Altemiq.SemanticVersioning.MSBuild" Version="10.0.3" />
   </ItemGroup>
 
 </Project>
