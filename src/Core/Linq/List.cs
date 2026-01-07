@@ -21,7 +21,8 @@ public static partial class List
     /// <param name="source">The <see cref="IList{T}"/> that contains the elements to be cast.</param>
     /// <returns>An <see cref="IList{T}"/> that contains each element of <paramref name="source"/> cast to <typeparamref name="TResult"/>.</returns>
     [System.Diagnostics.CodeAnalysis.RequiresDynamicCode($"Requires reflection on {nameof(source)}")]
-    public static IList<TResult>? Cast<TSource, TResult>(this IList<TSource> source)
+    [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(source))]
+    public static IList<TResult>? Cast<TSource, TResult>(this IList<TSource>? source)
         where TSource : class, TResult
         where TResult : class
     {
@@ -141,7 +142,7 @@ public static partial class List
             return;
         }
 
-        QuickSort(values, 0, values.Count, comparer);
+        values.QuickSort(0, values.Count, comparer);
     }
 
     /// <summary>
@@ -167,7 +168,7 @@ public static partial class List
                 list.Sort(comparison);
                 break;
             default:
-                QuickSort(values, 0, values.Count, comparison);
+                values.QuickSort(0, values.Count, comparison);
                 break;
         }
     }
@@ -200,8 +201,7 @@ public static partial class List
         else
         {
             comparer ??= Comparer<T>.Default;
-            QuickSort(
-                values,
+            values.QuickSort(
                 index,
                 length,
                 comparer.Compare);
@@ -351,7 +351,7 @@ public static partial class List
                 list.Sort();
                 break;
             default:
-                QuickSort(values, 0, values.Count);
+                values.QuickSort(0, values.Count);
                 break;
         }
     }

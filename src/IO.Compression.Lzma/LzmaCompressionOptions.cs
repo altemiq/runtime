@@ -6,6 +6,8 @@
 
 namespace System.IO.Compression;
 
+#pragma warning disable S2325
+
 /// <summary>
 /// Provides compression options to be used with <see cref="LzmaStream"/>.
 /// </summary>
@@ -13,36 +15,92 @@ public sealed class LzmaCompressionOptions
 {
     private const int DefaultDictionary = 23;
     private const int DefaultFastBytes = 128;
-    private const int DefaultAlgorithm = 2;
     private const int DefaultLiteralContextBits = 3;
     private const int DefaultLiteralPosBits = 0;
     private const int DefaultPosBits = 2;
     private const LzmaMatchFinder DefaultMatchFinder = LzmaMatchFinder.BinaryTree4;
 
+    private const int DictionaryLogSizeMaximumCompress = 30;
+
     /// <summary>
     /// Gets or sets the dictionary.
     /// </summary>
-    public int Dictionary { get; set; } = DefaultDictionary;
+    public int Dictionary
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, Constants.DictionaryMinimumSize);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, DictionaryLogSizeMaximumCompress);
+            field = value;
+        }
+    }
+
+    = DefaultDictionary;
 
     /// <summary>
     /// Gets or sets the number of fast bytes.
     /// </summary>
-    public int FastBytes { get; set; } = DefaultFastBytes;
+    public int FastBytes
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 5);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, (int)Constants.MatchMaximumLength);
+            field = value;
+        }
+    }
+
+    = DefaultFastBytes;
 
     /// <summary>
     /// Gets or sets the number of literal context bits.
     /// </summary>
-    public int LiteralContextBits { get; set; } = DefaultLiteralContextBits;
+    public int LiteralContextBits
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, (int)Constants.LiteralContextBitsMaximum);
+            field = value;
+        }
+    }
+
+    = DefaultLiteralContextBits;
 
     /// <summary>
-    /// Gets or sets the number of literal pos bits.
+    /// Gets or sets the number of literal position bits.
     /// </summary>
-    public int LiteralPosBits { get; set; } = DefaultLiteralPosBits;
+    public int LiteralPositionBits
+    {
+        get;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, (int)Constants.LiteralPositionStatesBitsEncodingMaximum);
+            field = value;
+        }
+    }
+
+    = DefaultLiteralPosBits;
 
     /// <summary>
-    /// Gets or sets the number of pos bits.
+    /// Gets or sets the number of position state bits.
     /// </summary>
-    public int PosBits { get; set; } = DefaultPosBits;
+    public int PositionStateBits
+    {
+        get => field;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(value, Constants.PositionStatesBitsEncodingMaximum);
+            field = value;
+        }
+    }
+
+    = DefaultPosBits;
 
     /// <summary>
     /// Gets or sets the match finder.
@@ -55,24 +113,27 @@ public sealed class LzmaCompressionOptions
     public bool EndMarker { get; set; }
 
     /// <summary>
-    /// Converts this instance into a dictionary.
+    /// Computes the distribution table size.
     /// </summary>
-    /// <returns>The dictionary.</returns>
-    public IDictionary<CoderPropId, object> ToDictionary() => new Dictionary<CoderPropId, object>
+    /// <returns>The distribution table size.</returns>
+    internal uint DistributionTableSize()
     {
-        { CoderPropId.DictionarySize, 1 << this.Dictionary },
-        { CoderPropId.PositionStateBits, this.PosBits },
-        { CoderPropId.LiteralContextBits, this.LiteralContextBits },
-        { CoderPropId.LiteralPositionBits, this.LiteralPosBits },
-        { CoderPropId.Algorithm, DefaultAlgorithm },
-        { CoderPropId.FastBytes, this.FastBytes },
-        { CoderPropId.MatchFinder, this.MatchFinder.ToName() },
-        { CoderPropId.EndMarker, this.EndMarker },
-    };
+        var optionsDictionarySize = 1 << this.Dictionary;
+        int size;
+        for (size = 0; size < DictionaryLogSizeMaximumCompress; size++)
+        {
+            if (optionsDictionarySize <= (1 << size))
+            {
+                break;
+            }
+        }
+
+        return (uint)size * 2;
+    }
 
     /// <summary>
     /// Creates the encoder.
     /// </summary>
     /// <returns>The created encoder.</returns>
-    internal LzmaEncoder CreateEncoder() => new(this.ToDictionary());
+    internal LzmaEncoder CreateEncoder() => new(this);
 }

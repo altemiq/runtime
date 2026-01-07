@@ -7,6 +7,8 @@
 using System.CommandLine;
 using System.IO.Compression;
 
+[assembly: NetEscapades.EnumGenerators.EnumExtensions<LzmaMatchFinder>]
+
 var inputArgument = new Argument<FileInfo>("INPUT").AcceptExistingOnly();
 var outputArgument = new Argument<FileInfo>("OUTPUT");
 
@@ -78,28 +80,18 @@ encodeCommand.SetAction(parseResult =>
     var input = parseResult.GetValue(inputArgument);
     var output = parseResult.GetValue(outputArgument);
 
-    var dictionarySize = 1 << parseResult.GetValue(dictionaryOption);
-    var positionStateBits = parseResult.GetValue(posBitsOption);
-    var literalContextBits = parseResult.GetValue(litContextBitsOption);
-    var literalPositionBits = parseResult.GetValue(litPosBitsOptions);
-    const int Algorithm = 2;
-    var fastBytes = parseResult.GetValue(numFastBytesOption);
-    var matchFinder = parseResult.GetValue(matchFinderOption);
-    var eos = parseResult.GetValue(eosOption);
-
-    var properties = new Dictionary<CoderPropId, object>
+    var options = new LzmaCompressionOptions()
     {
-        { CoderPropId.DictionarySize, dictionarySize },
-        { CoderPropId.PositionStateBits, positionStateBits },
-        { CoderPropId.LiteralContextBits, literalContextBits },
-        { CoderPropId.LiteralPositionBits, literalPositionBits },
-        { CoderPropId.Algorithm, Algorithm },
-        { CoderPropId.FastBytes, fastBytes },
-        { CoderPropId.MatchFinder, matchFinder },
-        { CoderPropId.EndMarker, eos },
+        Dictionary = parseResult.GetValue(dictionaryOption),
+        PositionStateBits = parseResult.GetValue(posBitsOption),
+        LiteralPositionBits = parseResult.GetValue(litPosBitsOptions),
+        LiteralContextBits = parseResult.GetValue(litContextBitsOption),
+        FastBytes = parseResult.GetValue(numFastBytesOption),
+        MatchFinder = parseResult.GetValue(matchFinderOption),
+        EndMarker = parseResult.GetValue(eosOption),
     };
 
-    LzmaEncoder encoder = new(properties);
+    var encoder = options.CreateEncoder();
     output?.Directory?.Create();
     using var outStream = output?.OpenWrite();
     if (outStream is null)
@@ -110,7 +102,7 @@ encodeCommand.SetAction(parseResult =>
     encoder.WriteCoderProperties(outStream);
 
     using var inStream = input!.OpenRead();
-    var fileSize = eos ? -1L : inStream.Length;
+    var fileSize = options.EndMarker ? -1L : inStream.Length;
     for (var i = 0; i < 8; i++)
     {
         outStream.WriteByte((byte)(fileSize >> (8 * i)));

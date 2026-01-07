@@ -8,34 +8,10 @@ namespace System.IO.Compression.Tests;
 
 public class LzmaEncoderTests
 {
-    internal static IDictionary<CoderPropId, object> GetDefaultProperties()
-    {
-        const int DictionarySizer = 1 << 23;
-        const int PositionStateBits = 2;
-        const int LiteralContextBits = 3;
-        const int LiteralPositionBits = 0;
-        const int Algorithm = 2;
-        const int FastBytes = 128;
-        const string MatchFinder = "bt4";
-        const bool Eos = false;
-
-        return new Dictionary<CoderPropId, object>
-        {
-            { CoderPropId.DictionarySize, DictionarySizer },
-            { CoderPropId.PositionStateBits, PositionStateBits },
-            { CoderPropId.LiteralContextBits, LiteralContextBits },
-            { CoderPropId.LiteralPositionBits, LiteralPositionBits },
-            { CoderPropId.Algorithm, Algorithm },
-            { CoderPropId.FastBytes, FastBytes },
-            { CoderPropId.MatchFinder, MatchFinder },
-            { CoderPropId.EndMarker, Eos },
-        };
-    }
-
     [Test]
     public async Task Encode()
     {
-        var encoder = new LzmaEncoder(GetDefaultProperties());
+        var encoder = new LzmaEncoder();
 
         using var output = new MemoryStream();
         encoder.WriteCoderProperties(output);

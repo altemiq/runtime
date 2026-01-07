@@ -13,10 +13,12 @@
       T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes|
       T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute|
       T:System.Diagnostics.CodeAnalysis.NotNullAttribute|
+      T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute|
       T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|
       T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute|
       T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute|
-      T:System.Threading.Lock|M:System.ArgumentNullException.ThrowIfNull(System.Object,System.String)|
+      T:System.Threading.Lock|
+      M:System.ArgumentNullException.ThrowIfNull(System.Object,System.String)|
       M:System.ArgumentOutOfRangeException.ThrowIfGreaterThan``1(``0,``0,System.String)|
       M:System.ArgumentOutOfRangeException.ThrowIfLessThan``1(``0,``0,System.String)|
       M:System.ArgumentOutOfRangeException.ThrowIfLessThanOrEqual``1(``0,``0,System.String)|

@@ -39,14 +39,19 @@ internal static class Benchmark
 
         Console.Write("\n       Compressing                Decompressing\n\n");
 
-        LzmaEncoder encoder = new(new Dictionary<CoderPropId, object> { { CoderPropId.DictionarySize, (int)dictionarySize } });
+        // undo the bit shifting
+        var dictionary = 1;
+        while ((1U << dictionary) < dictionarySize)
+        {
+            dictionary++;
+        }
+
+        LzmaCompressionOptions options = new() { Dictionary = dictionary };
 
         var bufferSize = dictionarySize + AdditionalSize;
         var compressedBufferSize = (bufferSize / 2) + CompressedAdditionalSize;
 
-        var propStream = new MemoryStream();
-        encoder.WriteCoderProperties(propStream);
-        var propArray = propStream.ToArray();
+        byte[]? propArray = null;
 
         var rg = new BenchRandomGenerator(bufferSize);
 
@@ -69,9 +74,17 @@ internal static class Benchmark
             _ = rawStream.Seek(0, SeekOrigin.Begin);
             _ = compressedStream.Seek(0, SeekOrigin.Begin);
             var inSize = 0L;
+            var encoder = options.CreateEncoder();
+            if (propArray is null)
+            {
+                var propStream = new MemoryStream();
+                encoder.WriteCoderProperties(propStream);
+                propArray = propStream.ToArray();
+            }
+
             encoder.Compress(rawStream, compressedStream, (ins, _) =>
             {
-                if (inSize is not 0 || ins < dictionarySize)
+                if (inSize is not 0L || ins < dictionarySize)
                 {
                     return;
                 }

@@ -363,7 +363,7 @@ public class MemoryExtensionsTests
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             await Assert.That(getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
-            await Assert.That(parsedValues).IsEquivalentTo(randomValues);
+            await Assert.That(parsedValues!).IsEquivalentTo(randomValues);
         }
 
         public static Func<(Func<Random, int, double>, TryGetValuesCharDelegate<double>)> TryGetValuesCharData() => () => (static (random, _) => random.NextDouble(), MemoryExtensions.TryGetDoubleValues);
@@ -375,7 +375,7 @@ public class MemoryExtensionsTests
             var random = new Random();
             var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             await Assert.That(getValues(string.Join("|", randomValues).AsSpan(), "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
-            await Assert.That(parsedValues).IsEquivalentTo(randomValues);
+            await Assert.That(parsedValues!).IsEquivalentTo(randomValues);
         }
 
         public static Func<(Func<Random, int, double>, TryGetValuesSpanDelegate<double>)> TryGetValuesSpanData() => () => (static (random, _) => random.NextDouble(), MemoryExtensions.TryGetDoubleValues);
@@ -439,9 +439,9 @@ public class MemoryExtensionsTests
         }
     }
 
-    public delegate bool TryGetValuesSpanDelegate<TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider, out TResult[]? output);
+    public delegate bool TryGetValuesSpanDelegate<TResult>(ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TResult[]? output);
 
-    public delegate bool TryGetValuesCharDelegate<TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider, out TResult[]? output);
+    public delegate bool TryGetValuesCharDelegate<TResult>(ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TResult[]? output);
 
     public delegate bool TryGetDelegateObject(
         ReadOnlySpan<char> span,

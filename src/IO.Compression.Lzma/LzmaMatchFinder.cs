@@ -9,7 +9,6 @@ namespace System.IO.Compression;
 /// <summary>
 /// The LZMA match finders.
 /// </summary>
-[NetEscapades.EnumGenerators.EnumExtensions]
 public enum LzmaMatchFinder
 {
     /// <summary>

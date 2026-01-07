@@ -14,15 +14,13 @@ using static System.IO.Compression.Constants;
 public class LzmaEncoder
 {
     private const uint InfinityPrice = uint.MaxValue;
-    private const int DefaultDictionarySize = 22;
-    private const uint FastBytesDefault = 0x20U;
     private const uint OptimalCount = 1U << 12;
 
     private static readonly byte[] FastPos = CreatePosSlots();
 
     private readonly uint[] repDistances = new uint[RegisteredDistances];
 
-    private readonly Optimal[] optimum = new Optimal[OptimalCount];
+    private readonly Optimal[] optimum = Enumerable.Range(0, (int)OptimalCount).Select(_ => new Optimal()).ToArray();
     private readonly RangeCoder.RangeEncoder rangeEncoder = new();
 
     private readonly RangeCoder.BitEncoder[] matchEncoders = new RangeCoder.BitEncoder[States << PositionStatesBitsMaximum];
@@ -32,7 +30,7 @@ public class LzmaEncoder
     private readonly RangeCoder.BitEncoder[] repG2Encoders = new RangeCoder.BitEncoder[States];
     private readonly RangeCoder.BitEncoder[] rep0LongEncoders = new RangeCoder.BitEncoder[States << PositionStatesBitsMaximum];
 
-    private readonly RangeCoder.BitTreeEncoder[] posSlotEncoder = new RangeCoder.BitTreeEncoder[LengthToPositionStates];
+    private readonly RangeCoder.BitTreeEncoder[] posSlotEncoder = [new(PositionSlotBits), new(PositionSlotBits), new(PositionSlotBits), new(PositionSlotBits)];
 
     private readonly RangeCoder.BitEncoder[] posEncoders = new RangeCoder.BitEncoder[FullDistances - EndPositionModelIndex];
     private readonly LengthPriceTableEncoder lengthEncoder = new();
@@ -51,18 +49,18 @@ public class LzmaEncoder
 
     private readonly uint[] tempPrices = new uint[FullDistances];
 
-    private readonly uint fastBytes = FastBytesDefault;
+    private readonly uint fastBytes;
 
-    private readonly uint distributionTableSize = DefaultDictionarySize * 2;
+    private readonly uint distributionTableSize;
 
-    private readonly int positionStateBits = 2;
-    private readonly uint positionStateMask = 4U - 1U;
+    private readonly int positionStateBits;
+    private readonly uint positionStateMask;
     private readonly int literalPositionStateBits;
-    private readonly int literalContextBits = 3;
+    private readonly int literalContextBits;
 
-    private readonly LzmaMatchFinder matchFinderType = LzmaMatchFinder.BinaryTree4;
+    private readonly LzmaMatchFinder matchFinderType;
 
-    private readonly uint dictionarySize = 1U << DefaultDictionarySize;
+    private readonly uint dictionarySize;
 
     private LiteralEncoder literalEncoder = new(0, 0);
 
@@ -101,72 +99,26 @@ public class LzmaEncoder
     /// <summary>
     /// Initializes a new instance of the <see cref="LzmaEncoder"/> class.
     /// </summary>
-    /// <param name="properties">The properties.</param>
-    public LzmaEncoder(IDictionary<CoderPropId, object> properties)
+    public LzmaEncoder()
+        : this(new())
     {
-        for (var i = 0; i < OptimalCount; i++)
-        {
-            this.optimum[i] = new();
-        }
+    }
 
-        for (var i = 0; i < LengthToPositionStates; i++)
-        {
-            this.posSlotEncoder[i] = new(PositionSlotBits);
-        }
-
-        foreach (var kvp in properties)
-        {
-            const int DictionaryLogSizeMaximumCompress = 30;
-            var prop = kvp.Value;
-            switch (kvp.Key)
-            {
-                case CoderPropId.FastBytes when prop is int fastBytesProperty and >= 5 and <= (int)MatchMaximumLength:
-                    this.fastBytes = (uint)fastBytesProperty;
-                    break;
-                case CoderPropId.Algorithm:
-                    break;
-                case CoderPropId.MatchFinder when prop is string stringProperty && LzmaMatchFinderExtensions.TryParse(stringProperty, out var match, ignoreCase: false, allowMatchingMetadataAttribute: true):
-                    if (this.matchFinderType != match)
-                    {
-                        this.matchFinderType = match;
-                        if (this.matchFinder is not null)
-                        {
-                            this.previousDictionarySize = uint.MaxValue;
-                            this.matchFinder = null;
-                        }
-                    }
-
-                    break;
-                case CoderPropId.DictionarySize when prop is int dictionarySizeProperty and >= (int)(1U << DictionaryMinimumSize) and <= (int)(1U << DictionaryLogSizeMaximumCompress):
-                    this.dictionarySize = (uint)dictionarySizeProperty;
-                    int size;
-                    for (size = 0; size < DictionaryLogSizeMaximumCompress; size++)
-                    {
-                        if (dictionarySizeProperty <= (1U << size))
-                        {
-                            break;
-                        }
-                    }
-
-                    this.distributionTableSize = (uint)size * 2;
-                    break;
-                case CoderPropId.PositionStateBits when prop is int positionStateBitsProperty and >= 0 and <= PositionStatesBitsEncodingMaximum:
-                    this.positionStateBits = positionStateBitsProperty;
-                    this.positionStateMask = (1U << this.positionStateBits) - 1;
-                    break;
-                case CoderPropId.LiteralPositionBits when prop is int literalPositionStateBitsProperty and >= 0 and <= (int)LiteralPositionStatesBitsEncodingMaximum:
-                    this.literalPositionStateBits = literalPositionStateBitsProperty;
-                    break;
-                case CoderPropId.LiteralContextBits when prop is int literalContextBitsProperty and >= 0 and <= (int)LiteralContextBitsMaximum:
-                    this.literalContextBits = literalContextBitsProperty;
-                    break;
-                case CoderPropId.EndMarker when prop is bool endMarkerProperty:
-                    this.SetWriteEndMarkerMode(endMarkerProperty);
-                    break;
-                default:
-                    throw new InvalidDataException();
-            }
-        }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LzmaEncoder"/> class.
+    /// </summary>
+    /// <param name="options">The compression options.</param>
+    public LzmaEncoder(LzmaCompressionOptions options)
+    {
+        this.fastBytes = (uint)options.FastBytes;
+        this.matchFinderType = options.MatchFinder;
+        this.dictionarySize = (uint)(1 << options.Dictionary);
+        this.distributionTableSize = options.DistributionTableSize();
+        this.positionStateBits = options.PositionStateBits;
+        this.positionStateMask = (1U << this.positionStateBits) - 1;
+        this.literalPositionStateBits = options.LiteralPositionBits;
+        this.literalContextBits = options.LiteralContextBits;
+        this.SetWriteEndMarkerMode(options.EndMarker);
     }
 
     /// <summary>
@@ -197,14 +149,12 @@ public class LzmaEncoder
 
             this.literalEncoder = new(this.literalPositionStateBits, this.literalContextBits);
 
-            if (this.dictionarySize == this.previousDictionarySize && this.previousFastBytes == this.fastBytes)
+            if (this.dictionarySize != this.previousDictionarySize || this.previousFastBytes != this.fastBytes)
             {
-                return;
+                this.matchFinder.Create(this.dictionarySize, OptimalCount, this.fastBytes, MatchMaximumLength + 1);
+                this.previousDictionarySize = this.dictionarySize;
+                this.previousFastBytes = this.fastBytes;
             }
-
-            this.matchFinder.Create(this.dictionarySize, OptimalCount, this.fastBytes, MatchMaximumLength + 1);
-            this.previousDictionarySize = this.dictionarySize;
-            this.previousFastBytes = this.fastBytes;
 
             this.previousByte = 0;
             for (var i = 0U; i < RegisteredDistances; i++)
