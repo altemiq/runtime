@@ -11,7 +11,7 @@ namespace Altemiq.Math;
 /// <summary>
 /// The <see cref="ReadOnlySpan2D{T}"/> extensions.
 /// </summary>
-public static partial class ReadOnlySpan2DExtensions
+public static class ReadOnlySpan2DExtensions
 {
     /// <summary>
     /// The <see cref="ReadOnlySpan2D{T}"/> extension block.
@@ -252,6 +252,15 @@ public static partial class ReadOnlySpan2DExtensions
         /// <param name="scale">A value to scale the matrix by.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
         /// <seealso cref="ReadOnlySpan2DExtensions.Scale{T}(ReadOnlySpan2D{T},T)"/>
+        public static ReadOnlySpan2D<T> operator *(T scale, ReadOnlySpan2D<T> value) => value * scale;
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.
+        /// </summary>
+        /// <param name="value">An instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <param name="scale">A value to scale the matrix by.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Scale{T}(ReadOnlySpan2D{T},T)"/>
         public static ReadOnlySpan2D<T> operator *(ReadOnlySpan2D<T> value, T scale)
         {
             if (value.IsEmpty)
@@ -357,21 +366,15 @@ public static partial class ReadOnlySpan2DExtensions
         /// Gets the determinant of the current <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
         /// <returns>A double value representing the determinant of the matrix.</returns>
-        public T GetDeterminant()
-        {
-            if (!matrix.IsSquare)
+        public T GetDeterminant() =>
+            matrix switch
             {
-                throw new InvalidOperationException();
-            }
-
-            return matrix.Height switch
-            {
-                0 => T.Zero,
-                1 => matrix[0, 0],
-                2 => (matrix[0, 0] * matrix[1, 1]) - (matrix[0, 1] * matrix[1, 0]),
-                _ => ReadOnlySpan2D<T>.ComputeDeterminant(matrix.ToArray(), matrix.Height),
+                { Height: var h, Width: var w } when h != w =>throw new NotSupportedException(),
+                { Height: 0 } => T.Zero,
+                { Height: 1 } => matrix[0, 0],
+                { Height: 2 } => (matrix[0, 0] * matrix[1, 1]) - (matrix[0, 1] * matrix[1, 0]),
+                _ => ReadOnlySpan2D<T>.ComputeDeterminant(matrix),
             };
-        }
 
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
@@ -410,7 +413,7 @@ public static partial class ReadOnlySpan2DExtensions
                     : matrix.Slice(0, 0, 1, 1);
             }
 
-            var determinant = ReadOnlySpan2D<T>.ComputeDeterminant(matrix.ToArray(), matrix.Height);
+            var determinant = ReadOnlySpan2D<T>.ComputeDeterminant(matrix);
 
             if (T.IsZero(determinant))
             {
@@ -478,17 +481,25 @@ public static partial class ReadOnlySpan2DExtensions
             }
         }
 
-        private static T ComputeDeterminant(T[,] value, int rows)
+        private static T ComputeDeterminant(ReadOnlySpan2D<T> value)
         {
-            var zeroBasedRows = rows - 1;
+            using var owner = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(value.Height * value.Width);
+            value.CopyTo(owner.Span);
+            var working = Span2D<T>.DangerousCreate(ref owner.Span[0], value.Height, value.Width, 0);
+            return ReadOnlySpan2D<T>.ComputeDeterminant(working, value.Height);
+        }
+
+        private static T ComputeDeterminant(Span2D<T> value, int size)
+        {
+            var zeroBasedSize = size - 1;
             var determinant = T.One;
 
-            for (var k = 0; k < rows; k++)
+            for (var k = 0; k < size; k++)
             {
                 if (T.IsZero(value[k, k]))
                 {
                     var j = k;
-                    while ((j < zeroBasedRows) && T.IsZero(value[k, j]))
+                    while ((j < zeroBasedSize) && T.IsZero(value[k, j]))
                     {
                         j++;
                     }
@@ -498,7 +509,7 @@ public static partial class ReadOnlySpan2DExtensions
                         return T.Zero;
                     }
 
-                    for (var i = k; i < rows; i++)
+                    for (var i = k; i < size; i++)
                     {
                         (value[i, j], value[i, k]) = (value[i, k], value[i, j]);
                     }
@@ -508,14 +519,14 @@ public static partial class ReadOnlySpan2DExtensions
 
                 var arrayK = value[k, k];
                 determinant *= arrayK;
-                if (k >= rows)
+                if (k >= size)
                 {
                     continue;
                 }
 
-                for (var i = k + 1; i < rows; i++)
+                for (var i = k + 1; i < size; i++)
                 {
-                    for (var j = k + 1; j < rows; j++)
+                    for (var j = k + 1; j < size; j++)
                     {
                         value[i, j] -= value[i, k] * (value[k, j] / arrayK);
                     }

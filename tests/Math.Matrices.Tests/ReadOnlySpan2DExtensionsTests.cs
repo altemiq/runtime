@@ -171,6 +171,8 @@ public class ReadOnlySpan2DExtensionsTests
 
     public static IEnumerable<Func<(double[,], double)>> GetDeterminantData()
     {
+        yield return () => (new double[,] { }, 0);
+        yield return () => (new double[,] { { 3 } }, 3);
         yield return () => (new double[,] { { 3, 2 }, { 1, 4 } }, 10);
         yield return () => (new double[,] { { 1, 2, 3 }, { 0, 4, 5 }, { 1, 0, 6 } }, 22);
     }

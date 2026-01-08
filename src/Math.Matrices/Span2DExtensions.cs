@@ -13,6 +13,118 @@ namespace Altemiq.Math;
 /// </summary>
 public static class Span2DExtensions
 {
+    extension(Span2D<float> input)
+    {
+        public System.Numerics.Matrix4x4 ToMatrix4x4()
+        {
+            if (input is not { Height: 4, Width: 4 })
+            {
+                throw new NotSupportedException();
+            }
+
+            if (input.TryGetSpan(out var span))
+            {
+                return ToMatrix4x4Core(span);
+            }
+
+            Span<float> temp = stackalloc float[16];
+            input.CopyTo(temp);
+            return ToMatrix4x4Core(temp);
+
+            static System.Numerics.Matrix4x4 ToMatrix4x4Core(ReadOnlySpan<float> span)
+            {
+                return new(
+                    span[0],
+                    span[1],
+                    span[2],
+                    span[3],
+                    span[4],
+                    span[5],
+                    span[6],
+                    span[7],
+                    span[8],
+                    span[9],
+                    span[10],
+                    span[11],
+                    span[12],
+                    span[13],
+                    span[14],
+                    span[15]);
+            }
+        }
+
+        public System.Numerics.Matrix3x2 ToMatrix3x2()
+        {
+            if (input is not { Height: 3, Width: 2 })
+            {
+                throw new NotSupportedException();
+            }
+
+            if (input.TryGetSpan(out var span))
+            {
+                return ToMatrix3x2Core(span);
+            }
+
+            Span<float> temp = stackalloc float[6];
+            input.CopyTo(temp);
+            return ToMatrix3x2Core(temp);
+
+            static System.Numerics.Matrix3x2 ToMatrix3x2Core(ReadOnlySpan<float> span)
+            {
+                return new(
+                    span[0],
+                    span[1],
+                    span[2],
+                    span[3],
+                    span[4],
+                    span[5]);
+            }
+        }
+
+        public static Span2D<float> FromMatrix(System.Numerics.Matrix4x4 matrix)
+        {
+            var items = new float[16];
+
+            items[0] = matrix.M11;
+            items[1] = matrix.M12;
+            items[2] = matrix.M13;
+            items[3] = matrix.M14;
+
+            items[4] = matrix.M21;
+            items[5] = matrix.M22;
+            items[6] = matrix.M23;
+            items[7] = matrix.M24;
+
+            items[8] = matrix.M31;
+            items[9] = matrix.M32;
+            items[10] = matrix.M33;
+            items[11] = matrix.M34;
+
+            items[12] = matrix.M41;
+            items[13] = matrix.M42;
+            items[14] = matrix.M43;
+            items[15] = matrix.M44;
+
+            return new(items, 4, 4);
+        }
+
+        public static Span2D<float> FromMatrix(System.Numerics.Matrix3x2 matrix)
+        {
+            var items = new float[6];
+
+            items[0] = matrix.M11;
+            items[1] = matrix.M12;
+
+            items[3] = matrix.M21;
+            items[4] = matrix.M22;
+
+            items[5] = matrix.M31;
+            items[6] = matrix.M32;
+
+            return new(items, 3, 2);
+        }
+    }
+
     /// <summary>
     /// The <see cref="ReadOnlySpan2D{T}"/> extension block.
     /// </summary>
@@ -35,18 +147,27 @@ public static class Span2DExtensions
             }
 
             // copy this to a temporary matrix
-            var temp = new ReadOnlySpan2D<T>(matrix.ToArray());
+            using var workingOwner = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(matrix.Height * matrix.Width);
+            matrix.CopyTo(workingOwner.Span);
+            var working = ReadOnlySpan2D<T>.DangerousCreate(workingOwner.Span[0], matrix.Height, matrix.Width, 0);
+
+            // if this is not square then we can't do this in place
+            if (matrix.Height != matrix.Width)
+            {
+                matrix = new(new T[matrix.Height, other.Width]);
+            }
+
             if (matrix.TryGetSpan(out var matrixSpan))
             {
-                ReadOnlySpan2D<T>.Multiply(temp, other, matrixSpan);
+                ReadOnlySpan2D<T>.Multiply(working, other, matrixSpan);
                 return;
             }
 
             for (var column = 0; column < other.Width; column++)
             {
-                for (var row = 0; row < temp.Height; row++)
+                for (var row = 0; row < working.Height; row++)
                 {
-                    var rowEnumerator = temp.GetRow(row).GetEnumerator();
+                    var rowEnumerator = working.GetRow(row).GetEnumerator();
                     var columnEnumerator = other.GetColumn(column).GetEnumerator();
 
                     if (!rowEnumerator.MoveNext() || !columnEnumerator.MoveNext())

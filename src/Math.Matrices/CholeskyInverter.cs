@@ -18,31 +18,32 @@ public class CholeskyInverter : IMatrixInverter
     public ReadOnlySpan2D<T> Invert<T>(ReadOnlySpan2D<T> matrix)
         where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
     {
-        var value = new Span2D<T>(matrix.ToArray());
+        var returnMatrix = new Span2D<T>(matrix.ToArray());
 
         // Make all lower triangle values 0
-        RemoveLowerTriangle(value);
+        RemoveLowerTriangle(returnMatrix);
 
         // Invert the matrix
-        var factors = new T[value.Height];
+        using var factorsOwner = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(returnMatrix.Height);
+        var factors = factorsOwner.Span;
 
         // Check to make sure we can
-        for (var row = 0; row < value.Height; row++)
+        for (var row = 0; row < returnMatrix.Height; row++)
         {
-            if (T.IsNegative(value[row, row]))
+            if (T.IsNegative(returnMatrix[row, row]))
             {
                 // Cannot do an inverse when a diagonal is 0
                 throw new InvalidOperationException();
             }
 
-            factors[row] = T.Sqrt(value[row, row]);
+            factors[row] = T.Sqrt(returnMatrix[row, row]);
         }
 
-        for (var row = 0; row < value.Height; row++)
+        for (var row = 0; row < returnMatrix.Height; row++)
         {
-            for (var column = 0; column < value.Width; column++)
+            for (var column = 0; column < returnMatrix.Width; column++)
             {
-                ref T current = ref value[row, column];
+                ref T current = ref returnMatrix[row, column];
                 current /= factors[row] * factors[column];
             }
         }
@@ -50,7 +51,7 @@ public class CholeskyInverter : IMatrixInverter
         // Cholesky Decomposition
         try
         {
-            CholeskyDecomposition(value);
+            CholeskyDecomposition(returnMatrix);
         }
         catch (ArgumentOutOfRangeException ex)
         {
@@ -58,13 +59,13 @@ public class CholeskyInverter : IMatrixInverter
         }
 
         // Form the w matrix
-        for (var row = value.Height - 1; row >= 0; row--)
+        for (var row = returnMatrix.Height - 1; row >= 0; row--)
         {
-            for (var column = value.Width - 1; column >= 0; column--)
+            for (var column = returnMatrix.Width - 1; column >= 0; column--)
             {
                 if (row == column)
                 {
-                    ref T current = ref value[row, column];
+                    ref T current = ref returnMatrix[row, column];
                     current = T.One / current;
                 }
                 else
@@ -73,34 +74,34 @@ public class CholeskyInverter : IMatrixInverter
 
                     for (var k = row + 1; k <= column; k++)
                     {
-                        temp += value[row, k] * value[k, column];
+                        temp += returnMatrix[row, k] * returnMatrix[k, column];
                     }
 
-                    value[row, column] = -temp / value[row, row];
+                    returnMatrix[row, column] = -temp / returnMatrix[row, row];
                 }
             }
         }
 
         // Form the wwt (inverse)
-        for (var row = 0; row < value.Height; row++)
+        for (var row = 0; row < returnMatrix.Height; row++)
         {
-            for (var j = row; j < value.Height; j++)
+            for (var j = row; j < returnMatrix.Height; j++)
             {
                 var temp = T.Zero;
 
-                for (var k = row; k < value.Width; k++)
+                for (var k = row; k < returnMatrix.Width; k++)
                 {
-                    temp += value[row, k] * value[j, k];
+                    temp += returnMatrix[row, k] * returnMatrix[j, k];
                 }
 
-                value[row, j] = temp / (factors[row] * factors[j]);
+                returnMatrix[row, j] = temp / (factors[row] * factors[j]);
             }
         }
 
         // fill the lower triangle
-        FillLowerTriangle(value);
+        FillLowerTriangle(returnMatrix);
 
-        return value;
+        return returnMatrix;
 
         static void FillLowerTriangle(Span2D<T> value)
         {

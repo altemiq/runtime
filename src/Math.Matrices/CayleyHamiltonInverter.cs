@@ -21,19 +21,25 @@ public class CayleyHamiltonInverter : IMatrixInverter
     private static ReadOnlySpan2D<T> InvertCayleyHamilton<T>(ReadOnlySpan2D<T> matrix, out T determinant)
         where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
     {
-        var coefficients = FaddeevLeVerrierCoefficients(matrix);
+        using var coefficients = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(matrix.Height + 1);
+        FaddeevLeVerrierCoefficients(matrix, coefficients.Span);
 
-        var diagonal = MatrixDiagonal(matrix.Height, coefficients[matrix.Height - 1]);
+        var diagonal = MatrixDiagonal(matrix.Height, coefficients.Span[matrix.Height - 1]);
         var k = matrix.Height - 2;
-        var valuePower = new Span2D<T>(matrix.ToArray());
+        var valuePowerArray = System.Buffers.ArrayPool<T>.Shared.Rent(matrix.Height * matrix.Width);
+        matrix.CopyTo(valuePowerArray);
+        var valuePower = new Span2D<T>(valuePowerArray, matrix.Height, matrix.Width);
         while (k >= 0)
         {
-            diagonal += (ReadOnlySpan2D<T>)valuePower * coefficients[k];
+            diagonal += (ReadOnlySpan2D<T>)valuePower * coefficients.Span[k];
             valuePower *= matrix;
             k--;
         }
 
-        determinant = coefficients[matrix.Height];
+        System.Buffers.ArrayPool<T>.Shared.Return(valuePowerArray);
+
+        determinant = coefficients.Span[matrix.Height];
+
         diagonal *= -T.One / determinant;
         if (matrix.Height % 2 is not 0)
         {
@@ -56,30 +62,30 @@ public class CayleyHamiltonInverter : IMatrixInverter
         }
     }
 
-    private static T[] FaddeevLeVerrierCoefficients<T>(ReadOnlySpan2D<T> a)
+    private static void FaddeevLeVerrierCoefficients<T>(ReadOnlySpan2D<T> a, Span<T> coefficients)
         where T : System.Numerics.INumberBase<T>
     {
         var rows = a.Height;
-        var coefficients = new T[rows + 1];
         coefficients[0] = T.One;
 
-        var ak = new Span2D<T>(a.ToArray());
-        _ = ak.TryGetSpan(out var source);
-        Span<T> destination = new T[ak.Length];
-        for (var k = 1; k <= rows; ++k)
+        var length = a.Height * a.Width;
+        using var owner = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(a.Height * a.Width);
+        Span<T> source = owner.Span;
+        a.CopyTo(source);
+        var ak = Span2D<T>.DangerousCreate(ref source[0], a.Height, a.Width, 0);
+        var destination = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(length);
+        for (var k = 1; k <= rows; k++)
         {
             var coefficient = -T.One * DiagonalSum(ak) / T.CreateChecked(k);
             coefficients[k] = coefficient;
-            for (var i = 0; i < rows; ++i)
+            for (var i = 0; i < rows; i++)
             {
                 ak[i, i] += coefficient;
             }
 
-            ReadOnlySpan2D<T>.Multiply(a, ak, destination);
-            destination.CopyTo(source);
+            ReadOnlySpan2D<T>.Multiply(a, ak, destination.Span);
+            destination.Span.CopyTo(source);
         }
-
-        return coefficients;
 
         static T DiagonalSum(ReadOnlySpan2D<T> a)
         {
