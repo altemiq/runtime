@@ -34,6 +34,7 @@
     <Project Path="src/Grpc.Tools/Grpc.Tools.csproj" />
     <Project Path="src/IO.Compression.Lzma/IO.Compression.Lzma.csproj" />
     <Project Path="src/IO.Compression/IO.Compression.csproj" />
+    <Project Path="src/Numerics/Numerics.csproj" />
     <Project Path="src/Protobuf/Protobuf.csproj" />
     <Project Path="src/Runtime/Runtime.csproj" />
     <Project Path="src\Math.Matrices\Math.Matrices.csproj" />
@@ -55,6 +56,7 @@
     <Project Path="tests/IO.Compression.Tests/IO.Compression.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
+    <Project Path="tests/Numerics.Tests/Numerics.Tests.csproj" />
     <Project Path="tests/Protobuf.Tests/Protobuf.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>

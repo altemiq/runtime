@@ -1,0 +1,441 @@
+// -----------------------------------------------------------------------
+// <copyright file="Matrix3x2D.Impl.cs" company="Altemiq">
+// Copyright (c) Altemiq. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace Altemiq.Numerics;
+
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+
+/// <content>
+/// The Matrix3x2D implementation.
+/// </content>
+public partial struct Matrix3x2D
+{
+    /*
+    See Matrix3x2D.cs for an explanation of why this file/type exists
+
+    Note that we use some particular patterns below, such as defining a result
+    and assigning the fields directly rather than using the object initializer
+    syntax. We do this because it saves roughly 8-bytes of IL per method which
+    in turn helps improve inlining chances.
+    */
+
+    /// <summary>
+    /// Gets this <see cref="Matrix3x2D"/> as and <see cref="Impl"/>.
+    /// </summary>
+    /// <returns>The <see cref="Impl"/>.</returns>
+    [UnscopedRef]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
+    internal ref Impl AsImpl() => ref Unsafe.As<Matrix3x2D, Impl>(ref this);
+
+    /// <summary>
+    /// Gets this <see cref="Matrix3x2D"/> as and <see cref="Impl"/>.
+    /// </summary>
+    /// <returns>The <see cref="Impl" />.</returns>
+    [UnscopedRef]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal readonly ref readonly Impl AsROImpl() => ref Unsafe.As<Matrix3x2D, Impl>(ref Unsafe.AsRef(in this));
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass", Justification = "Checked")]
+    [SuppressMessage("Critical Code Smell", "S3218:Inner class members should not shadow outer class \"static\" or type members", Justification = "Checked")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:Elements should be documented", Justification = "Checked")]
+    [SuppressMessage("Roslynator", "RCS1242:Do not pass non-read-only struct by read-only reference", Justification = "Checked")]
+    internal struct Impl : IEquatable<Impl>
+    {
+        public Vector2D X;
+        public Vector2D Y;
+        public Vector2D Z;
+
+        private const double RotationEpsilon = 0.001 * double.Pi / 180D; // 0.1% of a degree
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl operator +(in Impl left, in Impl right)
+        {
+            Impl result;
+
+            result.X = left.X + right.X;
+            result.Y = left.Y + right.Y;
+            result.Z = left.Z + right.Z;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(in Impl left, in Impl right) => (left.X == right.X)
+                   && (left.Y == right.Y)
+                   && (left.Z == right.Z);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(in Impl left, in Impl right) => (left.X != right.X)
+                   || (left.Y != right.Y)
+                   || (left.Z != right.Z);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl operator *(in Impl left, in Impl right)
+        {
+            Impl result;
+
+            result.X = Vector2D.Create(
+                (left.X.X * right.X.X) + (left.X.Y * right.Y.X),
+                (left.X.X * right.X.Y) + (left.X.Y * right.Y.Y));
+            result.Y = Vector2D.Create(
+                (left.Y.X * right.X.X) + (left.Y.Y * right.Y.X),
+                (left.Y.X * right.X.Y) + (left.Y.Y * right.Y.Y));
+            result.Z = Vector2D.Create(
+                (left.Z.X * right.X.X) + (left.Z.Y * right.Y.X) + right.Z.X,
+                (left.Z.X * right.X.Y) + (left.Z.Y * right.Y.Y) + right.Z.Y);
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl operator *(in Impl left, double right)
+        {
+            Impl result;
+
+            result.X = left.X * right;
+            result.Y = left.Y * right;
+            result.Z = left.Z * right;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl operator -(in Impl left, in Impl right)
+        {
+            Impl result;
+
+            result.X = left.X - right.X;
+            result.Y = left.Y - right.Y;
+            result.Z = left.Z - right.Z;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl operator -(in Impl value)
+        {
+            Impl result;
+
+            result.X = -value.X;
+            result.Y = -value.Y;
+            result.Z = -value.Z;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateRotation(double radians)
+        {
+            radians = double.Ieee754Remainder(radians, double.Tau);
+
+            double c;
+            double s;
+
+            if (radians is > -RotationEpsilon and < RotationEpsilon)
+            {
+                // Exact case for zero rotation.
+                c = 1;
+                s = 0;
+            }
+            else if (radians is > (double.Pi / 2) - RotationEpsilon and < (double.Pi / 2) + RotationEpsilon)
+            {
+                // Exact case for 90 degree rotation.
+                c = 0;
+                s = 1;
+            }
+            else if (radians < -double.Pi + RotationEpsilon || radians > double.Pi - RotationEpsilon)
+            {
+                // Exact case for 180 degree rotation.
+                c = -1;
+                s = 0;
+            }
+            else if (radians is > (-double.Pi / 2) - RotationEpsilon and < (-double.Pi / 2) + RotationEpsilon)
+            {
+                // Exact case for 270 degree rotation.
+                c = 0;
+                s = -1;
+            }
+            else
+            {
+                // Arbitrary rotation.
+                (s, c) = double.SinCos(radians);
+            }
+
+            // [  c  s ]
+            // [ -s  c ]
+            // [  0  0 ]
+            Impl result;
+
+            result.X = Vector2D.Create(c, s);
+            result.Y = Vector2D.Create(-s, c);
+            result.Z = Vector2D.Zero;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateRotation(double radians, Vector2D centerPoint)
+        {
+            radians = double.Ieee754Remainder(radians, double.Tau);
+
+            double c, s;
+
+            if (radians is > -RotationEpsilon and < RotationEpsilon)
+            {
+                // Exact case for zero rotation.
+                c = 1;
+                s = 0;
+            }
+            else if (radians is > (double.Pi / 2) - RotationEpsilon and < (double.Pi / 2) + RotationEpsilon)
+            {
+                // Exact case for 90 degree rotation.
+                c = 0;
+                s = 1;
+            }
+            else if (radians < -double.Pi + RotationEpsilon || radians > double.Pi - RotationEpsilon)
+            {
+                // Exact case for 180 degree rotation.
+                c = -1;
+                s = 0;
+            }
+            else if (radians is > (-double.Pi / 2) - RotationEpsilon and < (-double.Pi / 2) + RotationEpsilon)
+            {
+                // Exact case for 270 degree rotation.
+                c = 0;
+                s = -1;
+            }
+            else
+            {
+                // Arbitrary rotation.
+                (s, c) = double.SinCos(radians);
+            }
+
+            var x = (centerPoint.X * (1 - c)) + (centerPoint.Y * s);
+            var y = (centerPoint.Y * (1 - c)) - (centerPoint.X * s);
+
+            // [  c  s ]
+            // [ -s  c ]
+            // [  x  y ]
+            Impl result;
+
+            result.X = Vector2D.Create(c, s);
+            result.Y = Vector2D.Create(-s, c);
+            result.Z = Vector2D.Create(x, y);
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateScale(Vector2D scales)
+        {
+            Impl result;
+
+            result.X = Vector2D.CreateScalar(scales.X);
+            result.Y = Vector2D.Create(0, scales.Y);
+            result.Z = Vector2D.Zero;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateScale(double scaleX, double scaleY)
+        {
+            Impl result;
+
+            result.X = Vector2D.CreateScalar(scaleX);
+            result.Y = Vector2D.Create(0, scaleY);
+            result.Z = Vector2D.Zero;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateScale(double scaleX, double scaleY, Vector2D centerPoint)
+        {
+            Impl result;
+
+            result.X = Vector2D.CreateScalar(scaleX);
+            result.Y = Vector2D.Create(0, scaleY);
+            result.Z = centerPoint * (Vector2D.One - Vector2D.Create(scaleX, scaleY));
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateScale(Vector2D scales, Vector2D centerPoint)
+        {
+            Impl result;
+
+            result.X = Vector2D.CreateScalar(scales.X);
+            result.Y = Vector2D.Create(0, scales.Y);
+            result.Z = centerPoint * (Vector2D.One - scales);
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateScale(double scale)
+        {
+            Impl result;
+
+            result.X = Vector2D.CreateScalar(scale);
+            result.Y = Vector2D.Create(0, scale);
+            result.Z = Vector2D.Zero;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateScale(double scale, Vector2D centerPoint)
+        {
+            Impl result;
+
+            result.X = Vector2D.CreateScalar(scale);
+            result.Y = Vector2D.Create(0, scale);
+            result.Z = centerPoint * (Vector2D.One - Vector2D.Create(scale));
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateSkew(double radiansX, double radiansY)
+        {
+            Impl result;
+
+            result.X = Vector2D.Create(1, double.Tan(radiansY));
+            result.Y = Vector2D.Create(double.Tan(radiansX), 1);
+            result.Z = Vector2D.Zero;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateSkew(double radiansX, double radiansY, Vector2D centerPoint)
+        {
+            var xTan = double.Tan(radiansX);
+            var yTan = double.Tan(radiansY);
+
+            var tx = -centerPoint.Y * xTan;
+            var ty = -centerPoint.X * yTan;
+
+            Impl result;
+
+            result.X = Vector2D.Create(1, yTan);
+            result.Y = Vector2D.Create(xTan, 1);
+            result.Z = Vector2D.Create(tx, ty);
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateTranslation(Vector2D position)
+        {
+            Impl result;
+
+            result.X = Vector2D.UnitX;
+            result.Y = Vector2D.UnitY;
+            result.Z = position;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl CreateTranslation(double positionX, double positionY)
+        {
+            Impl result;
+
+            result.X = Vector2D.UnitX;
+            result.Y = Vector2D.UnitY;
+            result.Z = Vector2D.Create(positionX, positionY);
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Invert(in Impl matrix, out Impl result)
+        {
+            var det = (matrix.X.X * matrix.Y.Y) - (matrix.Y.X * matrix.X.Y);
+
+            if (double.Abs(det) < double.Epsilon)
+            {
+                var vNaN = Vector2D.NaN;
+
+                result.X = vNaN;
+                result.Y = vNaN;
+                result.Z = vNaN;
+
+                return false;
+            }
+
+            var invDet = 1.0 / det;
+
+            result.X = Vector2D.Create(
+                +matrix.Y.Y * invDet,
+                -matrix.X.Y * invDet);
+            result.Y = Vector2D.Create(
+                -matrix.Y.X * invDet,
+                +matrix.X.X * invDet);
+            result.Z = Vector2D.Create(
+                ((matrix.Y.X * matrix.Z.Y) - (matrix.Z.X * matrix.Y.Y)) * invDet,
+                ((matrix.Z.X * matrix.X.Y) - (matrix.X.X * matrix.Z.Y)) * invDet);
+
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Impl Lerp(in Impl left, in Impl right, double amount)
+        {
+            Impl result;
+
+            result.X = Vector2D.Lerp(left.X, right.X, amount);
+            result.Y = Vector2D.Lerp(left.Y, right.Y, amount);
+            result.Z = Vector2D.Lerp(left.Z, right.Z, amount);
+
+            return result;
+        }
+
+        [UnscopedRef]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref Matrix3x2D AsM3x2D() => ref Unsafe.As<Impl, Matrix3x2D>(ref this);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override readonly bool Equals([NotNullWhen(true)] object? obj)
+            => (obj is Matrix3x2D other) && this.Equals(in other.AsImpl());
+
+        // This function needs to account for floating-point equality around NaN
+        // and so must behave equivalently to the underlying double/double.Equals
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly bool Equals(in Impl other) => this.X.Equals(other.X) && this.Y.Equals(other.Y) && this.Z.Equals(other.Z);
+
+        /*
+        There isn't actually any such thing as a determinant for a non-square matrix,
+        but this 3x2 type is really just an optimization of a 3x3 where we happen to
+        know the rightmost column is always (0, 0, 1). So we expand to 3x3 format:
+
+         [ X.X, X.Y, 0 ]
+         [ Y.X, Y.Y, 0 ]
+         [ Z.X, Z.Y, 1 ]
+
+        Sum the diagonal products:
+         (X.X * Y.Y * 1) + (X.Y * 0 * Z.X) + (0 * Y.X * Z.Y)
+
+        Subtract the opposite diagonal products:
+         (Z.X * Y.Y * 0) + (Z.Y * 0 * X.X) + (1 * Y.X * X.Y)
+
+        Collapse out the constants and oh look, this is just a 2x2 determinant!
+        */
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly double GetDeterminant() => (this.X.X * this.Y.Y) - (this.Y.X * this.X.Y);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override readonly int GetHashCode() => HashCode.Combine(this.X, this.Y, this.Z);
+
+        readonly bool IEquatable<Impl>.Equals(Impl other) => this.Equals(in other);
+    }
+}

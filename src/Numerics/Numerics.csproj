@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>$(RootNamespace.Replace('.$(MSBuildProjectName)', ''))</RootNamespace>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Update="**\*.Extensions.cs;**\*.Impl.cs">
+      <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)%(Extension)', '\.[^.]+\%(Extension)$', '%(Extension)'))</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
