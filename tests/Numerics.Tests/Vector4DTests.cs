@@ -1998,6 +1998,7 @@ public sealed class Vector4DTests
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
+#if NET10_OR_GREATER
     [Test]
     public async Task AllAnyNoneTest()
     {
@@ -2240,6 +2241,7 @@ public sealed class Vector4DTests
             await Assert.That(Vector4D.ConditionalSelect(condition, left, right)).IsEqualTo(expectedResult);
         }
     }
+#endif
 
     [Test]
     [Arguments(+0.0, +0.0, +0.0, +0.0, 0b0000)]

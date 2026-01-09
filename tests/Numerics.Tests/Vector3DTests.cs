@@ -1585,6 +1585,7 @@ public sealed class Vector3DTests
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
+#if NET10_OR_GREATER
     [Test]
     public async Task AllAnyNoneTest()
     {
@@ -1826,6 +1827,7 @@ public sealed class Vector3DTests
             await Assert.That(Vector3D.ConditionalSelect(condition, left, right)).IsEqualTo(expectedResult);
         }
     }
+#endif
 
     [Test]
     [Arguments(+0.0, +0.0, +0.0, 0b000)]

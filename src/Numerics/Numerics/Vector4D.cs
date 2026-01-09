@@ -241,6 +241,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <returns>The summed vector.</returns>
     public static Vector4D Add(Vector4D left, Vector4D right) => left + right;
 
+#if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.All{T}(Vector256{T}, T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool All(Vector4D vector, double value) => Vector256.All(vector.AsVector256(), value);
@@ -266,27 +267,35 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
 
     /// <inheritdoc cref="Vector256.BitwiseOr{T}(Vector256{T}, Vector256{T})" />
     public static Vector4D BitwiseOr(Vector4D left, Vector4D right) => left | right;
+#endif
 
     /// <inheritdoc cref="Vector256.Clamp{T}(Vector256{T}, Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Clamp(Vector4D value1, Vector4D min, Vector4D max) => Vector256.Clamp(value1.AsVector256(), min.AsVector256(), max.AsVector256()).AsVector4D();
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.ClampNative{T}(Vector256{T}, Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D ClampNative(Vector4D value1, Vector4D min, Vector4D max) => Vector256.ClampNative(value1.AsVector256(), min.AsVector256(), max.AsVector256()).AsVector4D();
+#endif
 
+#if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.ConditionalSelect{T}(Vector256{T}, Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D ConditionalSelect(Vector4D condition, Vector4D left, Vector4D right) => Vector256.ConditionalSelect(condition.AsVector256(), left.AsVector256(), right.AsVector256()).AsVector4D();
+#endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.CopySign{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D CopySign(Vector4D value, Vector4D sign) => Vector256.CopySign(value.AsVector256(), sign.AsVector256()).AsVector4D();
+#endif
 
     /// <inheritdoc cref="Vector256.Cos(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Cos(Vector4D vector) => Vector256.Cos(vector.AsVector256()).AsVector4D();
 
+#if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Count{T}(Vector256{T}, T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Count(Vector4D vector, double value) => Vector256.Count(vector.AsVector256(), value);
@@ -294,6 +303,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.CountWhereAllBitsSet{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int CountWhereAllBitsSet(Vector4D vector) => Vector256.CountWhereAllBitsSet(vector.AsVector256());
+#endif
 
     /// <summary>Creates a new <see cref="Vector4D" /> object whose four elements have the same value.</summary>
     /// <param name="value">The value to assign to all four elements.</param>
@@ -373,9 +383,11 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
             -m2.WithElement(3, 0)).AsVector4D();
     }
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.DegreesToRadians(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D DegreesToRadians(Vector4D degrees) => Vector256.DegreesToRadians(degrees.AsVector256()).AsVector4D();
+#endif
 
     /// <summary>Computes the Euclidean distance between the two given points.</summary>
     /// <param name="value1">The first point.</param>
@@ -408,14 +420,17 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Dot(Vector4D vector1, Vector4D vector2) => Vector256.Dot(vector1.AsVector256(), vector2.AsVector256());
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Exp(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Exp(Vector4D vector) => Vector256.Exp(vector.AsVector256()).AsVector4D();
+#endif
 
     /// <inheritdoc cref="Vector256.Equals{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Equals(Vector4D left, Vector4D right) => Vector256.Equals(left.AsVector256(), right.AsVector256()).AsVector4D();
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.EqualsAll{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool EqualsAll(Vector4D left, Vector4D right) => Vector256.EqualsAll(left.AsVector256(), right.AsVector256());
@@ -455,7 +470,9 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.Hypot(Vector256{double}, Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Hypot(Vector4D x, Vector4D y) => Vector256.Hypot(x.AsVector256(), y.AsVector256()).AsVector4D();
+#endif
 
+#if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.IndexOf{T}(Vector256{T}, T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int IndexOf(Vector4D vector, double value) => Vector256.IndexOf(vector.AsVector256(), value);
@@ -479,7 +496,9 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.IsInteger{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D IsInteger(Vector4D vector) => Vector256.IsInteger(vector.AsVector256()).AsVector4D();
+#endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.IsNaN{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D IsNaN(Vector4D vector) => Vector256.IsNaN(vector.AsVector256()).AsVector4D();
@@ -487,7 +506,9 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.IsNegative{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D IsNegative(Vector4D vector) => Vector256.IsNegative(vector.AsVector256()).AsVector4D();
+#endif
 
+#if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.IsNegativeInfinity{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D IsNegativeInfinity(Vector4D vector) => Vector256.IsNegativeInfinity(vector.AsVector256()).AsVector4D();
@@ -499,11 +520,15 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.IsOddInteger{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D IsOddInteger(Vector4D vector) => Vector256.IsOddInteger(vector.AsVector256()).AsVector4D();
+#endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.IsPositive{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D IsPositive(Vector4D vector) => Vector256.IsPositive(vector.AsVector256()).AsVector4D();
+#endif
 
+#if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.IsPositiveInfinity{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D IsPositiveInfinity(Vector4D vector) => Vector256.IsPositiveInfinity(vector.AsVector256()).AsVector4D();
@@ -523,11 +548,18 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.LastIndexOfWhereAllBitsSet{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int LastIndexOfWhereAllBitsSet(Vector4D vector) => Vector256.LastIndexOfWhereAllBitsSet(vector.AsVector256());
+#endif
 
     /// <inheritdoc cref="Lerp(Vector4D, Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector4D Lerp(Vector4D value1, Vector4D value2, double amount) => Lerp(value1, value2, Create(amount));
+    public static Vector4D Lerp(Vector4D value1, Vector4D value2, double amount) =>
+#if NET9_0_OR_GREATER
+        Lerp(value1, value2, Create(amount));
+#else
+        (value1 * (1.0 - amount)) + (value2 * amount);
+#endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Lerp(Vector256{double}, Vector256{double}, Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Lerp(Vector4D value1, Vector4D value2, Vector4D amount) => Vector256.Lerp(value1.AsVector256(), value2.AsVector256(), amount.AsVector256()).AsVector4D();
@@ -555,6 +587,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.LessThanOrEqualAny{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool LessThanOrEqualAny(Vector4D left, Vector4D right) => Vector256.LessThanOrEqualAny(left.AsVector256(), right.AsVector256());
+#endif
 
     /// <inheritdoc cref="Vector256.Load{T}(T*)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -576,6 +609,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D LoadUnsafe(ref readonly double source, nuint elementOffset) => Vector256.LoadUnsafe(in source, elementOffset).AsVector4D();
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Log(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Log(Vector4D vector) => Vector256.Log(vector.AsVector256()).AsVector4D();
@@ -583,11 +617,13 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.Log2(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Log2(Vector4D vector) => Vector256.Log2(vector.AsVector256()).AsVector4D();
+#endif
 
     /// <inheritdoc cref="Vector256.Max{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Max(Vector4D value1, Vector4D value2) => Vector256.Max(value1.AsVector256(), value2.AsVector256()).AsVector4D();
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MaxMagnitude{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D MaxMagnitude(Vector4D value1, Vector4D value2) => Vector256.MaxMagnitude(value1.AsVector256(), value2.AsVector256()).AsVector4D();
@@ -603,11 +639,13 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.MaxNumber{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D MaxNumber(Vector4D value1, Vector4D value2) => Vector256.MaxNumber(value1.AsVector256(), value2.AsVector256()).AsVector4D();
+#endif
 
     /// <inheritdoc cref="Vector256.Min{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Min(Vector4D value1, Vector4D value2) => Vector256.Min(value1.AsVector256(), value2.AsVector256()).AsVector4D();
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MinMagnitude{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D MinMagnitude(Vector4D value1, Vector4D value2) => Vector256.MinMagnitude(value1.AsVector256(), value2.AsVector256()).AsVector4D();
@@ -623,6 +661,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.MinNumber{T}(Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D MinNumber(Vector4D value1, Vector4D value2) => Vector256.MinNumber(value1.AsVector256(), value2.AsVector256()).AsVector4D();
+#endif
 
     /// <summary>Returns a new vector whose values are the product of each pair of elements in two specified vectors.</summary>
     /// <param name="left">The first vector.</param>
@@ -642,15 +681,18 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <returns>The scaled vector.</returns>
     public static Vector4D Multiply(double left, Vector4D right) => left * right;
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D MultiplyAddEstimate(Vector4D left, Vector4D right, Vector4D addend) => Vector256.MultiplyAddEstimate(left.AsVector256(), right.AsVector256(), addend.AsVector256()).AsVector4D();
+#endif
 
     /// <summary>Negates a specified vector.</summary>
     /// <param name="value">The vector to negate.</param>
     /// <returns>The negated vector.</returns>
     public static Vector4D Negate(Vector4D value) => -value;
 
+#if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.None{T}(Vector256{T}, T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool None(Vector4D vector, double value) => Vector256.None(vector.AsVector256(), value);
@@ -658,6 +700,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.NoneWhereAllBitsSet{T}(Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool NoneWhereAllBitsSet(Vector4D vector) => Vector256.NoneWhereAllBitsSet(vector.AsVector256());
+#endif
 
     /// <summary>Returns a vector with the same direction as the specified vector, but with a length of one.</summary>
     /// <param name="vector">The vector to normalize.</param>
@@ -667,6 +710,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.OnesComplement{T}(Vector256{T})" />
     public static Vector4D OnesComplement(Vector4D value) => ~value;
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.RadiansToDegrees(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D RadiansToDegrees(Vector4D radians) => Vector256.RadiansToDegrees(radians.AsVector256()).AsVector4D();
@@ -676,6 +720,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
 
     /// <inheritdoc cref="Vector256.Round(Vector256{double}, MidpointRounding)" />
     public static Vector4D Round(Vector4D vector, MidpointRounding mode) => Vector256.Round(vector.AsVector256(), mode).AsVector4D();
+#endif
 
     /// <summary>Creates a new vector by selecting values from an input vector using a set of indices.</summary>
     /// <param name="vector">The input vector from which values are selected.</param>
@@ -687,6 +732,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Shuffle(Vector4D vector, byte xIndex, byte yIndex, byte zIndex, byte wIndex) => Vector256.Shuffle(vector.AsVector256(), Vector256.Create(xIndex, yIndex, zIndex, wIndex)).AsVector4D();
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Sin(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Sin(Vector4D vector) => Vector256.Sin(vector.AsVector256()).AsVector4D();
@@ -698,6 +744,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
         var (sin, cos) = Vector256.SinCos(vector.AsVector256());
         return (sin.AsVector4D(), cos.AsVector4D());
     }
+#endif
 
     /// <summary>Returns a vector whose elements are the square root of each of a specified vector's elements.</summary>
     /// <param name="value">A vector.</param>
@@ -715,20 +762,6 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Sum(Vector4D value) => Vector256.Sum(value.AsVector256());
 
-    // /// <summary>Transforms a two-dimensional vector by a specified 4x4 matrix.</summary>
-    // /// <param name="position">The vector to transform.</param>
-    // /// <param name="matrix">The transformation matrix.</param>
-    // /// <returns>The transformed vector.</returns>
-    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    // public static Vector4D Transform(Vector2D position, Matrix4x4D matrix)
-    // {
-    //     // This implementation is based on the DirectX Math Library XMVector2DTransform method
-    //     // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
-    //
-    //     Vector4D result = matrix.X * position.X;
-    //     result = MultiplyAddEstimate(matrix.Y, Create(position.Y), result);
-    //     return result + matrix.W;
-    // }
     /// <summary>Transforms a two-dimensional vector by a specified 4x4 matrix.</summary>
     /// <param name="position">The vector to transform.</param>
     /// <param name="matrix">The transformation matrix.</param>
@@ -736,11 +769,20 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector2D position, Matrix4x4D matrix)
     {
+#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector2DTransform method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var result = matrix.X * position.X;
         result = MultiplyAddEstimate(matrix.Y, Create(position.Y), result);
         return result + matrix.W;
+#else
+        var result = matrix.X * position.X;
+
+        result += matrix.Y * position.Y;
+        result += matrix.W;
+
+        return result;
+#endif
     }
 
     /// <summary>Transforms a two-dimensional vector by the specified QuaternionD rotation value.</summary>
@@ -750,21 +792,6 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector2D value, QuaternionD rotation) => Transform(Create(value, 0.0, 1.0), rotation);
 
-    // /// <summary>Transforms a three-dimensional vector by a specified 4x4 matrix.</summary>
-    // /// <param name="position">The vector to transform.</param>
-    // /// <param name="matrix">The transformation matrix.</param>
-    // /// <returns>The transformed vector.</returns>
-    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    // public static Vector4D Transform(Vector3D position, Matrix4x4D matrix)
-    // {
-    //     // This implementation is based on the DirectX Math Library XMVector3DTransform method
-    //     // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
-    //
-    //     Vector4D result = matrix.X * position.X;
-    //     result = MultiplyAddEstimate(matrix.Y, Create(position.Y), result);
-    //     result = MultiplyAddEstimate(matrix.Z, Create(position.Z), result);
-    //     return result + matrix.W;
-    // }
     /// <summary>Transforms a three-dimensional vector by a specified 4x4 matrix.</summary>
     /// <param name="position">The vector to transform.</param>
     /// <param name="matrix">The transformation matrix.</param>
@@ -772,12 +799,22 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector3D position, Matrix4x4D matrix)
     {
+#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector3DTransform method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var result = matrix.X * position.X;
         result = MultiplyAddEstimate(matrix.Y, Create(position.Y), result);
         result = MultiplyAddEstimate(matrix.Z, Create(position.Z), result);
         return result + matrix.W;
+#else
+        var result = matrix.X * position.X;
+
+        result += matrix.Y * position.Y;
+        result += matrix.Z * position.Z;
+        result += matrix.W;
+
+        return result;
+#endif
     }
 
     /// <summary>Transforms a three-dimensional vector by the specified QuaternionD rotation value.</summary>
@@ -787,22 +824,6 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector3D value, QuaternionD rotation) => Transform(Create(value, 1.0), rotation);
 
-    // /// <summary>Transforms a four-dimensional vector by a specified 4x4 matrix.</summary>
-    // /// <param name="vector">The vector to transform.</param>
-    // /// <param name="matrix">The transformation matrix.</param>
-    // /// <returns>The transformed vector.</returns>
-    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    // public static Vector4D Transform(Vector4D vector, Matrix4x4D matrix)
-    // {
-    //     // This implementation is based on the DirectX Math Library XMVector4Transform method
-    //     // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
-    //
-    //     Vector4D result = matrix.X * vector.X;
-    //     result = MultiplyAddEstimate(matrix.Y, Create(vector.Y), result);
-    //     result = MultiplyAddEstimate(matrix.Z, Create(vector.Z), result);
-    //     result = MultiplyAddEstimate(matrix.W, Create(vector.W), result);
-    //     return result;
-    // }
     /// <summary>Transforms a four-dimensional vector by a specified 4x4 matrix.</summary>
     /// <param name="vector">The vector to transform.</param>
     /// <param name="matrix">The transformation matrix.</param>
@@ -810,6 +831,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector4D vector, Matrix4x4D matrix)
     {
+#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector4Transform method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var result = matrix.X * vector.X;
@@ -817,6 +839,15 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
         result = MultiplyAddEstimate(matrix.Z, Create(vector.Z), result);
         result = MultiplyAddEstimate(matrix.W, Create(vector.W), result);
         return result;
+#else
+        var result = matrix.X * vector.X;
+
+        result += matrix.Y * vector.Y;
+        result += matrix.Z * vector.Z;
+        result += matrix.W * vector.W;
+
+        return result;
+#endif
     }
 
     /// <summary>Transforms a four-dimensional vector by the specified QuaternionD rotation value.</summary>
@@ -833,8 +864,10 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
         return QuaternionD.Concatenate(temp, rotation).AsVector4D();
     }
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Truncate(Vector256{double})" />
     public static Vector4D Truncate(Vector4D vector) => Vector256.Truncate(vector.AsVector256()).AsVector4D();
+#endif
 
     /// <inheritdoc cref="Vector256.Xor{T}(Vector256{T}, Vector256{T})" />
     public static Vector4D Xor(Vector4D left, Vector4D right) => left ^ right;

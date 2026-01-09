@@ -16,6 +16,7 @@ using System.Runtime.Intrinsics;
 /// </summary>
 public static class Vector256Extensions
 {
+#if NET10_0_OR_GREATER
     extension(Vector256)
     {
         /// <inheritdoc cref="Numerics.Vector4D.All(Numerics.Vector4D, double)"/>
@@ -131,7 +132,8 @@ public static class Vector256Extensions
         /// <inheritdoc cref="Numerics.Vector4D.NoneWhereAllBitsSet(Numerics.Vector4D)" />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool NoneWhereAllBitsSet(Numerics.Vector3D vector) => !Vector256.EqualsAny(vector.AsVector256().AsInt64(), Vector256<long>.AllBitsSet);
-    }
+   }
+#endif
 
     /// <summary>The <see cref="Vector256{Double}"/> extensions.</summary>
     /// <param name="value">The vector to reinterpret.</param>

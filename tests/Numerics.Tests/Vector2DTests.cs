@@ -1262,214 +1262,215 @@ public class Vector2DTests
         public Vector2D FieldVector;
     }
 
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.CosSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task CosSingleTest(double value, double expectedResult, double variance)
-    // {
-    //     Vector2D actualResult = Vector2D.Cos(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.ExpSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task ExpSingleTest(double value, double expectedResult, double variance)
-    // {
-    //     Vector2D actualResult = Vector2D.Exp(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.LogSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task LogSingleTest(double value, double expectedResult, double variance)
-    // {
-    //     Vector2D actualResult = Vector2D.Log(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.Log2Single), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task Log2SingleTest(double value, double expectedResult, double variance)
-    // {
-    //     Vector2D actualResult = Vector2D.Log2(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.FusedMultiplyAddSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task FusedMultiplyAddSingleTest(double left, double right, double addend, double expectedResult)
-    // {
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.FusedMultiplyAdd(Vector2D.Create(left), Vector2D.Create(right), Vector2D.Create(addend)), Vector2D.Zero);
-    //     AssertEqual(Vector2D.Create(double.MultiplyAddEstimate(left, right, addend)), Vector2D.MultiplyAddEstimate(Vector2D.Create(left), Vector2D.Create(right), Vector2D.Create(addend)), Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.ClampSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task ClampSingleTest(double x, double min, double max, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.Clamp(Vector2D.Create(x), Vector2D.Create(min), Vector2D.Create(max));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.CopySignSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task CopySignSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.CopySign(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.DegreesToRadiansSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task DegreesToRadiansSingleTest(double value, double expectedResult, double variance)
-    // {
-    //     AssertEqual(Vector2D.Create(-expectedResult), Vector2D.DegreesToRadians(Vector2D.Create(-value)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(+expectedResult), Vector2D.DegreesToRadians(Vector2D.Create(+value)), Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.HypotSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task HypotSingleTest(double x, double y, double expectedResult, double variance)
-    // {
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(-y)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(+y)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(-y)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(+y)), Vector2D.Create(variance));
-    //
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(-x)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(+x)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(-x)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(expectedResult), Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(+x)), Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.LerpSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task LerpSingleTest(double x, double y, double amount, double expectedResult)
-    // {
-    //     AssertEqual(Vector2D.Create(+expectedResult), Vector2D.Lerp(Vector2D.Create(+x), Vector2D.Create(+y), Vector2D.Create(amount)), Vector2D.Zero);
-    //     AssertEqual(Vector2D.Create((expectedResult == 0.0) ? expectedResult : -expectedResult), Vector2D.Lerp(Vector2D.Create(-x), Vector2D.Create(-y), Vector2D.Create(amount)), Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MaxSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MaxSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.Max(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MaxMagnitudeSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MaxMagnitudeSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.MaxMagnitude(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MaxMagnitudeNumberSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MaxMagnitudeNumberSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.MaxMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MaxNumberSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MaxNumberSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.MaxNumber(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MinSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MinSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.Min(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MinMagnitudeSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MinMagnitudeSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.MinMagnitude(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MinMagnitudeNumberSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MinMagnitudeNumberSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.MinMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.MinNumberSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task MinNumberSingleTest(double x, double y, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.MinNumber(Vector2D.Create(x), Vector2D.Create(y));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.RadiansToDegreesSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task RadiansToDegreesSingleTest(double value, double expectedResult, double variance)
-    // {
-    //     AssertEqual(Vector2D.Create(-expectedResult), Vector2D.RadiansToDegrees(Vector2D.Create(-value)), Vector2D.Create(variance));
-    //     AssertEqual(Vector2D.Create(+expectedResult), Vector2D.RadiansToDegrees(Vector2D.Create(+value)), Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.RoundSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task RoundSingleTest(double value, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.Round(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.RoundAwayFromZeroSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task RoundAwayFromZeroSingleTest(double value, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.AwayFromZero);
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.RoundToEvenSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task RoundToEvenSingleTest(double value, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.ToEven);
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.SinSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task SinSingleTest(double value, double expectedResult, double variance)
-    // {
-    //     Vector2D actualResult = Vector2D.Sin(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Create(variance));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.SinCosSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task SinCosSingleTest(double value, double expectedResultSin, double expectedResultCos, double allowedVarianceSin, double allowedVarianceCos)
-    // {
-    //     (Vector2D resultSin, Vector2D resultCos) = Vector2D.SinCos(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResultSin), resultSin, Vector2D.Create(allowedVarianceSin));
-    //     AssertEqual(Vector2D.Create(expectedResultCos), resultCos, Vector2D.Create(allowedVarianceCos));
-    // }
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.TruncateSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task TruncateSingleTest(double value, double expectedResult)
-    // {
-    //     Vector2D actualResult = Vector2D.Truncate(Vector2D.Create(value));
-    //     AssertEqual(Vector2D.Create(expectedResult), actualResult, Vector2D.Zero);
-    // }
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CosDouble))]
+    public async Task CosDoubleTest(double value, double expectedResult, double variance)
+    {
+        Vector2D actualResult = Vector2D.Cos(Vector2D.Create(value));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+    }
     
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ExpDouble))]
+    public async Task ExpDoubleTest(double value, double expectedResult, double variance)
+    {
+        Vector2D actualResult = Vector2D.Exp(Vector2D.Create(value));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.LogDouble))]
+    public async Task LogDoubleTest(double value, double expectedResult, double variance)
+    {
+        Vector2D actualResult = Vector2D.Log(Vector2D.Create(value));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.Log2Double))]
+    public async Task Log2DoubleTest(double value, double expectedResult, double variance)
+    {
+        Vector2D actualResult = Vector2D.Log2(Vector2D.Create(value));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.FusedMultiplyAddDouble))]
+    public async Task FusedMultiplyAddDoubleTest(double left, double right, double addend, double expectedResult)
+    {
+        await Assert.That(Vector2D.FusedMultiplyAdd(Vector2D.Create(left), Vector2D.Create(right), Vector2D.Create(addend))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+        await Assert.That(Vector2D.MultiplyAddEstimate(Vector2D.Create(left), Vector2D.Create(right), Vector2D.Create(addend))).IsEqualTo(Vector2D.Create(double.MultiplyAddEstimate(left, right, addend))).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ClampDouble))]
+    public async Task ClampDoubleTest(double x, double min, double max, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.Clamp(Vector2D.Create(x), Vector2D.Create(min), Vector2D.Create(max));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CopySignDouble))]
+    public async Task CopySignDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.CopySign(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.DegreesToRadiansDouble))]
+    public async Task DegreesToRadiansDoubleTest(double value, double expectedResult, double variance)
+    {
+        await Assert.That(Vector2D.DegreesToRadians(Vector2D.Create(-value))).IsEqualTo(Vector2D.Create(-expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.DegreesToRadians(Vector2D.Create(+value))).IsEqualTo(Vector2D.Create(+expectedResult)).Within(Vector2D.Create(variance));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.HypotDouble))]
+    public async Task HypotDoubleTest(double x, double y, double expectedResult, double variance)
+    {
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(-y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(+y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(-y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(+y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(-x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(+x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(-x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(+x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.LerpDouble))]
+    public async Task LerpDoubleTest(double x, double y, double amount, double expectedResult)
+    {
+        await Assert.That(Vector2D.Lerp(Vector2D.Create(+x), Vector2D.Create(+y), Vector2D.Create(amount))).IsEqualTo(Vector2D.Create(+expectedResult)).Within(Vector2D.Zero);
+        await Assert.That(Vector2D.Lerp(Vector2D.Create(-x), Vector2D.Create(-y), Vector2D.Create(amount))).IsEqualTo(Vector2D.Create((expectedResult == 0.0) ? expectedResult : -expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxDouble))]
+    public async Task MaxDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.Max(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeDouble))]
+    public async Task MaxMagnitudeDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.MaxMagnitude(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeNumberDouble))]
+    public async Task MaxMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.MaxMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxNumberDouble))]
+    public async Task MaxNumberDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.MaxNumber(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinDouble))]
+    public async Task MinDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.Min(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeDouble))]
+    public async Task MinMagnitudeDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.MinMagnitude(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeNumberDouble))]
+    public async Task MinMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.MinMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinNumberDouble))]
+    public async Task MinNumberDoubleTest(double x, double y, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.MinNumber(Vector2D.Create(x), Vector2D.Create(y));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RadiansToDegreesDouble))]
+    public async Task RadiansToDegreesDoubleTest(double value, double expectedResult, double variance)
+    {
+        await Assert.That(Vector2D.RadiansToDegrees(Vector2D.Create(-value))).IsEqualTo(Vector2D.Create(-expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.RadiansToDegrees(Vector2D.Create(+value))).IsEqualTo(Vector2D.Create(+expectedResult)).Within(Vector2D.Create(variance));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundDouble))]
+    public async Task RoundDoubleTest(double value, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.Round(Vector2D.Create(value));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundAwayFromZeroDouble))]
+    public async Task RoundAwayFromZeroDoubleTest(double value, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.AwayFromZero);
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundToEvenDouble))]
+    public async Task RoundToEvenDoubleTest(double value, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.ToEven);
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinDouble))]
+    public async Task SinDoubleTest(double value, double expectedResult, double variance)
+    {
+        Vector2D actualResult = Vector2D.Sin(Vector2D.Create(value));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinCosDouble))]
+    public async Task SinCosDoubleTest(double value, double expectedResultSin, double expectedResultCos, double allowedVarianceSin, double allowedVarianceCos)
+    {
+        (Vector2D resultSin, Vector2D resultCos) = Vector2D.SinCos(Vector2D.Create(value));
+        await Assert.That(resultSin).IsEqualTo(Vector2D.Create(expectedResultSin)).Within(Vector2D.Create(allowedVarianceSin));
+        await Assert.That(resultCos).IsEqualTo(Vector2D.Create(expectedResultCos)).Within(Vector2D.Create(allowedVarianceCos));
+    }
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.TruncateDouble))]
+    public async Task TruncateDoubleTest(double value, double expectedResult)
+    {
+        Vector2D actualResult = Vector2D.Truncate(Vector2D.Create(value));
+        await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
+    }
+    
+#if NET10_OR_GREATER
     [Test]
     public async Task AllAnyNoneTest()
     {
@@ -1638,57 +1639,57 @@ public class Vector2DTests
         }
     }
 
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsEvenIntegerTest(double value) => await Assert.That(double.IsEvenInteger(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsEvenInteger(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsFiniteTest(double value) => await Assert.That(double.IsFinite(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsFinite(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsInfinityTest(double value) => await Assert.That(double.IsInfinity(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsInfinity(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsIntegerTest(double value) => await Assert.That(double.IsInteger(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsInteger(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsNaNTest(double value) => await Assert.That(double.IsNaN(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsNaN(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsNegativeTest(double value) => await Assert.That(double.IsNegative(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsNegative(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsNegativeInfinityTest(double value) => await Assert.That(double.IsNegativeInfinity(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsNegativeInfinity(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsNormalTest(double value) => await Assert.That(double.IsNormal(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsNormal(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsOddIntegerTest(double value) => await Assert.That(double.IsOddInteger(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsOddInteger(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsPositiveTest(double value) => await Assert.That(double.IsPositive(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsPositive(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsPositiveInfinityTest(double value) => await Assert.That(double.IsPositiveInfinity(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsPositiveInfinity(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsSubnormalTest(double value) => await Assert.That(double.IsSubnormal(value) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsSubnormal(Vector2D.Create(value)));
-    //
-    // [Test]
-    // [MemberData(nameof(GenericMathTestMemberData.IsTestSingle), MemberType = typeof(GenericMathTestMemberData))]
-    // public async Task IsZeroSingleTest(double value) => await Assert.That((value == 0) ? Vector2D.AllBitsSet : Vector2D.Zero, Vector2D.IsZero(Vector2D.Create(value)));
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsEvenIntegerTest(double value) => await Assert.That(Vector2D.IsEvenInteger(Vector2D.Create(value))).IsEqualTo(double.IsEvenInteger(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsFiniteTest(double value) => await Assert.That(Vector2D.IsFinite(Vector2D.Create(value))).IsEqualTo(double.IsFinite(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsInfinityTest(double value) => await Assert.That(Vector2D.IsInfinity(Vector2D.Create(value))).IsEqualTo(double.IsInfinity(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsIntegerTest(double value) => await Assert.That(Vector2D.IsInteger(Vector2D.Create(value))).IsEqualTo(double.IsInteger(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsNaNTest(double value) => await Assert.That(Vector2D.IsNaN(Vector2D.Create(value))).IsEqualTo(double.IsNaN(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsNegativeTest(double value) => await Assert.That(Vector2D.IsNegative(Vector2D.Create(value))).IsEqualTo(double.IsNegative(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsNegativeInfinityTest(double value) => await Assert.That(Vector2D.IsNegativeInfinity(Vector2D.Create(value))).IsEqualTo(double.IsNegativeInfinity(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsNormalTest(double value) => await Assert.That(Vector2D.IsNormal(Vector2D.Create(value))).IsEqualTo(double.IsNormal(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsOddIntegerTest(double value) => await Assert.That(Vector2D.IsOddInteger(Vector2D.Create(value))).IsEqualTo(double.IsOddInteger(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsPositiveTest(double value) => await Assert.That(Vector2D.IsPositive(Vector2D.Create(value))).IsEqualTo(double.IsPositive(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsPositiveInfinityTest(double value) => await Assert.That(Vector2D.IsPositiveInfinity(Vector2D.Create(value))).IsEqualTo(double.IsPositiveInfinity(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsSubnormalTest(double value) => await Assert.That(Vector2D.IsSubnormal(Vector2D.Create(value))).IsEqualTo(double.IsSubnormal(value) ? Vector2D.AllBitsSet : Vector2D.Zero);
+    
+    [Test]
+    [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.IsTestDouble))]
+    public async Task IsZeroDoubleTest(double value) => await Assert.That(Vector2D.IsZero(Vector2D.Create(value))).IsEqualTo((value == 0) ? Vector2D.AllBitsSet : Vector2D.Zero);
 
     [Test]
     public async Task AllBitsSetTest()
@@ -1710,6 +1711,7 @@ public class Vector2DTests
             await Assert.That(Vector2D.ConditionalSelect(condition, left, right)).IsEqualTo(expectedResult);
         }
     }
+#endif
 
     [Test]
     [Arguments(+0.0, +0.0, 0b00)]

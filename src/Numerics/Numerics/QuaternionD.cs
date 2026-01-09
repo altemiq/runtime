@@ -250,12 +250,26 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <returns>The resulting quaternion.</returns>
     public static QuaternionD CreateFromYawPitchRoll(double yaw, double pitch, double roll)
     {
+#if NET9_0_OR_GREATER
         var (sin, cos) = Vector3D.SinCos(Vector3D.Create(roll, pitch, yaw) * 0.5);
 
         var (sr, cr) = (sin.X, cos.X);
         var (sp, cp) = (sin.Y, cos.Y);
         var (sy, cy) = (sin.Z, cos.Z);
+#else
+        // Roll first, about axis the object is facing, then pitch upward, then yaw to face into the new heading
+        var halfRoll = roll * 0.5;
+        var sr = Math.Sin(halfRoll);
+        var cr = Math.Cos(halfRoll);
 
+        var halfPitch = pitch * 0.5;
+        var sp = Math.Sin(halfPitch);
+        var cp = Math.Cos(halfPitch);
+
+        var halfYaw = yaw * 0.5;
+        var sy = Math.Sin(halfYaw);
+        var cy = Math.Cos(halfYaw);
+#endif
 
         QuaternionD result;
 
