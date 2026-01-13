@@ -246,9 +246,21 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     public static Vector3D BitwiseOr(Vector3D left, Vector3D right) => left | right;
 #endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Clamp(Vector4D, Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D Clamp(Vector3D value1, Vector3D min, Vector3D max) => Vector256.Clamp(value1.AsVector256Unsafe(), min.AsVector256Unsafe(), max.AsVector256Unsafe()).AsVector3D();
+#else
+    /// <summary>
+    /// Restricts a vector between a minimum and a maximum value.
+    /// </summary>
+    /// <param name="value1">The vector to restrict.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The restricted vector.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3D Clamp(Vector3D value1, Vector3D min, Vector3D max) => Vector256.Min(Vector256.Max(value1.AsVector256(), min.AsVector256()), max.AsVector256()).AsVector3D();
+#endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.ClampNative(Vector4D, Vector4D, Vector4D)" />
@@ -262,6 +274,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     public static Vector3D ConditionalSelect(Vector3D condition, Vector3D left, Vector3D right) => Vector256.ConditionalSelect(condition.AsVector256Unsafe(), left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector3D();
 #endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.CopySign(Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D CopySign(Vector3D value, Vector3D sign) => Vector256.CopySign(value.AsVector256Unsafe(), sign.AsVector256Unsafe()).AsVector3D();
@@ -269,6 +282,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     /// <inheritdoc cref="Vector4D.Cos(Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D Cos(Vector3D vector) => Vector256.Cos(vector.AsVector256()).AsVector3D();
+#endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Count(Vector4D, double)" />
@@ -550,6 +564,8 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
 
     /// <inheritdoc cref="Vector4D.LoadAligned(double*)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "This is valid")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "This is valid")]
     public static unsafe Vector3D LoadAligned(double* source)
     {
         if (((nuint)source % Alignment) != 0)
@@ -653,9 +669,11 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
+#else
+    /// <inheritdoc cref="Vector256Extensions.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
+#endif
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D MultiplyAddEstimate(Vector3D left, Vector3D right, Vector3D addend) => Vector256.MultiplyAddEstimate(left.AsVector256Unsafe(), right.AsVector256Unsafe(), addend.AsVector256Unsafe()).AsVector3D();
-#endif
 
     /// <summary>Negates a specified vector.</summary>
     /// <param name="value">The vector to negate.</param>
@@ -693,16 +711,11 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D Reflect(Vector3D vector, Vector3D normal)
     {
-#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector3Reflect method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var tmp = Create(Dot(vector, normal));
         tmp += tmp;
         return MultiplyAddEstimate(-tmp, normal, vector);
-#else
-        var dot = Dot(vector, normal);
-        return vector - (2.0 * (dot * normal));
-#endif
     }
 
 #if NET9_0_OR_GREATER

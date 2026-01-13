@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
     <RootNamespace>$(RootNamespace.Replace('.$(MSBuildProjectName)', ''))</RootNamespace>
+    <NoWarn>$(NoWarn);AD0001</NoWarn>
   </PropertyGroup>
   
   <ItemGroup>

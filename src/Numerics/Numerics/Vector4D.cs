@@ -269,9 +269,21 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     public static Vector4D BitwiseOr(Vector4D left, Vector4D right) => left | right;
 #endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Clamp{T}(Vector256{T}, Vector256{T}, Vector256{T})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Clamp(Vector4D value1, Vector4D min, Vector4D max) => Vector256.Clamp(value1.AsVector256(), min.AsVector256(), max.AsVector256()).AsVector4D();
+#else
+    /// <summary>
+    /// Restricts a vector between a minimum and a maximum value.
+    /// </summary>
+    /// <param name="value1">The vector to restrict.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The restricted vector.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector4D Clamp(Vector4D value1, Vector4D min, Vector4D max) => Vector256.Min(Vector256.Max(value1.AsVector256(), min.AsVector256()), max.AsVector256()).AsVector4D();
+#endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.ClampNative{T}(Vector256{T}, Vector256{T}, Vector256{T})" />
@@ -291,9 +303,11 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     public static Vector4D CopySign(Vector4D value, Vector4D sign) => Vector256.CopySign(value.AsVector256(), sign.AsVector256()).AsVector4D();
 #endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Cos(Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Cos(Vector4D vector) => Vector256.Cos(vector.AsVector256()).AsVector4D();
+#endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Count{T}(Vector256{T}, T)" />
@@ -550,13 +564,20 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     public static int LastIndexOfWhereAllBitsSet(Vector4D vector) => Vector256.LastIndexOfWhereAllBitsSet(vector.AsVector256());
 #endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Lerp(Vector4D, Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector4D Lerp(Vector4D value1, Vector4D value2, double amount) =>
-#if NET9_0_OR_GREATER
-        Lerp(value1, value2, Create(amount));
+    public static Vector4D Lerp(Vector4D value1, Vector4D value2, double amount) => Lerp(value1, value2, Create(amount));
 #else
-        (value1 * (1.0 - amount)) + (value2 * amount);
+    /// <summary>
+    /// Performs a linear interpolation between two vectors based on the given weighting.
+    /// </summary>
+    /// <param name="value1">The first vector.</param>
+    /// <param name="value2">The second vector.</param>
+    /// <param name="amount">A value between 0 and 1 that indicates the weight of <paramref name="value2"/>.</param>
+    /// <returns>The interpolated vector.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector4D Lerp(Vector4D value1, Vector4D value2, double amount) => (value1 * (1.0 - amount)) + (value2 * amount);
 #endif
 
 #if NET9_0_OR_GREATER
@@ -683,9 +704,11 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
+#else
+    /// <inheritdoc cref="Vector256Extensions.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
+#endif
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D MultiplyAddEstimate(Vector4D left, Vector4D right, Vector4D addend) => Vector256.MultiplyAddEstimate(left.AsVector256(), right.AsVector256(), addend.AsVector256()).AsVector4D();
-#endif
 
     /// <summary>Negates a specified vector.</summary>
     /// <param name="value">The vector to negate.</param>
@@ -859,8 +882,8 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     {
         // This implementation is based on the DirectX Math Library XMVector3DRotate method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
-        var conjuagate = QuaternionD.Conjugate(rotation);
-        var temp = QuaternionD.Concatenate(conjuagate, value.AsQuaternionD());
+        var conjugate = QuaternionD.Conjugate(rotation);
+        var temp = QuaternionD.Concatenate(conjugate, value.AsQuaternionD());
         return QuaternionD.Concatenate(temp, rotation).AsVector4D();
     }
 

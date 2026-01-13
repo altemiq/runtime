@@ -1758,6 +1758,7 @@ public sealed class Vector4DTests
     }
 #pragma warning restore 0169
 
+#if NET9_0_OR_GREATER
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CosDouble))]
     public async Task CosDoubleTest(double value, double expectedResult, double variance)
@@ -1965,7 +1966,8 @@ public sealed class Vector4DTests
         var actualResult = Vector4D.Truncate(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
-
+#endif
+    
 #if NET10_OR_GREATER
     [Test]
     public async Task AllAnyNoneTest()

@@ -644,8 +644,13 @@ public partial struct Matrix4x4D
         {
             var (s, c) = double.SinCos(radians);
 
+#if NET9_0_OR_GREATER
             var y = double.MultiplyAddEstimate(centerPoint.Y, 1 - c, +centerPoint.Z * s);
             var z = double.MultiplyAddEstimate(centerPoint.Z, 1 - c, -centerPoint.Y * s);
+#else
+            var y = (centerPoint.Y * (1 - c)) + (centerPoint.Z * s);
+            var z = (centerPoint.Z * (1 - c)) - (centerPoint.Y * s);
+#endif
 
             // [  1  0  0  0 ]
             // [  0  c  s  0 ]
@@ -685,8 +690,13 @@ public partial struct Matrix4x4D
         {
             var (s, c) = double.SinCos(radians);
 
+#if NET9_0_OR_GREATER
             var x = double.MultiplyAddEstimate(centerPoint.X, 1 - c, -centerPoint.Z * s);
             var z = double.MultiplyAddEstimate(centerPoint.Z, 1 - c, +centerPoint.X * s);
+#else
+            var x = (centerPoint.X * (1 - c)) - (centerPoint.Z * s);
+            var z = (centerPoint.Z * (1 - c)) + (centerPoint.X * s);
+#endif
 
             // [  c  0 -s  0 ]
             // [  0  1  0  0 ]
@@ -726,8 +736,13 @@ public partial struct Matrix4x4D
         {
             var (s, c) = double.SinCos(radians);
 
+#if NET9_0_OR_GREATER
             var x = double.MultiplyAddEstimate(centerPoint.X, 1 - c, +centerPoint.Y * s);
             var y = double.MultiplyAddEstimate(centerPoint.Y, 1 - c, -centerPoint.X * s);
+#else
+            var x = (centerPoint.X * (1 - c)) + (centerPoint.Y * s);
+            var y = (centerPoint.Y * (1 - c)) - (centerPoint.X * s);
+#endif
 
             // [  c  s  0  0 ]
             // [ -s  c  0  0 ]

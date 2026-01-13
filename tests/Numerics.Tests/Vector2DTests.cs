@@ -1250,6 +1250,7 @@ public class Vector2DTests
         public Vector2D FieldVector;
     }
 
+#if NET9_0_OR_GREATER
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CosDouble))]
     public async Task CosDoubleTest(double value, double expectedResult, double variance)
@@ -1457,6 +1458,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Truncate(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
+#endif
     
 #if NET10_OR_GREATER
     [Test]

@@ -16,9 +16,9 @@ using System.Runtime.Intrinsics;
 /// </summary>
 public static class Vector256Extensions
 {
-#if NET10_0_OR_GREATER
     extension(Vector256)
     {
+#if NET10_0_OR_GREATER
         /// <inheritdoc cref="Numerics.Vector4D.All(Numerics.Vector4D, double)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool All(Numerics.Vector2D vector, double value) => vector.AsVector256() == Numerics.Vector2D.Create(value).AsVector256();
@@ -132,8 +132,15 @@ public static class Vector256Extensions
         /// <inheritdoc cref="Numerics.Vector4D.NoneWhereAllBitsSet(Numerics.Vector4D)" />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool NoneWhereAllBitsSet(Numerics.Vector3D vector) => !Vector256.EqualsAny(vector.AsVector256().AsInt64(), Vector256<long>.AllBitsSet);
-   }
+#elif !NET9_0_OR_GREATER
+        /// <inheritdoc cref="Numerics.Vector4D.MultiplyAddEstimate(Numerics.Vector4D,Numerics.Vector4D,Numerics.Vector4D)" />
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<double> MultiplyAddEstimate(Vector256<double> left, Vector256<double> right, Vector256<double> addend) =>
+            Vector256.Create(
+                Vector128.MultiplyAddEstimate(left.GetLower(), right.GetLower(), addend.GetLower()),
+                Vector128.MultiplyAddEstimate(left.GetUpper(), right.GetUpper(), addend.GetUpper()));
 #endif
+    }
 
     /// <summary>The <see cref="Vector256{Double}"/> extensions.</summary>
     /// <param name="value">The vector to reinterpret.</param>

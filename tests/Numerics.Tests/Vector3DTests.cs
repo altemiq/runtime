@@ -1346,6 +1346,7 @@ public sealed class Vector3DTests
         public Vector3D FieldVector;
     }
 
+#if NET9_0_OR_GREATER
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CosDouble))]
     public async Task CosDoubleTest(double value, double expectedResult, double variance)
@@ -1553,6 +1554,7 @@ public sealed class Vector3DTests
         var actualResult = Vector3D.Truncate(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
+#endif
 
 #if NET10_OR_GREATER
     [Test]

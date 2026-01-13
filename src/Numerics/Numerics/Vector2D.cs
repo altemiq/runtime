@@ -233,9 +233,21 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     public static Vector2D BitwiseOr(Vector2D left, Vector2D right) => left | right;
 #endif
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Clamp(Vector4D, Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Clamp(Vector2D value1, Vector2D min, Vector2D max) => Vector256.Clamp(value1.AsVector256Unsafe(), min.AsVector256Unsafe(), max.AsVector256Unsafe()).AsVector2D();
+#else
+    /// <summary>
+    /// Restricts a vector between a minimum and a maximum value.
+    /// </summary>
+    /// <param name="value1">The vector to restrict.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The restricted vector.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2D Clamp(Vector2D value1, Vector2D min, Vector2D max) => Vector256.Min(Vector256.Max(value1.AsVector256(), min.AsVector256()), max.AsVector256()).AsVector2D();
+#endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.ClampNative(Vector4D, Vector4D, Vector4D)" />
@@ -253,11 +265,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <inheritdoc cref="Vector4D.CopySign(Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D CopySign(Vector2D value, Vector2D sign) => Vector256.CopySign(value.AsVector256Unsafe(), sign.AsVector256Unsafe()).AsVector2D();
-#endif
 
     /// <inheritdoc cref="Vector4D.Cos(Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Cos(Vector2D vector) => Vector256.Cos(vector.AsVector256()).AsVector2D();
+#endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Count(Vector4D, double)" />
@@ -368,6 +380,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Equals(Vector2D left, Vector2D right) => Vector256.Equals(left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 
+#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.EqualsAll(Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool EqualsAll(Vector2D left, Vector2D right) => Vector256.EqualsAll(left.AsVector256Unsafe(), right.AsVector256Unsafe());
@@ -376,11 +389,9 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool EqualsAny(Vector2D left, Vector2D right) => Vector256.EqualsAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
-#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D FusedMultiplyAdd(Vector2D left, Vector2D right, Vector2D addend) => Vector256.FusedMultiplyAdd(left.AsVector256Unsafe(), right.AsVector256Unsafe(), addend.AsVector256Unsafe()).AsVector2D();
-#endif
 
     /// <inheritdoc cref="Vector4D.GreaterThan(Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -406,7 +417,6 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GreaterThanOrEqualAny(Vector2D left, Vector2D right) => Vector256.GreaterThanOrEqualAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
-#if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Hypot(Vector4D, Vector4D)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Hypot(Vector2D x, Vector2D y) => Vector256.Hypot(x.AsVector256Unsafe(), y.AsVector256Unsafe()).AsVector2D();
@@ -534,6 +544,8 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
     /// <inheritdoc cref="Vector4D.LoadAligned(double*)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "This is valid")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "This is valid")]
     public static unsafe Vector2D LoadAligned(double* source)
     {
         if (((nuint)source % Alignment) != 0)
