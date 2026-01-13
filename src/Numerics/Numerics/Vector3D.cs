@@ -6,7 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Altemiq.Runtime.Intrinsics;
@@ -579,6 +578,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     /// <inheritdoc cref="Vector4D.LoadAlignedNonTemporal(double*)" />
     public static unsafe Vector3D LoadAlignedNonTemporal(double* source) => LoadAligned(source);
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D LoadUnsafe(ref readonly double source)
@@ -586,7 +586,17 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
         ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
         return Unsafe.ReadUnaligned<Vector3D>(in address);
     }
+#else
+    /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3D LoadUnsafe(ref readonly double source)
+    {
+        ref var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
+        return Unsafe.ReadUnaligned<Vector3D>(ref address);
+    }
+#endif
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.LoadUnsafe(ref readonly double, nuint)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D LoadUnsafe(ref readonly double source, nuint elementOffset)
@@ -594,6 +604,15 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
         ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
         return Unsafe.ReadUnaligned<Vector3D>(in address);
     }
+#else
+    /// <inheritdoc cref="Vector4D.LoadUnsafe(ref double, nuint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3D LoadUnsafe(ref readonly double source, nuint elementOffset)
+    {
+        ref var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
+        return Unsafe.ReadUnaligned<Vector3D>(ref address);
+    }
+#endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Log(Vector4D)" />
@@ -790,21 +809,12 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D TransformNormal(Vector3D normal, Matrix4x4D matrix)
     {
-        #if NET9_0_OR_GREATER
-        Vector4D result = matrix.X * normal.X;
+        var result = matrix.X * normal.X;
 
         result = Vector4D.MultiplyAddEstimate(matrix.Y, Vector4D.Create(normal.Y), result);
         result = Vector4D.MultiplyAddEstimate(matrix.Z, Vector4D.Create(normal.Z), result);
 
         return result.AsVector3D();
-#else
-        var result = matrix.X * normal.X;
-
-        result += matrix.Y * normal.Y;
-        result += matrix.Z * normal.Z;
-
-        return result.AsVector256().AsVector3D();
-#endif
     }
 
 #if NET9_0_OR_GREATER
@@ -893,7 +903,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns><see langword="true" /> if the current instance and <paramref name="obj" /> are equal; otherwise, <see langword="false" />. If <paramref name="obj" /> is <see langword="null" />, the method returns <see langword="false" />.</returns>
     /// <remarks>The current instance and <paramref name="obj" /> are equal if <paramref name="obj" /> is a <see cref="Vector3D" /> object and their corresponding elements are equal.</remarks>
-    public override readonly bool Equals([NotNullWhen(true)] object? obj) => (obj is Vector3D other) && this.Equals(other);
+    public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => (obj is Vector3D other) && this.Equals(other);
 
     /// <summary>Returns a value that indicates whether this instance and another vector are equal.</summary>
     /// <param name="other">The other vector.</param>
@@ -926,14 +936,14 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     /// <param name="format">A standard or custom numeric format string that defines the format of individual elements.</param>
     /// <returns>The string representation of the current instance.</returns>
     /// <remarks>This method returns a string in which each element of the vector is formatted using <paramref name="format" /> and the current culture's formatting conventions. The "&lt;" and "&gt;" characters are used to begin and end the string, and the current culture's <see cref="System.Globalization.NumberFormatInfo.NumberGroupSeparator" /> property followed by a space is used to separate each element.</remarks>
-    public readonly string ToString([StringSyntax(StringSyntaxAttribute.NumericFormat)] string? format) => this.ToString(format, System.Globalization.CultureInfo.CurrentCulture);
+    public readonly string ToString([System.Diagnostics.CodeAnalysis.StringSyntax(System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.NumericFormat)] string? format) => this.ToString(format, System.Globalization.CultureInfo.CurrentCulture);
 
     /// <summary>Returns the string representation of the current instance using the specified format string to format individual elements and the specified format provider to define culture-specific formatting.</summary>
     /// <param name="format">A standard or custom numeric format string that defines the format of individual elements.</param>
     /// <param name="formatProvider">A format provider that supplies culture-specific formatting information.</param>
     /// <returns>The string representation of the current instance.</returns>
     /// <remarks>This method returns a string in which each element of the vector is formatted using <paramref name="format" /> and <paramref name="formatProvider" />. The "&lt;" and "&gt;" characters are used to begin and end the string, and the format provider's <see cref="System.Globalization.NumberFormatInfo.NumberGroupSeparator" /> property followed by a space is used to separate each element.</remarks>
-    public readonly string ToString([StringSyntax(StringSyntaxAttribute.NumericFormat)] string? format, IFormatProvider? formatProvider)
+    public readonly string ToString([System.Diagnostics.CodeAnalysis.StringSyntax(System.Diagnostics.CodeAnalysis.StringSyntaxAttribute.NumericFormat)] string? format, IFormatProvider? formatProvider)
     {
         var separator = System.Globalization.NumberFormatInfo.GetInstance(formatProvider).NumberGroupSeparator;
 

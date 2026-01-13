@@ -130,10 +130,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     public readonly bool IsIdentity
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (this.X == Vector4D.UnitX)
-               && (this.Y == Vector4D.UnitY)
-               && (this.Z == Vector4D.UnitZ)
-               && (this.W == Vector4D.UnitW);
+        get => (this.X == Vector4D.UnitX) && (this.Y == Vector4D.UnitY) && (this.Z == Vector4D.UnitZ) && (this.W == Vector4D.UnitW);
     }
 
     /// <summary>Gets or sets the translation component of this matrix.</summary>
@@ -202,33 +199,14 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
         {
             ref readonly var impl = ref this.AsROImpl();
 
-            switch (row)
+            return row switch
             {
-                case 0:
-                {
-                    return impl.X;
-                }
-
-                case 1:
-                {
-                    return impl.Y;
-                }
-
-                case 2:
-                {
-                    return impl.Z;
-                }
-
-                case 3:
-                {
-                    return impl.W;
-                }
-
-                default:
-                {
-                    throw new ArgumentOutOfRangeException(nameof(row));
-                }
-            }
+                0 => impl.X,
+                1 => impl.Y,
+                2 => impl.Z,
+                3 => impl.W,
+                _ => throw new ArgumentOutOfRangeException(nameof(row)),
+            };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -239,33 +217,23 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
             switch (row)
             {
                 case 0:
-                {
                     impl.X = value;
                     break;
-                }
 
                 case 1:
-                {
                     impl.Y = value;
                     break;
-                }
 
                 case 2:
-                {
                     impl.Z = value;
                     break;
-                }
 
                 case 3:
-                {
                     impl.W = value;
                     break;
-                }
 
                 default:
-                {
                     throw new ArgumentOutOfRangeException(nameof(row));
-                }
             }
         }
     }
@@ -286,33 +254,14 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
         {
             ref readonly var impl = ref this.AsROImpl();
 
-            switch (row)
+            return row switch
             {
-                case 0:
-                {
-                    return impl.X.GetElement(column);
-                }
-
-                case 1:
-                {
-                    return impl.Y.GetElement(column);
-                }
-
-                case 2:
-                {
-                    return impl.Z.GetElement(column);
-                }
-
-                case 3:
-                {
-                    return impl.W.GetElement(column);
-                }
-
-                default:
-                {
-                    throw new ArgumentOutOfRangeException(nameof(row));
-                }
-            }
+                0 => impl.X.GetElement(column),
+                1 => impl.Y.GetElement(column),
+                2 => impl.Z.GetElement(column),
+                3 => impl.W.GetElement(column),
+                _ => throw new ArgumentOutOfRangeException(nameof(row)),
+            };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -323,33 +272,23 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
             switch (row)
             {
                 case 0:
-                {
                     impl.X = impl.X.WithElement(column, value);
                     break;
-                }
 
                 case 1:
-                {
                     impl.Y = impl.Y.WithElement(column, value);
                     break;
-                }
 
                 case 2:
-                {
                     impl.Z = impl.Z.WithElement(column, value);
                     break;
-                }
 
                 case 3:
-                {
                     impl.W = impl.W.WithElement(column, value);
                     break;
-                }
 
                 default:
-                {
                     throw new ArgumentOutOfRangeException(nameof(row));
-                }
             }
         }
     }
@@ -360,8 +299,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <returns>The matrix that contains the summed values.</returns>
     /// <remarks>The <see cref="op_Addition" /> method defines the operation of the addition operator for <see cref="Matrix4x4D" /> objects.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D operator +(Matrix4x4D value1, Matrix4x4D value2)
-        => (value1.AsImpl() + value2.AsImpl()).AsM4x4D();
+    public static Matrix4x4D operator +(Matrix4x4D value1, Matrix4x4D value2) => (value1.AsImpl() + value2.AsImpl()).AsM4x4D();
 
     /// <summary>Returns a value that indicates whether the specified matrices are equal.</summary>
     /// <param name="value1">The first matrix to compare.</param>
@@ -369,58 +307,48 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <returns><see langword="true" /> if <paramref name="value1" /> and <paramref name="value2" /> are equal; otherwise, <see langword="false" />.</returns>
     /// <remarks>Two matrices are equal if all their corresponding elements are equal.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(Matrix4x4D value1, Matrix4x4D value2)
-        => value1.AsImpl() == value2.AsImpl();
+    public static bool operator ==(Matrix4x4D value1, Matrix4x4D value2) => value1.AsImpl() == value2.AsImpl();
 
     /// <summary>Returns a value that indicates whether the specified matrices are not equal.</summary>
     /// <param name="value1">The first matrix to compare.</param>
     /// <param name="value2">The second matrix to compare.</param>
     /// <returns><see langword="true" /> if <paramref name="value1" /> and <paramref name="value2" /> are not equal; otherwise, <see langword="false" />.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(Matrix4x4D value1, Matrix4x4D value2)
-        => value1.AsImpl() != value2.AsImpl();
+    public static bool operator !=(Matrix4x4D value1, Matrix4x4D value2) => value1.AsImpl() != value2.AsImpl();
 
     /// <summary>Multiplies two matrices together to compute the product.</summary>
     /// <param name="value1">The first matrix.</param>
     /// <param name="value2">The second matrix.</param>
     /// <returns>The product matrix.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D operator *(Matrix4x4D value1, Matrix4x4D value2) => Create(
-        Vector4D.Transform(value1.X, value2),
-        Vector4D.Transform(value1.Y, value2),
-        Vector4D.Transform(value1.Z, value2),
-        Vector4D.Transform(value1.W, value2));
+    public static Matrix4x4D operator *(Matrix4x4D value1, Matrix4x4D value2) => Create(Vector4D.Transform(value1.X, value2), Vector4D.Transform(value1.Y, value2), Vector4D.Transform(value1.Z, value2), Vector4D.Transform(value1.W, value2));
 
     /// <summary>Multiplies a matrix by a double to compute the product.</summary>
     /// <param name="value1">The matrix to scale.</param>
     /// <param name="value2">The scaling value to use.</param>
     /// <returns>The scaled matrix.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D operator *(Matrix4x4D value1, double value2)
-        => (value1.AsImpl() * value2).AsM4x4D();
+    public static Matrix4x4D operator *(Matrix4x4D value1, double value2) => (value1.AsImpl() * value2).AsM4x4D();
 
     /// <summary>Subtracts each element in a second matrix from its corresponding element in a first matrix.</summary>
     /// <param name="value1">The first matrix.</param>
     /// <param name="value2">The second matrix.</param>
     /// <returns>The matrix containing the values that result from subtracting each element in <paramref name="value2" /> from its corresponding element in <paramref name="value1" />.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D operator -(Matrix4x4D value1, Matrix4x4D value2)
-        => (value1.AsImpl() - value2.AsImpl()).AsM4x4D();
+    public static Matrix4x4D operator -(Matrix4x4D value1, Matrix4x4D value2) => (value1.AsImpl() - value2.AsImpl()).AsM4x4D();
 
     /// <summary>Negates the specified matrix by multiplying all its values by -1.</summary>
     /// <param name="value">The matrix to negate.</param>
     /// <returns>The negated matrix.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D operator -(Matrix4x4D value)
-        => (-value.AsImpl()).AsM4x4D();
+    public static Matrix4x4D operator -(Matrix4x4D value) => (-value.AsImpl()).AsM4x4D();
 
     /// <summary>Adds each element in one matrix with its corresponding element in a second matrix.</summary>
     /// <param name="value1">The first matrix.</param>
     /// <param name="value2">The second matrix.</param>
     /// <returns>The matrix that contains the summed values of <paramref name="value1" /> and <paramref name="value2" />.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D Add(Matrix4x4D value1, Matrix4x4D value2)
-        => (value1.AsImpl() + value2.AsImpl()).AsM4x4D();
+    public static Matrix4x4D Add(Matrix4x4D value1, Matrix4x4D value2) => (value1.AsImpl() + value2.AsImpl()).AsM4x4D();
 
     /// <summary>Creates a <see cref="Matrix4x4D" /> whose 16 elements are set to the specified value.</summary>
     /// <param name="value">The value to assign to all 16 elements.</param>
@@ -433,11 +361,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <returns>A <see cref="Matrix4x4D" /> that was initialized using the elements from <paramref name="value" />.</returns>
     /// <remarks>The last two elements of <see cref="X" />, <see cref="Y" />, and <see cref="W" /> are initialized to zero; while <see cref="Z" /> is initialized to <see cref="Vector4D.UnitZ" />.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D Create(Matrix3x2D value) => Create(
-        value.X.AsVector4D(),
-        value.Y.AsVector4D(),
-        Vector4D.UnitZ,
-        Vector4D.Create(value.Z, 0, 1));
+    public static Matrix4x4D Create(Matrix3x2D value) => Create(value.X.AsVector4D(), value.Y.AsVector4D(), Vector4D.UnitZ, Vector4D.Create(value.Z, 0, 1));
 
     /// <summary>Creates a <see cref="Matrix4x4D" /> whose 4 rows are set to the specified value.</summary>
     /// <param name="value">The value to assign to all 4 rows.</param>
@@ -483,12 +407,8 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="m44">The value to assign to <see cref="M44" />.</param>
     /// <returns>A <see cref="Matrix4x4D" /> whose elements are set to the specified values.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D Create(double m11, double m12, double m13, double m14, double m21, double m22, double m23, double m24, double m31, double m32, double m33, double m34, double m41, double m42, double m43, double m44)
-        => Create(
-            Vector4D.Create(m11, m12, m13, m14),
-            Vector4D.Create(m21, m22, m23, m24),
-            Vector4D.Create(m31, m32, m33, m34),
-            Vector4D.Create(m41, m42, m43, m44));
+    public static Matrix4x4D Create(double m11, double m12, double m13, double m14, double m21, double m22, double m23, double m24, double m31, double m32, double m33, double m34, double m41, double m42, double m43, double m44) =>
+        Create(Vector4D.Create(m11, m12, m13, m14), Vector4D.Create(m21, m22, m23, m24), Vector4D.Create(m31, m32, m33, m34), Vector4D.Create(m41, m42, m43, m44));
 
     /// <summary>Creates a right-handed spherical billboard matrix that rotates around a specified object position.</summary>
     /// <param name="objectPosition">The position of the object that the billboard will rotate around.</param>
@@ -496,8 +416,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="cameraUpVector">The up vector of the camera.</param>
     /// <param name="cameraForwardVector">The forward vector of the camera.</param>
     /// <returns>The created billboard.</returns>
-    public static Matrix4x4D CreateBillboard(Vector3D objectPosition, Vector3D cameraPosition, Vector3D cameraUpVector, Vector3D cameraForwardVector)
-        => Impl.CreateBillboard(in objectPosition, in cameraPosition, in cameraUpVector, in cameraForwardVector).AsM4x4D();
+    public static Matrix4x4D CreateBillboard(Vector3D objectPosition, Vector3D cameraPosition, Vector3D cameraUpVector, Vector3D cameraForwardVector) => Impl.CreateBillboard(in objectPosition, in cameraPosition, in cameraUpVector, in cameraForwardVector).AsM4x4D();
 
     /// <summary>Creates a left-handed spherical billboard matrix that rotates around a specified object position.</summary>
     /// <param name="objectPosition">The position of the object that the billboard will rotate around.</param>
@@ -505,8 +424,8 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="cameraUpVector">The up vector of the camera.</param>
     /// <param name="cameraForwardVector">The forward vector of the camera.</param>
     /// <returns>The created billboard.</returns>
-    public static Matrix4x4D CreateBillboardLeftHanded(Vector3D objectPosition, Vector3D cameraPosition, Vector3D cameraUpVector, Vector3D cameraForwardVector)
-        => Impl.CreateBillboardLeftHanded(in objectPosition, in cameraPosition, in cameraUpVector, in cameraForwardVector).AsM4x4D();
+    public static Matrix4x4D CreateBillboardLeftHanded(Vector3D objectPosition, Vector3D cameraPosition, Vector3D cameraUpVector, Vector3D cameraForwardVector) =>
+        Impl.CreateBillboardLeftHanded(in objectPosition, in cameraPosition, in cameraUpVector, in cameraForwardVector).AsM4x4D();
 
     /// <summary>Creates a right-handed cylindrical billboard matrix that rotates around a specified axis.</summary>
     /// <param name="objectPosition">The position of the object that the billboard will rotate around.</param>
@@ -515,8 +434,8 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="cameraForwardVector">The forward vector of the camera.</param>
     /// <param name="objectForwardVector">The forward vector of the object.</param>
     /// <returns>The billboard matrix.</returns>
-    public static Matrix4x4D CreateConstrainedBillboard(Vector3D objectPosition, Vector3D cameraPosition, Vector3D rotateAxis, Vector3D cameraForwardVector, Vector3D objectForwardVector)
-        => Impl.CreateConstrainedBillboard(in objectPosition, in cameraPosition, in rotateAxis, in cameraForwardVector, in objectForwardVector).AsM4x4D();
+    public static Matrix4x4D CreateConstrainedBillboard(Vector3D objectPosition, Vector3D cameraPosition, Vector3D rotateAxis, Vector3D cameraForwardVector, Vector3D objectForwardVector) =>
+        Impl.CreateConstrainedBillboard(in objectPosition, in cameraPosition, in rotateAxis, in cameraForwardVector, in objectForwardVector).AsM4x4D();
 
     /// <summary>Creates a left-handed cylindrical billboard matrix that rotates around a specified axis.</summary>
     /// <param name="objectPosition">The position of the object that the billboard will rotate around.</param>
@@ -525,29 +444,26 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="cameraForwardVector">The forward vector of the camera.</param>
     /// <param name="objectForwardVector">The forward vector of the object.</param>
     /// <returns>The billboard matrix.</returns>
-    public static Matrix4x4D CreateConstrainedBillboardLeftHanded(Vector3D objectPosition, Vector3D cameraPosition, Vector3D rotateAxis, Vector3D cameraForwardVector, Vector3D objectForwardVector)
-        => Impl.CreateConstrainedBillboardLeftHanded(in objectPosition, in cameraPosition, in rotateAxis, in cameraForwardVector, in objectForwardVector).AsM4x4D();
+    public static Matrix4x4D CreateConstrainedBillboardLeftHanded(Vector3D objectPosition, Vector3D cameraPosition, Vector3D rotateAxis, Vector3D cameraForwardVector, Vector3D objectForwardVector) =>
+        Impl.CreateConstrainedBillboardLeftHanded(in objectPosition, in cameraPosition, in rotateAxis, in cameraForwardVector, in objectForwardVector).AsM4x4D();
 
     /// <summary>Creates a matrix that rotates around an arbitrary vector.</summary>
     /// <param name="axis">The axis to rotate around.</param>
     /// <param name="angle">The angle to rotate around <paramref name="axis" />, in radians.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateFromAxisAngle(Vector3D axis, double angle)
-        => Impl.CreateFromAxisAngle(in axis, angle).AsM4x4D();
+    public static Matrix4x4D CreateFromAxisAngle(Vector3D axis, double angle) => Impl.CreateFromAxisAngle(in axis, angle).AsM4x4D();
 
     /// <summary>Creates a rotation matrix from the specified Quaternion rotation value.</summary>
     /// <param name="quaternion">The source Quaternion.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateFromQuaternion(QuaternionD quaternion)
-        => Impl.CreateFromQuaternion(in quaternion).AsM4x4D();
+    public static Matrix4x4D CreateFromQuaternion(QuaternionD quaternion) => Impl.CreateFromQuaternion(in quaternion).AsM4x4D();
 
     /// <summary>Creates a rotation matrix from the specified yaw, pitch, and roll.</summary>
     /// <param name="yaw">The angle of rotation, in radians, around the Y axis.</param>
     /// <param name="pitch">The angle of rotation, in radians, around the X axis.</param>
     /// <param name="roll">The angle of rotation, in radians, around the Z axis.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateFromYawPitchRoll(double yaw, double pitch, double roll)
-        => Impl.CreateFromYawPitchRoll(yaw, pitch, roll).AsM4x4D();
+    public static Matrix4x4D CreateFromYawPitchRoll(double yaw, double pitch, double roll) => Impl.CreateFromYawPitchRoll(yaw, pitch, roll).AsM4x4D();
 
     /// <summary>Creates a right-handed view matrix.</summary>
     /// <param name="cameraPosition">The position of the camera.</param>
@@ -576,16 +492,14 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="cameraDirection">The direction in which the camera is pointing.</param>
     /// <param name="cameraUpVector">The direction that is "up" from the camera's point of view.</param>
     /// <returns>The right-handed view matrix.</returns>
-    public static Matrix4x4D CreateLookTo(Vector3D cameraPosition, Vector3D cameraDirection, Vector3D cameraUpVector)
-        => Impl.CreateLookTo(in cameraPosition, in cameraDirection, in cameraUpVector).AsM4x4D();
+    public static Matrix4x4D CreateLookTo(Vector3D cameraPosition, Vector3D cameraDirection, Vector3D cameraUpVector) => Impl.CreateLookTo(in cameraPosition, in cameraDirection, in cameraUpVector).AsM4x4D();
 
     /// <summary>Creates a left-handed view matrix.</summary>
     /// <param name="cameraPosition">The position of the camera.</param>
     /// <param name="cameraDirection">The direction in which the camera is pointing.</param>
     /// <param name="cameraUpVector">The direction that is "up" from the camera's point of view.</param>
     /// <returns>The left-handed view matrix.</returns>
-    public static Matrix4x4D CreateLookToLeftHanded(Vector3D cameraPosition, Vector3D cameraDirection, Vector3D cameraUpVector)
-        => Impl.CreateLookToLeftHanded(in cameraPosition, in cameraDirection, in cameraUpVector).AsM4x4D();
+    public static Matrix4x4D CreateLookToLeftHanded(Vector3D cameraPosition, Vector3D cameraDirection, Vector3D cameraUpVector) => Impl.CreateLookToLeftHanded(in cameraPosition, in cameraDirection, in cameraUpVector).AsM4x4D();
 
     /// <summary>Creates a right-handed orthographic perspective matrix from the given view volume dimensions.</summary>
     /// <param name="width">The width of the view volume.</param>
@@ -593,8 +507,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="zNearPlane">The minimum Z-value of the view volume.</param>
     /// <param name="zFarPlane">The maximum Z-value of the view volume.</param>
     /// <returns>The right-handed orthographic projection matrix.</returns>
-    public static Matrix4x4D CreateOrthographic(double width, double height, double zNearPlane, double zFarPlane)
-        => Impl.CreateOrthographic(width, height, zNearPlane, zFarPlane).AsM4x4D();
+    public static Matrix4x4D CreateOrthographic(double width, double height, double zNearPlane, double zFarPlane) => Impl.CreateOrthographic(width, height, zNearPlane, zFarPlane).AsM4x4D();
 
     /// <summary>Creates a left-handed orthographic perspective matrix from the given view volume dimensions.</summary>
     /// <param name="width">The width of the view volume.</param>
@@ -602,8 +515,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="zNearPlane">The minimum Z-value of the view volume.</param>
     /// <param name="zFarPlane">The maximum Z-value of the view volume.</param>
     /// <returns>The left-handed orthographic projection matrix.</returns>
-    public static Matrix4x4D CreateOrthographicLeftHanded(double width, double height, double zNearPlane, double zFarPlane)
-        => Impl.CreateOrthographicLeftHanded(width, height, zNearPlane, zFarPlane).AsM4x4D();
+    public static Matrix4x4D CreateOrthographicLeftHanded(double width, double height, double zNearPlane, double zFarPlane) => Impl.CreateOrthographicLeftHanded(width, height, zNearPlane, zFarPlane).AsM4x4D();
 
     /// <summary>Creates a right-handed customized orthographic projection matrix.</summary>
     /// <param name="left">The minimum X-value of the view volume.</param>
@@ -613,8 +525,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="zNearPlane">The minimum Z-value of the view volume.</param>
     /// <param name="zFarPlane">The maximum Z-value of the view volume.</param>
     /// <returns>The right-handed orthographic projection matrix.</returns>
-    public static Matrix4x4D CreateOrthographicOffCenter(double left, double right, double bottom, double top, double zNearPlane, double zFarPlane)
-        => Impl.CreateOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane).AsM4x4D();
+    public static Matrix4x4D CreateOrthographicOffCenter(double left, double right, double bottom, double top, double zNearPlane, double zFarPlane) => Impl.CreateOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane).AsM4x4D();
 
     /// <summary>Creates a left-handed customized orthographic projection matrix.</summary>
     /// <param name="left">The minimum X-value of the view volume.</param>
@@ -624,8 +535,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="zNearPlane">The minimum Z-value of the view volume.</param>
     /// <param name="zFarPlane">The maximum Z-value of the view volume.</param>
     /// <returns>The left-handed orthographic projection matrix.</returns>
-    public static Matrix4x4D CreateOrthographicOffCenterLeftHanded(double left, double right, double bottom, double top, double zNearPlane, double zFarPlane)
-        => Impl.CreateOrthographicOffCenterLeftHanded(left, right, bottom, top, zNearPlane, zFarPlane).AsM4x4D();
+    public static Matrix4x4D CreateOrthographicOffCenterLeftHanded(double left, double right, double bottom, double top, double zNearPlane, double zFarPlane) => Impl.CreateOrthographicOffCenterLeftHanded(left, right, bottom, top, zNearPlane, zFarPlane).AsM4x4D();
 
     /// <summary>Creates a right-handed perspective projection matrix from the given view volume dimensions.</summary>
     /// <param name="width">The width of the view volume at the near view plane.</param>
@@ -638,8 +548,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <paramref name="farPlaneDistance" /> is less than or equal to zero.
     /// -or-
     /// <paramref name="nearPlaneDistance" /> is greater than or equal to <paramref name="farPlaneDistance" />.</exception>
-    public static Matrix4x4D CreatePerspective(double width, double height, double nearPlaneDistance, double farPlaneDistance)
-        => Impl.CreatePerspective(width, height, nearPlaneDistance, farPlaneDistance).AsM4x4D();
+    public static Matrix4x4D CreatePerspective(double width, double height, double nearPlaneDistance, double farPlaneDistance) => Impl.CreatePerspective(width, height, nearPlaneDistance, farPlaneDistance).AsM4x4D();
 
     /// <summary>Creates a left-handed perspective projection matrix from the given view volume dimensions.</summary>
     /// <param name="width">The width of the view volume at the near view plane.</param>
@@ -652,8 +561,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <paramref name="farPlaneDistance" /> is less than or equal to zero.
     /// -or-
     /// <paramref name="nearPlaneDistance" /> is greater than or equal to <paramref name="farPlaneDistance" />.</exception>
-    public static Matrix4x4D CreatePerspectiveLeftHanded(double width, double height, double nearPlaneDistance, double farPlaneDistance)
-        => Impl.CreatePerspectiveLeftHanded(width, height, nearPlaneDistance, farPlaneDistance).AsM4x4D();
+    public static Matrix4x4D CreatePerspectiveLeftHanded(double width, double height, double nearPlaneDistance, double farPlaneDistance) => Impl.CreatePerspectiveLeftHanded(width, height, nearPlaneDistance, farPlaneDistance).AsM4x4D();
 
     /// <summary>Creates a right-handed perspective projection matrix based on a field of view, aspect ratio, and near and far view plane distances.</summary>
     /// <param name="fieldOfView">The field of view in the y direction, in radians.</param>
@@ -669,8 +577,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <paramref name="farPlaneDistance" /> is less than or equal to zero.
     /// -or-
     /// <paramref name="nearPlaneDistance" /> is greater than or equal to <paramref name="farPlaneDistance" />.</exception>
-    public static Matrix4x4D CreatePerspectiveFieldOfView(double fieldOfView, double aspectRatio, double nearPlaneDistance, double farPlaneDistance)
-        => Impl.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance).AsM4x4D();
+    public static Matrix4x4D CreatePerspectiveFieldOfView(double fieldOfView, double aspectRatio, double nearPlaneDistance, double farPlaneDistance) => Impl.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance).AsM4x4D();
 
     /// <summary>Creates a left-handed perspective projection matrix based on a field of view, aspect ratio, and near and far view plane distances.</summary>
     /// <param name="fieldOfView">The field of view in the y direction, in radians.</param>
@@ -686,8 +593,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <paramref name="farPlaneDistance" /> is less than or equal to zero.
     /// -or-
     /// <paramref name="nearPlaneDistance" /> is greater than or equal to <paramref name="farPlaneDistance" />.</exception>
-    public static Matrix4x4D CreatePerspectiveFieldOfViewLeftHanded(double fieldOfView, double aspectRatio, double nearPlaneDistance, double farPlaneDistance)
-        => Impl.CreatePerspectiveFieldOfViewLeftHanded(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance).AsM4x4D();
+    public static Matrix4x4D CreatePerspectiveFieldOfViewLeftHanded(double fieldOfView, double aspectRatio, double nearPlaneDistance, double farPlaneDistance) => Impl.CreatePerspectiveFieldOfViewLeftHanded(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance).AsM4x4D();
 
     /// <summary>Creates a right-handed customized perspective projection matrix.</summary>
     /// <param name="left">The minimum x-value of the view volume at the near view plane.</param>
@@ -702,8 +608,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <paramref name="farPlaneDistance" /> is less than or equal to zero.
     /// -or-
     /// <paramref name="nearPlaneDistance" /> is greater than or equal to <paramref name="farPlaneDistance" />.</exception>
-    public static Matrix4x4D CreatePerspectiveOffCenter(double left, double right, double bottom, double top, double nearPlaneDistance, double farPlaneDistance)
-        => Impl.CreatePerspectiveOffCenter(left, right, bottom, top, nearPlaneDistance, farPlaneDistance).AsM4x4D();
+    public static Matrix4x4D CreatePerspectiveOffCenter(double left, double right, double bottom, double top, double nearPlaneDistance, double farPlaneDistance) => Impl.CreatePerspectiveOffCenter(left, right, bottom, top, nearPlaneDistance, farPlaneDistance).AsM4x4D();
 
     /// <summary>Creates a left-handed customized perspective projection matrix.</summary>
     /// <param name="left">The minimum x-value of the view volume at the near view plane.</param>
@@ -724,55 +629,47 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <summary>Creates a matrix that reflects the coordinate system about a specified plane.</summary>
     /// <param name="value">The plane about which to create a reflection.</param>
     /// <returns>A new matrix expressing the reflection.</returns>
-    public static Matrix4x4D CreateReflection(PlaneD value)
-        => Impl.CreateReflection(in value).AsM4x4D();
+    public static Matrix4x4D CreateReflection(PlaneD value) => Impl.CreateReflection(in value).AsM4x4D();
 
     /// <summary>Creates a matrix for rotating points around the X axis.</summary>
     /// <param name="radians">The amount, in radians, by which to rotate around the X axis.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateRotationX(double radians)
-        => Impl.CreateRotationX(radians).AsM4x4D();
+    public static Matrix4x4D CreateRotationX(double radians) => Impl.CreateRotationX(radians).AsM4x4D();
 
     /// <summary>Creates a matrix for rotating points around the X axis from a center point.</summary>
     /// <param name="radians">The amount, in radians, by which to rotate around the X axis.</param>
     /// <param name="centerPoint">The center point.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateRotationX(double radians, Vector3D centerPoint)
-        => Impl.CreateRotationX(radians, in centerPoint).AsM4x4D();
+    public static Matrix4x4D CreateRotationX(double radians, Vector3D centerPoint) => Impl.CreateRotationX(radians, in centerPoint).AsM4x4D();
 
     /// <summary>Creates a matrix for rotating points around the Y axis.</summary>
     /// <param name="radians">The amount, in radians, by which to rotate around the Y-axis.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateRotationY(double radians)
-        => Impl.CreateRotationY(radians).AsM4x4D();
+    public static Matrix4x4D CreateRotationY(double radians) => Impl.CreateRotationY(radians).AsM4x4D();
 
     /// <summary>The amount, in radians, by which to rotate around the Y axis from a center point.</summary>
     /// <param name="radians">The amount, in radians, by which to rotate around the Y-axis.</param>
     /// <param name="centerPoint">The center point.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateRotationY(double radians, Vector3D centerPoint)
-        => Impl.CreateRotationY(radians, in centerPoint).AsM4x4D();
+    public static Matrix4x4D CreateRotationY(double radians, Vector3D centerPoint) => Impl.CreateRotationY(radians, in centerPoint).AsM4x4D();
 
     /// <summary>Creates a matrix for rotating points around the Z axis.</summary>
     /// <param name="radians">The amount, in radians, by which to rotate around the Z-axis.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateRotationZ(double radians)
-        => Impl.CreateRotationZ(radians).AsM4x4D();
+    public static Matrix4x4D CreateRotationZ(double radians) => Impl.CreateRotationZ(radians).AsM4x4D();
 
     /// <summary>Creates a matrix for rotating points around the Z axis from a center point.</summary>
     /// <param name="radians">The amount, in radians, by which to rotate around the Z-axis.</param>
     /// <param name="centerPoint">The center point.</param>
     /// <returns>The rotation matrix.</returns>
-    public static Matrix4x4D CreateRotationZ(double radians, Vector3D centerPoint)
-        => Impl.CreateRotationZ(radians, in centerPoint).AsM4x4D();
+    public static Matrix4x4D CreateRotationZ(double radians, Vector3D centerPoint) => Impl.CreateRotationZ(radians, in centerPoint).AsM4x4D();
 
     /// <summary>Creates a scaling matrix from the specified X, Y, and Z components.</summary>
     /// <param name="xScale">The value to scale by on the X axis.</param>
     /// <param name="yScale">The value to scale by on the Y axis.</param>
     /// <param name="zScale">The value to scale by on the Z axis.</param>
     /// <returns>The scaling matrix.</returns>
-    public static Matrix4x4D CreateScale(double xScale, double yScale, double zScale)
-        => Impl.CreateScale(xScale, yScale, zScale).AsM4x4D();
+    public static Matrix4x4D CreateScale(double xScale, double yScale, double zScale) => Impl.CreateScale(xScale, yScale, zScale).AsM4x4D();
 
     /// <summary>Creates a scaling matrix that is offset by a given center point.</summary>
     /// <param name="xScale">The value to scale by on the X axis.</param>
@@ -780,55 +677,47 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="zScale">The value to scale by on the Z axis.</param>
     /// <param name="centerPoint">The center point.</param>
     /// <returns>The scaling matrix.</returns>
-    public static Matrix4x4D CreateScale(double xScale, double yScale, double zScale, Vector3D centerPoint)
-        => Impl.CreateScale(xScale, yScale, zScale, in centerPoint).AsM4x4D();
+    public static Matrix4x4D CreateScale(double xScale, double yScale, double zScale, Vector3D centerPoint) => Impl.CreateScale(xScale, yScale, zScale, in centerPoint).AsM4x4D();
 
     /// <summary>Creates a scaling matrix from the specified vector scale.</summary>
     /// <param name="scales">The scale to use.</param>
     /// <returns>The scaling matrix.</returns>
-    public static Matrix4x4D CreateScale(Vector3D scales)
-        => Impl.CreateScale(in scales).AsM4x4D();
+    public static Matrix4x4D CreateScale(Vector3D scales) => Impl.CreateScale(in scales).AsM4x4D();
 
     /// <summary>Creates a scaling matrix with a center point.</summary>
     /// <param name="scales">The vector that contains the amount to scale on each axis.</param>
     /// <param name="centerPoint">The center point.</param>
     /// <returns>The scaling matrix.</returns>
-    public static Matrix4x4D CreateScale(Vector3D scales, Vector3D centerPoint)
-        => Impl.CreateScale(scales, in centerPoint).AsM4x4D();
+    public static Matrix4x4D CreateScale(Vector3D scales, Vector3D centerPoint) => Impl.CreateScale(scales, in centerPoint).AsM4x4D();
 
     /// <summary>Creates a uniform scaling matrix that scale equally on each axis.</summary>
     /// <param name="scale">The uniform scaling factor.</param>
     /// <returns>The scaling matrix.</returns>
-    public static Matrix4x4D CreateScale(double scale)
-        => Impl.CreateScale(scale).AsM4x4D();
+    public static Matrix4x4D CreateScale(double scale) => Impl.CreateScale(scale).AsM4x4D();
 
     /// <summary>Creates a uniform scaling matrix that scales equally on each axis with a center point.</summary>
     /// <param name="scale">The uniform scaling factor.</param>
     /// <param name="centerPoint">The center point.</param>
     /// <returns>The scaling matrix.</returns>
-    public static Matrix4x4D CreateScale(double scale, Vector3D centerPoint)
-        => Impl.CreateScale(scale, in centerPoint).AsM4x4D();
+    public static Matrix4x4D CreateScale(double scale, Vector3D centerPoint) => Impl.CreateScale(scale, in centerPoint).AsM4x4D();
 
     /// <summary>Creates a matrix that flattens geometry into a specified plane as if casting a shadow from a specified light source.</summary>
     /// <param name="lightDirection">The direction from which the light that will cast the shadow is coming.</param>
     /// <param name="plane">The plane onto which the new matrix should flatten geometry as to cast a shadow.</param>
     /// <returns>A new matrix that can be used to flatten geometry onto the specified plane from the specified direction.</returns>
-    public static Matrix4x4D CreateShadow(Vector3D lightDirection, PlaneD plane)
-        => Impl.CreateShadow(in lightDirection, in plane).AsM4x4D();
+    public static Matrix4x4D CreateShadow(Vector3D lightDirection, PlaneD plane) => Impl.CreateShadow(in lightDirection, in plane).AsM4x4D();
 
     /// <summary>Creates a translation matrix from the specified 3-dimensional vector.</summary>
     /// <param name="position">The amount to translate in each axis.</param>
     /// <returns>The translation matrix.</returns>
-    public static Matrix4x4D CreateTranslation(Vector3D position)
-        => Impl.CreateTranslation(in position).AsM4x4D();
+    public static Matrix4x4D CreateTranslation(Vector3D position) => Impl.CreateTranslation(in position).AsM4x4D();
 
     /// <summary>Creates a translation matrix from the specified X, Y, and Z components.</summary>
     /// <param name="xPosition">The amount to translate on the X axis.</param>
     /// <param name="yPosition">The amount to translate on the Y axis.</param>
     /// <param name="zPosition">The amount to translate on the Z axis.</param>
     /// <returns>The translation matrix.</returns>
-    public static Matrix4x4D CreateTranslation(double xPosition, double yPosition, double zPosition)
-        => Impl.CreateTranslation(xPosition, yPosition, zPosition).AsM4x4D();
+    public static Matrix4x4D CreateTranslation(double xPosition, double yPosition, double zPosition) => Impl.CreateTranslation(xPosition, yPosition, zPosition).AsM4x4D();
 
     /// <summary>Creates a right-handed viewport matrix from the specified parameters.</summary>
     /// <param name="x">X coordinate of the viewport upper left corner.</param>
@@ -838,8 +727,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="minDepth">Viewport minimum depth.</param>
     /// <param name="maxDepth">Viewport maximum depth.</param>
     /// <returns>The right-handed viewport matrix.</returns>
-    public static Matrix4x4D CreateViewport(double x, double y, double width, double height, double minDepth, double maxDepth)
-        => Impl.CreateViewport(x, y, width, height, minDepth, maxDepth).AsM4x4D();
+    public static Matrix4x4D CreateViewport(double x, double y, double width, double height, double minDepth, double maxDepth) => Impl.CreateViewport(x, y, width, height, minDepth, maxDepth).AsM4x4D();
 
     /// <summary>Creates a left-handed viewport matrix from the specified parameters.</summary>
     /// <param name="x">X coordinate of the viewport upper left corner.</param>
@@ -849,8 +737,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="minDepth">Viewport minimum depth.</param>
     /// <param name="maxDepth">Viewport maximum depth.</param>
     /// <returns>The left-handed viewport matrix.</returns>
-    public static Matrix4x4D CreateViewportLeftHanded(double x, double y, double width, double height, double minDepth, double maxDepth)
-        => Impl.CreateViewportLeftHanded(x, y, width, height, minDepth, maxDepth).AsM4x4D();
+    public static Matrix4x4D CreateViewportLeftHanded(double x, double y, double width, double height, double minDepth, double maxDepth) => Impl.CreateViewportLeftHanded(x, y, width, height, minDepth, maxDepth).AsM4x4D();
 
     /// <summary>Creates a world matrix with the specified parameters.</summary>
     /// <param name="position">The position of the object.</param>
@@ -858,8 +745,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="up">The upward direction of the object. Its value is usually <c>[0, 1, 0]</c>.</param>
     /// <returns>The world matrix.</returns>
     /// <remarks><paramref name="position" /> is used in translation operations.</remarks>
-    public static Matrix4x4D CreateWorld(Vector3D position, Vector3D forward, Vector3D up)
-        => Impl.CreateWorld(in position, in forward, in up).AsM4x4D();
+    public static Matrix4x4D CreateWorld(Vector3D position, Vector3D forward, Vector3D up) => Impl.CreateWorld(in position, in forward, in up).AsM4x4D();
 
     /// <summary>Attempts to extract the scale, translation, and rotation components from the given scale, rotation, or translation matrix. The return value indicates whether the operation succeeded.</summary>
     /// <param name="matrix">The source matrix.</param>
@@ -867,8 +753,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="rotation">When this method returns, contains the rotation component of the transformation matrix if the operation succeeded.</param>
     /// <param name="translation">When the method returns, contains the translation component of the transformation matrix if the operation succeeded.</param>
     /// <returns><see langword="true" /> if <paramref name="matrix" /> was decomposed successfully; otherwise,  <see langword="false" />.</returns>
-    public static bool Decompose(Matrix4x4D matrix, out Vector3D scale, out QuaternionD rotation, out Vector3D translation)
-        => Impl.Decompose(in matrix.AsImpl(), out scale, out rotation, out translation);
+    public static bool Decompose(Matrix4x4D matrix, out Vector3D scale, out QuaternionD rotation, out Vector3D translation) => Impl.Decompose(in matrix.AsImpl(), out scale, out rotation, out translation);
 
     /// <summary>Tries to invert the specified matrix. The return value indicates whether the operation succeeded.</summary>
     /// <param name="matrix">The matrix to invert.</param>
@@ -886,8 +771,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="amount">The relative weighting of <paramref name="matrix2" />.</param>
     /// <returns>The interpolated matrix.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D Lerp(Matrix4x4D matrix1, Matrix4x4D matrix2, double amount)
-        => Impl.Lerp(in matrix1.AsImpl(), in matrix2.AsImpl(), amount).AsM4x4D();
+    public static Matrix4x4D Lerp(Matrix4x4D matrix1, Matrix4x4D matrix2, double amount) => Impl.Lerp(in matrix1.AsImpl(), in matrix2.AsImpl(), amount).AsM4x4D();
 
     /// <summary>Multiplies two matrices together to compute the product.</summary>
     /// <param name="value1">The first matrix.</param>
@@ -900,56 +784,48 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="value2">The scaling value to use.</param>
     /// <returns>The scaled matrix.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D Multiply(Matrix4x4D value1, double value2)
-        => (value1.AsImpl() * value2).AsM4x4D();
+    public static Matrix4x4D Multiply(Matrix4x4D value1, double value2) => (value1.AsImpl() * value2).AsM4x4D();
 
     /// <summary>Negates the specified matrix by multiplying all its values by -1.</summary>
     /// <param name="value">The matrix to negate.</param>
     /// <returns>The negated matrix.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D Negate(Matrix4x4D value)
-        => (-value.AsImpl()).AsM4x4D();
+    public static Matrix4x4D Negate(Matrix4x4D value) => (-value.AsImpl()).AsM4x4D();
 
     /// <summary>Subtracts each element in a second matrix from its corresponding element in a first matrix.</summary>
     /// <param name="value1">The first matrix.</param>
     /// <param name="value2">The second matrix.</param>
     /// <returns>The matrix containing the values that result from subtracting each element in <paramref name="value2" /> from its corresponding element in <paramref name="value1" />.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Matrix4x4D Subtract(Matrix4x4D value1, Matrix4x4D value2)
-        => (value1.AsImpl() - value2.AsImpl()).AsM4x4D();
+    public static Matrix4x4D Subtract(Matrix4x4D value1, Matrix4x4D value2) => (value1.AsImpl() - value2.AsImpl()).AsM4x4D();
 
     /// <summary>Transforms the specified matrix by applying the specified Quaternion rotation.</summary>
     /// <param name="value">The matrix to transform.</param>
     /// <param name="rotation">The rotation t apply.</param>
     /// <returns>The transformed matrix.</returns>
-    public static Matrix4x4D Transform(Matrix4x4D value, QuaternionD rotation)
-        => Impl.Transform(in value.AsImpl(), in rotation).AsM4x4D();
+    public static Matrix4x4D Transform(Matrix4x4D value, QuaternionD rotation) => Impl.Transform(in value.AsImpl(), in rotation).AsM4x4D();
 
     /// <summary>Transposes the rows and columns of a matrix.</summary>
     /// <param name="matrix">The matrix to transpose.</param>
     /// <returns>The transposed matrix.</returns>
-    public static Matrix4x4D Transpose(Matrix4x4D matrix)
-        => Impl.Transpose(in matrix.AsImpl()).AsM4x4D();
+    public static Matrix4x4D Transpose(Matrix4x4D matrix) => Impl.Transpose(in matrix.AsImpl()).AsM4x4D();
 
     /// <summary>Returns a value that indicates whether this instance and a specified object are equal.</summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns><see langword="true" /> if the current instance and <paramref name="obj" /> are equal; otherwise, <see langword="false" />. If <paramref name="obj" /> is <see langword="null" />, the method returns <see langword="false" />.</returns>
     /// <remarks>The current instance and <paramref name="obj" /> are equal if <paramref name="obj" /> is a <see cref="Matrix4x4D" /> object and the corresponding elements of each matrix are equal.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj)
-        => this.AsROImpl().Equals(obj);
+    public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => this.AsROImpl().Equals(obj);
 
     /// <summary>Returns a value that indicates whether this instance and another 4x4 matrix are equal.</summary>
     /// <param name="other">The other matrix.</param>
     /// <returns><see langword="true" /> if the two matrices are equal; otherwise, <see langword="false" />.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly bool Equals(Matrix4x4D other)
-        => this.AsROImpl().Equals(in other.AsImpl());
+    public readonly bool Equals(Matrix4x4D other) => this.AsROImpl().Equals(in other.AsImpl());
 
     /// <summary>Calculates the determinant of the current 4x4 matrix.</summary>
     /// <returns>The determinant.</returns>
-    public readonly double GetDeterminant()
-        => this.AsROImpl().GetDeterminant();
+    public readonly double GetDeterminant() => this.AsROImpl().GetDeterminant();
 
     /// <summary>Gets the element at the specified row and column.</summary>
     /// <param name="row">The index of the row containing the element to get.</param>
@@ -973,14 +849,13 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>The hash code.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override readonly int GetHashCode()
-        => this.AsROImpl().GetHashCode();
+    public override readonly int GetHashCode() => this.AsROImpl().GetHashCode();
 
     /// <summary>Returns a string that represents this matrix.</summary>
     /// <returns>The string representation of this matrix.</returns>
     /// <remarks>The numeric values in the returned string are formatted by using the conventions of the current culture. For example, for the en-US culture, the returned string might appear as <c>{ {M11:1.1 M12:1.2 M13:1.3 M14:1.4} {M21:2.1 M22:2.2 M23:2.3 M24:2.4} {M31:3.1 M32:3.2 M33:3.3 M34:3.4} {M41:4.1 M42:4.2 M43:4.3 M44:4.4} }</c>.</remarks>
-    public override readonly string ToString()
-        => $"{{ {{M11:{this.M11} M12:{this.M12} M13:{this.M13} M14:{this.M14}}} {{M21:{this.M21} M22:{this.M22} M23:{this.M23} M24:{this.M24}}} {{M31:{this.M31} M32:{this.M32} M33:{this.M33} M34:{this.M34}}} {{M41:{this.M41} M42:{this.M42} M43:{this.M43} M44:{this.M44}}} }}";
+    public override readonly string ToString() =>
+        $"{{ {{M11:{this.M11} M12:{this.M12} M13:{this.M13} M14:{this.M14}}} {{M21:{this.M21} M22:{this.M22} M23:{this.M23} M24:{this.M24}}} {{M31:{this.M31} M32:{this.M32} M33:{this.M33} M34:{this.M34}}} {{M41:{this.M41} M42:{this.M42} M43:{this.M43} M44:{this.M44}}} }}";
 
     /// <summary>Creates a new <see cref="Matrix4x4D"/> with the element at the specified row and column set to the given value and the remaining elements set to the same value as that in the current matrix.</summary>
     /// <param name="row">The index of the row containing the element to replace.</param>

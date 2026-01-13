@@ -18,5 +18,9 @@
   <ItemGroup>
     <Using Include="CommunityToolkit.HighPerformance" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Numerics\Numerics.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -34,6 +34,9 @@ public static class Vector64Extensions
 
 #pragma warning disable SA1101
     extension<T>(in Vector64<T> vector)
+#if !NET8_0_OR_GREATER
+        where T : struct
+#endif
     {
        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private T GetElementUnsafe(int index)

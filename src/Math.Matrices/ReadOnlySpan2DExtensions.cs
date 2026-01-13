@@ -248,8 +248,8 @@ public static class ReadOnlySpan2DExtensions
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.
         /// </summary>
-        /// <param name="value">An instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
         /// <param name="scale">A value to scale the matrix by.</param>
+        /// <param name="value">An instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
         /// <seealso cref="ReadOnlySpan2DExtensions.Scale{T}(ReadOnlySpan2D{T},T)"/>
         public static ReadOnlySpan2D<T> operator *(T scale, ReadOnlySpan2D<T> value) => value * scale;
@@ -369,7 +369,7 @@ public static class ReadOnlySpan2DExtensions
         public T GetDeterminant() =>
             matrix switch
             {
-                { Height: var h, Width: var w } when h != w =>throw new NotSupportedException(),
+                { Height: var h, Width: var w } when h != w => throw new NotSupportedException(),
                 { Height: 0 } => T.Zero,
                 { Height: 1 } => matrix[0, 0],
                 { Height: 2 } => (matrix[0, 0] * matrix[1, 1]) - (matrix[0, 1] * matrix[1, 0]),

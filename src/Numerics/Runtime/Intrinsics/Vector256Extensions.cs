@@ -132,7 +132,9 @@ public static class Vector256Extensions
         /// <inheritdoc cref="Numerics.Vector4D.NoneWhereAllBitsSet(Numerics.Vector4D)" />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool NoneWhereAllBitsSet(Numerics.Vector3D vector) => !Vector256.EqualsAny(vector.AsVector256().AsInt64(), Vector256<long>.AllBitsSet);
-#elif !NET9_0_OR_GREATER
+#endif
+
+#if !NET9_0_OR_GREATER
         /// <inheritdoc cref="Numerics.Vector4D.MultiplyAddEstimate(Numerics.Vector4D,Numerics.Vector4D,Numerics.Vector4D)" />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> MultiplyAddEstimate(Vector256<double> left, Vector256<double> right, Vector256<double> addend) =>
@@ -141,6 +143,47 @@ public static class Vector256Extensions
                 Vector128.MultiplyAddEstimate(left.GetUpper(), right.GetUpper(), addend.GetUpper()));
 #endif
     }
+
+#if !NET8_0_OR_GREATER
+    extension<T>(Vector256<T> value)
+        where T : struct
+    {
+        /// <summary>
+        /// Divides a vector by a scalar to compute the per-element quotient.
+        /// </summary>
+        /// <param name="left">The vector that will be divided by right.</param>
+        /// <param name="right">The scalar that will divide left.</param>
+        /// <returns>The quotient of left divided by right.</returns>
+        public static Vector256<T> operator /(Vector256<T> left, T right) => left / Vector256.Create(right);
+    }
+    
+    extension(Vector256<double>)
+    {
+        /// <summary>
+        /// Shifts each element of a vector value by the specified amount.
+        /// </summary>
+        /// <param name="value">The vector whose elements are to be shifted.</param>
+        /// <param name="shiftCount">The number of bits by which to shift each element.</param>
+        /// <returns>A vector whose elements where shifted left by shiftCount.</returns>
+        public static Vector256<double> operator <<(Vector256<double> value, int shiftCount) => Vector256.ShiftLeft(value.As<double, ulong>(), shiftCount).As<ulong, double>();
+
+        /// <summary>
+        /// Shifts (signed) each element of a vector right by the specified amount.
+        /// </summary>
+        /// <param name="value">The vector whose elements are to be shifted.</param>
+        /// <param name="shiftCount">The number of bits by which to shift each element.</param>
+        /// <returns>A vector whose elements where shifted right by shiftCount.</returns>
+        public static Vector256<double> operator >>(Vector256<double> value, int shiftCount) => Vector256.ShiftRightArithmetic(value.As<double, long>(), shiftCount).As<long, double>();
+
+        /// <summary>
+        /// Shifts (unsigned) each element of a vector shiftCount by the specified amount.
+        /// </summary>
+        /// <param name="value">The vector whose elements are to be shifted.</param>
+        /// <param name="shiftCount">The number of bits by which to shift each element.</param>
+        /// <returns>A vector whose elements where shifted shiftCount by shiftCount.</returns>
+        public static Vector256<double> operator >>>(Vector256<double> value, int shiftCount) => Vector256.ShiftRightLogical(value.As<double, ulong>(), shiftCount).As<ulong, double>();
+    }
+#endif
 
     /// <summary>The <see cref="Vector256{Double}"/> extensions.</summary>
     /// <param name="value">The vector to reinterpret.</param>

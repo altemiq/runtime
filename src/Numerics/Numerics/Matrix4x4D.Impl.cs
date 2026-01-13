@@ -1247,7 +1247,12 @@ public partial struct Matrix4x4D
                 }
 
                 // Create Vector256<double> copy of the determinant and invert them.
-                var vTemp = Vector256<double>.One / det;
+                var vTemp =
+#if NET8_0_OR_GREATER
+                    Vector256<double>.One / det;
+#else
+                    Vector256.Create(1D) / det;
+#endif
 
                 result.X = (C0 * vTemp).AsVector4D();
                 result.Y = (C2 * vTemp).AsVector4D();
@@ -1438,8 +1443,7 @@ public partial struct Matrix4x4D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj)
-            => obj is Matrix4x4D other && this.Equals(in other.AsImpl());
+        public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => obj is Matrix4x4D other && this.Equals(in other.AsImpl());
 
         // This function needs to account for floating-point equality around NaN
         // and so must behave equivalently to the underlying double/double.Equals

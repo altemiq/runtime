@@ -406,8 +406,7 @@ public partial struct Matrix3x2D
         public ref Matrix3x2D AsM3x2D() => ref Unsafe.As<Impl, Matrix3x2D>(ref this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj)
-            => (obj is Matrix3x2D other) && this.Equals(in other.AsImpl());
+        public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => (obj is Matrix3x2D other) && this.Equals(in other.AsImpl());
 
         // This function needs to account for floating-point equality around NaN
         // and so must behave equivalently to the underlying double/double.Equals

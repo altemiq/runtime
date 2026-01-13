@@ -209,7 +209,11 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator ^(Vector4D left, Vector4D right) => (left.AsVector256() ^ right.AsVector256()).AsVector4D();
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256{T}.op_LeftShift(Vector256{T}, int)" />
+#else
+    /// <inheritdoc cref="Vector256Extensions.op_LeftShift" />
+#endif
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator <<(Vector4D value, int shiftAmount) => (value.AsVector256() << shiftAmount).AsVector4D();
 
@@ -217,7 +221,11 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator ~(Vector4D value) => (~value.AsVector256()).AsVector4D();
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256{T}.op_RightShift(Vector256{T}, int)" />
+#else
+    /// <inheritdoc cref="Vector256Extensions.op_RightShift" />
+#endif
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator >>(Vector4D value, int shiftAmount) => (value.AsVector256() >> shiftAmount).AsVector4D();
 
@@ -225,7 +233,11 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator +(Vector4D value) => value;
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256{T}.op_UnsignedRightShift(Vector256{T}, int)" />
+#else
+    /// <inheritdoc cref="Vector256Extensions.op_UnsignedRightShift" />
+#endif
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator >>>(Vector4D value, int shiftAmount) => (value.AsVector256() >>> shiftAmount).AsVector4D();
 
@@ -622,13 +634,25 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Vector4D LoadAlignedNonTemporal(double* source) => Vector256.LoadAlignedNonTemporal(source).AsVector4D();
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D LoadUnsafe(ref readonly double source) => Vector256.LoadUnsafe(in source).AsVector4D();
+#else
+    /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector4D LoadUnsafe(ref double source) => Vector256.LoadUnsafe(ref source).AsVector4D();
+#endif
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T, nuint)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D LoadUnsafe(ref readonly double source, nuint elementOffset) => Vector256.LoadUnsafe(in source, elementOffset).AsVector4D();
+#else
+    /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T, nuint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector4D LoadUnsafe(ref double source, nuint elementOffset) => Vector256.LoadUnsafe(ref source, elementOffset).AsVector4D();
+#endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.Log(Vector256{double})" />
@@ -792,20 +816,11 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector2D position, Matrix4x4D matrix)
     {
-#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector2DTransform method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var result = matrix.X * position.X;
         result = MultiplyAddEstimate(matrix.Y, Create(position.Y), result);
         return result + matrix.W;
-#else
-        var result = matrix.X * position.X;
-
-        result += matrix.Y * position.Y;
-        result += matrix.W;
-
-        return result;
-#endif
     }
 
     /// <summary>Transforms a two-dimensional vector by the specified QuaternionD rotation value.</summary>
@@ -822,22 +837,12 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector3D position, Matrix4x4D matrix)
     {
-#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector3DTransform method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var result = matrix.X * position.X;
         result = MultiplyAddEstimate(matrix.Y, Create(position.Y), result);
         result = MultiplyAddEstimate(matrix.Z, Create(position.Z), result);
         return result + matrix.W;
-#else
-        var result = matrix.X * position.X;
-
-        result += matrix.Y * position.Y;
-        result += matrix.Z * position.Z;
-        result += matrix.W;
-
-        return result;
-#endif
     }
 
     /// <summary>Transforms a three-dimensional vector by the specified QuaternionD rotation value.</summary>
@@ -854,7 +859,6 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D Transform(Vector4D vector, Matrix4x4D matrix)
     {
-#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector4Transform method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var result = matrix.X * vector.X;
@@ -862,15 +866,6 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
         result = MultiplyAddEstimate(matrix.Z, Create(vector.Z), result);
         result = MultiplyAddEstimate(matrix.W, Create(vector.W), result);
         return result;
-#else
-        var result = matrix.X * vector.X;
-
-        result += matrix.Y * vector.Y;
-        result += matrix.Z * vector.Z;
-        result += matrix.W * vector.W;
-
-        return result;
-#endif
     }
 
     /// <summary>Transforms a four-dimensional vector by the specified QuaternionD rotation value.</summary>

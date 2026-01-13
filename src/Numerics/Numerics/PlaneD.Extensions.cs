@@ -6,6 +6,8 @@
 
 namespace Altemiq.Numerics;
 
+using System.Runtime.CompilerServices;
+
 #pragma warning disable CA1708
 
 /// <content>
@@ -16,5 +18,5 @@ public static partial class VectorD
     /// <summary>Reinterprets a <see cref="PlaneD"/> as a new <see cref="Vector4D"/>.</summary>
     /// <param name="value">The plane to reinterpret.</param>
     /// <returns><paramref name="value"/> reinterpreted as a new <see cref="Vector4D"/>.</returns>
-    public static Vector4D AsVector4D(this PlaneD value) => System.Runtime.CompilerServices.Unsafe.BitCast<PlaneD, Vector4D>(value);
+    public static Vector4D AsVector4D(this PlaneD value) => Unsafe.BitCast<PlaneD, Vector4D>(value);
 }

@@ -559,6 +559,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <inheritdoc cref="Vector4D.LoadAlignedNonTemporal(double*)" />
     public static unsafe Vector2D LoadAlignedNonTemporal(double* source) => LoadAligned(source);
 
+    #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source)
@@ -566,7 +567,17 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
         ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
         return Unsafe.ReadUnaligned<Vector2D>(in address);
     }
+#else
+    /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2D LoadUnsafe(ref readonly double source)
+    {
+        ref var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
+        return Unsafe.ReadUnaligned<Vector2D>(ref address);
+    }
+    #endif
 
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.LoadUnsafe(ref readonly double, nuint)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source, nuint elementOffset)
@@ -574,6 +585,15 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
         ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
         return Unsafe.ReadUnaligned<Vector2D>(in address);
     }
+#else
+    /// <inheritdoc cref="Vector4D.LoadUnsafe(ref double, nuint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2D LoadUnsafe(ref readonly double source, nuint elementOffset)
+    {
+        ref var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
+        return Unsafe.ReadUnaligned<Vector2D>(ref address);
+    }
+    #endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Log(Vector4D)" />
@@ -649,9 +669,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
+#else
+    /// <inheritdoc cref="Vector256Extensions.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
+#endif
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MultiplyAddEstimate(Vector2D left, Vector2D right, Vector2D addend) => Vector256.MultiplyAddEstimate(left.AsVector256Unsafe(), right.AsVector256Unsafe(), addend.AsVector256Unsafe()).AsVector2D();
-#endif
 
     /// <summary>Negates a specified vector.</summary>
     /// <param name="value">The vector to negate.</param>
@@ -758,18 +780,9 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Transform(Vector2D position, Matrix3x2D matrix)
     {
-#if NET9_0_OR_GREATER
         var result = matrix.X * position.X;
         result = MultiplyAddEstimate(matrix.Y, Create(position.Y), result);
         return result + matrix.Z;
-#else
-        var result = matrix.X * position.X;
-
-        result += matrix.Y * position.Y;
-        result += matrix.Z;
-
-        return result;
-#endif
     }
 
     /// <summary>Transforms a vector by a specified 4x4 matrix.</summary>
@@ -791,38 +804,14 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="matrix">The matrix.</param>
     /// <returns>The transformed vector.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2D TransformNormal(Vector2D normal, Matrix3x2D matrix)
-    {
-#if NET9_0_OR_GREATER
-        var result = matrix.X * normal.X;
-        result = MultiplyAddEstimate(matrix.Y, Create(normal.Y), result);
-#else
-        var result = matrix.X * normal.X;
-
-        result += matrix.Y * normal.Y;
-#endif
-        return result;
-    }
+    public static Vector2D TransformNormal(Vector2D normal, Matrix3x2D matrix) => MultiplyAddEstimate(matrix.Y, Create(normal.Y), matrix.X * normal.X);
 
     /// <summary>Transforms a vector normal by the given 4x4 matrix.</summary>
     /// <param name="normal">The source vector.</param>
     /// <param name="matrix">The matrix.</param>
     /// <returns>The transformed vector.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector2D TransformNormal(Vector2D normal, Matrix4x4D matrix)
-    {
-#if NET9_0_OR_GREATER
-        Vector4D result = matrix.X * normal.X;
-        result = Vector4D.MultiplyAddEstimate(matrix.Y, Vector4D.Create(normal.Y), result);
-        return result.AsVector2D();
-#else
-        var result = matrix.X * normal.X;
-
-        result += matrix.Y * normal.Y;
-
-        return result.AsVector256().AsVector2D();
-#endif
-    }
+    public static Vector2D TransformNormal(Vector2D normal, Matrix4x4D matrix) => Vector4D.MultiplyAddEstimate(matrix.Y, Vector4D.Create(normal.Y), matrix.X * normal.X).AsVector2D();
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Truncate(Vector4D)" />

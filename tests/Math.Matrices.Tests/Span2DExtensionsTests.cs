@@ -20,7 +20,7 @@ public class Span2DExtensionsTests
         first += second;
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundSubtract()
     {
@@ -33,12 +33,12 @@ public class Span2DExtensionsTests
             { -1, 1 },
             { 3, 5 },
         };
-        
+
         first -= second;
 
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     [MethodDataSource(nameof(GetMatricesToMultiply))]
     public async Task CompoundMultiply(double[,] firstArray, double[,] secondArray, double[,] expected)
@@ -47,10 +47,10 @@ public class Span2DExtensionsTests
         var second = new ReadOnlySpan2D<double>(secondArray);
 
         first *= second;
-        
+
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundScale()
     {
