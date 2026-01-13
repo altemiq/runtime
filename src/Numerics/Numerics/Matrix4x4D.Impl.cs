@@ -6,7 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -15,6 +14,7 @@ using Altemiq.Runtime.Intrinsics;
 /// <content>
 /// The Matrix3x2D implementation.
 /// </content>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "This is valid")]
 public partial struct Matrix4x4D
 {
     /*
@@ -30,24 +30,24 @@ public partial struct Matrix4x4D
     /// Gets this <see cref="Matrix3x2D"/> as and <see cref="Impl"/>.
     /// </summary>
     /// <returns>The <see cref="Impl"/>.</returns>
-    [UnscopedRef]
+    [System.Diagnostics.CodeAnalysis.UnscopedRef]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
     internal ref Impl AsImpl() => ref Unsafe.As<Matrix4x4D, Impl>(ref this);
 
     /// <summary>
     /// Gets this <see cref="Matrix3x2D"/> as and <see cref="Impl"/>.
     /// </summary>
     /// <returns>The <see cref="Impl" />.</returns>
-    [UnscopedRef]
+    [System.Diagnostics.CodeAnalysis.UnscopedRef]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal readonly ref readonly Impl AsROImpl() => ref Unsafe.As<Matrix4x4D, Impl>(ref Unsafe.AsRef(in this));
 
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-    [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass", Justification = "Checked")]
-    [SuppressMessage("Critical Code Smell", "S3218:Inner class members should not shadow outer class \"static\" or type members", Justification = "Checked")]
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:Elements should be documented", Justification = "Checked")]
-    [SuppressMessage("Roslynator", "RCS1242:Do not pass non-read-only struct by read-only reference", Justification = "Checked")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass", Justification = "Checked")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S3218:Inner class members should not shadow outer class \"static\" or type members", Justification = "Checked")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:Elements should be documented", Justification = "Checked")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1242:Do not pass non-read-only struct by read-only reference", Justification = "Checked")]
     internal struct Impl : IEquatable<Impl>
     {
         public Vector4D X;
@@ -1076,17 +1076,17 @@ public partial struct Matrix4x4D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Invert(in Impl matrix, out Impl result)
         {
-            return Avx.IsSupported
+            return Avx2.IsSupported
                 ? AvxImpl(in matrix, out result)
                 : SoftwareFallback(in matrix, out result);
 
-            [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1312:Variable names should begin with lower-case letter", Justification = "Checked")]
-            [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.NamingRules", "SA1312:Variable names should begin with lower-case letter", Justification = "Checked")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
             static bool AvxImpl(in Impl matrix, out Impl result)
             {
-                if (!Avx.IsSupported)
+                if (!Avx2.IsSupported)
                 {
-                    // Redundant test so we won't prejit remainder of this method on platforms without SSE.
+                    // Redundant test so we won't pre-jit remainder of this method on platforms without AVX.
                     ThrowPlatformNotSupportedException();
                 }
 
@@ -1097,22 +1097,22 @@ public partial struct Matrix4x4D
                 var row4 = matrix.W.AsVector256();
 
                 // Transpose the matrix
-                var vTemp1 = Avx.Shuffle(row1, row2, 0b01_00_01_00);
-                var vTemp3 = Avx.Shuffle(row1, row2, 0b11_10_11_10);
-                var vTemp2 = Avx.Shuffle(row3, row4, 0b01_00_01_00);
-                var vTemp4 = Avx.Shuffle(row3, row4, 0b11_10_11_10);
+                var vTemp1 = Avx.UnpackLow(row1, row2); // x[0], z[0], x[2], z[2]
+                var vTemp3 = Avx.UnpackLow(row3, row4); // y[0], w[0], y[2], w[2]
+                var vTemp2 = Avx.UnpackHigh(row1, row2); // x[1], z[1], x[4], z[4]
+                var vTemp4 = Avx.UnpackHigh(row3, row4); // y[1], w[1], y[4], w[4]
 
-                row1 = Avx.Shuffle(vTemp1, vTemp2, 0b10_00_10_00);
-                row2 = Avx.Shuffle(vTemp1, vTemp2, 0b11_01_11_01);
-                row3 = Avx.Shuffle(vTemp3, vTemp4, 0b10_00_10_00);
-                row4 = Avx.Shuffle(vTemp3, vTemp4, 0b11_01_11_01);
+                row1 = Avx.InsertVector128(vTemp1, vTemp3.GetLower(), 1); // x[0], y[0], z[0], w[0]
+                row2 = Avx.InsertVector128(vTemp2, vTemp4.GetLower(), 1); // x[1], y[1], z[1], w[1]
+                row3 = Avx.Permute2x128(vTemp1, vTemp3, 0b_00_11_00_01); // x[2], y[2], z[2], w[2]
+                row4 = Avx.Permute2x128(vTemp2, vTemp4, 0b_00_11_00_01); // x[3], y[3], z[3], w[3]
 
                 var V00 = Vector256.Shuffle(row3, Vector256.Create(0, 0, 1, 1));
                 var V10 = Vector256.Shuffle(row4, Vector256.Create(2, 3, 2, 3));
                 var V01 = Vector256.Shuffle(row1, Vector256.Create(0, 0, 1, 1));
                 var V11 = Vector256.Shuffle(row2, Vector256.Create(2, 3, 2, 3));
-                var V02 = Avx.Shuffle(row3, row1, 0b10_00_10_00);
-                var V12 = Avx.Shuffle(row4, row2, 0b11_01_11_01);
+                var V02 = Avx.Blend(Avx2.Permute4x64(row3, 0b10_00_10_00), Avx2.Permute4x64(row1, 0b10_00_10_00), 0b1100);
+                var V12 = Avx.Blend(Avx2.Permute4x64(row4, 0b11_01_11_01), Avx2.Permute4x64(row2, 0b11_01_11_01), 0b1100);
 
                 var D0 = V00 * V10;
                 var D1 = V01 * V11;
@@ -1122,26 +1122,26 @@ public partial struct Matrix4x4D
                 V10 = Vector256.Shuffle(row4, Vector256.Create(0, 0, 1, 1));
                 V01 = Vector256.Shuffle(row1, Vector256.Create(2, 3, 2, 3));
                 V11 = Vector256.Shuffle(row2, Vector256.Create(0, 0, 1, 1));
-                V02 = Avx.Shuffle(row3, row1, 0b11_01_11_01);
-                V12 = Avx.Shuffle(row4, row2, 0b10_00_10_00);
+                V02 = Avx.Blend(Avx2.Permute4x64(row3, 0b11_01_11_01), Avx2.Permute4x64(row1, 0b11_01_11_01), 0b1100);
+                V12 = Avx.Blend(Avx2.Permute4x64(row4, 0b10_00_10_00), Avx2.Permute4x64(row2, 0b10_00_10_00), 0b1100);
 
                 D0 = Vector256.MultiplyAddEstimate(-V00, V10, D0);
                 D1 = Vector256.MultiplyAddEstimate(-V01, V11, D1);
                 D2 = Vector256.MultiplyAddEstimate(-V02, V12, D2);
 
                 // V11 = D0Y,D0W,D2Y,D2Y
-                V11 = Avx.Shuffle(D0, D2, 0b01_01_11_01);
+                V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_01_11_01), Avx2.Permute4x64(D2, 0b01_01_11_01), 0b1100);
                 V00 = Vector256.Shuffle(row2, Vector256.Create(1, 2, 0, 1));
-                V10 = Avx.Shuffle(V11, D0, 0b00_11_00_10);
+                V10 = Avx.Blend(Avx2.Permute4x64(V11, 0b00_11_00_10), Avx2.Permute4x64(D0, 0b00_11_00_10), 0b1100);
                 V01 = Vector256.Shuffle(row1, Vector256.Create(2, 0, 1, 0));
-                V11 = Avx.Shuffle(V11, D0, 0b10_01_10_01);
+                V11 = Avx.Blend(Avx2.Permute4x64(V11, 0b10_01_10_01), Avx2.Permute4x64(D0, 0b10_01_10_01), 0b1100);
 
                 // V13 = D1Y,D1W,D2W,D2W
-                var V13 = Avx.Shuffle(D1, D2, 0b11_11_11_01);
+                var V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_11_11_01), Avx2.Permute4x64(D2, 0b11_11_11_01), 0b1100);
                 V02 = Vector256.Shuffle(row4, Vector256.Create(1, 2, 0, 1));
-                V12 = Avx.Shuffle(V13, D1, 0b00_11_00_10);
+                V12 = Avx.Blend(Avx2.Permute4x64(V13, 0b00_11_00_10), Avx2.Permute4x64(D1, 0b00_11_00_10), 0b1100);
                 var V03 = Vector256.Shuffle(row3, Vector256.Create(2, 0, 1, 0));
-                V13 = Avx.Shuffle(V13, D1, 0b10_01_10_01);
+                V13 = Avx.Blend(Avx2.Permute4x64(V13, 0b10_01_10_01), Avx2.Permute4x64(D1, 0b10_01_10_01), 0b1100);
 
                 var C0 = V00 * V10;
                 var C2 = V01 * V11;
@@ -1149,18 +1149,18 @@ public partial struct Matrix4x4D
                 var C6 = V03 * V13;
 
                 // V11 = D0X,D0Y,D2X,D2X
-                V11 = Avx.Shuffle(D0, D2, 0b00_00_01_00);
+                V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b00_00_01_00), Avx2.Permute4x64(D2, 0b00_00_01_00), 0b1100);
                 V00 = Vector256.Shuffle(row2, Vector256.Create(2, 3, 1, 2));
-                V10 = Avx.Shuffle(D0, V11, 0b10_01_00_11);
+                V10 = Avx.Blend(Avx2.Permute4x64(D0, 0b10_01_00_11), Avx2.Permute4x64(V11, 0b10_01_00_11), 0b1100);
                 V01 = Vector256.Shuffle(row1, Vector256.Create(3, 2, 3, 1));
-                V11 = Avx.Shuffle(D0, V11, 0b00_10_01_10);
+                V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b00_10_01_10), Avx2.Permute4x64(V11, 0b00_10_01_10), 0b1100);
 
                 // V13 = D1X,D1Y,D2Z,D2Z
-                V13 = Avx.Shuffle(D1, D2, 0b10_10_01_00);
+                V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b10_10_01_00), Avx2.Permute4x64(D2, 0b10_10_01_00), 0b1100);
                 V02 = Vector256.Shuffle(row4, Vector256.Create(2, 3, 1, 2));
-                V12 = Avx.Shuffle(D1, V13, 0b10_01_00_11);
+                V12 = Avx.Blend(Avx2.Permute4x64(D1, 0b10_01_00_11), Avx2.Permute4x64(V13, 0b10_01_00_11), 0b1100);
                 V03 = Vector256.Shuffle(row3, Vector256.Create(3, 2, 3, 1));
-                V13 = Avx.Shuffle(D1, V13, 0b_00_10_01_10);
+                V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b_00_10_01_10), Avx2.Permute4x64(V13, 0b_00_10_01_10), 0b1100);
 
                 C0 = Vector256.MultiplyAddEstimate(-V00, V10, C0);
                 C2 = Vector256.MultiplyAddEstimate(-V01, V11, C2);
@@ -1170,22 +1170,22 @@ public partial struct Matrix4x4D
                 V00 = Vector256.Shuffle(row2, Vector256.Create(3, 0, 3, 0));
 
                 // V10 = D0Z,D0Z,D2X,D2Y
-                V10 = Avx.Shuffle(D0, D2, 0b01_00_10_10);
+                V10 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_00_10_10), Avx2.Permute4x64(D2, 0b01_00_10_10), 0b1100);
                 V10 = Vector256.Shuffle(V10, Vector256.Create(0, 3, 2, 0));
                 V01 = Vector256.Shuffle(row1, Vector256.Create(1, 3, 0, 2));
 
                 // V11 = D0X,D0W,D2X,D2Y
-                V11 = Avx.Shuffle(D0, D2, 0b01_00_11_00);
+                V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_00_11_00), Avx2.Permute4x64(D2, 0b01_00_11_00), 0b1100);
                 V11 = Vector256.Shuffle(V11, Vector256.Create(3, 0, 1, 2));
                 V02 = Vector256.Shuffle(row4, Vector256.Create(3, 0, 3, 0));
 
                 // V12 = D1Z,D1Z,D2Z,D2W
-                V12 = Avx.Shuffle(D1, D2, 0b11_10_10_10);
+                V12 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_10_10_10), Avx2.Permute4x64(D2, 0b11_10_10_10), 0b1100);
                 V12 = Vector256.Shuffle(V12, Vector256.Create(0, 3, 2, 0));
                 V03 = Vector256.Shuffle(row3, Vector256.Create(1, 3, 0, 2));
 
                 // V13 = D1X,D1W,D2Z,D2W
-                V13 = Avx.Shuffle(D1, D2, 0b11_10_11_00);
+                V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_10_11_00), Avx2.Permute4x64(D2, 0b11_10_11_00), 0b1100);
                 V13 = Vector256.Shuffle(V13, Vector256.Create(3, 0, 1, 2));
 
                 V00 *= V10;
@@ -1205,10 +1205,10 @@ public partial struct Matrix4x4D
                 var C7 = C6 + V03;
                 C6 -= V03;
 
-                C0 = Avx.Shuffle(C0, C1, 0b11_01_10_00);
-                C2 = Avx.Shuffle(C2, C3, 0b11_01_10_00);
-                C4 = Avx.Shuffle(C4, C5, 0b11_01_10_00);
-                C6 = Avx.Shuffle(C6, C7, 0b11_01_10_00);
+                C0 = Avx.Blend(Avx2.Permute4x64(C0, 0b11_01_10_00), Avx2.Permute4x64(C1, 0b11_01_10_00), 0b1100);
+                C2 = Avx.Blend(Avx2.Permute4x64(C2, 0b11_01_10_00), Avx2.Permute4x64(C3, 0b11_01_10_00), 0b1100);
+                C4 = Avx.Blend(Avx2.Permute4x64(C4, 0b11_01_10_00), Avx2.Permute4x64(C5, 0b11_01_10_00), 0b1100);
+                C6 = Avx.Blend(Avx2.Permute4x64(C6, 0b11_01_10_00), Avx2.Permute4x64(C7, 0b11_01_10_00), 0b1100);
 
                 C0 = Vector256.Shuffle(C0, Vector256.Create(0, 2, 1, 3));
                 C2 = Vector256.Shuffle(C2, Vector256.Create(0, 2, 1, 3));
@@ -1242,7 +1242,7 @@ public partial struct Matrix4x4D
                 return true;
             }
 
-            [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
             static bool SoftwareFallback(in Impl matrix, out Impl result)
             {
                 double a = matrix.X.X, b = matrix.X.Y, c = matrix.X.Z, d = matrix.X.W;
@@ -1401,15 +1401,15 @@ public partial struct Matrix4x4D
                 var z = matrix.Z.AsVector256();
                 var w = matrix.W.AsVector256();
 
-                var lowerXz = Avx.UnpackLow(x, z); // x[0], z[0], x[1], z[1]
-                var lowerYw = Avx.UnpackLow(y, w); // y[0], w[0], y[1], w[1]
-                var upperXz = Avx.UnpackHigh(x, z); // x[2], z[2], x[3], z[3]
-                var upperYw = Avx.UnpackHigh(y, w); // y[2], w[2], y[3], z[3]
+                var lowerXy = Avx.UnpackLow(x, y); // x[0], z[0], x[2], z[2]
+                var lowerZw = Avx.UnpackLow(z, w); // y[0], w[0], y[2], w[2]
+                var upperXy = Avx.UnpackHigh(x, y); // x[1], z[1], x[4], z[4]
+                var upperZw = Avx.UnpackHigh(z, w); // y[1], w[1], y[4], w[4]
 
-                result.X = Avx.UnpackLow(lowerXz, lowerYw).AsVector4D(); // x[0], y[0], z[0], w[0]
-                result.Y = Avx.UnpackHigh(lowerXz, lowerYw).AsVector4D(); // x[1], y[1], z[1], w[1]
-                result.Z = Avx.UnpackLow(upperXz, upperYw).AsVector4D(); // x[2], y[2], z[2], w[2]
-                result.W = Avx.UnpackHigh(upperXz, upperYw).AsVector4D(); // x[3], y[3], z[3], w[3]
+                result.X = Avx.InsertVector128(lowerXy, lowerZw.GetLower(), 1).AsVector4D(); // x[0], y[0], z[0], w[0]
+                result.Y = Avx.InsertVector128(upperXy, upperZw.GetLower(), 1).AsVector4D(); // x[1], y[1], z[1], w[1]
+                result.Z = Avx.Permute2x128(lowerXy, lowerZw, 0b_00_11_00_01).AsVector4D(); // x[2], y[2], z[2], w[2]
+                result.W = Avx.Permute2x128(upperXy, upperZw, 0b_00_11_00_01).AsVector4D(); // x[3], y[3], z[3], w[3]
             }
             else
             {
@@ -1423,7 +1423,7 @@ public partial struct Matrix4x4D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override readonly bool Equals([NotNullWhen(true)] object? obj)
+        public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj)
             => obj is Matrix4x4D other && this.Equals(in other.AsImpl());
 
         // This function needs to account for floating-point equality around NaN
@@ -1436,7 +1436,7 @@ public partial struct Matrix4x4D
             && this.W.Equals(other.W);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
         public readonly double GetDeterminant()
         {
             double a = this.X.X, b = this.X.Y, c = this.X.Z, d = this.X.W;
@@ -1460,12 +1460,14 @@ public partial struct Matrix4x4D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override readonly int GetHashCode() => HashCode.Combine(this.X, this.Y, this.Z, this.W);
 
-        [UnscopedRef]
+        [System.Diagnostics.CodeAnalysis.UnscopedRef]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
         public ref Matrix4x4D AsM4x4D() => ref Unsafe.As<Impl, Matrix4x4D>(ref this);
 
         readonly bool IEquatable<Impl>.Equals(Impl other) => this.Equals(in other);
 
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         private static void ThrowPlatformNotSupportedException() => throw new PlatformNotSupportedException();
     }
 }

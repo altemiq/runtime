@@ -30,8 +30,8 @@ public class Vector2DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Vect
     protected override bool HasToleranceValue() => true;
 
     protected override bool IsWithinTolerance(Vector2D actual, Vector2D expected, Vector2D tolerance) =>
-        VectorHelpers.IsWithinToleranceCore(actual.X, expected.X, tolerance.X)
-        && VectorHelpers.IsWithinToleranceCore(actual.Y, expected.Y, tolerance.Y);
+        MathHelper.IsWithinToleranceCore(actual.X, expected.X, tolerance.X)
+        && MathHelper.IsWithinToleranceCore(actual.Y, expected.Y, tolerance.Y);
 
     protected override object CalculateDifference(Vector2D actual, Vector2D expected) => Vector2D.Abs(actual - expected);
 
@@ -47,9 +47,9 @@ public class Vector3DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Vect
     protected override bool HasToleranceValue() => true;
 
     protected override bool IsWithinTolerance(Vector3D actual, Vector3D expected, Vector3D tolerance) =>
-        VectorHelpers.IsWithinToleranceCore(actual.X, expected.X, tolerance.X)
-        && VectorHelpers.IsWithinToleranceCore(actual.Y, expected.Y, tolerance.Y)
-        && VectorHelpers.IsWithinToleranceCore(actual.Z, expected.Z, tolerance.Z);
+        MathHelper.IsWithinToleranceCore(actual.X, expected.X, tolerance.X)
+        && MathHelper.IsWithinToleranceCore(actual.Y, expected.Y, tolerance.Y)
+        && MathHelper.IsWithinToleranceCore(actual.Z, expected.Z, tolerance.Z);
 
     protected override object CalculateDifference(Vector3D actual, Vector3D expected) => Vector3D.Abs(actual - expected);
 
@@ -65,43 +65,12 @@ public class Vector4DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Vect
     protected override bool HasToleranceValue() => true;
 
     protected override bool IsWithinTolerance(Vector4D actual, Vector4D expected, Vector4D tolerance) =>
-        VectorHelpers.IsWithinToleranceCore(actual.X, expected.X, tolerance.X)
-        && VectorHelpers.IsWithinToleranceCore(actual.Y, expected.Y, tolerance.Y)
-        && VectorHelpers.IsWithinToleranceCore(actual.Z, expected.Z, tolerance.Z)
-        && VectorHelpers.IsWithinToleranceCore(actual.W, expected.W, tolerance.W);
+        MathHelper.IsWithinToleranceCore(actual.X, expected.X, tolerance.X)
+        && MathHelper.IsWithinToleranceCore(actual.Y, expected.Y, tolerance.Y)
+        && MathHelper.IsWithinToleranceCore(actual.Z, expected.Z, tolerance.Z)
+        && MathHelper.IsWithinToleranceCore(actual.W, expected.W, tolerance.W);
 
     protected override object CalculateDifference(Vector4D actual, Vector4D expected) => Vector4D.Abs(actual - expected);
 
     protected override bool AreExactlyEqual(Vector4D actual, Vector4D expected) => actual == expected;
-}
-
-internal static class VectorHelpers
-{
-    public static bool IsWithinToleranceCore(double actual, double expected, double tolerance)
-    {
-        // Handle NaN comparisons: NaN is only equal to NaN
-        if (double.IsNaN(actual) && double.IsNaN(expected))
-        {
-            return true;
-        }
-
-        if (double.IsNaN(actual) || double.IsNaN(expected))
-        {
-            return false;
-        }
-
-        // Handle infinity: infinity equals infinity
-        if (double.IsPositiveInfinity(actual) && double.IsPositiveInfinity(expected))
-        {
-            return true;
-        }
-
-        if (double.IsNegativeInfinity(actual) && double.IsNegativeInfinity(expected))
-        {
-            return true;
-        }
-
-        var diff = Math.Abs(actual - expected);
-        return diff <= tolerance;
-    }
 }

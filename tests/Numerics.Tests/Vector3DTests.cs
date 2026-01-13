@@ -1,23 +1,14 @@
-using System.Threading.Tasks;
-
 namespace Altemiq.Numerics;
 
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics;
-using Altemiq.Runtime.Intrinsics;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
 public sealed class Vector3DTests
 {
+#if NET10_OR_GREATER
     private const int ElementCount = 3;
-
-    // internal static async Task Assert.That(Vector3 expected, Vector3 actual, Vector3 variance)
-    // {
-    //     AssertExtensions.Equal(expected.X, actual.X, variance.X);
-    //     AssertExtensions.Equal(expected.Y, actual.Y, variance.Y);
-    //     AssertExtensions.Equal(expected.Z, actual.Z, variance.Z);
-    // }
+#endif
 
     [Test]
     public async Task Vector3DMarshalSizeTest()
@@ -47,11 +38,12 @@ public sealed class Vector3DTests
     [Arguments(1.0000001, 0.0000001, 2.0000001)]
     public async Task Vector3DIndexerSetTest(double x, double y, double z)
     {
-        var vector = new Vector3D(0.0, 0.0, 0.0);
-
-        vector[0] = x;
-        vector[1] = y;
-        vector[2] = z;
+        var vector = new Vector3D(0.0, 0.0, 0.0)
+        {
+            [0] = x,
+            [1] = y,
+            [2] = z,
+        };
 
         await Assert.That(vector[0]).IsEqualTo(x);
         await Assert.That(vector[1]).IsEqualTo(y);
@@ -61,10 +53,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DCopyToTest()
     {
-        Vector3D v1 = new Vector3D(2.0, 3.0, 3.3);
+        var v1 = new Vector3D(2.0, 3.0, 3.3);
 
-        double[] a = new double[4];
-        double[] b = new double[3];
+        var a = new double[4];
+        var b = new double[3];
 
         await Assert.That(() => v1.CopyTo(null!, 0)).ThrowsExactly<NullReferenceException>();
         await Assert.That(() => v1.CopyTo(a, -1)).ThrowsExactly<ArgumentOutOfRangeException>();
@@ -85,7 +77,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DCopyToSpanTest()
     {
-        Vector3D vector = new Vector3D(1.0, 2.0, 3.0);
+        var vector = new Vector3D(1.0, 2.0, 3.0);
         var destination = new double[3];
 
         await Assert.That(() => vector.CopyTo(new Span<double>(new double[2]))).ThrowsExactly<ArgumentException>();
@@ -102,10 +94,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DTryCopyToTest()
     {
-        Vector3D vector = new Vector3D(1.0, 2.0, 3.0);
+        var vector = new Vector3D(1.0, 2.0, 3.0);
         var destination = new double[3];
 
-        await Assert.That(vector.TryCopyTo(new Span<double>(new double[2]))).IsFalse();
+        await Assert.That(vector.TryCopyTo(new(new double[2]))).IsFalse();
         await Assert.That(vector.TryCopyTo(destination.AsSpan())).IsTrue();
 
         await Assert.That(vector.X).IsEqualTo(1.0);
@@ -119,19 +111,19 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DGetHashCodeTest()
     {
-        Vector3D v1 = new Vector3D(2.0, 3.0, 3.3);
-        Vector3D v2 = new Vector3D(2.0, 3.0, 3.3);
-        Vector3D v3 = new Vector3D(2.0, 3.0, 3.3);
-        Vector3D v5 = new Vector3D(3.0, 2.0, 3.3);
+        var v1 = new Vector3D(2.0, 3.0, 3.3);
+        var v2 = new Vector3D(2.0, 3.0, 3.3);
+        var v3 = new Vector3D(2.0, 3.0, 3.3);
+        var v5 = new Vector3D(3.0, 2.0, 3.3);
         await Assert.That(v1.GetHashCode()).IsEqualTo(v1.GetHashCode());
         await Assert.That(v2.GetHashCode()).IsEqualTo(v1.GetHashCode());
         await Assert.That(v5.GetHashCode()).IsNotEqualTo(v1.GetHashCode());
         await Assert.That(v3.GetHashCode()).IsEqualTo(v1.GetHashCode());
-        Vector3D v4 = new Vector3D(0.0, 0.0, 0.0);
-        Vector3D v6 = new Vector3D(1.0, 0.0, 0.0);
-        Vector3D v7 = new Vector3D(0.0, 1.0, 0.0);
-        Vector3D v8 = new Vector3D(1.0, 1.0, 1.0);
-        Vector3D v9 = new Vector3D(1.0, 1.0, 0.0);
+        var v4 = new Vector3D(0.0, 0.0, 0.0);
+        var v6 = new Vector3D(1.0, 0.0, 0.0);
+        var v7 = new Vector3D(0.0, 1.0, 0.0);
+        var v8 = new Vector3D(1.0, 1.0, 1.0);
+        var v9 = new Vector3D(1.0, 1.0, 0.0);
         await Assert.That(v6.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
         await Assert.That(v7.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
         await Assert.That(v8.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
@@ -144,46 +136,45 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DToStringTest()
     {
-        string separator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
-        CultureInfo enUsCultureInfo = new CultureInfo("en-US");
+        var separator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+        var enUsCultureInfo = new CultureInfo("en-US");
 
-        Vector3D v1 = new Vector3D(2.0, 3.0, 3.3);
-        string v1str = v1.ToString();
-        string expectedv1 = string.Format(CultureInfo.CurrentCulture
+        var v1 = new Vector3D(2.0, 3.0, 3.3);
+        var v1Str = v1.ToString();
+        var expectedV1 = string.Format(CultureInfo.CurrentCulture
             , "<{1:G}{0} {2:G}{0} {3:G}>"
             , separator, 2, 3, 3.3);
-        await Assert.That(v1str).IsEquivalentTo(expectedv1);
+        await Assert.That(v1Str).IsEquivalentTo(expectedV1);
 
-        string v1strformatted = v1.ToString("c", CultureInfo.CurrentCulture);
-        string expectedv1formatted = string.Format(CultureInfo.CurrentCulture
+        var v1StrFormatted = v1.ToString("c", CultureInfo.CurrentCulture);
+        var expectedV1Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}{0} {3:c}>"
             , separator, 2, 3, 3.3);
-        await Assert.That(v1strformatted).IsEquivalentTo(expectedv1formatted);
+        await Assert.That(v1StrFormatted).IsEquivalentTo(expectedV1Formatted);
 
-        string v2strformatted = v1.ToString("c", enUsCultureInfo);
-        string expectedv2formatted = string.Format(enUsCultureInfo
+        var v2StrFormatted = v1.ToString("c", enUsCultureInfo);
+        var expectedV2Formatted = string.Format(enUsCultureInfo
             , "<{1:c}{0} {2:c}{0} {3:c}>"
             , enUsCultureInfo.NumberFormat.NumberGroupSeparator, 2, 3, 3.3);
-        await Assert.That(v2strformatted).IsEquivalentTo(expectedv2formatted);
+        await Assert.That(v2StrFormatted).IsEquivalentTo(expectedV2Formatted);
 
-        string v3strformatted = v1.ToString("c");
-        string expectedv3formatted = string.Format(CultureInfo.CurrentCulture
+        var v3StrFormatted = v1.ToString("c");
+        var expectedV3Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}{0} {3:c}>"
             , separator, 2, 3, 3.3);
-        await Assert.That(v3strformatted).IsEquivalentTo(expectedv3formatted);
+        await Assert.That(v3StrFormatted).IsEquivalentTo(expectedV3Formatted);
     }
 
     // A test for Cross (Vector3Df, Vector3Df)
     [Test]
     public async Task Vector3DCrossTest()
     {
-        Vector3D a = new Vector3D(1.0, 0.0, 0.0);
-        Vector3D b = new Vector3D(0.0, 1.0, 0.0);
+        var a = new Vector3D(1.0, 0.0, 0.0);
+        var b = new Vector3D(0.0, 1.0, 0.0);
 
-        Vector3D expected = new Vector3D(0.0, 0.0, 1.0);
-        Vector3D actual;
+        var expected = new Vector3D(0.0, 0.0, 1.0);
 
-        actual = Vector3D.Cross(a, b);
+        var actual = Vector3D.Cross(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -192,11 +183,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DCrossTest1()
     {
-        Vector3D a = new Vector3D(0.0, 1.0, 0.0);
-        Vector3D b = new Vector3D(0.0, 1.0, 0.0);
+        var a = new Vector3D(0.0, 1.0, 0.0);
+        var b = new Vector3D(0.0, 1.0, 0.0);
 
-        Vector3D expected = new Vector3D(0.0, 0.0, 0.0);
-        Vector3D actual = Vector3D.Cross(a, b);
+        var expected = new Vector3D(0.0, 0.0, 0.0);
+        var actual = Vector3D.Cross(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -215,13 +206,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDistanceTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double expected = (double)System.Math.Sqrt(27);
-        double actual;
+        var expected = Math.Sqrt(27);
 
-        actual = Vector3D.Distance(a, b);
+        var actual = Vector3D.Distance(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -230,12 +220,14 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDistanceTest1()
     {
-        Vector3D a = new Vector3D(1.051, 2.05, 3.478);
-        Vector3D b = new Vector3D(new Vector2D(1.051, 0.0), 1);
-        b.Y = 2.05;
-        b.Z = 3.478;
+        var a = new Vector3D(1.051, 2.05, 3.478);
+        var b = new Vector3D(new(1.051, 0.0), 1)
+        {
+            Y = 2.05,
+            Z = 3.478,
+        };
 
-        double actual = Vector3D.Distance(a, b);
+        var actual = Vector3D.Distance(a, b);
         await Assert.That(actual).IsEqualTo(0.0);
     }
 
@@ -243,27 +235,25 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDistanceSquaredTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double expected = 27.0;
-        double actual;
+        var expected = 27.0;
 
-        actual = Vector3D.DistanceSquared(a, b);
-        await Assert.That(actual).IsEqualTo(expected);;
+        var actual = Vector3D.DistanceSquared(a, b);
+        await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for Dot (Vector3Df, Vector3Df)
     [Test]
     public async Task Vector3DDotTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double expected = 32.0;
-        double actual;
+        var expected = 32.0;
 
-        actual = Vector3D.Dot(a, b);
+        var actual = Vector3D.Dot(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -272,13 +262,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDotTest1()
     {
-        Vector3D a = new Vector3D(1.55, 1.55, 1.0);
-        Vector3D b = new Vector3D(2.5, 3.0, 1.5);
-        Vector3D c = Vector3D.Cross(a, b);
+        var a = new Vector3D(1.55, 1.55, 1.0);
+        var b = new Vector3D(2.5, 3.0, 1.5);
+        var c = Vector3D.Cross(a, b);
 
-        double expected = 0.0;
-        double actual1 = Vector3D.Dot(a, c);
-        double actual2 = Vector3D.Dot(b, c);
+        var expected = 0.0;
+        var actual1 = Vector3D.Dot(a, c);
+        var actual2 = Vector3D.Dot(b, c);
         await Assert.That(actual1).IsEqualTo(expected).Within(0.00000000001);
         await Assert.That(actual2).IsEqualTo(expected).Within(0.00000000001);
     }
@@ -287,16 +277,15 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLengthTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
 
-        double z = 3.0;
+        var z = 3.0;
 
-        Vector3D target = new Vector3D(a, z);
+        var target = new Vector3D(a, z);
 
-        double expected = (double)System.Math.Sqrt(14.0);
-        double actual;
+        var expected = Math.Sqrt(14.0);
 
-        actual = target.Length();
+        var actual = target.Length();
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -305,10 +294,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLengthTest1()
     {
-        Vector3D target = new Vector3D();
+        var target = new Vector3D();
 
-        double expected = 0.0;
-        double actual = target.Length();
+        var expected = 0.0;
+        var actual = target.Length();
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -316,16 +305,15 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLengthSquaredTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
 
-        double z = 3.0;
+        var z = 3.0;
 
-        Vector3D target = new Vector3D(a, z);
+        var target = new Vector3D(a, z);
 
-        double expected = 14.0;
-        double actual;
+        var expected = 14.0;
 
-        actual = target.LengthSquared();
+        var actual = target.LengthSquared();
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -333,12 +321,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMinTest()
     {
-        Vector3D a = new Vector3D(-1.0, 4.0, -3.0);
-        Vector3D b = new Vector3D(2.0, 1.0, -1.0);
+        var a = new Vector3D(-1.0, 4.0, -3.0);
+        var b = new Vector3D(2.0, 1.0, -1.0);
 
-        Vector3D expected = new Vector3D(-1.0, 1.0, -3.0);
-        Vector3D actual;
-        actual = Vector3D.Min(a, b);
+        var expected = new Vector3D(-1.0, 1.0, -3.0);
+        var actual = Vector3D.Min(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -346,24 +333,23 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMaxTest()
     {
-        Vector3D a = new Vector3D(-1.0, 4.0, -3.0);
-        Vector3D b = new Vector3D(2.0, 1.0, -1.0);
+        var a = new Vector3D(-1.0, 4.0, -3.0);
+        var b = new Vector3D(2.0, 1.0, -1.0);
 
-        Vector3D expected = new Vector3D(2.0, 4.0, -1.0);
-        Vector3D actual;
-        actual = Vector3D.Max(a, b);
+        var expected = new Vector3D(2.0, 4.0, -1.0);
+        var actual = Vector3D.Max(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
     [Test]
     public async Task Vector3DMinMaxCodeCoverageTest()
     {
-        Vector3D min = Vector3D.Zero;
-        Vector3D max = Vector3D.One;
-        Vector3D actual;
+        var min = Vector3D.Zero;
+        var max = Vector3D.One;
 
-        // Min.
-        actual = Vector3D.Min(min, max);
+        var actual =
+            // Min.
+            Vector3D.Min(min, max);
         await Assert.That(min).IsEqualTo(actual);
 
         actual = Vector3D.Min(max, min);
@@ -381,15 +367,14 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double t = 0.5;
+        var t = 0.5;
 
-        Vector3D expected = new Vector3D(2.5, 3.5, 4.5);
-        Vector3D actual;
+        var expected = new Vector3D(2.5, 3.5, 4.5);
 
-        actual = Vector3D.Lerp(a, b, t);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -398,12 +383,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest1()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double t = 0.0;
-        Vector3D expected = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var t = 0.0;
+        var expected = new Vector3D(1.0, 2.0, 3.0);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -412,12 +397,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest2()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double t = 1.0;
-        Vector3D expected = new Vector3D(4.0, 5.0, 6.0);
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var t = 1.0;
+        var expected = new Vector3D(4.0, 5.0, 6.0);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -426,12 +411,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest3()
     {
-        Vector3D a = new Vector3D(0.0, 0.0, 0.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(0.0, 0.0, 0.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double t = 2.0;
-        Vector3D expected = new Vector3D(8.0, 10.0, 12.0);
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var t = 2.0;
+        var expected = new Vector3D(8.0, 10.0, 12.0);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -440,12 +425,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest4()
     {
-        Vector3D a = new Vector3D(0.0, 0.0, 0.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(0.0, 0.0, 0.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        double t = -2.0;
-        Vector3D expected = new Vector3D(-8.0, -10.0, -12.0);
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var t = -2.0;
+        var expected = new Vector3D(-8.0, -10.0, -12.0);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -454,11 +439,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest5()
     {
-        Vector3D a = new Vector3D(45.67, 90.0, 0);
-        Vector3D b = new Vector3D(double.PositiveInfinity, double.NegativeInfinity, 0);
+        var a = new Vector3D(45.67, 90.0, 0);
+        var b = new Vector3D(double.PositiveInfinity, double.NegativeInfinity, 0);
 
-        double t = 0.408;
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var t = 0.408;
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual.X).IsPositiveInfinity();
         await Assert.That(actual.Y).IsNegativeInfinity();
     }
@@ -468,12 +453,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest6()
     {
-        Vector3D a = new Vector3D(1.68, 2.34, 5.43);
-        Vector3D b = a;
+        var a = new Vector3D(1.68, 2.34, 5.43);
+        var b = a;
 
-        double t = 0.18;
-        Vector3D expected = new Vector3D(1.68, 2.34, 5.43);
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var t = 0.18;
+        var expected = new Vector3D(1.68, 2.34, 5.43);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected).Within(0.01);
     }
 
@@ -482,13 +467,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest7()
     {
-        Vector3D a = new Vector3D(0.44728136);
-        Vector3D b = new Vector3D(0.46345946);
+        var a = new Vector3D(0.44728136);
+        var b = new Vector3D(0.46345946);
 
-        double t = 0.26402435;
+        var t = 0.26402435;
 
-        Vector3D expected = new Vector3D(0.45155275);
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var expected = new Vector3D(0.45155275);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected).Within(0.0000001);
     }
 
@@ -498,13 +483,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DLerpTest8()
     {
-        Vector3D a = new Vector3D(-100);
-        Vector3D b = new Vector3D(0.33333334);
+        var a = new Vector3D(-100);
+        var b = new Vector3D(0.33333334);
 
         double t = 1;
 
-        Vector3D expected = new Vector3D(0.33333334);
-        Vector3D actual = Vector3D.Lerp(a, b, t);
+        var expected = new Vector3D(0.33333334);
+        var actual = Vector3D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -512,23 +497,23 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DReflectTest()
     {
-        Vector3D a = Vector3D.Normalize(new Vector3D(1.0, 1.0, 1.0));
+        var a = Vector3D.Normalize(new(1.0, 1.0, 1.0));
 
         // Reflect on XZ plane.
-        Vector3D n = new Vector3D(0.0, 1.0, 0.0);
-        Vector3D expected = new Vector3D(a.X, -a.Y, a.Z);
-        Vector3D actual = Vector3D.Reflect(a, n);
+        var n = new Vector3D(0.0, 1.0, 0.0);
+        var expected = new Vector3D(a.X, -a.Y, a.Z);
+        var actual = Vector3D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Reflect on XY plane.
-        n = new Vector3D(0.0, 0.0, 1.0);
-        expected = new Vector3D(a.X, a.Y, -a.Z);
+        n = new(0.0, 0.0, 1.0);
+        expected = new(a.X, a.Y, -a.Z);
         actual = Vector3D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Reflect on YZ plane.
-        n = new Vector3D(1.0, 0.0, 0.0);
-        expected = new Vector3D(-a.X, a.Y, a.Z);
+        n = new(1.0, 0.0, 0.0);
+        expected = new(-a.X, a.Y, a.Z);
         actual = Vector3D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -538,12 +523,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DReflectTest1()
     {
-        Vector3D n = new Vector3D(0.45, 1.28, 0.86);
+        var n = new Vector3D(0.45, 1.28, 0.86);
         n = Vector3D.Normalize(n);
-        Vector3D a = n;
+        var a = n;
 
-        Vector3D expected = -n;
-        Vector3D actual = Vector3D.Reflect(a, n);
+        var expected = -n;
+        var actual = Vector3D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
     }
 
@@ -552,12 +537,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DReflectTest2()
     {
-        Vector3D n = new Vector3D(0.45, 1.28, 0.86);
+        var n = new Vector3D(0.45, 1.28, 0.86);
         n = Vector3D.Normalize(n);
-        Vector3D a = -n;
+        var a = -n;
 
-        Vector3D expected = n;
-        Vector3D actual = Vector3D.Reflect(a, n);
+        var expected = n;
+        var actual = Vector3D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
     }
 
@@ -566,13 +551,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DReflectTest3()
     {
-        Vector3D n = new Vector3D(0.45, 1.28, 0.86);
-        Vector3D temp = new Vector3D(1.28, 0.45, 0.01);
+        var n = new Vector3D(0.45, 1.28, 0.86);
+        var temp = new Vector3D(1.28, 0.45, 0.01);
         // find a perpendicular vector of n
-        Vector3D a = Vector3D.Cross(temp, n);
+        var a = Vector3D.Cross(temp, n);
 
-        Vector3D expected = a;
-        Vector3D actual = Vector3D.Reflect(a, n);
+        var expected = a;
+        var actual = Vector3D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -580,8 +565,8 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DTransformTest()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        Matrix4x4D m =
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -589,10 +574,9 @@ public sealed class Vector3DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector3D expected = new Vector3D(12.191987, 21.533493, 32.616024);
-        Vector3D actual;
+        var expected = new Vector3D(12.191987, 21.533493, 32.616024);
 
-        actual = Vector3D.Transform(v, m);
+        var actual = Vector3D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-5);
     }
 
@@ -600,54 +584,54 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DClampTest()
     {
-        Vector3D a = new Vector3D(0.5, 0.3, 0.33);
-        Vector3D min = new Vector3D(0.0, 0.1, 0.13);
-        Vector3D max = new Vector3D(1.0, 1.1, 1.13);
+        var a = new Vector3D(0.5, 0.3, 0.33);
+        var min = new Vector3D(0.0, 0.1, 0.13);
+        var max = new Vector3D(1.0, 1.1, 1.13);
 
         // Normal case.
         // Case N1: specified value is in the range.
-        Vector3D expected = new Vector3D(0.5, 0.3, 0.33);
-        Vector3D actual = Vector3D.Clamp(a, min, max);
+        var expected = new Vector3D(0.5, 0.3, 0.33);
+        var actual = Vector3D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Normal case.
         // Case N2: specified value is bigger than max value.
-        a = new Vector3D(2.0, 3.0, 4.0);
+        a = new(2.0, 3.0, 4.0);
         expected = max;
         actual = Vector3D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Case N3: specified value is smaller than max value.
-        a = new Vector3D(-2.0, -3.0, -4.0);
+        a = new(-2.0, -3.0, -4.0);
         expected = min;
         actual = Vector3D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Case N4: combination case.
-        a = new Vector3D(-2.0, 0.5, 4.0);
-        expected = new Vector3D(min.X, a.Y, max.Z);
+        a = new(-2.0, 0.5, 4.0);
+        expected = new(min.X, a.Y, max.Z);
         actual = Vector3D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // User specified min value is bigger than max value.
-        max = new Vector3D(0.0, 0.1, 0.13);
-        min = new Vector3D(1.0, 1.1, 1.13);
+        max = new(0.0, 0.1, 0.13);
+        min = new(1.0, 1.1, 1.13);
 
         // Case W1: specified value is in the range.
-        a = new Vector3D(0.5, 0.3, 0.33);
+        a = new(0.5, 0.3, 0.33);
         expected = max;
         actual = Vector3D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Normal case.
         // Case W2: specified value is bigger than max and min value.
-        a = new Vector3D(2.0, 3.0, 4.0);
+        a = new(2.0, 3.0, 4.0);
         expected = max;
         actual = Vector3D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Case W3: specified value is smaller than min and max value.
-        a = new Vector3D(-2.0, -3.0, -4.0);
+        a = new(-2.0, -3.0, -4.0);
         expected = max;
         actual = Vector3D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
@@ -657,8 +641,8 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DTransformNormalTest()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        Matrix4x4D m =
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -666,10 +650,9 @@ public sealed class Vector3DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector3D expected = new Vector3D(2.19198728, 1.53349364, 2.61602545);
-        Vector3D actual;
+        var expected = new Vector3D(2.19198728, 1.53349364, 2.61602545);
 
-        actual = Vector3D.TransformNormal(v, m);
+        var actual = Vector3D.TransformNormal(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-7);
     }
 
@@ -677,16 +660,16 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DTransformByQuaternionDTest()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
-        QuaternionD q = QuaternionD.CreateFromRotationMatrix(m);
+        var q = QuaternionD.CreateFromRotationMatrix(m);
 
-        Vector3D expected = Vector3D.Transform(v, m);
-        Vector3D actual = Vector3D.Transform(v, q);
+        var expected = Vector3D.Transform(v, m);
+        var actual = Vector3D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
     }
 
@@ -695,11 +678,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DTransformByQuaternionDTest1()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        QuaternionD q = new QuaternionD();
-        Vector3D expected = Vector3D.Zero;
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var q = new QuaternionD();
+        var expected = Vector3D.Zero;
 
-        Vector3D actual = Vector3D.Transform(v, q);
+        var actual = Vector3D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -708,11 +691,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DTransformByQuaternionDTest2()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        QuaternionD q = QuaternionD.Identity;
-        Vector3D expected = v;
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var q = QuaternionD.Identity;
+        var expected = v;
 
-        Vector3D actual = Vector3D.Transform(v, q);
+        var actual = Vector3D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -720,15 +703,14 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DNormalizeTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
 
-        Vector3D expected = new Vector3D(
+        var expected = new Vector3D(
             0.26726124191242438468455348087975,
             0.53452248382484876936910696175951,
             0.80178372573727315405366044263926);
-        Vector3D actual;
 
-        actual = Vector3D.Normalize(a);
+        var actual = Vector3D.Normalize(a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -737,10 +719,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DNormalizeTest1()
     {
-        Vector3D a = new Vector3D(1.0, 0.0, 0.0);
+        var a = new Vector3D(1.0, 0.0, 0.0);
 
-        Vector3D expected = new Vector3D(1.0, 0.0, 0.0);
-        Vector3D actual = Vector3D.Normalize(a);
+        var expected = new Vector3D(1.0, 0.0, 0.0);
+        var actual = Vector3D.Normalize(a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -749,10 +731,9 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DNormalizeTest2()
     {
-        Vector3D a = new Vector3D(0.0, 0.0, 0.0);
+        var a = new Vector3D(0.0, 0.0, 0.0);
 
-        Vector3D expected = new Vector3D(0.0, 0.0, 0.0);
-        Vector3D actual = Vector3D.Normalize(a);
+        var actual = Vector3D.Normalize(a);
         await Assert.That(actual)
             .Member(x => x.X, x => x.IsNaN()).And
             .Member(x => x.Y, x => x.IsNaN()).And
@@ -763,12 +744,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DUnaryNegationTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
 
-        Vector3D expected = new Vector3D(-1.0, -2.0, -3.0);
-        Vector3D actual;
+        var expected = new Vector3D(-1.0, -2.0, -3.0);
 
-        actual = -a;
+        var actual = -a;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -776,8 +756,8 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DUnaryNegationTest1()
     {
-        Vector3D a = -new Vector3D(double.NaN, double.PositiveInfinity, double.NegativeInfinity);
-        Vector3D b = -new Vector3D(0.0, 0.0, 0.0);
+        var a = -new Vector3D(double.NaN, double.PositiveInfinity, double.NegativeInfinity);
+        var b = -new Vector3D(0.0, 0.0, 0.0);
         await Assert.That(a.X).IsNaN();
         await Assert.That(a.Y).IsNegativeInfinity();
         await Assert.That(a.Z).IsPositiveInfinity();
@@ -790,14 +770,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DSubtractionTest()
     {
-        Vector3D a = new Vector3D(4.0, 2.0, 3.0);
+        var a = new Vector3D(4.0, 2.0, 3.0);
 
-        Vector3D b = new Vector3D(1.0, 5.0, 7.0);
+        var b = new Vector3D(1.0, 5.0, 7.0);
 
-        Vector3D expected = new Vector3D(3.0, -3.0, -4.0);
-        Vector3D actual;
+        var expected = new Vector3D(3.0, -3.0, -4.0);
 
-        actual = a - b;
+        var actual = a - b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -806,14 +785,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMultiplyOperatorTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
 
-        double factor = 2.0;
+        var factor = 2.0;
 
-        Vector3D expected = new Vector3D(2.0, 4.0, 6.0);
-        Vector3D actual;
+        var expected = new Vector3D(2.0, 4.0, 6.0);
 
-        actual = a * factor;
+        var actual = a * factor;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -822,14 +800,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMultiplyOperatorTest2()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
 
-        const double factor = 2.0;
+        const double Factor = 2.0;
 
-        Vector3D expected = new Vector3D(2.0, 4.0, 6.0);
-        Vector3D actual;
+        var expected = new Vector3D(2.0, 4.0, 6.0);
 
-        actual = factor * a;
+        var actual = Factor * a;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -838,14 +815,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMultiplyOperatorTest3()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
 
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        Vector3D expected = new Vector3D(4.0, 10.0, 18.0);
-        Vector3D actual;
+        var expected = new Vector3D(4.0, 10.0, 18.0);
 
-        actual = a * b;
+        var actual = a * b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -854,14 +830,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDivisionTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
 
-        double div = 2.0;
+        var div = 2.0;
 
-        Vector3D expected = new Vector3D(0.5, 1.0, 1.5);
-        Vector3D actual;
+        var expected = new Vector3D(0.5, 1.0, 1.5);
 
-        actual = a / div;
+        var actual = a / div;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -870,14 +845,13 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDivisionTest1()
     {
-        Vector3D a = new Vector3D(4.0, 2.0, 3.0);
+        var a = new Vector3D(4.0, 2.0, 3.0);
 
-        Vector3D b = new Vector3D(1.0, 5.0, 6.0);
+        var b = new Vector3D(1.0, 5.0, 6.0);
 
-        Vector3D expected = new Vector3D(4.0, 0.4, 0.5);
-        Vector3D actual;
+        var expected = new Vector3D(4.0, 0.4, 0.5);
 
-        actual = a / b;
+        var actual = a / b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -887,11 +861,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDivisionTest2()
     {
-        Vector3D a = new Vector3D(-2.0, 3.0, double.MaxValue);
+        var a = new Vector3D(-2.0, 3.0, double.MaxValue);
 
-        double div = 0.0;
+        var div = 0.0;
 
-        Vector3D actual = a / div;
+        var actual = a / div;
 
         await Assert.That(actual.X).IsNegativeInfinity();
         await Assert.That(actual.Y).IsPositiveInfinity();
@@ -903,10 +877,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDivisionTest3()
     {
-        Vector3D a = new Vector3D(0.047, -3.0, double.NegativeInfinity);
-        Vector3D b = new Vector3D();
+        var a = new Vector3D(0.047, -3.0, double.NegativeInfinity);
+        var b = new Vector3D();
 
-        Vector3D actual = a / b;
+        var actual = a / b;
 
         await Assert.That(actual.X).IsPositiveInfinity();
         await Assert.That(actual.Y).IsNegativeInfinity();
@@ -917,13 +891,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DAdditionTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(4.0, 5.0, 6.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(4.0, 5.0, 6.0);
 
-        Vector3D expected = new Vector3D(5.0, 7.0, 9.0);
-        Vector3D actual;
+        var expected = new Vector3D(5.0, 7.0, 9.0);
 
-        actual = a + b;
+        var actual = a + b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -932,11 +905,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DConstructorTest()
     {
-        double x = 1.0;
-        double y = 2.0;
-        double z = 3.0;
+        var x = 1.0;
+        var y = 2.0;
+        var z = 3.0;
 
-        Vector3D target = new Vector3D(x, y, z);
+        var target = new Vector3D(x, y, z);
         await Assert.That(target.X).IsEqualTo(x);
         await Assert.That(target.Y).IsEqualTo(y);
         await Assert.That(target.Z).IsEqualTo(z);
@@ -946,11 +919,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DConstructorTest1()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
 
-        double z = 3.0;
+        var z = 3.0;
 
-        Vector3D target = new Vector3D(a, z);
+        var target = new Vector3D(a, z);
         await Assert.That(target.X).IsEqualTo(a.X);
         await Assert.That(target.Y).IsEqualTo(a.Y);
         await Assert.That(target.Z).IsEqualTo(z);
@@ -961,7 +934,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DConstructorTest3()
     {
-        Vector3D a = new Vector3D();
+        var a = new Vector3D();
 
         await Assert.That(a.X).IsEqualTo(0.0);
         await Assert.That(a.Y).IsEqualTo(0.0);
@@ -969,11 +942,11 @@ public sealed class Vector3DTests
     }
 
     // A test for Vector2D (double, double)
-    // Constructor with special doubleing values
+    // Constructor with special floating values
     [Test]
     public async Task Vector3DConstructorTest4()
     {
-        Vector3D target = new Vector3D(double.NaN, double.MaxValue, double.PositiveInfinity);
+        var target = new Vector3D(double.NaN, double.MaxValue, double.PositiveInfinity);
 
         await Assert.That(target.X).IsNaN();
         await Assert.That(target.Y).IsEqualTo(double.MaxValue);
@@ -984,25 +957,24 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DConstructorTest6()
     {
-        double value = 1.0;
-        Vector3D target = new Vector3D(new[] { value, value, value });
-        Vector3D expected = new Vector3D(value);
+        var value = 1.0;
+        var target = new Vector3D(new[] { value, value, value });
+        var expected = new Vector3D(value);
 
         await Assert.That(target).IsEqualTo(expected);
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Vector3D(new double[2]));
+        await Assert.That(() => new Vector3D(new double[2])).Throws<ArgumentOutOfRangeException>();
     }
 
     // A test for Add (Vector3Df, Vector3Df)
     [Test]
     public async Task Vector3DAddTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(5.0, 6.0, 7.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(5.0, 6.0, 7.0);
 
-        Vector3D expected = new Vector3D(6.0, 8.0, 10.0);
-        Vector3D actual;
+        var expected = new Vector3D(6.0, 8.0, 10.0);
 
-        actual = Vector3D.Add(a, b);
+        var actual = Vector3D.Add(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1010,11 +982,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDivideTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        double div = 2.0;
-        Vector3D expected = new Vector3D(0.5, 1.0, 1.5);
-        Vector3D actual;
-        actual = Vector3D.Divide(a, div);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var div = 2.0;
+        var expected = new Vector3D(0.5, 1.0, 1.5);
+        var actual = Vector3D.Divide(a, div);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1022,13 +993,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DDivideTest1()
     {
-        Vector3D a = new Vector3D(1.0, 6.0, 7.0);
-        Vector3D b = new Vector3D(5.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 6.0, 7.0);
+        var b = new Vector3D(5.0, 2.0, 3.0);
 
-        Vector3D expected = new Vector3D(1.0 / 5.0, 6.0 / 2.0, 7.0 / 3.0);
-        Vector3D actual;
+        var expected = new Vector3D(1.0 / 5.0, 6.0 / 2.0, 7.0 / 3.0);
 
-        actual = Vector3D.Divide(a, b);
+        var actual = Vector3D.Divide(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1036,14 +1006,14 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DEqualsTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(1.0, 2.0, 3.0);
 
         // case 1: compare between same values
         object obj = b;
 
-        bool expected = true;
-        bool actual = a.Equals(obj);
+        var expected = true;
+        var actual = a.Equals(obj);
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1070,10 +1040,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMultiplyTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        const double factor = 2.0;
-        Vector3D expected = new Vector3D(2.0, 4.0, 6.0);
-        Vector3D actual = Vector3D.Multiply(a, factor);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        const double Factor = 2.0;
+        var expected = new Vector3D(2.0, 4.0, 6.0);
+        var actual = Vector3D.Multiply(a, Factor);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1081,10 +1051,10 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMultiplyTest2()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        const double factor = 2.0;
-        Vector3D expected = new Vector3D(2.0, 4.0, 6.0);
-        Vector3D actual = Vector3D.Multiply(factor, a);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        const double Factor = 2.0;
+        var expected = new Vector3D(2.0, 4.0, 6.0);
+        var actual = Vector3D.Multiply(Factor, a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1092,13 +1062,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DMultiplyTest3()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(5.0, 6.0, 7.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(5.0, 6.0, 7.0);
 
-        Vector3D expected = new Vector3D(5.0, 12.0, 21.0);
-        Vector3D actual;
+        var expected = new Vector3D(5.0, 12.0, 21.0);
 
-        actual = Vector3D.Multiply(a, b);
+        var actual = Vector3D.Multiply(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1106,12 +1075,11 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DNegateTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
 
-        Vector3D expected = new Vector3D(-1.0, -2.0, -3.0);
-        Vector3D actual;
+        var expected = new Vector3D(-1.0, -2.0, -3.0);
 
-        actual = Vector3D.Negate(a);
+        var actual = Vector3D.Negate(a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1119,12 +1087,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DInequalityTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(1.0, 2.0, 3.0);
 
         // case 1: compare between same values
-        bool expected = false;
-        bool actual = a != b;
+        var expected = false;
+        var actual = a != b;
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1138,12 +1106,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DEqualityTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(1.0, 2.0, 3.0);
 
         // case 1: compare between same values
-        bool expected = true;
-        bool actual = a == b;
+        var expected = true;
+        var actual = a == b;
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1157,13 +1125,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DSubtractTest()
     {
-        Vector3D a = new Vector3D(1.0, 6.0, 3.0);
-        Vector3D b = new Vector3D(5.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 6.0, 3.0);
+        var b = new Vector3D(5.0, 2.0, 3.0);
 
-        Vector3D expected = new Vector3D(-4.0, 4.0, 0.0);
-        Vector3D actual;
+        var expected = new Vector3D(-4.0, 4.0, 0.0);
 
-        actual = Vector3D.Subtract(a, b);
+        var actual = Vector3D.Subtract(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1171,7 +1138,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DOneTest()
     {
-        Vector3D val = new Vector3D(1.0, 1.0, 1.0);
+        var val = new Vector3D(1.0, 1.0, 1.0);
         await Assert.That(Vector3D.One).IsEqualTo(val);
     }
 
@@ -1179,7 +1146,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DUnitXTest()
     {
-        Vector3D val = new Vector3D(1.0, 0.0, 0.0);
+        var val = new Vector3D(1.0, 0.0, 0.0);
         await Assert.That(Vector3D.UnitX).IsEqualTo(val);
     }
 
@@ -1187,7 +1154,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DUnitYTest()
     {
-        Vector3D val = new Vector3D(0.0, 1.0, 0.0);
+        var val = new Vector3D(0.0, 1.0, 0.0);
         await Assert.That(Vector3D.UnitY).IsEqualTo(val);
     }
 
@@ -1195,7 +1162,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DUnitZTest()
     {
-        Vector3D val = new Vector3D(0.0, 0.0, 1.0);
+        var val = new Vector3D(0.0, 0.0, 1.0);
         await Assert.That(Vector3D.UnitZ).IsEqualTo(val);
     }
 
@@ -1203,7 +1170,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DZeroTest()
     {
-        Vector3D val = new Vector3D(0.0, 0.0, 0.0);
+        var val = new Vector3D(0.0, 0.0, 0.0);
         await Assert.That(Vector3D.Zero).IsEqualTo(val);
     }
 
@@ -1211,12 +1178,12 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DEqualsTest1()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        Vector3D b = new Vector3D(1.0, 2.0, 3.0);
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var b = new Vector3D(1.0, 2.0, 3.0);
 
         // case 1: compare between same values
-        bool expected = true;
-        bool actual = a.Equals(b);
+        var expected = true;
+        var actual = a.Equals(b);
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1230,15 +1197,15 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DConstructorTest5()
     {
-        double value = 1.0;
-        Vector3D target = new Vector3D(value);
+        var value = 1.0;
+        var target = new Vector3D(value);
 
-        Vector3D expected = new Vector3D(value, value, value);
+        var expected = new Vector3D(value, value, value);
         await Assert.That(target).IsEqualTo(expected);
 
         value = 2.0;
-        target = new Vector3D(value);
-        expected = new Vector3D(value, value, value);
+        target = new(value);
+        expected = new(value, value, value);
         await Assert.That(target).IsEqualTo(expected);
     }
 
@@ -1246,9 +1213,9 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DEqualsNaNTest()
     {
-        Vector3D a = new Vector3D(double.NaN, 0, 0);
-        Vector3D b = new Vector3D(0, double.NaN, 0);
-        Vector3D c = new Vector3D(0, 0, double.NaN);
+        var a = new Vector3D(double.NaN, 0, 0);
+        var b = new Vector3D(0, double.NaN, 0);
+        var c = new Vector3D(0, 0, double.NaN);
 
         await Assert.That(a == Vector3D.Zero).IsFalse();
         await Assert.That(b == Vector3D.Zero).IsFalse();
@@ -1270,9 +1237,9 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DAbsTest()
     {
-        Vector3D v1 = new Vector3D(-2.5, 2.0, 0.5);
-        Vector3D v3 = Vector3D.Abs(new Vector3D(0.0, double.NegativeInfinity, double.NaN));
-        Vector3D v = Vector3D.Abs(v1);
+        var v1 = new Vector3D(-2.5, 2.0, 0.5);
+        var v3 = Vector3D.Abs(new(0.0, double.NegativeInfinity, double.NaN));
+        var v = Vector3D.Abs(v1);
         await Assert.That(v.X).IsEqualTo(2.5);
         await Assert.That(v.Y).IsEqualTo(2.0);
         await Assert.That(v.Z).IsEqualTo(0.5);
@@ -1284,8 +1251,8 @@ public sealed class Vector3DTests
     [Test]
     public async Task Vector3DSqrtTest()
     {
-        Vector3D a = new Vector3D(-2.5, 2.0, 0.5);
-        Vector3D b = new Vector3D(5.5, 4.5, 16.5);
+        var a = new Vector3D(-2.5, 2.0, 0.5);
+        var b = new Vector3D(5.5, 4.5, 16.5);
         await Assert.That((int)Vector3D.SquareRoot(b).X).IsEqualTo(2);
         await Assert.That((int)Vector3D.SquareRoot(b).Y).IsEqualTo(2);
         await Assert.That((int)Vector3D.SquareRoot(b).Z).IsEqualTo(4);
@@ -1339,14 +1306,16 @@ public sealed class Vector3DTests
     [Test]
     public async Task SetFieldsTest()
     {
-        Vector3D v3 = new Vector3D(4, 5, 6);
-        v3.X = 1.0;
-        v3.Y = 2.0;
-        v3.Z = 3.0;
+        var v3 = new Vector3D(4, 5, 6)
+        {
+            X = 1.0,
+            Y = 2.0,
+            Z = 3.0,
+        };
         await Assert.That(v3.X).IsEqualTo(1.0);
         await Assert.That(v3.Y).IsEqualTo(2.0);
         await Assert.That(v3.Z).IsEqualTo(3.0);
-        Vector3D v4 = v3;
+        var v4 = v3;
         v4.Y = 0.5;
         v4.Z = 2.2;
         await Assert.That(v4.X).IsEqualTo(1.0);
@@ -1354,8 +1323,8 @@ public sealed class Vector3DTests
         await Assert.That(v4.Z).IsEqualTo(2.2);
         await Assert.That(v3.Y).IsEqualTo(2.0);
 
-        Vector3D before = new Vector3D(1, 2, 3);
-        Vector3D after = before;
+        var before = new Vector3D(1, 2, 3);
+        var after = before;
         after.X = 500.0;
         await Assert.That(after).IsNotEqualTo(before);
     }
@@ -1363,7 +1332,7 @@ public sealed class Vector3DTests
     [Test]
     public async Task EmbeddedVectorSetFields()
     {
-        EmbeddedVectorObject evo = new EmbeddedVectorObject();
+        var evo = new EmbeddedVectorObject();
         evo.FieldVector.X = 5.0;
         evo.FieldVector.Y = 5.0;
         evo.FieldVector.Z = 5.0;
@@ -1381,7 +1350,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CosDouble))]
     public async Task CosDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector3D actualResult = Vector3D.Cos(Vector3D.Create(value));
+        var actualResult = Vector3D.Cos(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
     }
 
@@ -1389,7 +1358,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ExpDouble))]
     public async Task ExpDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector3D actualResult = Vector3D.Exp(Vector3D.Create(value));
+        var actualResult = Vector3D.Exp(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
     }
 
@@ -1397,7 +1366,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.LogDouble))]
     public async Task LogDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector3D actualResult = Vector3D.Log(Vector3D.Create(value));
+        var actualResult = Vector3D.Log(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
     }
 
@@ -1405,7 +1374,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.Log2Double))]
     public async Task Log2DoubleTest(double value, double expectedResult, double variance)
     {
-        Vector3D actualResult = Vector3D.Log2(Vector3D.Create(value));
+        var actualResult = Vector3D.Log2(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
     }
 
@@ -1421,7 +1390,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ClampDouble))]
     public async Task ClampDoubleTest(double x, double min, double max, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.Clamp(Vector3D.Create(x), Vector3D.Create(min), Vector3D.Create(max));
+        var actualResult = Vector3D.Clamp(Vector3D.Create(x), Vector3D.Create(min), Vector3D.Create(max));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1429,7 +1398,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CopySignDouble))]
     public async Task CopySignDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.CopySign(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.CopySign(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1468,7 +1437,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxDouble))]
     public async Task MaxDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.Max(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.Max(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1476,7 +1445,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeDouble))]
     public async Task MaxMagnitudeDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.MaxMagnitude(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.MaxMagnitude(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1484,7 +1453,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeNumberDouble))]
     public async Task MaxMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.MaxMagnitudeNumber(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.MaxMagnitudeNumber(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1492,7 +1461,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxNumberDouble))]
     public async Task MaxNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.MaxNumber(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.MaxNumber(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1500,7 +1469,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinDouble))]
     public async Task MinDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.Min(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.Min(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1508,7 +1477,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeDouble))]
     public async Task MinMagnitudeDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.MinMagnitude(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.MinMagnitude(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1516,7 +1485,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeNumberDouble))]
     public async Task MinMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.MinMagnitudeNumber(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.MinMagnitudeNumber(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1524,7 +1493,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinNumberDouble))]
     public async Task MinNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.MinNumber(Vector3D.Create(x), Vector3D.Create(y));
+        var actualResult = Vector3D.MinNumber(Vector3D.Create(x), Vector3D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1540,7 +1509,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundDouble))]
     public async Task RoundDoubleTest(double value, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.Round(Vector3D.Create(value));
+        var actualResult = Vector3D.Round(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1548,7 +1517,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundAwayFromZeroDouble))]
     public async Task RoundAwayFromZeroDoubleTest(double value, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.Round(Vector3D.Create(value), MidpointRounding.AwayFromZero);
+        var actualResult = Vector3D.Round(Vector3D.Create(value), MidpointRounding.AwayFromZero);
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1556,7 +1525,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundToEvenDouble))]
     public async Task RoundToEvenDoubleTest(double value, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.Round(Vector3D.Create(value), MidpointRounding.ToEven);
+        var actualResult = Vector3D.Round(Vector3D.Create(value), MidpointRounding.ToEven);
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 
@@ -1564,7 +1533,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinDouble))]
     public async Task SinDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector3D actualResult = Vector3D.Sin(Vector3D.Create(value));
+        var actualResult = Vector3D.Sin(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
     }
 
@@ -1572,7 +1541,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinCosDouble))]
     public async Task SinCosDoubleTest(double value, double expectedResultSin, double expectedResultCos, double allowedVarianceSin, double allowedVarianceCos)
     {
-        (Vector3D resultSin, Vector3D resultCos) = Vector3D.SinCos(Vector3D.Create(value));
+        var (resultSin, resultCos) = Vector3D.SinCos(Vector3D.Create(value));
         await Assert.That(resultSin).IsEqualTo(Vector3D.Create(expectedResultSin)).Within(Vector3D.Create(allowedVarianceSin));
         await Assert.That(resultCos).IsEqualTo(Vector3D.Create(expectedResultCos)).Within(Vector3D.Create(allowedVarianceCos));
     }
@@ -1581,7 +1550,7 @@ public sealed class Vector3DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.TruncateDouble))]
     public async Task TruncateDoubleTest(double value, double expectedResult)
     {
-        Vector3D actualResult = Vector3D.Truncate(Vector3D.Create(value));
+        var actualResult = Vector3D.Truncate(Vector3D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Zero);
     }
 

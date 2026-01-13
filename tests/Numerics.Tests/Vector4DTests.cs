@@ -1,14 +1,14 @@
 namespace Altemiq.Numerics;
 
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics;
-using Altemiq.Runtime.Intrinsics;
 
+//[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
 public sealed class Vector4DTests
 {
+#if NET10_OR_GREATER
     private const int ElementCount = 4;
+#endif
 
     [Test]
     public async Task Vector4DMarshalSizeTest()
@@ -39,12 +39,13 @@ public sealed class Vector4DTests
     [Arguments(1.0000001, 0.0000001, 2.0000001, 0.0000002)]
     public async Task Vector4DIndexerSetTest(double x, double y, double z, double w)
     {
-        var vector = new Vector4D(0.0, 0.0, 0.0, 0.0);
-
-        vector[0] = x;
-        vector[1] = y;
-        vector[2] = z;
-        vector[3] = w;
+        var vector = new Vector4D(0.0, 0.0, 0.0, 0.0)
+        {
+            [0] = x,
+            [1] = y,
+            [2] = z,
+            [3] = w,
+        };
 
         await Assert.That(vector[0]).IsEqualTo(x);
         await Assert.That(vector[1]).IsEqualTo(y);
@@ -55,10 +56,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DCopyToTest()
     {
-        Vector4D v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
+        var v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
 
-        double[] a = new double[5];
-        double[] b = new double[4];
+        var a = new double[5];
+        var b = new double[4];
 
         await Assert.That(() => v1.CopyTo(null!, 0)).Throws<NullReferenceException>();
         await Assert.That(() => v1.CopyTo(a, -1)).Throws<ArgumentOutOfRangeException>();
@@ -81,7 +82,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DCopyToSpanTest()
     {
-        Vector4D vector = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var vector = new Vector4D(1.0, 2.0, 3.0, 4.0);
         var destination = new double[4];
 
         await Assert.That(() => vector.CopyTo(new Span<double>(new double[3]))).Throws<ArgumentException>();
@@ -100,10 +101,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTryCopyToTest()
     {
-        Vector4D vector = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var vector = new Vector4D(1.0, 2.0, 3.0, 4.0);
         var destination = new double[4];
 
-        await Assert.That(vector.TryCopyTo(new Span<double>(new double[3]))).IsFalse();
+        await Assert.That(vector.TryCopyTo(new(new double[3]))).IsFalse();
         await Assert.That(vector.TryCopyTo(destination.AsSpan())).IsTrue();
 
         await Assert.That(vector.X).IsEqualTo(1.0);
@@ -119,19 +120,19 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DGetHashCodeTest()
     {
-        Vector4D v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
-        Vector4D v2 = new Vector4D(2.5, 2.0, 3.0, 3.3);
-        Vector4D v3 = new Vector4D(2.5, 2.0, 3.0, 3.3);
-        Vector4D v5 = new Vector4D(3.3, 3.0, 2.0, 2.5);
+        var v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
+        var v2 = new Vector4D(2.5, 2.0, 3.0, 3.3);
+        var v3 = new Vector4D(2.5, 2.0, 3.0, 3.3);
+        var v5 = new Vector4D(3.3, 3.0, 2.0, 2.5);
         await Assert.That(v1.GetHashCode()).IsEqualTo(v1.GetHashCode());
         await Assert.That(v2.GetHashCode()).IsEqualTo(v1.GetHashCode());
         await Assert.That(v5.GetHashCode()).IsNotEqualTo(v1.GetHashCode());
         await Assert.That(v3.GetHashCode()).IsEqualTo(v1.GetHashCode());
-        Vector4D v4 = new Vector4D(0.0, 0.0, 0.0, 0.0);
-        Vector4D v6 = new Vector4D(1.0, 0.0, 0.0, 0.0);
-        Vector4D v7 = new Vector4D(0.0, 1.0, 0.0, 0.0);
-        Vector4D v8 = new Vector4D(1.0, 1.0, 1.0, 1.0);
-        Vector4D v9 = new Vector4D(1.0, 1.0, 0.0, 0.0);
+        var v4 = new Vector4D(0.0, 0.0, 0.0, 0.0);
+        var v6 = new Vector4D(1.0, 0.0, 0.0, 0.0);
+        var v7 = new Vector4D(0.0, 1.0, 0.0, 0.0);
+        var v8 = new Vector4D(1.0, 1.0, 1.0, 1.0);
+        var v9 = new Vector4D(1.0, 1.0, 0.0, 0.0);
         await Assert.That(v6.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
         await Assert.That(v7.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
         await Assert.That(v8.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
@@ -144,47 +145,46 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DToStringTest()
     {
-        string separator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
-        CultureInfo enUsCultureInfo = new CultureInfo("en-US");
+        var separator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+        var enUsCultureInfo = new CultureInfo("en-US");
 
-        Vector4D v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
+        var v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
 
-        string v1str = v1.ToString();
-        string expectedv1 = string.Format(CultureInfo.CurrentCulture
+        var v1Str = v1.ToString();
+        var expectedV1 = string.Format(CultureInfo.CurrentCulture
             , "<{1:G}{0} {2:G}{0} {3:G}{0} {4:G}>"
             , separator, 2.5, 2, 3, 3.3);
-        await Assert.That(v1str).IsEquivalentTo(expectedv1);
+        await Assert.That(v1Str).IsEquivalentTo(expectedV1);
 
-        string v1strformatted = v1.ToString("c", CultureInfo.CurrentCulture);
-        string expectedv1formatted = string.Format(CultureInfo.CurrentCulture
+        var v1StrFormatted = v1.ToString("c", CultureInfo.CurrentCulture);
+        var expectedV1Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}{0} {3:c}{0} {4:c}>"
             , separator, 2.5, 2, 3, 3.3);
-        await Assert.That(v1strformatted).IsEquivalentTo(expectedv1formatted);
+        await Assert.That(v1StrFormatted).IsEquivalentTo(expectedV1Formatted);
 
-        string v2strformatted = v1.ToString("c", enUsCultureInfo);
-        string expectedv2formatted = string.Format(enUsCultureInfo
+        var v2StrFormatted = v1.ToString("c", enUsCultureInfo);
+        var expectedV2Formatted = string.Format(enUsCultureInfo
             , "<{1:c}{0} {2:c}{0} {3:c}{0} {4:c}>"
             , enUsCultureInfo.NumberFormat.NumberGroupSeparator, 2.5, 2, 3, 3.3);
-        await Assert.That(v2strformatted).IsEquivalentTo(expectedv2formatted);
+        await Assert.That(v2StrFormatted).IsEquivalentTo(expectedV2Formatted);
 
-        string v3strformatted = v1.ToString("c");
-        string expectedv3formatted = string.Format(CultureInfo.CurrentCulture
+        var v3StrFormatted = v1.ToString("c");
+        var expectedV3Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}{0} {3:c}{0} {4:c}>"
             , separator, 2.5, 2, 3, 3.3);
-        await Assert.That(v3strformatted).IsEquivalentTo(expectedv3formatted);
+        await Assert.That(v3StrFormatted).IsEquivalentTo(expectedV3Formatted);
     }
 
     // A test for DistanceSquared (Vector4Df, Vector4Df)
     [Test]
     public async Task Vector4DDistanceSquaredTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        double expected = 64.0;
-        double actual;
+        var expected = 64.0;
 
-        actual = Vector4D.DistanceSquared(a, b);
+        var actual = Vector4D.DistanceSquared(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -192,13 +192,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDistanceTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        double expected = 8.0;
-        double actual;
+        var expected = 8.0;
 
-        actual = Vector4D.Distance(a, b);
+        var actual = Vector4D.Distance(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -207,11 +206,13 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDistanceTest1()
     {
-        Vector4D a = new Vector4D(new Vector2D(1.051, 2.05), 3.478, 1.0);
-        Vector4D b = new Vector4D(new Vector3D(1.051, 2.05, 3.478), 0.0);
-        b.W = 1.0;
+        var a = new Vector4D(new(1.051, 2.05), 3.478, 1.0);
+        var b = new Vector4D(new(1.051, 2.05, 3.478), 0.0)
+        {
+            W = 1.0,
+        };
 
-        double actual = Vector4D.Distance(a, b);
+        var actual = Vector4D.Distance(a, b);
         await Assert.That(actual).IsEqualTo(0.0);
     }
 
@@ -219,13 +220,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDotTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        double expected = 70.0;
-        double actual;
+        var expected = 70.0;
 
-        actual = Vector4D.Dot(a, b);
+        var actual = Vector4D.Dot(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -234,29 +234,29 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDotTest1()
     {
-        Vector3D a = new Vector3D(1.55, 1.55, 1);
-        Vector3D b = new Vector3D(2.5, 3, 1.5);
-        Vector3D c = Vector3D.Cross(a, b);
+        var a = new Vector3D(1.55, 1.55, 1);
+        var b = new Vector3D(2.5, 3, 1.5);
+        var c = Vector3D.Cross(a, b);
 
-        Vector4D d = new Vector4D(a, 0);
-        Vector4D e = new Vector4D(c, 0);
+        var d = new Vector4D(a, 0);
+        var e = new Vector4D(c, 0);
 
-        double actual = Vector4D.Dot(d, e);
+        var actual = Vector4D.Dot(d, e);
         await Assert.That(actual).IsEqualTo(0.0).Within(1E-15);
     }
 
     [Test]
     public async Task Vector4DCrossTest()
     {
-        Vector3D a3 = new Vector3D(1.0, 0.0, 0.0);
-        Vector3D b3 = new Vector3D(0.0, 1.0, 0.0);
-        Vector3D e3 = Vector3D.Cross(a3, b3);
+        var a3 = new Vector3D(1.0, 0.0, 0.0);
+        var b3 = new Vector3D(0.0, 1.0, 0.0);
+        var e3 = Vector3D.Cross(a3, b3);
 
-        Vector4D a4 = new Vector4D(a3, 2.0);
-        Vector4D b4 = new Vector4D(b3, 3.0);
-        Vector4D e4 = new Vector4D(e3, a4.W * b4.W);
+        var a4 = new Vector4D(a3, 2.0);
+        var b4 = new Vector4D(b3, 3.0);
+        var e4 = new Vector4D(e3, a4.W * b4.W);
 
-        Vector4D actual = Vector4D.Cross(a4, b4);
+        var actual = Vector4D.Cross(a4, b4);
         await Assert.That(actual).IsEqualTo(e4);
     }
 
@@ -264,15 +264,15 @@ public sealed class Vector4DTests
     public async Task Vector4DCrossTest1()
     {
         // Cross test of the same vector
-        Vector3D a3 = new Vector3D(0.0, 1.0, 0.0);
-        Vector3D b3 = new Vector3D(0.0, 1.0, 0.0);
-        Vector3D e3 = Vector3D.Cross(a3, b3);
+        var a3 = new Vector3D(0.0, 1.0, 0.0);
+        var b3 = new Vector3D(0.0, 1.0, 0.0);
+        var e3 = Vector3D.Cross(a3, b3);
 
-        Vector4D a4 = new Vector4D(a3, 3.0);
-        Vector4D b4 = new Vector4D(b3, 3.0);
-        Vector4D e4 = new Vector4D(e3, a4.W * b4.W);
+        var a4 = new Vector4D(a3, 3.0);
+        var b4 = new Vector4D(b3, 3.0);
+        var e4 = new Vector4D(e3, a4.W * b4.W);
 
-        Vector4D actual = Vector4D.Cross(a4, b4);
+        var actual = Vector4D.Cross(a4, b4);
         await Assert.That(actual).IsEqualTo(e4);
     }
 
@@ -280,15 +280,14 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLengthTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        double w = 4.0;
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var w = 4.0;
 
-        Vector4D target = new Vector4D(a, w);
+        var target = new Vector4D(a, w);
 
-        double expected = Math.Sqrt(30.0);
-        double actual;
+        var expected = Math.Sqrt(30.0);
 
-        actual = target.Length();
+        var actual = target.Length();
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -298,10 +297,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLengthTest1()
     {
-        Vector4D target = new Vector4D();
+        var target = new Vector4D();
 
-        double expected = 0.0;
-        double actual = target.Length();
+        var expected = 0.0;
+        var actual = target.Length();
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -310,15 +309,14 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLengthSquaredTest()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        double w = 4.0;
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var w = 4.0;
 
-        Vector4D target = new Vector4D(a, w);
+        var target = new Vector4D(a, w);
 
         double expected = 30;
-        double actual;
 
-        actual = target.LengthSquared();
+        var actual = target.LengthSquared();
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -327,12 +325,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMinTest()
     {
-        Vector4D a = new Vector4D(-1.0, 4.0, -3.0, 1000.0);
-        Vector4D b = new Vector4D(2.0, 1.0, -1.0, 0.0);
+        var a = new Vector4D(-1.0, 4.0, -3.0, 1000.0);
+        var b = new Vector4D(2.0, 1.0, -1.0, 0.0);
 
-        Vector4D expected = new Vector4D(-1.0, 1.0, -3.0, 0.0);
-        Vector4D actual;
-        actual = Vector4D.Min(a, b);
+        var expected = new Vector4D(-1.0, 1.0, -3.0, 0.0);
+        var actual = Vector4D.Min(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -340,24 +337,23 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMaxTest()
     {
-        Vector4D a = new Vector4D(-1.0, 4.0, -3.0, 1000.0);
-        Vector4D b = new Vector4D(2.0, 1.0, -1.0, 0.0);
+        var a = new Vector4D(-1.0, 4.0, -3.0, 1000.0);
+        var b = new Vector4D(2.0, 1.0, -1.0, 0.0);
 
-        Vector4D expected = new Vector4D(2.0, 4.0, -1.0, 1000.0);
-        Vector4D actual;
-        actual = Vector4D.Max(a, b);
+        var expected = new Vector4D(2.0, 4.0, -1.0, 1000.0);
+        var actual = Vector4D.Max(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
     [Test]
     public async Task Vector4DMinMaxCodeCoverageTest()
     {
-        Vector4D min = Vector4D.Zero;
-        Vector4D max = Vector4D.One;
-        Vector4D actual;
+        var min = Vector4D.Zero;
+        var max = Vector4D.One;
 
-        // Min.
-        actual = Vector4D.Min(min, max);
+        var actual =
+            // Min.
+            Vector4D.Min(min, max);
         await Assert.That(min).IsEqualTo(actual);
 
         actual = Vector4D.Min(max, min);
@@ -375,55 +371,55 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DClampTest()
     {
-        Vector4D a = new Vector4D(0.5, 0.3, 0.33, 0.44);
-        Vector4D min = new Vector4D(0.0, 0.1, 0.13, 0.14);
-        Vector4D max = new Vector4D(1.0, 1.1, 1.13, 1.14);
+        var a = new Vector4D(0.5, 0.3, 0.33, 0.44);
+        var min = new Vector4D(0.0, 0.1, 0.13, 0.14);
+        var max = new Vector4D(1.0, 1.1, 1.13, 1.14);
 
         // Normal case.
         // Case N1: specified value is in the range.
-        Vector4D expected = new Vector4D(0.5, 0.3, 0.33, 0.44);
-        Vector4D actual = Vector4D.Clamp(a, min, max);
+        var expected = new Vector4D(0.5, 0.3, 0.33, 0.44);
+        var actual = Vector4D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
 
         // Normal case.
         // Case N2: specified value is bigger than max value.
-        a = new Vector4D(2.0, 3.0, 4.0, 5.0);
+        a = new(2.0, 3.0, 4.0, 5.0);
         expected = max;
         actual = Vector4D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Case N3: specified value is smaller than max value.
-        a = new Vector4D(-2.0, -3.0, -4.0, -5.0);
+        a = new(-2.0, -3.0, -4.0, -5.0);
         expected = min;
         actual = Vector4D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Case N4: combination case.
-        a = new Vector4D(-2.0, 0.5, 4.0, -5.0);
-        expected = new Vector4D(min.X, a.Y, max.Z, min.W);
+        a = new(-2.0, 0.5, 4.0, -5.0);
+        expected = new(min.X, a.Y, max.Z, min.W);
         actual = Vector4D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // User specified min value is bigger than max value.
-        max = new Vector4D(0.0, 0.1, 0.13, 0.14);
-        min = new Vector4D(1.0, 1.1, 1.13, 1.14);
+        max = new(0.0, 0.1, 0.13, 0.14);
+        min = new(1.0, 1.1, 1.13, 1.14);
 
         // Case W1: specified value is in the range.
-        a = new Vector4D(0.5, 0.3, 0.33, 0.44);
+        a = new(0.5, 0.3, 0.33, 0.44);
         expected = max;
         actual = Vector4D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Normal case.
         // Case W2: specified value is bigger than max and min value.
-        a = new Vector4D(2.0, 3.0, 4.0, 5.0);
+        a = new(2.0, 3.0, 4.0, 5.0);
         expected = max;
         actual = Vector4D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Case W3: specified value is smaller than min and max value.
-        a = new Vector4D(-2.0, -3.0, -4.0, -5.0);
+        a = new(-2.0, -3.0, -4.0, -5.0);
         expected = max;
         actual = Vector4D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
@@ -433,15 +429,14 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        double t = 0.5;
+        var t = 0.5;
 
-        Vector4D expected = new Vector4D(3.0, 4.0, 5.0, 6.0);
-        Vector4D actual;
+        var expected = new Vector4D(3.0, 4.0, 5.0, 6.0);
 
-        actual = Vector4D.Lerp(a, b, t);
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -450,12 +445,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest1()
     {
-        Vector4D a = new Vector4D(new Vector3D(1.0, 2.0, 3.0), 4.0);
-        Vector4D b = new Vector4D(4.0, 5.0, 6.0, 7.0);
+        var a = new Vector4D(new(1.0, 2.0, 3.0), 4.0);
+        var b = new Vector4D(4.0, 5.0, 6.0, 7.0);
 
-        double t = 0.0;
-        Vector4D expected = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var t = 0.0;
+        var expected = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -464,12 +459,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest2()
     {
-        Vector4D a = new Vector4D(new Vector3D(1.0, 2.0, 3.0), 4.0);
-        Vector4D b = new Vector4D(4.0, 5.0, 6.0, 7.0);
+        var a = new Vector4D(new(1.0, 2.0, 3.0), 4.0);
+        var b = new Vector4D(4.0, 5.0, 6.0, 7.0);
 
-        double t = 1.0;
-        Vector4D expected = new Vector4D(4.0, 5.0, 6.0, 7.0);
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var t = 1.0;
+        var expected = new Vector4D(4.0, 5.0, 6.0, 7.0);
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -478,12 +473,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest3()
     {
-        Vector4D a = new Vector4D(new Vector3D(0.0, 0.0, 0.0), 0.0);
-        Vector4D b = new Vector4D(4.0, 5.0, 6.0, 7.0);
+        var a = new Vector4D(new(0.0, 0.0, 0.0), 0.0);
+        var b = new Vector4D(4.0, 5.0, 6.0, 7.0);
 
-        double t = 2.0;
-        Vector4D expected = new Vector4D(8.0, 10.0, 12.0, 14.0);
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var t = 2.0;
+        var expected = new Vector4D(8.0, 10.0, 12.0, 14.0);
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -492,12 +487,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest4()
     {
-        Vector4D a = new Vector4D(new Vector3D(0.0, 0.0, 0.0), 0.0);
-        Vector4D b = new Vector4D(4.0, 5.0, 6.0, 7.0);
+        var a = new Vector4D(new(0.0, 0.0, 0.0), 0.0);
+        var b = new Vector4D(4.0, 5.0, 6.0, 7.0);
 
-        double t = -2.0;
-        Vector4D expected = -(b * 2);
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var t = -2.0;
+        var expected = -(b * 2);
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -506,11 +501,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest5()
     {
-        Vector4D a = new Vector4D(45.67, 90.0, 0, 0);
-        Vector4D b = new Vector4D(double.PositiveInfinity, double.NegativeInfinity, 0, 0);
+        var a = new Vector4D(45.67, 90.0, 0, 0);
+        var b = new Vector4D(double.PositiveInfinity, double.NegativeInfinity, 0, 0);
 
-        double t = 0.408;
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var t = 0.408;
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual.X).IsPositiveInfinity();
         await Assert.That(actual.Y).IsNegativeInfinity();
     }
@@ -520,12 +515,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest6()
     {
-        Vector4D a = new Vector4D(4.0, 5.0, 6.0, 7.0);
-        Vector4D b = new Vector4D(4.0, 5.0, 6.0, 7.0);
+        var a = new Vector4D(4.0, 5.0, 6.0, 7.0);
+        var b = new Vector4D(4.0, 5.0, 6.0, 7.0);
 
-        double t = 0.85;
-        Vector4D expected = a;
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var t = 0.85;
+        var expected = a;
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -534,13 +529,13 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest7()
     {
-        Vector4D a = new Vector4D(0.44728136);
-        Vector4D b = new Vector4D(0.46345946);
+        var a = new Vector4D(0.44728136);
+        var b = new Vector4D(0.46345946);
 
-        double t = 0.26402435;
+        var t = 0.26402435;
 
-        Vector4D expected = new Vector4D(0.45155275);
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var expected = new Vector4D(0.45155275);
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-7);
     }
 
@@ -550,13 +545,13 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DLerpTest8()
     {
-        Vector4D a = new Vector4D(-100);
-        Vector4D b = new Vector4D(0.33333334);
+        var a = new Vector4D(-100);
+        var b = new Vector4D(0.33333334);
 
         double t = 1;
 
-        Vector4D expected = new Vector4D(0.33333334);
-        Vector4D actual = Vector4D.Lerp(a, b, t);
+        var expected = new Vector4D(0.33333334);
+        var actual = Vector4D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -564,9 +559,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformTest1()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
+        var v = new Vector2D(1.0, 2.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -574,10 +569,9 @@ public sealed class Vector4DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector4D expected = new Vector4D(10.316987, 22.183012, 30.3660259, 1.0);
-        Vector4D actual;
+        var expected = new Vector4D(10.316987, 22.183012, 30.3660259, 1.0);
 
-        actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
     }
 
@@ -585,9 +579,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformTest2()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -595,10 +589,9 @@ public sealed class Vector4DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector4D expected = new Vector4D(12.19198728, 21.53349376, 32.61602545, 1.0);
-        Vector4D actual;
+        var expected = new Vector4D(12.19198728, 21.53349376, 32.61602545, 1.0);
 
-        actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
     }
 
@@ -606,9 +599,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector4DTest()
     {
-        Vector4D v = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var v = new Vector4D(1.0, 2.0, 3.0, 0.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -616,16 +609,15 @@ public sealed class Vector4DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector4D expected = new Vector4D(2.19198728, 1.53349376, 2.61602545, 0.0);
-        Vector4D actual;
+        var expected = new Vector4D(2.19198728, 1.53349376, 2.61602545, 0.0);
 
-        actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
 
         //
         v.W = 1.0;
 
-        expected = new Vector4D(12.19198728, 21.53349376, 32.61602545, 1.0);
+        expected = new(12.19198728, 21.53349376, 32.61602545, 1.0);
         actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
     }
@@ -635,11 +627,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector4DTest1()
     {
-        Vector4D v = new Vector4D(1.0, 2.0, 3.0, 0.0);
-        Matrix4x4D m = new Matrix4x4D();
-        Vector4D expected = new Vector4D(0, 0, 0, 0);
+        var v = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var m = new Matrix4x4D();
+        var expected = new Vector4D(0, 0, 0, 0);
 
-        Vector4D actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -648,11 +640,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector4DTest2()
     {
-        Vector4D v = new Vector4D(1.0, 2.0, 3.0, 0.0);
-        Matrix4x4D m = Matrix4x4D.Identity;
-        Vector4D expected = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var v = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var m = Matrix4x4D.Identity;
+        var expected = new Vector4D(1.0, 2.0, 3.0, 0.0);
 
-        Vector4D actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -661,9 +653,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector3DTest()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -671,8 +663,8 @@ public sealed class Vector4DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector4D expected = Vector4D.Transform(new Vector4D(v, 1.0), m);
-        Vector4D actual = Vector4D.Transform(v, m);
+        var expected = Vector4D.Transform(new Vector4D(v, 1.0), m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -681,11 +673,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector3DTest1()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        Matrix4x4D m = new Matrix4x4D();
-        Vector4D expected = new Vector4D(0, 0, 0, 0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var m = new Matrix4x4D();
+        var expected = new Vector4D(0, 0, 0, 0);
 
-        Vector4D actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -694,11 +686,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector3DTest2()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        Matrix4x4D m = Matrix4x4D.Identity;
-        Vector4D expected = new Vector4D(1.0, 2.0, 3.0, 1.0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var m = Matrix4x4D.Identity;
+        var expected = new Vector4D(1.0, 2.0, 3.0, 1.0);
 
-        Vector4D actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -707,9 +699,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector2DTest()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
+        var v = new Vector2D(1.0, 2.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -717,8 +709,8 @@ public sealed class Vector4DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector4D expected = Vector4D.Transform(new Vector4D(v, 0.0, 1.0), m);
-        Vector4D actual = Vector4D.Transform(v, m);
+        var expected = Vector4D.Transform(new Vector4D(v, 0.0, 1.0), m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -727,11 +719,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector2DTest1()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        Matrix4x4D m = new Matrix4x4D();
-        Vector4D expected = new Vector4D(0, 0, 0, 0);
+        var v = new Vector2D(1.0, 2.0);
+        var m = new Matrix4x4D();
+        var expected = new Vector4D(0, 0, 0, 0);
 
-        Vector4D actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -740,50 +732,29 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector2DTest2()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        Matrix4x4D m = Matrix4x4D.Identity;
-        Vector4D expected = new Vector4D(1.0, 2.0, 0, 1.0);
+        var v = new Vector2D(1.0, 2.0);
+        var m = Matrix4x4D.Identity;
+        var expected = new Vector4D(1.0, 2.0, 0, 1.0);
 
-        Vector4D actual = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected);
-    }
-
-    // A test for Transform (Vector2Df, QuaternionD)
-    [Test]
-    public async Task Vector4DTransformVector2DQuatanionTest()
-    {
-        Vector2D v = new Vector2D(1.0, 2.0);
-
-        Matrix4x4D m =
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
-
-        QuaternionD q = QuaternionD.CreateFromRotationMatrix(m);
-
-        Vector4D expected = Vector4D.Transform(v, m);
-        Vector4D actual;
-
-        actual = Vector4D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
     }
 
     // A test for Transform (Vector3Df, QuaternionD)
     [Test]
     public async Task Vector4DTransformVector3DQuaternion()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
-        QuaternionD q = QuaternionD.CreateFromRotationMatrix(m);
+        var q = QuaternionD.CreateFromRotationMatrix(m);
 
-        Vector4D expected = Vector4D.Transform(v, m);
-        Vector4D actual;
+        var expected = Vector4D.Transform(v, m);
 
-        actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
     }
 
@@ -791,18 +762,17 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector4DQuaternionTest()
     {
-        Vector4D v = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var v = new Vector4D(1.0, 2.0, 3.0, 0.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
-        QuaternionD q = QuaternionD.CreateFromRotationMatrix(m);
+        var q = QuaternionD.CreateFromRotationMatrix(m);
 
-        Vector4D expected = Vector4D.Transform(v, m);
-        Vector4D actual;
+        var expected = Vector4D.Transform(v, m);
 
-        actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
 
         //
@@ -817,11 +787,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector4DQuaternionTest1()
     {
-        Vector4D v = new Vector4D(1.0, 2.0, 3.0, 0.0);
-        QuaternionD q = new QuaternionD();
-        Vector4D expected = Vector4D.Zero;
+        var v = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var q = new QuaternionD();
+        var expected = Vector4D.Zero;
 
-        Vector4D actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -830,11 +800,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector4DQuaternionTest2()
     {
-        Vector4D v = new Vector4D(1.0, 2.0, 3.0, 0.0);
-        QuaternionD q = QuaternionD.Identity;
-        Vector4D expected = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var v = new Vector4D(1.0, 2.0, 3.0, 0.0);
+        var q = QuaternionD.Identity;
+        var expected = new Vector4D(1.0, 2.0, 3.0, 0.0);
 
-        Vector4D actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -843,16 +813,16 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector3DQuaternionTest()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
-        QuaternionD q = QuaternionD.CreateFromRotationMatrix(m);
+        var q = QuaternionD.CreateFromRotationMatrix(m);
 
-        Vector4D expected = Vector4D.Transform(v, m);
-        Vector4D actual = Vector4D.Transform(v, q);
+        var expected = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
     }
 
@@ -861,11 +831,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector3DQuaternionTest1()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        QuaternionD q = new QuaternionD();
-        Vector4D expected = Vector4D.Zero;
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var q = new QuaternionD();
+        var expected = Vector4D.Zero;
 
-        Vector4D actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -874,11 +844,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector3DQuaternionTest2()
     {
-        Vector3D v = new Vector3D(1.0, 2.0, 3.0);
-        QuaternionD q = QuaternionD.Identity;
-        Vector4D expected = new Vector4D(1.0, 2.0, 3.0, 1.0);
+        var v = new Vector3D(1.0, 2.0, 3.0);
+        var q = QuaternionD.Identity;
+        var expected = new Vector4D(1.0, 2.0, 3.0, 1.0);
 
-        Vector4D actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -887,16 +857,16 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector2DQuaternionTest()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
+        var v = new Vector2D(1.0, 2.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
-        QuaternionD q = QuaternionD.CreateFromRotationMatrix(m);
+        var q = QuaternionD.CreateFromRotationMatrix(m);
 
-        Vector4D expected = Vector4D.Transform(v, m);
-        Vector4D actual = Vector4D.Transform(v, q);
+        var expected = Vector4D.Transform(v, m);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
     }
 
@@ -905,11 +875,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector2DQuaternionTest1()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        QuaternionD q = new QuaternionD();
-        Vector4D expected = Vector4D.Zero;
+        var v = new Vector2D(1.0, 2.0);
+        var q = new QuaternionD();
+        var expected = Vector4D.Zero;
 
-        Vector4D actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -918,11 +888,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DTransformVector2DQuaternionTest2()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        QuaternionD q = QuaternionD.Identity;
-        Vector4D expected = new Vector4D(1.0, 2.0, 0, 1.0);
+        var v = new Vector2D(1.0, 2.0);
+        var q = QuaternionD.Identity;
+        var expected = new Vector4D(1.0, 2.0, 0, 1.0);
 
-        Vector4D actual = Vector4D.Transform(v, q);
+        var actual = Vector4D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -930,16 +900,15 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DNormalizeTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
-        Vector4D expected = new Vector4D(
+        var expected = new Vector4D(
             0.1825741858350553711523232609336,
             0.3651483716701107423046465218672,
             0.5477225575051661134569697828008,
             0.7302967433402214846092930437344);
-        Vector4D actual;
 
-        actual = Vector4D.Normalize(a);
+        var actual = Vector4D.Normalize(a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -948,10 +917,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DNormalizeTest1()
     {
-        Vector4D a = new Vector4D(1.0, 0.0, 0.0, 0.0);
+        var a = new Vector4D(1.0, 0.0, 0.0, 0.0);
 
-        Vector4D expected = new Vector4D(1.0, 0.0, 0.0, 0.0);
-        Vector4D actual = Vector4D.Normalize(a);
+        var expected = new Vector4D(1.0, 0.0, 0.0, 0.0);
+        var actual = Vector4D.Normalize(a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -960,10 +929,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DNormalizeTest2()
     {
-        Vector4D a = new Vector4D(0.0, 0.0, 0.0, 0.0);
+        var a = new Vector4D(0.0, 0.0, 0.0, 0.0);
 
-        Vector4D expected = new Vector4D(0.0, 0.0, 0.0, 0.0);
-        Vector4D actual = Vector4D.Normalize(a);
+        var actual = Vector4D.Normalize(a);
         await Assert.That(actual.X).IsNaN();
         await Assert.That(actual.Y).IsNaN();
         await Assert.That(actual.Z).IsNaN();
@@ -974,12 +942,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DUnaryNegationTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
-        Vector4D expected = new Vector4D(-1.0, -2.0, -3.0, -4.0);
-        Vector4D actual;
+        var expected = new Vector4D(-1.0, -2.0, -3.0, -4.0);
 
-        actual = -a;
+        var actual = -a;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -988,13 +955,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DSubtractionTest()
     {
-        Vector4D a = new Vector4D(1.0, 6.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 2.0, 3.0, 9.0);
+        var a = new Vector4D(1.0, 6.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 2.0, 3.0, 9.0);
 
-        Vector4D expected = new Vector4D(-4.0, 4.0, 0.0, -5.0);
-        Vector4D actual;
+        var expected = new Vector4D(-4.0, 4.0, 0.0, -5.0);
 
-        actual = a - b;
+        var actual = a - b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -1003,14 +969,13 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMultiplyOperatorTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
-        const double factor = 2.0;
+        const double Factor = 2.0;
 
-        Vector4D expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
-        Vector4D actual;
+        var expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
 
-        actual = a * factor;
+        var actual = a * Factor;
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1018,13 +983,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMultiplyOperatorTest2()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
-        const double factor = 2.0;
-        Vector4D expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
-        Vector4D actual;
+        const double Factor = 2.0;
+        var expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
 
-        actual = factor * a;
+        var actual = Factor * a;
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1032,13 +996,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMultiplyOperatorTest3()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        Vector4D expected = new Vector4D(5.0, 12.0, 21.0, 32.0);
-        Vector4D actual;
+        var expected = new Vector4D(5.0, 12.0, 21.0, 32.0);
 
-        actual = a * b;
+        var actual = a * b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -1047,14 +1010,13 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDivisionTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
-        double div = 2.0;
+        var div = 2.0;
 
-        Vector4D expected = new Vector4D(0.5, 1.0, 1.5, 2.0);
-        Vector4D actual;
+        var expected = new Vector4D(0.5, 1.0, 1.5, 2.0);
 
-        actual = a / div;
+        var actual = a / div;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -1063,13 +1025,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDivisionTest1()
     {
-        Vector4D a = new Vector4D(1.0, 6.0, 7.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 2.0, 3.0, 8.0);
+        var a = new Vector4D(1.0, 6.0, 7.0, 4.0);
+        var b = new Vector4D(5.0, 2.0, 3.0, 8.0);
 
-        Vector4D expected = new Vector4D(1.0 / 5.0, 6.0 / 2.0, 7.0 / 3.0, 4.0 / 8.0);
-        Vector4D actual;
+        var expected = new Vector4D(1.0 / 5.0, 6.0 / 2.0, 7.0 / 3.0, 4.0 / 8.0);
 
-        actual = a / b;
+        var actual = a / b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -1079,11 +1040,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDivisionTest2()
     {
-        Vector4D a = new Vector4D(-2.0, 3.0, double.MaxValue, double.NaN);
+        var a = new Vector4D(-2.0, 3.0, double.MaxValue, double.NaN);
 
-        double div = 0.0;
+        var div = 0.0;
 
-        Vector4D actual = a / div;
+        var actual = a / div;
 
         await Assert.That(actual.X).IsNegativeInfinity();
         await Assert.That(actual.Y).IsPositiveInfinity();
@@ -1096,10 +1057,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDivisionTest3()
     {
-        Vector4D a = new Vector4D(0.047, -3.0, double.NegativeInfinity, double.MinValue);
-        Vector4D b = new Vector4D();
+        var a = new Vector4D(0.047, -3.0, double.NegativeInfinity, double.MinValue);
+        var b = new Vector4D();
 
-        Vector4D actual = a / b;
+        var actual = a / b;
 
         await Assert.That(actual.X).IsPositiveInfinity();
         await Assert.That(actual.Y).IsNegativeInfinity();
@@ -1111,13 +1072,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DAdditionTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        Vector4D expected = new Vector4D(6.0, 8.0, 10.0, 12.0);
-        Vector4D actual;
+        var expected = new Vector4D(6.0, 8.0, 10.0, 12.0);
 
-        actual = a + b;
+        var actual = a + b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -1125,12 +1085,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task OperatorAddTest()
     {
-        Vector4D v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
-        Vector4D v2 = new Vector4D(5.5, 4.5, 6.5, 7.5);
+        var v1 = new Vector4D(2.5, 2.0, 3.0, 3.3);
+        var v2 = new Vector4D(5.5, 4.5, 6.5, 7.5);
 
-        Vector4D v3 = v1 + v2;
-        Vector4D v5 = new Vector4D(-1.0, 0.0, 0.0, double.NaN);
-        Vector4D v4 = v1 + v5;
+        var v3 = v1 + v2;
+        var v5 = new Vector4D(-1.0, 0.0, 0.0, double.NaN);
+        var v4 = v1 + v5;
         await Assert.That(v3.X).IsEqualTo(8.0);
         await Assert.That(v3.Y).IsEqualTo(6.5);
         await Assert.That(v3.Z).IsEqualTo(9.5);
@@ -1145,12 +1105,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DConstructorTest()
     {
-        double x = 1.0;
-        double y = 2.0;
-        double z = 3.0;
-        double w = 4.0;
+        var x = 1.0;
+        var y = 2.0;
+        var z = 3.0;
+        var w = 4.0;
 
-        Vector4D target = new Vector4D(x, y, z, w);
+        var target = new Vector4D(x, y, z, w);
 
         await Assert.That(target.X).IsEqualTo(x);
         await Assert.That(target.Y).IsEqualTo(y);
@@ -1162,11 +1122,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DConstructorTest1()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        double z = 3.0;
-        double w = 4.0;
+        var a = new Vector2D(1.0, 2.0);
+        var z = 3.0;
+        var w = 4.0;
 
-        Vector4D target = new Vector4D(a, z, w);
+        var target = new Vector4D(a, z, w);
 
         await Assert.That(target.X).IsEqualTo(a.X);
         await Assert.That(target.Y).IsEqualTo(a.Y);
@@ -1178,10 +1138,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DConstructorTest2()
     {
-        Vector3D a = new Vector3D(1.0, 2.0, 3.0);
-        double w = 4.0;
+        var a = new Vector3D(1.0, 2.0, 3.0);
+        var w = 4.0;
 
-        Vector4D target = new Vector4D(a, w);
+        var target = new Vector4D(a, w);
 
         await Assert.That(target.X).IsEqualTo(a.X);
         await Assert.That(target.Y).IsEqualTo(a.Y);
@@ -1194,7 +1154,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DConstructorTest4()
     {
-        Vector4D a = new Vector4D();
+        var a = new Vector4D();
 
         await Assert.That(a.X).IsEqualTo(0.0);
         await Assert.That(a.Y).IsEqualTo(0.0);
@@ -1203,11 +1163,11 @@ public sealed class Vector4DTests
     }
 
     // A test for Vector4Df ()
-    // Constructor with special doubleing values
+    // Constructor with special floating values
     [Test]
     public async Task Vector4DConstructorTest5()
     {
-        Vector4D target = new Vector4D(double.NaN, double.MaxValue, double.PositiveInfinity, double.Epsilon);
+        var target = new Vector4D(double.NaN, double.MaxValue, double.PositiveInfinity, double.Epsilon);
 
         await Assert.That(target.X).IsNaN();
         await Assert.That(target.Y).IsEqualTo(double.MaxValue);
@@ -1219,9 +1179,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DConstructorTest7()
     {
-        double value = 1.0;
-        Vector4D target = new Vector4D(new[] { value, value, value, value });
-        Vector4D expected = new Vector4D(value);
+        var value = 1.0;
+        var target = new Vector4D(new[] { value, value, value, value });
+        var expected = new Vector4D(value);
 
         await Assert.That(target).IsEqualTo(expected);
         await Assert.That(() => new Vector4D(new double[3])).Throws<ArgumentOutOfRangeException>();
@@ -1231,13 +1191,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DAddTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        Vector4D expected = new Vector4D(6.0, 8.0, 10.0, 12.0);
-        Vector4D actual;
+        var expected = new Vector4D(6.0, 8.0, 10.0, 12.0);
 
-        actual = Vector4D.Add(a, b);
+        var actual = Vector4D.Add(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1245,11 +1204,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDivideTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        double div = 2.0;
-        Vector4D expected = new Vector4D(0.5, 1.0, 1.5, 2.0);
-        Vector4D actual;
-        actual = Vector4D.Divide(a, div);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var div = 2.0;
+        var expected = new Vector4D(0.5, 1.0, 1.5, 2.0);
+        var actual = Vector4D.Divide(a, div);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1257,13 +1215,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DDivideTest1()
     {
-        Vector4D a = new Vector4D(1.0, 6.0, 7.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 2.0, 3.0, 8.0);
+        var a = new Vector4D(1.0, 6.0, 7.0, 4.0);
+        var b = new Vector4D(5.0, 2.0, 3.0, 8.0);
 
-        Vector4D expected = new Vector4D(1.0 / 5.0, 6.0 / 2.0, 7.0 / 3.0, 4.0 / 8.0);
-        Vector4D actual;
+        var expected = new Vector4D(1.0 / 5.0, 6.0 / 2.0, 7.0 / 3.0, 4.0 / 8.0);
 
-        actual = Vector4D.Divide(a, b);
+        var actual = Vector4D.Divide(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1271,14 +1228,14 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DEqualsTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
         // case 1: compare between same values
         object obj = b;
 
-        bool expected = true;
-        bool actual = a.Equals(obj);
+        var expected = true;
+        var actual = a.Equals(obj);
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1305,10 +1262,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMultiplyTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        const double factor = 2.0;
-        Vector4D expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
-        Vector4D actual = Vector4D.Multiply(factor, a);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        const double Factor = 2.0;
+        var expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
+        var actual = Vector4D.Multiply(Factor, a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1316,10 +1273,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMultiplyTest2()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        const double factor = 2.0;
-        Vector4D expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
-        Vector4D actual = Vector4D.Multiply(a, factor);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        const double Factor = 2.0;
+        var expected = new Vector4D(2.0, 4.0, 6.0, 8.0);
+        var actual = Vector4D.Multiply(a, Factor);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1327,13 +1284,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DMultiplyTest3()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 6.0, 7.0, 8.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 6.0, 7.0, 8.0);
 
-        Vector4D expected = new Vector4D(5.0, 12.0, 21.0, 32.0);
-        Vector4D actual;
+        var expected = new Vector4D(5.0, 12.0, 21.0, 32.0);
 
-        actual = Vector4D.Multiply(a, b);
+        var actual = Vector4D.Multiply(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1341,12 +1297,11 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DNegateTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
-        Vector4D expected = new Vector4D(-1.0, -2.0, -3.0, -4.0);
-        Vector4D actual;
+        var expected = new Vector4D(-1.0, -2.0, -3.0, -4.0);
 
-        actual = Vector4D.Negate(a);
+        var actual = Vector4D.Negate(a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1354,12 +1309,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DInequalityTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
         // case 1: compare between same values
-        bool expected = false;
-        bool actual = a != b;
+        var expected = false;
+        var actual = a != b;
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1373,12 +1328,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DEqualityTest()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
         // case 1: compare between same values
-        bool expected = true;
-        bool actual = a == b;
+        var expected = true;
+        var actual = a == b;
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1392,13 +1347,12 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DSubtractTest()
     {
-        Vector4D a = new Vector4D(1.0, 6.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(5.0, 2.0, 3.0, 9.0);
+        var a = new Vector4D(1.0, 6.0, 3.0, 4.0);
+        var b = new Vector4D(5.0, 2.0, 3.0, 9.0);
 
-        Vector4D expected = new Vector4D(-4.0, 4.0, 0.0, -5.0);
-        Vector4D actual;
+        var expected = new Vector4D(-4.0, 4.0, 0.0, -5.0);
 
-        actual = Vector4D.Subtract(a, b);
+        var actual = Vector4D.Subtract(a, b);
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -1407,7 +1361,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DUnitWTest()
     {
-        Vector4D val = new Vector4D(0.0, 0.0, 0.0, 1.0);
+        var val = new Vector4D(0.0, 0.0, 0.0, 1.0);
         await Assert.That(Vector4D.UnitW).IsEqualTo(val);
     }
 
@@ -1415,7 +1369,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DUnitXTest()
     {
-        Vector4D val = new Vector4D(1.0, 0.0, 0.0, 0.0);
+        var val = new Vector4D(1.0, 0.0, 0.0, 0.0);
         await Assert.That(Vector4D.UnitX).IsEqualTo(val);
     }
 
@@ -1423,7 +1377,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DUnitYTest()
     {
-        Vector4D val = new Vector4D(0.0, 1.0, 0.0, 0.0);
+        var val = new Vector4D(0.0, 1.0, 0.0, 0.0);
         await Assert.That(Vector4D.UnitY).IsEqualTo(val);
     }
 
@@ -1431,7 +1385,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DUnitZTest()
     {
-        Vector4D val = new Vector4D(0.0, 0.0, 1.0, 0.0);
+        var val = new Vector4D(0.0, 0.0, 1.0, 0.0);
         await Assert.That(Vector4D.UnitZ).IsEqualTo(val);
     }
 
@@ -1439,7 +1393,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DOneTest()
     {
-        Vector4D val = new Vector4D(1.0, 1.0, 1.0, 1.0);
+        var val = new Vector4D(1.0, 1.0, 1.0, 1.0);
         await Assert.That(Vector4D.One).IsEqualTo(val);
     }
 
@@ -1447,7 +1401,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DZeroTest()
     {
-        Vector4D val = new Vector4D(0.0, 0.0, 0.0, 0.0);
+        var val = new Vector4D(0.0, 0.0, 0.0, 0.0);
         await Assert.That(Vector4D.Zero).IsEqualTo(val);
     }
 
@@ -1455,8 +1409,8 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DEqualsTest1()
     {
-        Vector4D a = new Vector4D(1.0, 2.0, 3.0, 4.0);
-        Vector4D b = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var a = new Vector4D(1.0, 2.0, 3.0, 4.0);
+        var b = new Vector4D(1.0, 2.0, 3.0, 4.0);
 
         // case 1: compare between same values
         await Assert.That(a.Equals(b)).IsTrue();
@@ -1470,15 +1424,15 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DConstructorTest6()
     {
-        double value = 1.0;
-        Vector4D target = new Vector4D(value);
+        var value = 1.0;
+        var target = new Vector4D(value);
 
-        Vector4D expected = new Vector4D(value, value, value, value);
+        var expected = new Vector4D(value, value, value, value);
         await Assert.That(target).IsEqualTo(expected);
 
         value = 2.0;
-        target = new Vector4D(value);
-        expected = new Vector4D(value, value, value, value);
+        target = new(value);
+        expected = new(value, value, value, value);
         await Assert.That(target).IsEqualTo(expected);
     }
 
@@ -1486,10 +1440,10 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DEqualsNaNTest()
     {
-        Vector4D a = new Vector4D(double.NaN, 0, 0, 0);
-        Vector4D b = new Vector4D(0, double.NaN, 0, 0);
-        Vector4D c = new Vector4D(0, 0, double.NaN, 0);
-        Vector4D d = new Vector4D(0, 0, 0, double.NaN);
+        var a = new Vector4D(double.NaN, 0, 0, 0);
+        var b = new Vector4D(0, double.NaN, 0, 0);
+        var c = new Vector4D(0, 0, double.NaN, 0);
+        var d = new Vector4D(0, 0, 0, double.NaN);
 
         await Assert.That(a == Vector4D.Zero).IsFalse();
         await Assert.That(b == Vector4D.Zero).IsFalse();
@@ -1515,9 +1469,9 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DAbsTest()
     {
-        Vector4D v1 = new Vector4D(-2.5, 2.0, 3.0, 3.3);
-        Vector4D v3 = Vector4D.Abs(new Vector4D(double.PositiveInfinity, 0.0, double.NegativeInfinity, double.NaN));
-        Vector4D v = Vector4D.Abs(v1);
+        var v1 = new Vector4D(-2.5, 2.0, 3.0, 3.3);
+        var v3 = Vector4D.Abs(new(double.PositiveInfinity, 0.0, double.NegativeInfinity, double.NaN));
+        var v = Vector4D.Abs(v1);
         await Assert.That(v.X).IsEqualTo(2.5);
         await Assert.That(v.Y).IsEqualTo(2.0);
         await Assert.That(v.Z).IsEqualTo(3.0);
@@ -1531,8 +1485,8 @@ public sealed class Vector4DTests
     [Test]
     public async Task Vector4DSqrtTest()
     {
-        Vector4D v1 = new Vector4D(-2.5, 2.0, 3.0, 3.3);
-        Vector4D v2 = new Vector4D(5.5, 4.5, 6.5, 7.5);
+        var v1 = new Vector4D(-2.5, 2.0, 3.0, 3.3);
+        var v2 = new Vector4D(5.5, 4.5, 6.5, 7.5);
         await Assert.That((int)Vector4D.SquareRoot(v2).X).IsEqualTo(2);
         await Assert.That((int)Vector4D.SquareRoot(v2).Y).IsEqualTo(2);
         await Assert.That((int)Vector4D.SquareRoot(v2).Z).IsEqualTo(2);
@@ -1552,9 +1506,9 @@ public sealed class Vector4DTests
         unsafe
         {
             sizeofVector4D = sizeof(Vector4D);
-            sizeofVector4D2 = sizeof(Vector4D_2x);
+            sizeofVector4D2 = sizeof(Vector4D2X);
             sizeofVector4DPlusDouble = sizeof(Vector4DPlusDouble);
-            sizeofVector4DPlusDouble2 = sizeof(Vector4DPlusDouble_2x);
+            sizeofVector4DPlusDouble2 = sizeof(Vector4DPlusDouble2X);
         }
 
         await Assert.That(sizeofVector4D).IsEqualTo(32);
@@ -1564,7 +1518,7 @@ public sealed class Vector4DTests
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct Vector4D_2x
+    struct Vector4D2X
     {
         private Vector4D _a;
         private Vector4D _b;
@@ -1578,7 +1532,7 @@ public sealed class Vector4DTests
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct Vector4DPlusDouble_2x
+    struct Vector4DPlusDouble2X
     {
         private Vector4DPlusDouble _a;
         private Vector4DPlusDouble _b;
@@ -1587,16 +1541,18 @@ public sealed class Vector4DTests
     [Test]
     public async Task SetFieldsTest()
     {
-        Vector4D v3 = new Vector4D(4, 5, 6, 7);
-        v3.X = 1.0;
-        v3.Y = 2.0;
-        v3.Z = 3.0;
-        v3.W = 4.0;
+        var v3 = new Vector4D(4, 5, 6, 7)
+        {
+            X = 1.0,
+            Y = 2.0,
+            Z = 3.0,
+            W = 4.0,
+        };
         await Assert.That(v3.X).IsEqualTo(1.0);
         await Assert.That(v3.Y).IsEqualTo(2.0);
         await Assert.That(v3.Z).IsEqualTo(3.0);
         await Assert.That(v3.W).IsEqualTo(4.0);
-        Vector4D v4 = v3;
+        var v4 = v3;
         v4.Y = 0.5;
         v4.Z = 2.2;
         v4.W = 3.5;
@@ -1610,7 +1566,7 @@ public sealed class Vector4DTests
     [Test]
     public async Task EmbeddedVectorSetFields()
     {
-        EmbeddedVectorObject evo = new EmbeddedVectorObject();
+        var evo = new EmbeddedVectorObject();
         evo.FieldVector.X = 5.0;
         evo.FieldVector.Y = 5.0;
         evo.FieldVector.Z = 5.0;
@@ -1624,13 +1580,13 @@ public sealed class Vector4DTests
     [Test]
     public async Task DeeplyEmbeddedObjectTest()
     {
-        DeeplyEmbeddedClass obj = new DeeplyEmbeddedClass();
+        var obj = new DeeplyEmbeddedClass();
         obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector.X = 5;
         await Assert.That(obj.RootEmbeddedObject.X).IsEqualTo(5);
         await Assert.That(obj.RootEmbeddedObject.Y).IsEqualTo(5);
         await Assert.That(obj.RootEmbeddedObject.Z).IsEqualTo(1);
         await Assert.That( obj.RootEmbeddedObject.W).IsEqualTo(-5);
-        obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector = new Vector4D(1, 2, 3, 4);
+        obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector = new(1, 2, 3, 4);
         await Assert.That(obj.RootEmbeddedObject.X).IsEqualTo(1);
         await Assert.That(obj.RootEmbeddedObject.Y).IsEqualTo(2);
         await Assert.That(obj.RootEmbeddedObject.Z).IsEqualTo(3);
@@ -1640,13 +1596,13 @@ public sealed class Vector4DTests
     [Test]
     public async Task DeeplyEmbeddedStructTest()
     {
-        DeeplyEmbeddedStruct obj = DeeplyEmbeddedStruct.Create();
+        var obj = DeeplyEmbeddedStruct.Create();
         obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector.X = 5;
         await Assert.That(obj.RootEmbeddedObject.X).IsEqualTo(5);
         await Assert.That(obj.RootEmbeddedObject.Y).IsEqualTo(5);
         await Assert.That(obj.RootEmbeddedObject.Z).IsEqualTo(1);
         await Assert.That(obj.RootEmbeddedObject.W).IsEqualTo(-5);
-        obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector = new Vector4D(1, 2, 3, 4);
+        obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector = new(1, 2, 3, 4);
         await Assert.That(obj.RootEmbeddedObject.X).IsEqualTo(1);
         await Assert.That(obj.RootEmbeddedObject.Y).IsEqualTo(2);
         await Assert.That(obj.RootEmbeddedObject.Z).IsEqualTo(3);
@@ -1660,44 +1616,41 @@ public sealed class Vector4DTests
 
     private class DeeplyEmbeddedClass
     {
-        public readonly Level0 L0 = new Level0();
+        public readonly Level0 L0 = new();
 
-        public Vector4D RootEmbeddedObject
-        {
-            get { return L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector; }
-        }
+        public Vector4D RootEmbeddedObject => L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector;
 
         public class Level0
         {
-            public readonly Level1 L1 = new Level1();
+            public readonly Level1 L1 = new();
 
             public class Level1
             {
-                public readonly Level2 L2 = new Level2();
+                public readonly Level2 L2 = new();
 
                 public class Level2
                 {
-                    public readonly Level3 L3 = new Level3();
+                    public readonly Level3 L3 = new();
 
                     public class Level3
                     {
-                        public readonly Level4 L4 = new Level4();
+                        public readonly Level4 L4 = new();
 
                         public class Level4
                         {
-                            public readonly Level5 L5 = new Level5();
+                            public readonly Level5 L5 = new();
 
                             public class Level5
                             {
-                                public readonly Level6 L6 = new Level6();
+                                public readonly Level6 L6 = new();
 
                                 public class Level6
                                 {
-                                    public readonly Level7 L7 = new Level7();
+                                    public readonly Level7 L7 = new();
 
                                     public class Level7
                                     {
-                                        public Vector4D EmbeddedVector = new Vector4D(1, 5, 1, -5);
+                                        public Vector4D EmbeddedVector = new(1, 5, 1, -5);
                                     }
                                 }
                             }
@@ -1714,44 +1667,59 @@ public sealed class Vector4DTests
     {
         public static DeeplyEmbeddedStruct Create()
         {
-            var obj = new DeeplyEmbeddedStruct();
-            obj.L0 = new Level0();
-            obj.L0.L1 = new Level0.Level1();
-            obj.L0.L1.L2 = new Level0.Level1.Level2();
-            obj.L0.L1.L2.L3 = new Level0.Level1.Level2.Level3();
-            obj.L0.L1.L2.L3.L4 = new Level0.Level1.Level2.Level3.Level4();
-            obj.L0.L1.L2.L3.L4.L5 = new Level0.Level1.Level2.Level3.Level4.Level5();
-            obj.L0.L1.L2.L3.L4.L5.L6 = new Level0.Level1.Level2.Level3.Level4.Level5.Level6();
-            obj.L0.L1.L2.L3.L4.L5.L6.L7 = new Level0.Level1.Level2.Level3.Level4.Level5.Level6.Level7();
-            obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector = new Vector4D(1, 5, 1, -5);
+            var obj = new DeeplyEmbeddedStruct
+            {
+                L0 = new()
+                {
+                    L1 = new()
+                    {
+                        L2 = new()
+                        {
+                            L3 = new()
+                            {
+                                L4 = new()
+                                {
+                                    L5 = new()
+                                    {
+                                        L6 = new()
+                                        {
+                                            L7 = new()
+                                            {
+                                                EmbeddedVector = new(1, 5, 1, -5),
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            };
 
             return obj;
         }
 
         public Level0 L0;
 
-        public Vector4D RootEmbeddedObject
-        {
-            get { return L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector; }
-        }
+        public Vector4D RootEmbeddedObject => L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector;
 
         public struct Level0
         {
-            private double _buffer0, _buffer1;
+            private double buffer0, buffer1;
             public Level1 L1;
-            private double _buffer2;
+            private double buffer2;
 
             public struct Level1
             {
-                private double _buffer0, _buffer1;
+                private double buffer0, buffer1;
                 public Level2 L2;
-                private byte _buffer2;
+                private byte buffer2;
 
                 public struct Level2
                 {
                     public Level3 L3;
-                    private double _buffer0;
-                    private byte _buffer1;
+                    private double buffer0;
+                    private byte buffer1;
 
                     public struct Level3
                     {
@@ -1759,22 +1727,22 @@ public sealed class Vector4DTests
 
                         public struct Level4
                         {
-                            private double _buffer0;
+                            private double buffer0;
                             public Level5 L5;
-                            private long _buffer1;
-                            private byte _buffer2;
-                            private double _buffer3;
+                            private long buffer1;
+                            private byte buffer2;
+                            private double buffer3;
 
                             public struct Level5
                             {
-                                private byte _buffer0;
+                                private byte buffer0;
                                 public Level6 L6;
 
                                 public struct Level6
                                 {
-                                    private byte _buffer0;
+                                    private byte buffer0;
                                     public Level7 L7;
-                                    private byte _buffer1, _buffer2;
+                                    private byte buffer1, buffer2;
 
                                     public struct Level7
                                     {
@@ -1794,7 +1762,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CosDouble))]
     public async Task CosDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector4D actualResult = Vector4D.Cos(Vector4D.Create(value));
+        var actualResult = Vector4D.Cos(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Create(variance));
     }
 
@@ -1802,7 +1770,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ExpDouble))]
     public async Task ExpDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector4D actualResult = Vector4D.Exp(Vector4D.Create(value));
+        var actualResult = Vector4D.Exp(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Create(variance));
     }
 
@@ -1810,7 +1778,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.LogDouble))]
     public async Task LogDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector4D actualResult = Vector4D.Log(Vector4D.Create(value));
+        var actualResult = Vector4D.Log(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Create(variance));
     }
 
@@ -1818,7 +1786,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.Log2Double))]
     public async Task Log2DoubleTest(double value, double expectedResult, double variance)
     {
-        Vector4D actualResult = Vector4D.Log2(Vector4D.Create(value));
+        var actualResult = Vector4D.Log2(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Create(variance));
     }
 
@@ -1834,7 +1802,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ClampDouble))]
     public async Task ClampDoubleTest(double x, double min, double max, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.Clamp(Vector4D.Create(x), Vector4D.Create(min), Vector4D.Create(max));
+        var actualResult = Vector4D.Clamp(Vector4D.Create(x), Vector4D.Create(min), Vector4D.Create(max));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1842,7 +1810,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CopySignDouble))]
     public async Task CopySignDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.CopySign(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.CopySign(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1881,7 +1849,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxDouble))]
     public async Task MaxDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.Max(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.Max(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1889,7 +1857,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeDouble))]
     public async Task MaxMagnitudeDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.MaxMagnitude(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.MaxMagnitude(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1897,7 +1865,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeNumberDouble))]
     public async Task MaxMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.MaxMagnitudeNumber(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.MaxMagnitudeNumber(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1905,7 +1873,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxNumberDouble))]
     public async Task MaxNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.MaxNumber(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.MaxNumber(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1913,7 +1881,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinDouble))]
     public async Task MinDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.Min(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.Min(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1921,7 +1889,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeDouble))]
     public async Task MinMagnitudeDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.MinMagnitude(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.MinMagnitude(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1929,7 +1897,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeNumberDouble))]
     public async Task MinMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.MinMagnitudeNumber(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.MinMagnitudeNumber(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1937,7 +1905,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinNumberDouble))]
     public async Task MinNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.MinNumber(Vector4D.Create(x), Vector4D.Create(y));
+        var actualResult = Vector4D.MinNumber(Vector4D.Create(x), Vector4D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1953,7 +1921,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundDouble))]
     public async Task RoundDoubleTest(double value, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.Round(Vector4D.Create(value));
+        var actualResult = Vector4D.Round(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1961,7 +1929,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundAwayFromZeroDouble))]
     public async Task RoundAwayFromZeroDoubleTest(double value, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.Round(Vector4D.Create(value), MidpointRounding.AwayFromZero);
+        var actualResult = Vector4D.Round(Vector4D.Create(value), MidpointRounding.AwayFromZero);
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1969,7 +1937,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundToEvenDouble))]
     public async Task RoundToEvenDoubleTest(double value, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.Round(Vector4D.Create(value), MidpointRounding.ToEven);
+        var actualResult = Vector4D.Round(Vector4D.Create(value), MidpointRounding.ToEven);
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 
@@ -1977,7 +1945,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinDouble))]
     public async Task SinDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector4D actualResult = Vector4D.Sin(Vector4D.Create(value));
+        var actualResult = Vector4D.Sin(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Create(variance));
     }
 
@@ -1985,7 +1953,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinCosDouble))]
     public async Task SinCosDoubleTest(double value, double expectedResultSin, double expectedResultCos, double allowedVarianceSin, double allowedVarianceCos)
     {
-        (Vector4D resultSin, Vector4D resultCos) = Vector4D.SinCos(Vector4D.Create(value));
+        var (resultSin, resultCos) = Vector4D.SinCos(Vector4D.Create(value));
         await Assert.That(resultSin).IsEqualTo(Vector4D.Create(expectedResultSin)).Within(Vector4D.Create(allowedVarianceSin));
         await Assert.That(resultCos).IsEqualTo(Vector4D.Create(expectedResultCos)).Within(Vector4D.Create(allowedVarianceCos));
     }
@@ -1994,7 +1962,7 @@ public sealed class Vector4DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.TruncateDouble))]
     public async Task TruncateDoubleTest(double value, double expectedResult)
     {
-        Vector4D actualResult = Vector4D.Truncate(Vector4D.Create(value));
+        var actualResult = Vector4D.Truncate(Vector4D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 

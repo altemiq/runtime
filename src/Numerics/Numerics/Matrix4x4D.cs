@@ -20,7 +20,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     // without it pessimizing other parts of the JIT and still preventing things like field promotion.
     //
     // This nested Impl struct works around this problem by relying on the JIT treating same sizeof
-    // value type bitcasts as a no-op. Effectively the entire implementation is here in this type
+    // value type bit casts as a no-op. Effectively the entire implementation is here in this type
     // and the public facing Matrix4x4D just defers to it with simple reinterpret casts inserted
     // at the relevant points.
 

@@ -1,14 +1,14 @@
 namespace Altemiq.Numerics;
 
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics;
-using Altemiq.Runtime.Intrinsics;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
 public class Vector2DTests
 {
+#if NET10_OR_GREATER
     private const int ElementCount = 2;
+#endif
     
     [Test]
     public async Task Vector2DMarshalSizeTest()
@@ -37,10 +37,11 @@ public class Vector2DTests
     [Arguments(1.0000001, 0.0000001)]
     public async Task Vector2DIndexerSetTest(double x, double y)
     {
-        var vector = new Vector2D(0.0, 0.0);
-
-        vector[0] = x;
-        vector[1] = y;
+        var vector = new Vector2D(0.0, 0.0)
+        {
+            [0] = x,
+            [1] = y,
+        };
 
         await Assert.That(vector[0]).IsEqualTo(x);
         await Assert.That(vector[1]).IsEqualTo(y);
@@ -49,10 +50,10 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DCopyToTest()
     {
-        Vector2D v1 = new Vector2D(2.0, 3.0);
+        var v1 = new Vector2D(2.0, 3.0);
 
-        double[] a = new double[3];
-        double[] b = new double[2];
+        var a = new double[3];
+        var b = new double[2];
 
         Assert.Throws<NullReferenceException>(() => v1.CopyTo(null!, 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => v1.CopyTo(a, -1));
@@ -71,7 +72,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DCopyToSpanTest()
     {
-        Vector2D vector = new Vector2D(1.0, 2.0);
+        var vector = new Vector2D(1.0, 2.0);
         var destination = new double[2];
 
         Assert.Throws<ArgumentException>(() => vector.CopyTo(new Span<double>(new double[1])));
@@ -86,7 +87,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTryCopyToTest()
     {
-        Vector2D vector = new Vector2D(1.0, 2.0);
+        var vector = new Vector2D(1.0, 2.0);
         var destination = new double[2];
 
         await Assert.That(vector.TryCopyTo(new(new double[1]))).IsFalse();
@@ -101,16 +102,16 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DGetHashCodeTest()
     {
-        Vector2D v1 = new Vector2D(2.0, 3.0);
-        Vector2D v2 = new Vector2D(2.0, 3.0);
-        Vector2D v3 = new Vector2D(3.0, 2.0);
+        var v1 = new Vector2D(2.0, 3.0);
+        var v2 = new Vector2D(2.0, 3.0);
+        var v3 = new Vector2D(3.0, 2.0);
         await Assert.That(v1.GetHashCode()).IsEqualTo(v1.GetHashCode());
         await Assert.That(v2.GetHashCode()).IsEqualTo(v1.GetHashCode());
         await Assert.That(v3.GetHashCode()).IsNotEqualTo(v1.GetHashCode());
-        Vector2D v4 = new Vector2D(0.0, 0.0);
-        Vector2D v6 = new Vector2D(1.0, 0.0);
-        Vector2D v7 = new Vector2D(0.0, 1.0);
-        Vector2D v8 = new Vector2D(1.0, 1.0);
+        var v4 = new Vector2D(0.0, 0.0);
+        var v6 = new Vector2D(1.0, 0.0);
+        var v7 = new Vector2D(0.0, 1.0);
+        var v8 = new Vector2D(1.0, 1.0);
         await Assert.That(v6.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
         await Assert.That(v7.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
         await Assert.That(v8.GetHashCode()).IsNotEqualTo(v4.GetHashCode());
@@ -122,42 +123,42 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DToStringTest()
     {
-        string separator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
-        CultureInfo enUsCultureInfo = new CultureInfo("en-US");
+        var separator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+        var enUsCultureInfo = new CultureInfo("en-US");
 
-        Vector2D v1 = new Vector2D(2.0, 3.0);
+        var v1 = new Vector2D(2.0, 3.0);
 
-        string v1str = v1.ToString();
-        string expectedv1 = string.Format(CultureInfo.CurrentCulture
+        var v1Str = v1.ToString();
+        var expectedV1 = string.Format(CultureInfo.CurrentCulture
             , "<{1:G}{0} {2:G}>"
             , new object[] { separator, 2, 3 });
-        await Assert.That(v1str).IsEqualTo(expectedv1);
+        await Assert.That(v1Str).IsEqualTo(expectedV1);
 
-        string v1strformatted = v1.ToString("c", CultureInfo.CurrentCulture);
-        string expectedv1formatted = string.Format(CultureInfo.CurrentCulture
+        var v1StrFormatted = v1.ToString("c", CultureInfo.CurrentCulture);
+        var expectedV1Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}>"
             , new object[] { separator, 2, 3 });
-        await Assert.That(v1strformatted).IsEqualTo(expectedv1formatted);
+        await Assert.That(v1StrFormatted).IsEqualTo(expectedV1Formatted);
 
-        string v2strformatted = v1.ToString("c", enUsCultureInfo);
-        string expectedv2formatted = string.Format(enUsCultureInfo
+        var v2StrFormatted = v1.ToString("c", enUsCultureInfo);
+        var expectedV2Formatted = string.Format(enUsCultureInfo
             , "<{1:c}{0} {2:c}>"
             , new object[] { enUsCultureInfo.NumberFormat.NumberGroupSeparator, 2, 3 });
-        await Assert.That(v2strformatted).IsEqualTo(expectedv2formatted);
+        await Assert.That(v2StrFormatted).IsEqualTo(expectedV2Formatted);
 
-        string v3strformatted = v1.ToString("c");
-        string expectedv3formatted = string.Format(CultureInfo.CurrentCulture
+        var v3StrFormatted = v1.ToString("c");
+        var expectedV3Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}>"
             , new object[] { separator, 2, 3 });
-        await Assert.That(v3strformatted).IsEqualTo(expectedv3formatted);
+        await Assert.That(v3StrFormatted).IsEqualTo(expectedV3Formatted);
     }
 
     // A test for Distance (Vector2D, Vector2D)
     [Test]
     public async Task Vector2DDistanceTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(3.0, 4.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(3.0, 4.0);
 
         await Assert.That(Vector2D.Distance(a, b)).IsEqualTo(Math.Sqrt(8));
     }
@@ -167,8 +168,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DDistanceTest2()
     {
-        Vector2D a = new Vector2D(1.051, 2.05);
-        Vector2D b = new Vector2D(1.051, 2.05);
+        var a = new Vector2D(1.051, 2.05);
+        var b = new Vector2D(1.051, 2.05);
 
         await Assert.That(Vector2D.Distance(a, b)).IsEqualTo(0.0);
     }
@@ -177,8 +178,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DDistanceSquaredTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(3.0, 4.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(3.0, 4.0);
 
         await Assert.That(Vector2D.DistanceSquared(a, b)).IsEqualTo(8);
     }
@@ -187,8 +188,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DDotTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(3.0, 4.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(3.0, 4.0);
 
         await Assert.That(Vector2D.Dot(a, b)).IsEqualTo(11.0);
     }
@@ -198,19 +199,19 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DDotTest1()
     {
-        Vector2D a = new Vector2D(1.55, 1.55);
-        Vector2D b = new Vector2D(-1.55, 1.55);
+        var a = new Vector2D(1.55, 1.55);
+        var b = new Vector2D(-1.55, 1.55);
 
         await Assert.That(Vector2D.Dot(a, b)).IsEqualTo(0.0);
     }
 
     // A test for Dot (Vector2D, Vector2D)
-    // Dot test with specail double values
+    // Dot test with special double values
     [Test]
     public async Task Vector2DDotTest2()
     {
-        Vector2D a = new Vector2D(double.MinValue, double.MinValue);
-        Vector2D b = new Vector2D(double.MaxValue, double.MaxValue);
+        var a = new Vector2D(double.MinValue, double.MinValue);
+        var b = new Vector2D(double.MaxValue, double.MaxValue);
 
         await Assert.That(Vector2D.Dot(a, b)).IsNegativeInfinity();
     }
@@ -218,8 +219,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DCrossTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(-4.0, 3.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(-4.0, 3.0);
 
         await Assert.That(Vector2D.Cross(a, b)).IsEqualTo(11.0);
     }
@@ -228,8 +229,8 @@ public class Vector2DTests
     public async Task Vector2DCrossTest1()
     {
         // Cross test for parallel vector
-        Vector2D a = new Vector2D(1.55, 1.55);
-        Vector2D b = new Vector2D(-1.55, -1.55);
+        var a = new Vector2D(1.55, 1.55);
+        var b = new Vector2D(-1.55, -1.55);
 
         await Assert.That(Vector2D.Cross(a, b)).IsEqualTo(0.0);
     }
@@ -237,9 +238,9 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DCrossTest2()
     {
-        // Cross test with specail double values
-        Vector2D a = new Vector2D(double.MinValue, double.MinValue);
-        Vector2D b = new Vector2D(double.MinValue, double.MaxValue);
+        // Cross test with special double values
+        var a = new Vector2D(double.MinValue, double.MinValue);
+        var b = new Vector2D(double.MinValue, double.MaxValue);
 
         await Assert.That(Vector2D.Cross(a, b)).IsNegativeInfinity();
     }
@@ -248,7 +249,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLengthTest()
     {
-        Vector2D a = new Vector2D(2.0, 4.0);
+        var a = new Vector2D(2.0, 4.0);
 
         await Assert.That(a.Length()).IsEqualTo(Math.Sqrt(20));
     }
@@ -258,9 +259,11 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLengthTest1()
     {
-        Vector2D target = new Vector2D();
-        target.X = 0.0;
-        target.Y = 0.0;
+        var target = new Vector2D
+        {
+            X = 0.0,
+            Y = 0.0,
+        };
 
         await Assert.That(target.Length()).IsEqualTo(0.0);
     }
@@ -269,7 +272,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLengthSquaredTest()
     {
-        Vector2D a = new Vector2D(2.0, 4.0);
+        var a = new Vector2D(2.0, 4.0);
 
         await Assert.That(a.LengthSquared()).IsEqualTo(20.0);
     }
@@ -279,7 +282,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLengthSquaredTest1()
     {
-        Vector2D a = new Vector2D(0.0, 0.0);
+        var a = new Vector2D(0.0, 0.0);
 
         await Assert.That(a.LengthSquared()).IsEqualTo(0.0);
     }
@@ -288,17 +291,17 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMinTest()
     {
-        Vector2D a = new Vector2D(-1.0, 4.0);
-        Vector2D b = new Vector2D(2.0, 1.0);
+        var a = new Vector2D(-1.0, 4.0);
+        var b = new Vector2D(2.0, 1.0);
 
-        await Assert.That(Vector2D.Min(a, b)).IsEqualTo(new Vector2D(-1.0, 1.0));
+        await Assert.That(Vector2D.Min(a, b)).IsEqualTo(new(-1.0, 1.0));
     }
 
     [Test]
     public async Task Vector2DMinMaxCodeCoverageTest()
     {
-        Vector2D min = new Vector2D(0, 0);
-        Vector2D max = new Vector2D(1, 1);
+        var min = new Vector2D(0, 0);
+        var max = new Vector2D(1, 1);
 
         // Min.
         await Assert.That(min).IsEqualTo(Vector2D.Min(min, max));
@@ -313,60 +316,60 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMaxTest()
     {
-        Vector2D a = new Vector2D(-1.0, 4.0);
-        Vector2D b = new Vector2D(2.0, 1.0);
+        var a = new Vector2D(-1.0, 4.0);
+        var b = new Vector2D(2.0, 1.0);
 
-        await Assert.That(Vector2D.Max(a, b)).IsEqualTo(new Vector2D(2.0, 4.0));
+        await Assert.That(Vector2D.Max(a, b)).IsEqualTo(new(2.0, 4.0));
     }
 
     // A test for Clamp (Vector2D, Vector2D, Vector2D)
     [Test]
     public async Task Vector2DClampTest()
     {
-        Vector2D a = new Vector2D(0.5, 0.3);
-        Vector2D min = new Vector2D(0.0, 0.1);
-        Vector2D max = new Vector2D(1.0, 1.1);
+        var a = new Vector2D(0.5, 0.3);
+        var min = new Vector2D(0.0, 0.1);
+        var max = new Vector2D(1.0, 1.1);
 
         // Normal case.
         // Case N1: specified value is in the range.
-        Vector2D expected = new Vector2D(0.5, 0.3);
-        Vector2D actual = Vector2D.Clamp(a, min, max);
+        var expected = new Vector2D(0.5, 0.3);
+        var actual = Vector2D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
         // Normal case.
         // Case N2: specified value is bigger than max value.
-        a = new Vector2D(2.0, 3.0);
+        a = new(2.0, 3.0);
         expected = max;
         actual = Vector2D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
         // Case N3: specified value is smaller than max value.
-        a = new Vector2D(-1.0, -2.0);
+        a = new(-1.0, -2.0);
         expected = min;
         actual = Vector2D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
         // Case N4: combination case.
-        a = new Vector2D(-2.0, 4.0);
-        expected = new Vector2D(min.X, max.Y);
+        a = new(-2.0, 4.0);
+        expected = new(min.X, max.Y);
         actual = Vector2D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
         // User specified min value is bigger than max value.
-        max = new Vector2D(0.0, 0.1);
-        min = new Vector2D(1.0, 1.1);
+        max = new(0.0, 0.1);
+        min = new(1.0, 1.1);
 
         // Case W1: specified value is in the range.
-        a = new Vector2D(0.5, 0.3);
+        a = new(0.5, 0.3);
         expected = max;
         actual = Vector2D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Normal case.
         // Case W2: specified value is bigger than max and min value.
-        a = new Vector2D(2.0, 3.0);
+        a = new(2.0, 3.0);
         expected = max;
         actual = Vector2D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Case W3: specified value is smaller than min and max value.
-        a = new Vector2D(-1.0, -2.0);
+        a = new(-1.0, -2.0);
         expected = max;
         actual = Vector2D.Clamp(a, min, max);
         await Assert.That(actual).IsEqualTo(expected);
@@ -376,12 +379,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(3.0, 4.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(3.0, 4.0);
 
-        double t = 0.5;
+        var t = 0.5;
 
-        await Assert.That(Vector2D.Lerp(a, b, t)).IsEqualTo(new Vector2D(2.0, 3.0));
+        await Assert.That(Vector2D.Lerp(a, b, t)).IsEqualTo(new(2.0, 3.0));
     }
 
     // A test for Lerp (Vector2D, Vector2D, double)
@@ -389,10 +392,10 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest1()
     {
-        Vector2D a = new Vector2D(0.0, 0.0);
-        Vector2D b = new Vector2D(3.18, 4.25);
+        var a = new Vector2D(0.0, 0.0);
+        var b = new Vector2D(3.18, 4.25);
 
-        double t = 0.0;
+        var t = 0.0;
         await Assert.That(Vector2D.Lerp(a, b, t)).IsEqualTo(Vector2D.Zero);
     }
 
@@ -401,12 +404,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest2()
     {
-        Vector2D a = new Vector2D(0.0, 0.0);
-        Vector2D b = new Vector2D(3.18, 4.25);
+        var a = new Vector2D(0.0, 0.0);
+        var b = new Vector2D(3.18, 4.25);
 
-        double t = 1.0;
-        Vector2D expected = new Vector2D(3.18, 4.25);
-        Vector2D actual = Vector2D.Lerp(a, b, t);
+        var t = 1.0;
+        var expected = new Vector2D(3.18, 4.25);
+        var actual = Vector2D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -415,12 +418,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest3()
     {
-        Vector2D a = new Vector2D(0.0, 0.0);
-        Vector2D b = new Vector2D(3.18, 4.25);
+        var a = new Vector2D(0.0, 0.0);
+        var b = new Vector2D(3.18, 4.25);
 
-        double t = 2.0;
-        Vector2D expected = b * 2.0;
-        Vector2D actual = Vector2D.Lerp(a, b, t);
+        var t = 2.0;
+        var expected = b * 2.0;
+        var actual = Vector2D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -429,12 +432,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest4()
     {
-        Vector2D a = new Vector2D(0.0, 0.0);
-        Vector2D b = new Vector2D(3.18, 4.25);
+        var a = new Vector2D(0.0, 0.0);
+        var b = new Vector2D(3.18, 4.25);
 
-        double t = -2.0;
-        Vector2D expected = -(b * 2.0);
-        Vector2D actual = Vector2D.Lerp(a, b, t);
+        var t = -2.0;
+        var expected = -(b * 2.0);
+        var actual = Vector2D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -443,11 +446,11 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest5()
     {
-        Vector2D a = new Vector2D(45.67, 90.0);
-        Vector2D b = new Vector2D(double.PositiveInfinity, double.NegativeInfinity);
+        var a = new Vector2D(45.67, 90.0);
+        var b = new Vector2D(double.PositiveInfinity, double.NegativeInfinity);
 
-        double t = 0.408;
-        Vector2D actual = Vector2D.Lerp(a, b, t);
+        var t = 0.408;
+        var actual = Vector2D.Lerp(a, b, t);
         await Assert.That(actual.X).IsPositiveInfinity();
         await Assert.That(actual.Y).IsNegativeInfinity();
     }
@@ -457,13 +460,13 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest6()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(1.0, 2.0);
 
-        double t = 0.5;
+        var t = 0.5;
 
-        Vector2D expected = new Vector2D(1.0, 2.0);
-        Vector2D actual = Vector2D.Lerp(a, b, t);
+        var expected = new Vector2D(1.0, 2.0);
+        var actual = Vector2D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -472,13 +475,13 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest7()
     {
-        Vector2D a = new Vector2D(0.44728136);
-        Vector2D b = new Vector2D(0.46345946);
+        var a = new Vector2D(0.44728136);
+        var b = new Vector2D(0.46345946);
 
-        double t = 0.26402435;
+        var t = 0.26402435;
 
-        Vector2D expected = new Vector2D(0.45155275);
-        Vector2D actual = Vector2D.Lerp(a, b, t);
+        var expected = new Vector2D(0.45155275);
+        var actual = Vector2D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected).Within(0.0000001);
     }
 
@@ -488,13 +491,13 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DLerpTest8()
     {
-        Vector2D a = new Vector2D(-100);
-        Vector2D b = new Vector2D(0.33333334);
+        var a = new Vector2D(-100);
+        var b = new Vector2D(0.33333334);
 
         double t = 1;
 
-        Vector2D expected = new Vector2D(0.33333334);
-        Vector2D actual = Vector2D.Lerp(a, b, t);
+        var expected = new Vector2D(0.33333334);
+        var actual = Vector2D.Lerp(a, b, t);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -502,8 +505,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTransformTest()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        Matrix4x4D m =
+        var v = new Vector2D(1.0, 2.0);
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -511,10 +514,9 @@ public class Vector2DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector2D expected = new Vector2D(10.316987, 22.183012);
-        Vector2D actual;
+        var expected = new Vector2D(10.316987, 22.183012);
 
-        actual = Vector2D.Transform(v, m);
+        var actual = Vector2D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(0.000001);
     }
 
@@ -522,15 +524,14 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTransform3x2Test()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        Matrix3x2D m = Matrix3x2D.CreateRotation(MathHelper.ToRadians(30.0));
+        var v = new Vector2D(1.0, 2.0);
+        var m = Matrix3x2D.CreateRotation(MathHelper.ToRadians(30.0));
         m.M31 = 10.0;
         m.M32 = 20.0;
 
-        Vector2D expected = new Vector2D(9.866025, 22.23205);
-        Vector2D actual;
+        var expected = new Vector2D(9.866025, 22.23205);
 
-        actual = Vector2D.Transform(v, m);
+        var actual = Vector2D.Transform(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(0.000001);
     }
 
@@ -538,8 +539,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTransformNormalTest()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        Matrix4x4D m =
+        var v = new Vector2D(1.0, 2.0);
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
@@ -547,10 +548,9 @@ public class Vector2DTests
         m.M42 = 20.0;
         m.M43 = 30.0;
 
-        Vector2D expected = new Vector2D(0.3169873, 2.18301272);
-        Vector2D actual;
+        var expected = new Vector2D(0.3169873, 2.18301272);
 
-        actual = Vector2D.TransformNormal(v, m);
+        var actual = Vector2D.TransformNormal(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(0.000001);
     }
 
@@ -558,12 +558,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTransformNormal3x2Test()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        Matrix3x2D m = Matrix3x2D.CreateRotation(MathHelper.ToRadians(30.0));
+        var v = new Vector2D(1.0, 2.0);
+        var m = Matrix3x2D.CreateRotation(MathHelper.ToRadians(30.0));
         m.M31 = 10.0;
         m.M32 = 20.0;
 
-        Vector2D expected = new Vector2D(-0.133974612, 2.232051);
+        var expected = new Vector2D(-0.133974612, 2.232051);
         var actual = Vector2D.TransformNormal(v, m);
         await Assert.That(actual).IsEqualTo(expected).Within(0.000001);
     }
@@ -572,16 +572,16 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTransformByQuaternionTest()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
+        var v = new Vector2D(1.0, 2.0);
 
-        Matrix4x4D m =
+        var m =
             Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
             Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
-        QuaternionD q = QuaternionD.CreateFromRotationMatrix(m);
+        var q = QuaternionD.CreateFromRotationMatrix(m);
 
-        Vector2D expected = Vector2D.Transform(v, m);
-        Vector2D actual = Vector2D.Transform(v, q);
+        var expected = Vector2D.Transform(v, m);
+        var actual = Vector2D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -590,11 +590,11 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTransformByQuaternionTest1()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        QuaternionD q = new QuaternionD();
-        Vector2D expected = Vector2D.Zero;
+        var v = new Vector2D(1.0, 2.0);
+        var q = new QuaternionD();
+        var expected = Vector2D.Zero;
 
-        Vector2D actual = Vector2D.Transform(v, q);
+        var actual = Vector2D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -603,11 +603,11 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DTransformByQuaternionTest2()
     {
-        Vector2D v = new Vector2D(1.0, 2.0);
-        QuaternionD q = QuaternionD.Identity;
-        Vector2D expected = v;
+        var v = new Vector2D(1.0, 2.0);
+        var q = QuaternionD.Identity;
+        var expected = v;
 
-        Vector2D actual = Vector2D.Transform(v, q);
+        var actual = Vector2D.Transform(v, q);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -615,8 +615,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DNormalizeTest()
     {
-        Vector2D a = new Vector2D(2.0, 3.0);
-        Vector2D expected = new Vector2D(0.554700196225229122018341733457, 0.8320502943378436830275126001855);
+        var a = new Vector2D(2.0, 3.0);
+        var expected = new Vector2D(0.554700196225229122018341733457, 0.8320502943378436830275126001855);
 
         var actual = Vector2D.Normalize(a);
         await Assert.That(actual).IsEqualTo(expected);
@@ -627,8 +627,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DNormalizeTest1()
     {
-        Vector2D a = new Vector2D(); // no parameter, default to 0.0
-        Vector2D actual = Vector2D.Normalize(a);
+        var a = new Vector2D(); // no parameter, default to 0.0
+        var actual = Vector2D.Normalize(a);
         await Assert.That(actual.X).IsNaN();
         await Assert.That(actual.Y).IsNaN();
     }
@@ -638,9 +638,9 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DNormalizeTest2()
     {
-        Vector2D a = new Vector2D(double.MaxValue, double.MaxValue);
-        Vector2D actual = Vector2D.Normalize(a);
-        Vector2D expected = new Vector2D(0, 0);
+        var a = new Vector2D(double.MaxValue, double.MaxValue);
+        var actual = Vector2D.Normalize(a);
+        var expected = new Vector2D(0, 0);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -648,12 +648,11 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DUnaryNegationTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
 
-        Vector2D expected = new Vector2D(-1.0, -2.0);
-        Vector2D actual;
+        var expected = new Vector2D(-1.0, -2.0);
 
-        actual = -a;
+        var actual = -a;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -663,9 +662,9 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DUnaryNegationTest1()
     {
-        Vector2D a = new Vector2D(double.PositiveInfinity, double.NegativeInfinity);
+        var a = new Vector2D(double.PositiveInfinity, double.NegativeInfinity);
 
-        Vector2D actual = -a;
+        var actual = -a;
 
         await Assert.That(actual.X).IsNegativeInfinity();
         await Assert.That(actual.Y).IsPositiveInfinity();
@@ -676,8 +675,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DUnaryNegationTest2()
     {
-        Vector2D a = new Vector2D(double.NaN, 0.0);
-        Vector2D actual = -a;
+        var a = new Vector2D(double.NaN, 0.0);
+        var actual = -a;
 
         await Assert.That(actual.X).IsNaN();
         await Assert.That(actual.Y).IsEqualTo(0.0);
@@ -687,13 +686,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DSubtractionTest()
     {
-        Vector2D a = new Vector2D(1.0, 3.0);
-        Vector2D b = new Vector2D(2.0, 1.5);
+        var a = new Vector2D(1.0, 3.0);
+        var b = new Vector2D(2.0, 1.5);
 
-        Vector2D expected = new Vector2D(-1.0, 1.5);
-        Vector2D actual;
+        var expected = new Vector2D(-1.0, 1.5);
 
-        actual = a - b;
+        var actual = a - b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -702,13 +700,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMultiplyOperatorTest()
     {
-        Vector2D a = new Vector2D(2.0, 3.0);
+        var a = new Vector2D(2.0, 3.0);
         const double factor = 2.0;
 
-        Vector2D expected = new Vector2D(4.0, 6.0);
-        Vector2D actual;
+        var expected = new Vector2D(4.0, 6.0);
 
-        actual = a * factor;
+        var actual = a * factor;
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -716,13 +713,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMultiplyOperatorTest2()
     {
-        Vector2D a = new Vector2D(2.0, 3.0);
+        var a = new Vector2D(2.0, 3.0);
         const double factor = 2.0;
 
-        Vector2D expected = new Vector2D(4.0, 6.0);
-        Vector2D actual;
+        var expected = new Vector2D(4.0, 6.0);
 
-        actual = factor * a;
+        var actual = factor * a;
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -730,13 +726,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMultiplyOperatorTest3()
     {
-        Vector2D a = new Vector2D(2.0, 3.0);
-        Vector2D b = new Vector2D(4.0, 5.0);
+        var a = new Vector2D(2.0, 3.0);
+        var b = new Vector2D(4.0, 5.0);
 
-        Vector2D expected = new Vector2D(8.0, 15.0);
-        Vector2D actual;
+        var expected = new Vector2D(8.0, 15.0);
 
-        actual = a * b;
+        var actual = a * b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -745,14 +740,13 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DivisionTest()
     {
-        Vector2D a = new Vector2D(2.0, 3.0);
+        var a = new Vector2D(2.0, 3.0);
 
-        double div = 2.0;
+        var div = 2.0;
 
-        Vector2D expected = new Vector2D(1.0, 1.5);
-        Vector2D actual;
+        var expected = new Vector2D(1.0, 1.5);
 
-        actual = a / div;
+        var actual = a / div;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -761,13 +755,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DivisionTest1()
     {
-        Vector2D a = new Vector2D(2.0, 3.0);
-        Vector2D b = new Vector2D(4.0, 5.0);
+        var a = new Vector2D(2.0, 3.0);
+        var b = new Vector2D(4.0, 5.0);
 
-        Vector2D expected = new Vector2D(2.0 / 4.0, 3.0 / 5.0);
-        Vector2D actual;
+        var expected = new Vector2D(2.0 / 4.0, 3.0 / 5.0);
 
-        actual = a / b;
+        var actual = a / b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -777,11 +770,11 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DivisionTest2()
     {
-        Vector2D a = new Vector2D(-2.0, 3.0);
+        var a = new Vector2D(-2.0, 3.0);
 
-        double div = 0.0;
+        var div = 0.0;
 
-        Vector2D actual = a / div;
+        var actual = a / div;
 
         await Assert.That(actual.X).IsNegativeInfinity();
         await Assert.That(actual.Y).IsPositiveInfinity();
@@ -792,10 +785,10 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DivisionTest3()
     {
-        Vector2D a = new Vector2D(0.047, -3.0);
-        Vector2D b = new Vector2D();
+        var a = new Vector2D(0.047, -3.0);
+        var b = new Vector2D();
 
-        Vector2D actual = a / b;
+        var actual = a / b;
 
         await Assert.That(actual.X).IsInfinity();
         await Assert.That(actual.Y).IsInfinity();
@@ -805,13 +798,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DAdditionTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(3.0, 4.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(3.0, 4.0);
 
-        Vector2D expected = new Vector2D(4.0, 6.0);
-        Vector2D actual;
+        var expected = new Vector2D(4.0, 6.0);
 
-        actual = a + b;
+        var actual = a + b;
 
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -820,10 +812,10 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DConstructorTest()
     {
-        double x = 1.0;
-        double y = 2.0;
+        var x = 1.0;
+        var y = 2.0;
 
-        Vector2D target = new Vector2D(x, y);
+        var target = new Vector2D(x, y);
         await Assert.That(target.X).IsEqualTo(x);
         await Assert.That(target.Y).IsEqualTo(y);
     }
@@ -833,17 +825,17 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DConstructorTest2()
     {
-        Vector2D target = new Vector2D();
+        var target = new Vector2D();
         await Assert.That(target.X).IsEqualTo(0.0);
         await Assert.That(target.Y).IsEqualTo(0.0);
     }
 
     // A test for Vector2D (double, double)
-    // Constructor with special doubleing values
+    // Constructor with special floating values
     [Test]
     public async Task Vector2DConstructorTest3()
     {
-        Vector2D target = new Vector2D(double.NaN, double.MaxValue);
+        var target = new Vector2D(double.NaN, double.MaxValue);
         await Assert.That(target.X).IsNaN();
         await Assert.That(target.Y).IsEqualTo(double.MaxValue);
     }
@@ -852,15 +844,15 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DConstructorTest4()
     {
-        double value = 1.0;
-        Vector2D target = new Vector2D(value);
+        var value = 1.0;
+        var target = new Vector2D(value);
 
-        Vector2D expected = new Vector2D(value, value);
+        var expected = new Vector2D(value, value);
         await Assert.That(target).IsEqualTo(expected);
 
         value = 2.0;
-        target = new Vector2D(value);
-        expected = new Vector2D(value, value);
+        target = new(value);
+        expected = new(value, value);
         await Assert.That(target).IsEqualTo(expected);
     }
 
@@ -868,9 +860,9 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DConstructorTest5()
     {
-        double value = 1.0;
-        Vector2D target = new Vector2D(new[] { value, value });
-        Vector2D expected = new Vector2D(value);
+        var value = 1.0;
+        var target = new Vector2D(new[] { value, value });
+        var expected = new Vector2D(value);
 
         await Assert.That(target).IsEqualTo(expected);
         await Assert.That(() => new Vector2D(new double[1])).Throws<ArgumentOutOfRangeException>();
@@ -880,13 +872,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DAddTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(5.0, 6.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(5.0, 6.0);
 
-        Vector2D expected = new Vector2D(6.0, 8.0);
-        Vector2D actual;
+        var expected = new Vector2D(6.0, 8.0);
 
-        actual = Vector2D.Add(a, b);
+        var actual = Vector2D.Add(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -894,11 +885,10 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DivideTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        double div = 2.0;
-        Vector2D expected = new Vector2D(0.5, 1.0);
-        Vector2D actual;
-        actual = Vector2D.Divide(a, div);
+        var a = new Vector2D(1.0, 2.0);
+        var div = 2.0;
+        var expected = new Vector2D(0.5, 1.0);
+        var actual = Vector2D.Divide(a, div);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -906,13 +896,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DivideTest1()
     {
-        Vector2D a = new Vector2D(1.0, 6.0);
-        Vector2D b = new Vector2D(5.0, 2.0);
+        var a = new Vector2D(1.0, 6.0);
+        var b = new Vector2D(5.0, 2.0);
 
-        Vector2D expected = new Vector2D(1.0 / 5.0, 6.0 / 2.0);
-        Vector2D actual;
+        var expected = new Vector2D(1.0 / 5.0, 6.0 / 2.0);
 
-        actual = Vector2D.Divide(a, b);
+        var actual = Vector2D.Divide(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -920,14 +909,14 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DEqualsTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(1.0, 2.0);
 
         // case 1: compare between same values
         object obj = b;
 
-        bool expected = true;
-        bool actual = a.Equals(obj);
+        var expected = true;
+        var actual = a.Equals(obj);
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -954,10 +943,10 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMultiplyTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
         const double factor = 2.0;
-        Vector2D expected = new Vector2D(2.0, 4.0);
-        Vector2D actual = Vector2D.Multiply(a, factor);
+        var expected = new Vector2D(2.0, 4.0);
+        var actual = Vector2D.Multiply(a, factor);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -965,10 +954,10 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMultiplyTest2()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
         const double factor = 2.0;
-        Vector2D expected = new Vector2D(2.0, 4.0);
-        Vector2D actual = Vector2D.Multiply(factor, a);
+        var expected = new Vector2D(2.0, 4.0);
+        var actual = Vector2D.Multiply(factor, a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -976,13 +965,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DMultiplyTest3()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(5.0, 6.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(5.0, 6.0);
 
-        Vector2D expected = new Vector2D(5.0, 12.0);
-        Vector2D actual;
+        var expected = new Vector2D(5.0, 12.0);
 
-        actual = Vector2D.Multiply(a, b);
+        var actual = Vector2D.Multiply(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -990,12 +978,11 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DNegateTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
 
-        Vector2D expected = new Vector2D(-1.0, -2.0);
-        Vector2D actual;
+        var expected = new Vector2D(-1.0, -2.0);
 
-        actual = Vector2D.Negate(a);
+        var actual = Vector2D.Negate(a);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1003,12 +990,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DInequalityTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(1.0, 2.0);
 
         // case 1: compare between same values
-        bool expected = false;
-        bool actual = a != b;
+        var expected = false;
+        var actual = a != b;
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1022,12 +1009,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DEqualityTest()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(1.0, 2.0);
 
         // case 1: compare between same values
-        bool expected = true;
-        bool actual = a == b;
+        var expected = true;
+        var actual = a == b;
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1041,13 +1028,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DSubtractTest()
     {
-        Vector2D a = new Vector2D(1.0, 6.0);
-        Vector2D b = new Vector2D(5.0, 2.0);
+        var a = new Vector2D(1.0, 6.0);
+        var b = new Vector2D(5.0, 2.0);
 
-        Vector2D expected = new Vector2D(-4.0, 4.0);
-        Vector2D actual;
+        var expected = new Vector2D(-4.0, 4.0);
 
-        actual = Vector2D.Subtract(a, b);
+        var actual = Vector2D.Subtract(a, b);
         await Assert.That(actual).IsEqualTo(expected);
     }
 
@@ -1055,7 +1041,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DUnitXTest()
     {
-        Vector2D val = new Vector2D(1.0, 0.0);
+        var val = new Vector2D(1.0, 0.0);
         await Assert.That(Vector2D.UnitX).IsEqualTo(val);
     }
 
@@ -1063,7 +1049,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DUnitYTest()
     {
-        Vector2D val = new Vector2D(0.0, 1.0);
+        var val = new Vector2D(0.0, 1.0);
         await Assert.That(Vector2D.UnitY).IsEqualTo(val);
     }
 
@@ -1071,7 +1057,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DOneTest()
     {
-        Vector2D val = new Vector2D(1.0, 1.0);
+        var val = new Vector2D(1.0, 1.0);
         await Assert.That(Vector2D.One).IsEqualTo(val);
     }
 
@@ -1079,7 +1065,7 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DZeroTest()
     {
-        Vector2D val = new Vector2D(0.0, 0.0);
+        var val = new Vector2D(0.0, 0.0);
         await Assert.That(Vector2D.Zero).IsEqualTo(val);
     }
 
@@ -1087,12 +1073,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DEqualsTest1()
     {
-        Vector2D a = new Vector2D(1.0, 2.0);
-        Vector2D b = new Vector2D(1.0, 2.0);
+        var a = new Vector2D(1.0, 2.0);
+        var b = new Vector2D(1.0, 2.0);
 
         // case 1: compare between same values
-        bool expected = true;
-        bool actual = a.Equals(b);
+        var expected = true;
+        var actual = a.Equals(b);
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
@@ -1106,8 +1092,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DEqualsNaNTest()
     {
-        Vector2D a = new Vector2D(double.NaN, 0);
-        Vector2D b = new Vector2D(0, double.NaN);
+        var a = new Vector2D(double.NaN, 0);
+        var b = new Vector2D(0, double.NaN);
 
         await Assert.That(a).IsNotEqualTo(Vector2D.Zero);
         await Assert.That(b).IsNotEqualTo(Vector2D.Zero);
@@ -1117,23 +1103,23 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DReflectTest()
     {
-        Vector2D a = Vector2D.Normalize(new Vector2D(1.0, 1.0));
+        var a = Vector2D.Normalize(new(1.0, 1.0));
 
         // Reflect on XZ plane.
-        Vector2D n = new Vector2D(0.0, 1.0);
-        Vector2D expected = new Vector2D(a.X, -a.Y);
-        Vector2D actual = Vector2D.Reflect(a, n);
+        var n = new Vector2D(0.0, 1.0);
+        var expected = new Vector2D(a.X, -a.Y);
+        var actual = Vector2D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Reflect on XY plane.
-        n = new Vector2D(0.0, 0.0);
-        expected = new Vector2D(a.X, a.Y);
+        n = new(0.0, 0.0);
+        expected = new(a.X, a.Y);
         actual = Vector2D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected);
 
         // Reflect on YZ plane.
-        n = new Vector2D(1.0, 0.0);
-        expected = new Vector2D(-a.X, a.Y);
+        n = new(1.0, 0.0);
+        expected = new(-a.X, a.Y);
         actual = Vector2D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -1143,12 +1129,12 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DReflectTest1()
     {
-        Vector2D n = new Vector2D(0.45, 1.28);
+        var n = new Vector2D(0.45, 1.28);
         n = Vector2D.Normalize(n);
-        Vector2D a = n;
+        var a = n;
 
-        Vector2D expected = -n;
-        Vector2D actual = Vector2D.Reflect(a, n);
+        var expected = -n;
+        var actual = Vector2D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected).Within(0.00000000001);
     }
 
@@ -1157,21 +1143,21 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DReflectTest2()
     {
-        Vector2D n = new Vector2D(0.45, 1.28);
+        var n = new Vector2D(0.45, 1.28);
         n = Vector2D.Normalize(n);
-        Vector2D a = -n;
+        var a = -n;
 
-        Vector2D expected = n;
-        Vector2D actual = Vector2D.Reflect(a, n);
+        var expected = n;
+        var actual = Vector2D.Reflect(a, n);
         await Assert.That(actual).IsEqualTo(expected).Within(0.00000000001);
     }
 
     [Test]
     public async Task Vector2DAbsTest()
     {
-        Vector2D v1 = new Vector2D(-2.5, 2.0);
-        Vector2D v3 = Vector2D.Abs(new Vector2D(0.0, double.NegativeInfinity));
-        Vector2D v = Vector2D.Abs(v1);
+        var v1 = new Vector2D(-2.5, 2.0);
+        var v3 = Vector2D.Abs(new(0.0, double.NegativeInfinity));
+        var v = Vector2D.Abs(v1);
         await Assert.That(v.X).IsEqualTo(2.5);
         await Assert.That(v.Y).IsEqualTo(2.0);
         await Assert.That(v3.X).IsEqualTo(0.0);
@@ -1181,8 +1167,8 @@ public class Vector2DTests
     [Test]
     public async Task Vector2DSqrtTest()
     {
-        Vector2D v1 = new Vector2D(-2.5, 2.0);
-        Vector2D v2 = new Vector2D(5.5, 4.5);
+        var v1 = new Vector2D(-2.5, 2.0);
+        var v2 = new Vector2D(5.5, 4.5);
         await Assert.That((int)Vector2D.SquareRoot(v2).X).IsEqualTo(2);
         await Assert.That((int)Vector2D.SquareRoot(v2).Y).IsEqualTo(2);
         await Assert.That(Vector2D.SquareRoot(v1).X).IsNaN();
@@ -1235,12 +1221,14 @@ public class Vector2DTests
     [Test]
     public async Task SetFieldsTest()
     {
-        Vector2D v3 = new Vector2D(4, 5);
-        v3.X = 1.0;
-        v3.Y = 2.0;
+        var v3 = new Vector2D(4, 5)
+        {
+            X = 1.0,
+            Y = 2.0,
+        };
         await Assert.That(v3.X).IsEqualTo(1.0);
         await Assert.That(v3.Y).IsEqualTo(2.0);
-        Vector2D v4 = v3;
+        var v4 = v3;
         v4.Y = 0.5;
         await Assert.That(v4.X).IsEqualTo(1.0);
         await Assert.That(v4.Y).IsEqualTo(0.5);
@@ -1250,7 +1238,7 @@ public class Vector2DTests
     [Test]
     public async Task EmbeddedVectorSetFields()
     {
-        EmbeddedVectorObject evo = new EmbeddedVectorObject();
+        var evo = new EmbeddedVectorObject();
         evo.FieldVector.X = 5.0;
         evo.FieldVector.Y = 5.0;
         await Assert.That(evo.FieldVector.X).IsEqualTo(5.0);
@@ -1266,7 +1254,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CosDouble))]
     public async Task CosDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector2D actualResult = Vector2D.Cos(Vector2D.Create(value));
+        var actualResult = Vector2D.Cos(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
@@ -1275,7 +1263,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ExpDouble))]
     public async Task ExpDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector2D actualResult = Vector2D.Exp(Vector2D.Create(value));
+        var actualResult = Vector2D.Exp(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
     
@@ -1283,7 +1271,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.LogDouble))]
     public async Task LogDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector2D actualResult = Vector2D.Log(Vector2D.Create(value));
+        var actualResult = Vector2D.Log(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
     
@@ -1291,7 +1279,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.Log2Double))]
     public async Task Log2DoubleTest(double value, double expectedResult, double variance)
     {
-        Vector2D actualResult = Vector2D.Log2(Vector2D.Create(value));
+        var actualResult = Vector2D.Log2(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
     
@@ -1307,7 +1295,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ClampDouble))]
     public async Task ClampDoubleTest(double x, double min, double max, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.Clamp(Vector2D.Create(x), Vector2D.Create(min), Vector2D.Create(max));
+        var actualResult = Vector2D.Clamp(Vector2D.Create(x), Vector2D.Create(min), Vector2D.Create(max));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1315,7 +1303,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CopySignDouble))]
     public async Task CopySignDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.CopySign(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.CopySign(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1353,7 +1341,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxDouble))]
     public async Task MaxDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.Max(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.Max(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1361,7 +1349,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeDouble))]
     public async Task MaxMagnitudeDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.MaxMagnitude(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.MaxMagnitude(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1369,7 +1357,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeNumberDouble))]
     public async Task MaxMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.MaxMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.MaxMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1377,7 +1365,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxNumberDouble))]
     public async Task MaxNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.MaxNumber(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.MaxNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1385,7 +1373,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinDouble))]
     public async Task MinDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.Min(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.Min(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1393,7 +1381,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeDouble))]
     public async Task MinMagnitudeDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.MinMagnitude(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.MinMagnitude(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1401,7 +1389,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeNumberDouble))]
     public async Task MinMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.MinMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.MinMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1409,7 +1397,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinNumberDouble))]
     public async Task MinNumberDoubleTest(double x, double y, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.MinNumber(Vector2D.Create(x), Vector2D.Create(y));
+        var actualResult = Vector2D.MinNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1425,7 +1413,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundDouble))]
     public async Task RoundDoubleTest(double value, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.Round(Vector2D.Create(value));
+        var actualResult = Vector2D.Round(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1433,7 +1421,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundAwayFromZeroDouble))]
     public async Task RoundAwayFromZeroDoubleTest(double value, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.AwayFromZero);
+        var actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.AwayFromZero);
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1441,7 +1429,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundToEvenDouble))]
     public async Task RoundToEvenDoubleTest(double value, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.ToEven);
+        var actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.ToEven);
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
@@ -1449,7 +1437,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinDouble))]
     public async Task SinDoubleTest(double value, double expectedResult, double variance)
     {
-        Vector2D actualResult = Vector2D.Sin(Vector2D.Create(value));
+        var actualResult = Vector2D.Sin(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
     
@@ -1457,7 +1445,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinCosDouble))]
     public async Task SinCosDoubleTest(double value, double expectedResultSin, double expectedResultCos, double allowedVarianceSin, double allowedVarianceCos)
     {
-        (Vector2D resultSin, Vector2D resultCos) = Vector2D.SinCos(Vector2D.Create(value));
+        var (resultSin, resultCos) = Vector2D.SinCos(Vector2D.Create(value));
         await Assert.That(resultSin).IsEqualTo(Vector2D.Create(expectedResultSin)).Within(Vector2D.Create(allowedVarianceSin));
         await Assert.That(resultCos).IsEqualTo(Vector2D.Create(expectedResultCos)).Within(Vector2D.Create(allowedVarianceCos));
     }
@@ -1466,7 +1454,7 @@ public class Vector2DTests
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.TruncateDouble))]
     public async Task TruncateDoubleTest(double value, double expectedResult)
     {
-        Vector2D actualResult = Vector2D.Truncate(Vector2D.Create(value));
+        var actualResult = Vector2D.Truncate(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
     
