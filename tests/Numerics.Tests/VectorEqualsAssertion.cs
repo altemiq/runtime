@@ -7,13 +7,13 @@ public static class VectorEqualsExtensions
         source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(e => e != null)) + ")");
         return new(source.Context, expected);
     }
-    
+
     public static Vector3DEqualsAssertion IsEqualTo(this TUnit.Assertions.Core.IAssertionSource<Vector3D> source, Vector3D expected, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expected))] string? expectedExpression = null)
     {
         source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(e => e != null)) + ")");
         return new(source.Context, expected);
     }
-    
+
     public static Vector4DEqualsAssertion IsEqualTo(this TUnit.Assertions.Core.IAssertionSource<Vector4D> source, Vector4D expected, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expected))] string? expectedExpression = null)
     {
         source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(e => e != null)) + ")");
@@ -61,7 +61,7 @@ public class Vector4DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Vect
 {
     public TUnit.Assertions.Conditions.ToleranceBasedEqualsAssertion<Vector4D, Vector4D> Within(double tolerance) =>
         this.Within(Vector4D.Create(tolerance));
-    
+
     protected override bool HasToleranceValue() => true;
 
     protected override bool IsWithinTolerance(Vector4D actual, Vector4D expected, Vector4D tolerance) =>

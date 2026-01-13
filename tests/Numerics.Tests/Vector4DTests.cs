@@ -1585,7 +1585,7 @@ public sealed class Vector4DTests
         await Assert.That(obj.RootEmbeddedObject.X).IsEqualTo(5);
         await Assert.That(obj.RootEmbeddedObject.Y).IsEqualTo(5);
         await Assert.That(obj.RootEmbeddedObject.Z).IsEqualTo(1);
-        await Assert.That( obj.RootEmbeddedObject.W).IsEqualTo(-5);
+        await Assert.That(obj.RootEmbeddedObject.W).IsEqualTo(-5);
         obj.L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector = new(1, 2, 3, 4);
         await Assert.That(obj.RootEmbeddedObject.X).IsEqualTo(1);
         await Assert.That(obj.RootEmbeddedObject.Y).IsEqualTo(2);
@@ -1967,7 +1967,7 @@ public sealed class Vector4DTests
         await Assert.That(actualResult).IsEqualTo(Vector4D.Create(expectedResult)).Within(Vector4D.Zero);
     }
 #endif
-    
+
 #if NET10_OR_GREATER
     [Test]
     public async Task AllAnyNoneTest()

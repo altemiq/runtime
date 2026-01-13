@@ -559,7 +559,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <inheritdoc cref="Vector4D.LoadAlignedNonTemporal(double*)" />
     public static unsafe Vector2D LoadAlignedNonTemporal(double* source) => LoadAligned(source);
 
-    #if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source)
@@ -575,7 +575,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
         ref var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
         return Unsafe.ReadUnaligned<Vector2D>(ref address);
     }
-    #endif
+#endif
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.LoadUnsafe(ref readonly double, nuint)" />
@@ -593,7 +593,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
         ref var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
         return Unsafe.ReadUnaligned<Vector2D>(ref address);
     }
-    #endif
+#endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Log(Vector4D)" />

@@ -160,7 +160,7 @@ public sealed class Matrix3x2DTests
         await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo( Matrix3x2D.Identity);
+        await Assert.That(i).IsEqualTo(Matrix3x2D.Identity);
     }
 
     // A test for Invert (Matrix3x2D)
@@ -856,10 +856,10 @@ public sealed class Matrix3x2DTests
         await Assert.That(a.Translation).IsEqualTo(val);
 
         // Make sure it only modifies expected value of matrix.
-        
+
         await Assert.That(a.M11).IsEqualTo(b.M11);
         await Assert.That(a.M12).IsEqualTo(b.M12);
-        await Assert.That(a.M21).IsEqualTo(b.M21); 
+        await Assert.That(a.M21).IsEqualTo(b.M21);
         await Assert.That(a.M22).IsEqualTo(b.M22);
         await Assert.That(a.M31).IsNotEqualTo(b.M31);
         await Assert.That(a.M32).IsNotEqualTo(b.M32);
@@ -1049,7 +1049,7 @@ public sealed class Matrix3x2DTests
         int sizeofMatrix3x2D2;
         int sizeofMatrix3x2DPlusDouble;
         int sizeofMatrix3x2DPlusDouble2;
-        
+
         unsafe
         {
             sizeofMatrix3x2D = sizeof(Matrix3x2D);
@@ -1057,7 +1057,7 @@ public sealed class Matrix3x2DTests
             sizeofMatrix3x2DPlusDouble = sizeof(Matrix3x2DPlusDouble);
             sizeofMatrix3x2DPlusDouble2 = sizeof(Matrix3x2DPlusDouble_2x);
         }
-        
+
         await Assert.That(sizeofMatrix3x2D).IsEqualTo(48);
         await Assert.That(sizeofMatrix3x2D2).IsEqualTo(96);
         await Assert.That(sizeofMatrix3x2DPlusDouble).IsEqualTo(56);
@@ -1097,7 +1097,7 @@ public sealed class Matrix3x2DTests
         IntPtr intPtrMatM22;
         IntPtr intPtrMatM31;
         IntPtr intPtrMatM32;
-        
+
         unsafe
         {
 #pragma warning disable CS9123 // The '&' operator should not be used on parameters or local variables in async methods.

@@ -156,7 +156,7 @@ public static class Vector256Extensions
         /// <returns>The quotient of left divided by right.</returns>
         public static Vector256<T> operator /(Vector256<T> left, T right) => left / Vector256.Create(right);
     }
-    
+
     extension(Vector256<double>)
     {
         /// <summary>

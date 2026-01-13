@@ -9,7 +9,7 @@ public class Vector2DTests
 #if NET10_OR_GREATER
     private const int ElementCount = 2;
 #endif
-    
+
     [Test]
     public async Task Vector2DMarshalSizeTest()
     {
@@ -1259,7 +1259,7 @@ public class Vector2DTests
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ExpDouble))]
     public async Task ExpDoubleTest(double value, double expectedResult, double variance)
@@ -1267,7 +1267,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Exp(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.LogDouble))]
     public async Task LogDoubleTest(double value, double expectedResult, double variance)
@@ -1275,7 +1275,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Log(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.Log2Double))]
     public async Task Log2DoubleTest(double value, double expectedResult, double variance)
@@ -1283,7 +1283,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Log2(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.FusedMultiplyAddDouble))]
     public async Task FusedMultiplyAddDoubleTest(double left, double right, double addend, double expectedResult)
@@ -1291,7 +1291,7 @@ public class Vector2DTests
         await Assert.That(Vector2D.FusedMultiplyAdd(Vector2D.Create(left), Vector2D.Create(right), Vector2D.Create(addend))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
         await Assert.That(Vector2D.MultiplyAddEstimate(Vector2D.Create(left), Vector2D.Create(right), Vector2D.Create(addend))).IsEqualTo(Vector2D.Create(double.MultiplyAddEstimate(left, right, addend))).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.ClampDouble))]
     public async Task ClampDoubleTest(double x, double min, double max, double expectedResult)
@@ -1299,7 +1299,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Clamp(Vector2D.Create(x), Vector2D.Create(min), Vector2D.Create(max));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.CopySignDouble))]
     public async Task CopySignDoubleTest(double x, double y, double expectedResult)
@@ -1307,7 +1307,7 @@ public class Vector2DTests
         var actualResult = Vector2D.CopySign(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.DegreesToRadiansDouble))]
     public async Task DegreesToRadiansDoubleTest(double value, double expectedResult, double variance)
@@ -1315,21 +1315,21 @@ public class Vector2DTests
         await Assert.That(Vector2D.DegreesToRadians(Vector2D.Create(-value))).IsEqualTo(Vector2D.Create(-expectedResult)).Within(Vector2D.Create(variance));
         await Assert.That(Vector2D.DegreesToRadians(Vector2D.Create(+value))).IsEqualTo(Vector2D.Create(+expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.HypotDouble))]
     public async Task HypotDoubleTest(double x, double y, double expectedResult, double variance)
     {
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(-y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(+y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(-y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(+y))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(-x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(+x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(-x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
-        await Assert.That(Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(+x))).IsEqualTo(Vector2D.Create(expectedResult)).Within( Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(-y))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-x), Vector2D.Create(+y))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(-y))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+x), Vector2D.Create(+y))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(-x))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(-y), Vector2D.Create(+x))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(-x))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
+        await Assert.That(Vector2D.Hypot(Vector2D.Create(+y), Vector2D.Create(+x))).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.LerpDouble))]
     public async Task LerpDoubleTest(double x, double y, double amount, double expectedResult)
@@ -1337,7 +1337,7 @@ public class Vector2DTests
         await Assert.That(Vector2D.Lerp(Vector2D.Create(+x), Vector2D.Create(+y), Vector2D.Create(amount))).IsEqualTo(Vector2D.Create(+expectedResult)).Within(Vector2D.Zero);
         await Assert.That(Vector2D.Lerp(Vector2D.Create(-x), Vector2D.Create(-y), Vector2D.Create(amount))).IsEqualTo(Vector2D.Create((expectedResult == 0.0) ? expectedResult : -expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxDouble))]
     public async Task MaxDoubleTest(double x, double y, double expectedResult)
@@ -1345,7 +1345,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Max(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeDouble))]
     public async Task MaxMagnitudeDoubleTest(double x, double y, double expectedResult)
@@ -1353,7 +1353,7 @@ public class Vector2DTests
         var actualResult = Vector2D.MaxMagnitude(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxMagnitudeNumberDouble))]
     public async Task MaxMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
@@ -1361,7 +1361,7 @@ public class Vector2DTests
         var actualResult = Vector2D.MaxMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MaxNumberDouble))]
     public async Task MaxNumberDoubleTest(double x, double y, double expectedResult)
@@ -1369,7 +1369,7 @@ public class Vector2DTests
         var actualResult = Vector2D.MaxNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinDouble))]
     public async Task MinDoubleTest(double x, double y, double expectedResult)
@@ -1377,7 +1377,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Min(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeDouble))]
     public async Task MinMagnitudeDoubleTest(double x, double y, double expectedResult)
@@ -1385,7 +1385,7 @@ public class Vector2DTests
         var actualResult = Vector2D.MinMagnitude(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinMagnitudeNumberDouble))]
     public async Task MinMagnitudeNumberDoubleTest(double x, double y, double expectedResult)
@@ -1393,7 +1393,7 @@ public class Vector2DTests
         var actualResult = Vector2D.MinMagnitudeNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.MinNumberDouble))]
     public async Task MinNumberDoubleTest(double x, double y, double expectedResult)
@@ -1401,7 +1401,7 @@ public class Vector2DTests
         var actualResult = Vector2D.MinNumber(Vector2D.Create(x), Vector2D.Create(y));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RadiansToDegreesDouble))]
     public async Task RadiansToDegreesDoubleTest(double value, double expectedResult, double variance)
@@ -1409,7 +1409,7 @@ public class Vector2DTests
         await Assert.That(Vector2D.RadiansToDegrees(Vector2D.Create(-value))).IsEqualTo(Vector2D.Create(-expectedResult)).Within(Vector2D.Create(variance));
         await Assert.That(Vector2D.RadiansToDegrees(Vector2D.Create(+value))).IsEqualTo(Vector2D.Create(+expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundDouble))]
     public async Task RoundDoubleTest(double value, double expectedResult)
@@ -1417,7 +1417,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Round(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundAwayFromZeroDouble))]
     public async Task RoundAwayFromZeroDoubleTest(double value, double expectedResult)
@@ -1425,7 +1425,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.AwayFromZero);
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.RoundToEvenDouble))]
     public async Task RoundToEvenDoubleTest(double value, double expectedResult)
@@ -1433,7 +1433,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Round(Vector2D.Create(value), MidpointRounding.ToEven);
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinDouble))]
     public async Task SinDoubleTest(double value, double expectedResult, double variance)
@@ -1441,7 +1441,7 @@ public class Vector2DTests
         var actualResult = Vector2D.Sin(Vector2D.Create(value));
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Create(variance));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.SinCosDouble))]
     public async Task SinCosDoubleTest(double value, double expectedResultSin, double expectedResultCos, double allowedVarianceSin, double allowedVarianceCos)
@@ -1450,7 +1450,7 @@ public class Vector2DTests
         await Assert.That(resultSin).IsEqualTo(Vector2D.Create(expectedResultSin)).Within(Vector2D.Create(allowedVarianceSin));
         await Assert.That(resultCos).IsEqualTo(Vector2D.Create(expectedResultCos)).Within(Vector2D.Create(allowedVarianceCos));
     }
-    
+
     [Test]
     [MethodDataSource(typeof(GenericMathTestMemberData), nameof(GenericMathTestMemberData.TruncateDouble))]
     public async Task TruncateDoubleTest(double value, double expectedResult)
@@ -1459,7 +1459,7 @@ public class Vector2DTests
         await Assert.That(actualResult).IsEqualTo(Vector2D.Create(expectedResult)).Within(Vector2D.Zero);
     }
 #endif
-    
+
 #if NET10_OR_GREATER
     [Test]
     public async Task AllAnyNoneTest()

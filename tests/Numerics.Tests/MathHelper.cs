@@ -7,7 +7,7 @@ internal static class MathHelper
     {
         return value * T.Pi / T.CreateChecked(180);
     }
-    
+
     public static bool IsWithinToleranceCore<T>(T actual, T expected, T tolerance)
         where T : System.Numerics.INumberBase<T>, System.Numerics.IComparisonOperators<T, T, bool>
     {

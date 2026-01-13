@@ -1419,7 +1419,7 @@ public sealed class Vector3DTests
         await Assert.That(Vector3D.Hypot(Vector3D.Create(-x), Vector3D.Create(+y))).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
         await Assert.That(Vector3D.Hypot(Vector3D.Create(+x), Vector3D.Create(-y))).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
         await Assert.That(Vector3D.Hypot(Vector3D.Create(+x), Vector3D.Create(+y))).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
-        
+
         await Assert.That(Vector3D.Hypot(Vector3D.Create(-y), Vector3D.Create(-x))).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
         await Assert.That(Vector3D.Hypot(Vector3D.Create(-y), Vector3D.Create(+x))).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));
         await Assert.That(Vector3D.Hypot(Vector3D.Create(+y), Vector3D.Create(-x))).IsEqualTo(Vector3D.Create(expectedResult)).Within(Vector3D.Create(variance));

@@ -1064,7 +1064,7 @@ public partial struct Matrix4x4D
                 det = -det;
             }
 
-            det -= 1.0;
+            det--;
             det *= det;
 
             bool result;

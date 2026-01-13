@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 public sealed class Matrix4x4DTests
 {
     private static readonly Matrix4x4D DefaultVarianceMatrix = GenerateFilledMatrix(1e-5d);
-    
+
     private static Matrix4x4D GenerateIncrementalMatrixNumber(double value = 0.0d)
     {
         var a = new Matrix4x4D
@@ -1346,7 +1346,7 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreatePerspectiveFieldOfViewTest4()
     {
-        await Assert.That(() =>Matrix4x4D.CreatePerspectiveFieldOfView(Math.PI * 0.25, 1, 1, -10)).Throws<ArgumentOutOfRangeException>();
+        await Assert.That(() => Matrix4x4D.CreatePerspectiveFieldOfView(Math.PI * 0.25, 1, 1, -10)).Throws<ArgumentOutOfRangeException>();
     }
 
     // A test for CreatePerspectiveFieldOfView (double, double, double, double)

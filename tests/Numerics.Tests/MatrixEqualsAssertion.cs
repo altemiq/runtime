@@ -7,7 +7,7 @@ public static class MatrixEqualsAssertion
         source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(e => e != null)) + ")");
         return new(source.Context, expected);
     }
-    
+
     public static Matrix4x4DEqualsAssertion IsEqualTo(this TUnit.Assertions.Core.IAssertionSource<Matrix4x4D> source, Matrix4x4D expected, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expected))] string? expectedExpression = null)
     {
         source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(e => e != null)) + ")");
@@ -40,7 +40,7 @@ public class Matrix3x2DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Ma
             double.Abs(actual.M22 - expected.M22),
             double.Abs(actual.M31 - expected.M31),
             double.Abs(actual.M32 - expected.M32));
-    
+
 
     protected override bool AreExactlyEqual(Matrix3x2D actual, Matrix3x2D expected) => actual == expected;
 }
