@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net10.0;net9.0;net8.0;net7.0</TargetFrameworks>
     <RootNamespace>$(RootNamespace.Replace('.$(MSBuildProjectName)', ''))</RootNamespace>
+    <AssemblyName>$(AssemblyName).Vectors</AssemblyName>
     <NoWarn>$(NoWarn);AD0001</NoWarn>
 
     <MeziantouPolyfill_IncludedPolyfills>
