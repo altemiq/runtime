@@ -14,6 +14,7 @@
 
     <IsPackable>false</IsPackable>
     <IsPublishable>false</IsPublishable>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Label="Signing" Condition=" '$(Configuration)' != '' AND '$(Configuration)' != 'Debug' ">
