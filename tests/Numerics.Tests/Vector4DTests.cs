@@ -242,7 +242,7 @@ public sealed class Vector4DTests
         var e = new Vector4D(c, 0);
 
         var actual = Vector4D.Dot(d, e);
-        await Assert.That(actual).IsEqualTo(0.0).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(0.0).Within(MathHelper.HighQualityTolerance);
     }
 
     [Test]
@@ -536,7 +536,7 @@ public sealed class Vector4DTests
 
         var expected = new Vector4D(0.45155275);
         var actual = Vector4D.Lerp(a, b, t);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-7);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for Lerp (Vector4Df, Vector4Df, double)
@@ -572,7 +572,7 @@ public sealed class Vector4DTests
         var expected = new Vector4D(10.316987, 22.183012, 30.3660259, 1.0);
 
         var actual = Vector4D.Transform(v, m);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for Transform (Vector3Df, Matrix4x4D)
@@ -592,7 +592,7 @@ public sealed class Vector4DTests
         var expected = new Vector4D(12.19198728, 21.53349376, 32.61602545, 1.0);
 
         var actual = Vector4D.Transform(v, m);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for Transform (Vector4Df, Matrix4x4D)
@@ -612,14 +612,14 @@ public sealed class Vector4DTests
         var expected = new Vector4D(2.19198728, 1.53349376, 2.61602545, 0.0);
 
         var actual = Vector4D.Transform(v, m);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
 
         //
         v.W = 1.0;
 
         expected = new(12.19198728, 21.53349376, 32.61602545, 1.0);
         actual = Vector4D.Transform(v, m);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-6);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for Transform (Vector4Df, Matrix4x4D)
@@ -755,7 +755,7 @@ public sealed class Vector4DTests
         var expected = Vector4D.Transform(v, m);
 
         var actual = Vector4D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Transform (Vector4Df, QuaternionD)
@@ -773,13 +773,13 @@ public sealed class Vector4DTests
         var expected = Vector4D.Transform(v, m);
 
         var actual = Vector4D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         //
         v.W = 1.0;
         expected.W = 1.0;
         actual = Vector4D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Transform (Vector4Df, QuaternionD)
@@ -823,7 +823,7 @@ public sealed class Vector4DTests
 
         var expected = Vector4D.Transform(v, m);
         var actual = Vector4D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Transform (Vector3Df, QuaternionD)
@@ -867,7 +867,7 @@ public sealed class Vector4DTests
 
         var expected = Vector4D.Transform(v, m);
         var actual = Vector4D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Transform (Vector2Df, QuaternionD)

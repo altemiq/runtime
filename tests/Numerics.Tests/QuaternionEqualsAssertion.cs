@@ -36,7 +36,7 @@ public class QuaternionDEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Q
         double.Abs(actual.X - expected.X),
         double.Abs(actual.Y - expected.Y),
         double.Abs(actual.Z - expected.Z),
-        ignoreW ? 0D : double.Abs(actual.W - expected.W));
+        ignoreW ? 0.0 : double.Abs(actual.W - expected.W));
 
     protected override bool AreExactlyEqual(QuaternionD actual, QuaternionD expected)
     {

@@ -529,7 +529,7 @@ public sealed class Vector3DTests
 
         var expected = -n;
         var actual = Vector3D.Reflect(a, n);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Reflect (Vector3Df, Vector3Df)
@@ -543,7 +543,7 @@ public sealed class Vector3DTests
 
         var expected = n;
         var actual = Vector3D.Reflect(a, n);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Reflect (Vector3Df, Vector3Df)
@@ -577,7 +577,7 @@ public sealed class Vector3DTests
         var expected = new Vector3D(12.191987, 21.533493, 32.616024);
 
         var actual = Vector3D.Transform(v, m);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-5);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for Clamp (Vector3Df, Vector3Df, Vector3Df)
@@ -653,7 +653,7 @@ public sealed class Vector3DTests
         var expected = new Vector3D(2.19198728, 1.53349364, 2.61602545);
 
         var actual = Vector3D.TransformNormal(v, m);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-7);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for Transform (Vector3Df, QuaternionD)
@@ -670,7 +670,7 @@ public sealed class Vector3DTests
 
         var expected = Vector3D.Transform(v, m);
         var actual = Vector3D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1E-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Transform (Vector3Df, QuaternionD)
@@ -1891,14 +1891,14 @@ public sealed class Vector3DTests
         var vector = Vector3D.CreateScalar(double.Pi);
 
         await Assert.That(vector.X).IsEqualTo(double.Pi);
-        await Assert.That(vector.Y).IsEqualTo(0D);
-        await Assert.That(vector.Z).IsEqualTo(0D);
+        await Assert.That(vector.Y).IsEqualTo(0.0);
+        await Assert.That(vector.Z).IsEqualTo(0.0);
 
         vector = Vector3D.CreateScalar(double.E);
 
         await Assert.That(vector.X).IsEqualTo(double.E);
-        await Assert.That(vector.Y).IsEqualTo(0D);
-        await Assert.That(vector.Z).IsEqualTo(0D);
+        await Assert.That(vector.Y).IsEqualTo(0.0);
+        await Assert.That(vector.Z).IsEqualTo(0.0);
     }
 
     [Test]

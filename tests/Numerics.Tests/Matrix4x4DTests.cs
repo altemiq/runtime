@@ -8,26 +8,26 @@ public sealed class Matrix4x4DTests
 {
     private static readonly Matrix4x4D DefaultVarianceMatrix = GenerateFilledMatrix(1e-5d);
 
-    private static Matrix4x4D GenerateIncrementalMatrixNumber(double value = 0.0d)
+    private static Matrix4x4D GenerateIncrementalMatrixNumber(double value = 0.0)
     {
         var a = new Matrix4x4D
         {
-            M11 = value + 1.0d,
-            M12 = value + 2.0d,
-            M13 = value + 3.0d,
-            M14 = value + 4.0d,
-            M21 = value + 5.0d,
-            M22 = value + 6.0d,
-            M23 = value + 7.0d,
-            M24 = value + 8.0d,
-            M31 = value + 9.0d,
-            M32 = value + 10.0d,
-            M33 = value + 11.0d,
-            M34 = value + 12.0d,
-            M41 = value + 13.0d,
-            M42 = value + 14.0d,
-            M43 = value + 15.0d,
-            M44 = value + 16.0d,
+            M11 = value + 1.0,
+            M12 = value + 2.0,
+            M13 = value + 3.0,
+            M14 = value + 4.0,
+            M21 = value + 5.0,
+            M22 = value + 6.0,
+            M23 = value + 7.0,
+            M24 = value + 8.0,
+            M31 = value + 9.0,
+            M32 = value + 10.0,
+            M33 = value + 11.0,
+            M34 = value + 12.0,
+            M41 = value + 13.0,
+            M42 = value + 14.0,
+            M43 = value + 15.0,
+            M44 = value + 16.0,
         };
         return a;
     }
@@ -35,10 +35,10 @@ public sealed class Matrix4x4DTests
     private static Matrix4x4D GenerateTestMatrix()
     {
         var m =
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0d));
-        m.Translation = new(111.0d, 222.0d, 333.0d);
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
+        m.Translation = new(111.0, 222.0, 333.0);
         return m;
     }
 
@@ -85,10 +85,10 @@ public sealed class Matrix4x4DTests
         matrix.M41, matrix.M42, -matrix.M43, matrix.M44);
 
     [Test]
-    [Arguments(0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d)]
-    [Arguments(1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d)]
-    [Arguments(3.1434343d, 1.1234123d, 0.1234123d, -0.1234123d, 3.1434343d, 1.1234123d, 3.1434343d, 1.1234123d, 0.1234123d, -0.1234123d, 3.1434343d, 1.1234123d, 3.1434343d, 1.1234123d, 0.1234123d, -0.1234123d)]
-    [Arguments(1.0000001d, 0.0000001d, 2.0000001d, 0.0000002d, 1.0000001d, 0.0000001d, 1.0000001d, 0.0000001d, 2.0000001d, 0.0000002d, 1.0000001d, 0.0000001d, 1.0000001d, 0.0000001d, 2.0000001d, 0.0000002d)]
+    [Arguments(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0)]
+    [Arguments(1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0)]
+    [Arguments(3.1434343, 1.1234123, 0.1234123, -0.1234123, 3.1434343, 1.1234123, 3.1434343, 1.1234123, 0.1234123, -0.1234123, 3.1434343, 1.1234123, 3.1434343, 1.1234123, 0.1234123, -0.1234123)]
+    [Arguments(1.0000001, 0.0000001, 2.0000001, 0.0000002, 1.0000001, 0.0000001, 1.0000001, 0.0000001, 2.0000001, 0.0000002, 1.0000001, 0.0000001, 1.0000001, 0.0000001, 2.0000001, 0.0000002)]
     public async Task Matrix4x4DIndexerGetTest(double m11, double m12, double m13, double m14, double m21, double m22, double m23, double m24, double m31, double m32, double m33, double m34, double m41, double m42, double m43, double m44)
     {
         var matrix = new Matrix4x4D(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
@@ -115,13 +115,13 @@ public sealed class Matrix4x4DTests
     }
 
     [Test]
-    [Arguments(0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d)]
-    [Arguments(1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d, 1.0d, 0.0d)]
-    [Arguments(3.1434343d, 1.1234123d, 0.1234123d, -0.1234123d, 3.1434343d, 1.1234123d, 3.1434343d, 1.1234123d, 0.1234123d, -0.1234123d, 3.1434343d, 1.1234123d, 3.1434343d, 1.1234123d, 0.1234123d, -0.1234123d)]
-    [Arguments(1.0000001d, 0.0000001d, 2.0000001d, 0.0000002d, 1.0000001d, 0.0000001d, 1.0000001d, 0.0000001d, 2.0000001d, 0.0000002d, 1.0000001d, 0.0000001d, 1.0000001d, 0.0000001d, 2.0000001d, 0.0000002d)]
+    [Arguments(0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0)]
+    [Arguments(1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0)]
+    [Arguments(3.1434343, 1.1234123, 0.1234123, -0.1234123, 3.1434343, 1.1234123, 3.1434343, 1.1234123, 0.1234123, -0.1234123, 3.1434343, 1.1234123, 3.1434343, 1.1234123, 0.1234123, -0.1234123)]
+    [Arguments(1.0000001, 0.0000001, 2.0000001, 0.0000002, 1.0000001, 0.0000001, 1.0000001, 0.0000001, 2.0000001, 0.0000002, 1.0000001, 0.0000001, 1.0000001, 0.0000001, 2.0000001, 0.0000002)]
     public async Task Matrix4x4DIndexerSetTest(double m11, double m12, double m13, double m14, double m21, double m22, double m23, double m24, double m31, double m32, double m33, double m34, double m41, double m42, double m43, double m44)
     {
-        var matrix = new Matrix4x4D(0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d)
+        var matrix = new Matrix4x4D(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         {
             [0, 0] = m11,
             [0, 1] = m12,
@@ -167,7 +167,7 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DIdentityTest()
     {
         var val = new Matrix4x4D();
-        val.M11 = val.M22 = val.M33 = val.M44 = 1.0d;
+        val.M11 = val.M22 = val.M33 = val.M44 = 1.0;
 
         await Assert.That(val).IsEqualTo(Matrix4x4D.Identity);
     }
@@ -177,14 +177,14 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DDeterminantTest()
     {
         var target =
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0d));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
 
-        var val = 1.0d;
+        var val = 1.0;
         var det = target.GetDeterminant();
 
-        await Assert.That(det).IsEqualTo(val).Within(1e-15);
+        await Assert.That(det).IsEqualTo(val).Within(MathHelper.HighQualityTolerance);
     }
 
     // Determinant test |A| = 1 / |A'|
@@ -193,31 +193,31 @@ public sealed class Matrix4x4DTests
     {
         var a = new Matrix4x4D
         {
-            M11 = 5.0d,
-            M12 = 2.0d,
-            M13 = 8.25d,
-            M14 = 1.0d,
-            M21 = 12.0d,
-            M22 = 6.8d,
-            M23 = 2.14d,
-            M24 = 9.6d,
-            M31 = 6.5d,
-            M32 = 1.0d,
-            M33 = 3.14d,
-            M34 = 2.22d,
-            M41 = 0d,
-            M42 = 0.86d,
-            M43 = 4.0d,
-            M44 = 1.0d,
+            M11 = 5.0,
+            M12 = 2.0,
+            M13 = 8.25,
+            M14 = 1.0,
+            M21 = 12.0,
+            M22 = 6.8,
+            M23 = 2.14,
+            M24 = 9.6,
+            M31 = 6.5,
+            M32 = 1.0,
+            M33 = 3.14,
+            M34 = 2.22,
+            M41 = 0.0,
+            M42 = 0.86,
+            M43 = 4.0,
+            M44 = 1.0,
         };
         await Assert.That(Matrix4x4D.Invert(a, out var i)).IsTrue();
 
         var detA = a.GetDeterminant();
         var detI = i.GetDeterminant();
-        var t = 1.0d / detI;
+        var t = 1.0 / detI;
 
         // only accurate to 3 precision
-        await Assert.That(detA).IsEqualTo(t).Within(1e-3);
+        await Assert.That(detA).IsEqualTo(t).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for Invert (Matrix4x4D)
@@ -225,36 +225,36 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DInvertTest()
     {
         var mtx =
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0d));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
 
         var expected = new Matrix4x4D
         {
-            M11 = 0.74999994d,
-            M12 = -0.216506317d,
-            M13 = 0.62499994d,
-            M14 = 0.0d,
-            M21 = 0.433012635d,
-            M22 = 0.87499994d,
-            M23 = -0.216506317d,
-            M24 = 0.0d,
-            M31 = -0.49999997d,
-            M32 = 0.433012635d,
-            M33 = 0.74999994d,
-            M34 = 0.0d,
-            M41 = 0.0d,
-            M42 = 0.0d,
-            M43 = 0.0d,
-            M44 = 0.99999994d,
+            M11 = 0.74999994,
+            M12 = -0.216506317,
+            M13 = 0.62499994,
+            M14 = 0.0,
+            M21 = 0.433012635,
+            M22 = 0.87499994,
+            M23 = -0.216506317,
+            M24 = 0.0,
+            M31 = -0.49999997,
+            M32 = 0.433012635,
+            M33 = 0.74999994,
+            M34 = 0.0,
+            M41 = 0.0,
+            M42 = 0.0,
+            M43 = 0.0,
+            M44 = 0.99999994,
         };
 
         await Assert.That(Matrix4x4D.Invert(mtx, out var actual)).IsTrue();
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-07);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
 
         // Make sure M*M is identity matrix
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(1e-15);
+        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Invert (Matrix4x4D)
@@ -289,7 +289,7 @@ public sealed class Matrix4x4DTests
         await Assert.That(Matrix4x4D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(1e-15);
+        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Invert (Matrix4x4D)
@@ -308,12 +308,12 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DInvertProjectionTest()
     {
-        var mtx = Matrix4x4D.CreatePerspectiveFieldOfView(1, 1.333d, 0.1d, 666);
+        var mtx = Matrix4x4D.CreatePerspectiveFieldOfView(1, 1.333, 0.1, 666);
 
         await Assert.That(Matrix4x4D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(1e-15);
+        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Invert (Matrix4x4D)
@@ -327,7 +327,7 @@ public sealed class Matrix4x4DTests
         await Assert.That(Matrix4x4D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(1e-15);
+        await Assert.That(i).IsEqualTo(Matrix4x4D.Identity).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Invert (Matrix4x4D)
@@ -335,10 +335,10 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DInvertRank3()
     {
         // A 4x4 Matrix having a rank of 3
-        var mtx = new Matrix4x4D(1.0d, 2.0d, 3.0d, 0.0d,
-            5.0d, 1.0d, 6.0d, 0.0d,
-            8.0d, 9.0d, 1.0d, 0.0d,
-            4.0d, 7.0d, 3.0d, 0.0d);
+        var mtx = new Matrix4x4D(1.0, 2.0, 3.0, 0.0,
+            5.0, 1.0, 6.0, 0.0,
+            8.0, 9.0, 1.0, 0.0,
+            4.0, 7.0, 3.0, 0.0);
 
         await Assert.That(Matrix4x4D.Invert(mtx, out var actual)).IsFalse();
 
@@ -365,32 +365,32 @@ public sealed class Matrix4x4DTests
 
         if (scaleIsZeroOrNegative)
         {
-            await Assert.That(double.Abs(scales.X)).IsEqualTo(double.Abs(expectedScales.X)).Within(1e-15);
-            await Assert.That(double.Abs(scales.Y)).IsEqualTo(double.Abs(expectedScales.Y)).Within(1e-15);
-            await Assert.That(double.Abs(scales.Z)).IsEqualTo(double.Abs(expectedScales.Z)).Within(1e-15);
+            await Assert.That(double.Abs(scales.X)).IsEqualTo(double.Abs(expectedScales.X)).Within(MathHelper.HighQualityTolerance);
+            await Assert.That(double.Abs(scales.Y)).IsEqualTo(double.Abs(expectedScales.Y)).Within(MathHelper.HighQualityTolerance);
+            await Assert.That(double.Abs(scales.Z)).IsEqualTo(double.Abs(expectedScales.Z)).Within(MathHelper.HighQualityTolerance);
         }
         else
         {
-            await Assert.That(scales).IsEqualTo(expectedScales).Within(1e-14);
-            await Assert.That(rotation).IsEqualTo(expectedRotation).Within(1e-15).Or.IsEqualTo(-expectedRotation).Within(1e-15);
+            await Assert.That(scales).IsEqualTo(expectedScales).Within(MathHelper.HighQualityTolerance);
+            await Assert.That(rotation).IsEqualTo(expectedRotation).Within(MathHelper.HighQualityTolerance).Or.IsEqualTo(-expectedRotation).Within(MathHelper.HighQualityTolerance);
         }
 
-        await Assert.That(translation).IsEqualTo(expectedTranslation).Within(1e-15);
+        await Assert.That(translation).IsEqualTo(expectedTranslation).Within(MathHelper.HighQualityTolerance);
     }
 
     // Various rotation decompose test.
     [Test]
     public async Task Matrix4x4DDecomposeTest01()
     {
-        await DecomposeTest(10.0d, 20.0d, 30.0d, new(10, 20, 30), new(2, 3, 4));
+        await DecomposeTest(10.0, 20.0, 30.0, new(10, 20, 30), new(2, 3, 4));
 
-        const double step = 35.0d;
+        const double step = 35.0;
 
-        for (var yawAngle = -720.0d; yawAngle <= 720.0d; yawAngle += step)
+        for (var yawAngle = -720.0; yawAngle <= 720.0; yawAngle += step)
         {
-            for (var pitchAngle = -720.0d; pitchAngle <= 720.0d; pitchAngle += step)
+            for (var pitchAngle = -720.0; pitchAngle <= 720.0; pitchAngle += step)
             {
-                for (var rollAngle = -720.0d; rollAngle <= 720.0d; rollAngle += step)
+                for (var rollAngle = -720.0; rollAngle <= 720.0; rollAngle += step)
                 {
                     await DecomposeTest(yawAngle, pitchAngle, rollAngle, new(10, 20, 30), new(2, 3, 4));
                 }
@@ -402,7 +402,7 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DDecomposeTest02()
     {
-        await DecomposeTest(10.0d, 20.0d, 30.0d, new(10, 20, 30), new(2, 3, 4));
+        await DecomposeTest(10.0, 20.0, 30.0, new(10, 20, 30), new(2, 3, 4));
 
         // Various scales.
         await DecomposeTest(0, 0, 0, Vector3D.Zero, new(1, 2, 3));
@@ -480,35 +480,35 @@ public sealed class Matrix4x4DTests
         var target = GenerateIncrementalMatrixNumber();
 
         var m =
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0d)) *
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0d));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(30.0)) *
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(30.0));
 
         var q = QuaternionD.CreateFromRotationMatrix(m);
 
         var expected = target * m;
         var actual = Matrix4x4D.Transform(target, q);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-14);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for CreateRotationX (double)
     [Test]
     public async Task Matrix4x4DCreateRotationXTest()
     {
-        var radians = MathHelper.ToRadians(30.0d);
+        var radians = MathHelper.ToRadians(30.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = 1.0d,
-            M22 = 0.8660254d,
-            M23 = 0.5d,
-            M32 = -0.5d,
-            M33 = 0.8660254d,
-            M44 = 1.0d,
+            M11 = 1.0,
+            M22 = 0.8660254,
+            M23 = 0.5,
+            M32 = -0.5,
+            M33 = 0.8660254,
+            M44 = 1.0,
         };
 
         var actual = Matrix4x4D.CreateRotationX(radians);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-08);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for CreateRotationX (double)
@@ -527,7 +527,7 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateRotationXCenterTest()
     {
-        var radians = MathHelper.ToRadians(30.0d);
+        var radians = MathHelper.ToRadians(30.0);
         var center = new Vector3D(23, 42, 66);
 
         var rotateAroundZero = Matrix4x4D.CreateRotationX(radians, Vector3D.Zero);
@@ -536,27 +536,27 @@ public sealed class Matrix4x4DTests
 
         var rotateAroundCenter = Matrix4x4D.CreateRotationX(radians, center);
         var rotateAroundCenterExpected = Matrix4x4D.CreateTranslation(-center) * Matrix4x4D.CreateRotationX(radians) * Matrix4x4D.CreateTranslation(center);
-        await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected).Within(1e-14);
+        await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for CreateRotationY (double)
     [Test]
     public async Task Matrix4x4DCreateRotationYTest()
     {
-        var radians = MathHelper.ToRadians(60.0d);
+        var radians = MathHelper.ToRadians(60.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = 0.49999997d,
-            M13 = -0.866025448d,
-            M22 = 1.0d,
-            M31 = 0.866025448d,
-            M33 = 0.49999997d,
-            M44 = 1.0d,
+            M11 = 0.49999997,
+            M13 = -0.866025448,
+            M22 = 1.0,
+            M31 = 0.866025448,
+            M33 = 0.49999997,
+            M44 = 1.0,
         };
 
         var actual = Matrix4x4D.CreateRotationY(radians);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-07);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for RotationY (double)
@@ -564,27 +564,27 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateRotationYTest1()
     {
-        var radians = MathHelper.ToRadians(-300.0d);
+        var radians = MathHelper.ToRadians(-300.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = 0.49999997d,
-            M13 = -0.866025448d,
-            M22 = 1.0d,
-            M31 = 0.866025448d,
-            M33 = 0.49999997d,
-            M44 = 1.0d,
+            M11 = 0.49999997,
+            M13 = -0.866025448,
+            M22 = 1.0,
+            M31 = 0.866025448,
+            M33 = 0.49999997,
+            M44 = 1.0,
         };
 
         var actual = Matrix4x4D.CreateRotationY(radians);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-07);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for CreateRotationY (double, Vector3)
     [Test]
     public async Task Matrix4x4DCreateRotationYCenterTest()
     {
-        var radians = MathHelper.ToRadians(30.0d);
+        var radians = MathHelper.ToRadians(30.0);
         var center = new Vector3D(23, 42, 66);
 
         var rotateAroundZero = Matrix4x4D.CreateRotationY(radians, Vector3D.Zero);
@@ -593,35 +593,35 @@ public sealed class Matrix4x4DTests
 
         var rotateAroundCenter = Matrix4x4D.CreateRotationY(radians, center);
         var rotateAroundCenterExpected = Matrix4x4D.CreateTranslation(-center) * Matrix4x4D.CreateRotationY(radians) * Matrix4x4D.CreateTranslation(center);
-        await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected).Within(1e-14);
+        await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for CreateFromAxisAngle(Vector3,double)
     [Test]
     public async Task Matrix4x4DCreateFromAxisAngleTest()
     {
-        var radians = MathHelper.ToRadians(-30.0d);
+        var radians = MathHelper.ToRadians(-30.0);
 
         var expected = Matrix4x4D.CreateRotationX(radians);
         var actual = Matrix4x4D.CreateFromAxisAngle(Vector3D.UnitX, radians);
-        await Assert.That(actual).IsEqualTo(expected);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         expected = Matrix4x4D.CreateRotationY(radians);
         actual = Matrix4x4D.CreateFromAxisAngle(Vector3D.UnitY, radians);
-        await Assert.That(actual).IsEqualTo(expected);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         expected = Matrix4x4D.CreateRotationZ(radians);
         actual = Matrix4x4D.CreateFromAxisAngle(Vector3D.UnitZ, radians);
-        await Assert.That(actual).IsEqualTo(expected);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         expected = Matrix4x4D.CreateFromQuaternion(QuaternionD.CreateFromAxisAngle(Vector3D.Normalize(Vector3D.One), radians));
         actual = Matrix4x4D.CreateFromAxisAngle(Vector3D.Normalize(Vector3D.One), radians);
-        await Assert.That(actual).IsEqualTo(expected);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         const int rotCount = 16;
         for (var i = 0; i < rotCount; ++i)
         {
-            var latitude = 2.0d * Math.PI * ((double)i / rotCount);
+            var latitude = 2.0 * Math.PI * ((double)i / rotCount);
             for (var j = 0; j < rotCount; ++j)
             {
                 var longitude = -(Math.PI * 0.5) + Math.PI * ((double)j / rotCount);
@@ -630,7 +630,7 @@ public sealed class Matrix4x4DTests
                 var axis = new Vector3D(m.M11, m.M12, m.M13);
                 for (var k = 0; k < rotCount; ++k)
                 {
-                    var rot = (2.0d * Math.PI) * ((double)k / rotCount);
+                    var rot = (2.0 * Math.PI) * ((double)k / rotCount);
                     expected = Matrix4x4D.CreateFromQuaternion(QuaternionD.CreateFromAxisAngle(axis, rot));
                     actual = Matrix4x4D.CreateFromAxisAngle(axis, rot);
                     await Assert.That(actual).IsEqualTo(expected);
@@ -642,9 +642,9 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateFromYawPitchRollTest1()
     {
-        var yawAngle = MathHelper.ToRadians(30.0d);
-        var pitchAngle = MathHelper.ToRadians(40.0d);
-        var rollAngle = MathHelper.ToRadians(50.0d);
+        var yawAngle = MathHelper.ToRadians(30.0);
+        var pitchAngle = MathHelper.ToRadians(40.0);
+        var rollAngle = MathHelper.ToRadians(50.0);
 
         var yaw = Matrix4x4D.CreateFromAxisAngle(Vector3D.UnitY, yawAngle);
         var pitch = Matrix4x4D.CreateFromAxisAngle(Vector3D.UnitX, pitchAngle);
@@ -652,20 +652,20 @@ public sealed class Matrix4x4DTests
 
         var expected = roll * pitch * yaw;
         var actual = Matrix4x4D.CreateFromYawPitchRoll(yawAngle, pitchAngle, rollAngle);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // Covers more numeric regions
     [Test]
     public async Task Matrix4x4DCreateFromYawPitchRollTest2()
     {
-        const double step = 35.0d;
+        const double step = 35.0;
 
-        for (var yawAngle = -720.0d; yawAngle <= 720.0d; yawAngle += step)
+        for (var yawAngle = -720.0; yawAngle <= 720.0; yawAngle += step)
         {
-            for (var pitchAngle = -720.0d; pitchAngle <= 720.0d; pitchAngle += step)
+            for (var pitchAngle = -720.0; pitchAngle <= 720.0; pitchAngle += step)
             {
-                for (var rollAngle = -720.0d; rollAngle <= 720.0d; rollAngle += step)
+                for (var rollAngle = -720.0; rollAngle <= 720.0; rollAngle += step)
                 {
                     var yawRad = MathHelper.ToRadians(yawAngle);
                     var pitchRad = MathHelper.ToRadians(pitchAngle);
@@ -676,7 +676,7 @@ public sealed class Matrix4x4DTests
 
                     var expected = roll * pitch * yaw;
                     var actual = Matrix4x4D.CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
-                    await Assert.That(actual).IsEqualTo(expected).Within(1e-14);
+                    await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
                 }
             }
         }
@@ -726,44 +726,44 @@ public sealed class Matrix4x4DTests
             // Try various direction of light directions.
             var testDirections = new[]
             {
-                new Vector3D(-1.0d, 1.0d, 1.0d),
-                new Vector3D(0.0d, 1.0d, 1.0d),
-                new Vector3D(1.0d, 1.0d, 1.0d),
-                new Vector3D(-1.0d, 0.0d, 1.0d),
-                new Vector3D(0.0d, 0.0d, 1.0d),
-                new Vector3D(1.0d, 0.0d, 1.0d),
-                new Vector3D(-1.0d, -1.0d, 1.0d),
-                new Vector3D(0.0d, -1.0d, 1.0d),
-                new Vector3D(1.0d, -1.0d, 1.0d),
+                new Vector3D(-1.0, 1.0, 1.0),
+                new Vector3D(0.0, 1.0, 1.0),
+                new Vector3D(1.0, 1.0, 1.0),
+                new Vector3D(-1.0, 0.0, 1.0),
+                new Vector3D(0.0, 0.0, 1.0),
+                new Vector3D(1.0, 0.0, 1.0),
+                new Vector3D(-1.0, -1.0, 1.0),
+                new Vector3D(0.0, -1.0, 1.0),
+                new Vector3D(1.0, -1.0, 1.0),
 
-                new Vector3D(-1.0d, 1.0d, 0.0d),
-                new Vector3D(0.0d, 1.0d, 0.0d),
-                new Vector3D(1.0d, 1.0d, 0.0d),
-                new Vector3D(-1.0d, 0.0d, 0.0d),
-                new Vector3D(0.0d, 0.0d, 0.0d),
-                new Vector3D(1.0d, 0.0d, 0.0d),
-                new Vector3D(-1.0d, -1.0d, 0.0d),
-                new Vector3D(0.0d, -1.0d, 0.0d),
-                new Vector3D(1.0d, -1.0d, 0.0d),
+                new Vector3D(-1.0, 1.0, 0.0),
+                new Vector3D(0.0, 1.0, 0.0),
+                new Vector3D(1.0, 1.0, 0.0),
+                new Vector3D(-1.0, 0.0, 0.0),
+                new Vector3D(0.0, 0.0, 0.0),
+                new Vector3D(1.0, 0.0, 0.0),
+                new Vector3D(-1.0, -1.0, 0.0),
+                new Vector3D(0.0, -1.0, 0.0),
+                new Vector3D(1.0, -1.0, 0.0),
 
-                new Vector3D(-1.0d, 1.0d, -1.0d),
-                new Vector3D(0.0d, 1.0d, -1.0d),
-                new Vector3D(1.0d, 1.0d, -1.0d),
-                new Vector3D(-1.0d, 0.0d, -1.0d),
-                new Vector3D(0.0d, 0.0d, -1.0d),
-                new Vector3D(1.0d, 0.0d, -1.0d),
-                new Vector3D(-1.0d, -1.0d, -1.0d),
-                new Vector3D(0.0d, -1.0d, -1.0d),
-                new Vector3D(1.0d, -1.0d, -1.0d),
+                new Vector3D(-1.0, 1.0, -1.0),
+                new Vector3D(0.0, 1.0, -1.0),
+                new Vector3D(1.0, 1.0, -1.0),
+                new Vector3D(-1.0, 0.0, -1.0),
+                new Vector3D(0.0, 0.0, -1.0),
+                new Vector3D(1.0, 0.0, -1.0),
+                new Vector3D(-1.0, -1.0, -1.0),
+                new Vector3D(0.0, -1.0, -1.0),
+                new Vector3D(1.0, -1.0, -1.0),
             };
 
             foreach (var lightDirInfo in testDirections)
             {
-                if (lightDirInfo.Length() < 0.1d)
+                if (lightDirInfo.Length() < 0.1)
                     continue;
                 var lightDir = Vector3D.Normalize(lightDirInfo);
 
-                if (PlaneD.DotNormal(plane, lightDir) < 0.1d)
+                if (PlaneD.DotNormal(plane, lightDir) < 0.1)
                     continue;
 
                 var m = Matrix4x4D.CreateShadow(lightDir, plane);
@@ -779,13 +779,13 @@ public sealed class Matrix4x4DTests
                     // Make sure transformed position is on the plane.
                     var v = sp - pp;
                     var d = Vector3D.Dot(v, plane.Normal);
-                    await Assert.That(d).IsEqualTo(0).Within(1e-13);
+                    await Assert.That(d).IsEqualTo(0).Within(MathHelper.HighQualityTolerance);
 
                     // make sure direction between transformed position and original position are same as light direction.
-                    if (Vector3D.Dot(point - pp, plane.Normal) > 0.0001d)
+                    if (Vector3D.Dot(point - pp, plane.Normal) > 0.0001)
                     {
                         var dir = Vector3D.Normalize(point - sp);
-                        await Assert.That(dir).IsEqualTo(lightDir).Within(1e-15);
+                        await Assert.That(dir).IsEqualTo(lightDir).Within(MathHelper.HighQualityTolerance);
                     }
                 }
             }
@@ -840,8 +840,8 @@ public sealed class Matrix4x4DTests
                 // Manually compute reflection point and compare results.
                 var v = point - pp;
                 var d = Vector3D.Dot(v, plane.Normal);
-                var vp = point - 2.0d * d * plane.Normal;
-                await Assert.That(rp).IsEqualTo(vp).Within(1e-14);
+                var vp = point - 2.0 * d * plane.Normal;
+                await Assert.That(rp).IsEqualTo(vp).Within(MathHelper.HighQualityTolerance);
             }
         }
     }
@@ -852,52 +852,52 @@ public sealed class Matrix4x4DTests
         var plane = new PlaneD(0, 1, 0, 60);
         var actual = Matrix4x4D.CreateReflection(plane);
 
-        await Assert.That(actual.M11).IsEqualTo(1.0d);
-        await Assert.That(actual.M12).IsEqualTo(0.0d);
-        await Assert.That(actual.M13).IsEqualTo(0.0d);
-        await Assert.That(actual.M14).IsEqualTo(0.0d);
+        await Assert.That(actual.M11).IsEqualTo(1.0);
+        await Assert.That(actual.M12).IsEqualTo(0.0);
+        await Assert.That(actual.M13).IsEqualTo(0.0);
+        await Assert.That(actual.M14).IsEqualTo(0.0);
 
-        await Assert.That(actual.M21).IsEqualTo(0.0d);
-        await Assert.That(actual.M22).IsEqualTo(-1.0d);
-        await Assert.That(actual.M23).IsEqualTo(0.0d);
-        await Assert.That(actual.M24).IsEqualTo(0.0d);
+        await Assert.That(actual.M21).IsEqualTo(0.0);
+        await Assert.That(actual.M22).IsEqualTo(-1.0);
+        await Assert.That(actual.M23).IsEqualTo(0.0);
+        await Assert.That(actual.M24).IsEqualTo(0.0);
 
-        await Assert.That(actual.M31).IsEqualTo(0.0d);
-        await Assert.That(actual.M32).IsEqualTo(0.0d);
-        await Assert.That(actual.M33).IsEqualTo(1.0d);
-        await Assert.That(actual.M34).IsEqualTo(0.0d);
+        await Assert.That(actual.M31).IsEqualTo(0.0);
+        await Assert.That(actual.M32).IsEqualTo(0.0);
+        await Assert.That(actual.M33).IsEqualTo(1.0);
+        await Assert.That(actual.M34).IsEqualTo(0.0);
 
-        await Assert.That(actual.M41).IsEqualTo(0.0d);
-        await Assert.That(actual.M42).IsEqualTo(-120.0d);
-        await Assert.That(actual.M43).IsEqualTo(0.0d);
-        await Assert.That(actual.M44).IsEqualTo(1.0d);
+        await Assert.That(actual.M41).IsEqualTo(0.0);
+        await Assert.That(actual.M42).IsEqualTo(-120.0);
+        await Assert.That(actual.M43).IsEqualTo(0.0);
+        await Assert.That(actual.M44).IsEqualTo(1.0);
     }
 
     // A test for CreateRotationZ (double)
     [Test]
     public async Task Matrix4x4DCreateRotationZTest()
     {
-        var radians = MathHelper.ToRadians(50.0d);
+        var radians = MathHelper.ToRadians(50.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = 0.642787635d,
-            M12 = 0.766044438d,
-            M21 = -0.766044438d,
-            M22 = 0.642787635d,
-            M33 = 1.0d,
-            M44 = 1.0d,
+            M11 = 0.642787635,
+            M12 = 0.766044438,
+            M21 = -0.766044438,
+            M22 = 0.642787635,
+            M33 = 1.0,
+            M44 = 1.0,
         };
 
         var actual = Matrix4x4D.CreateRotationZ(radians);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-07);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for CreateRotationZ (double, Vector3)
     [Test]
     public async Task Matrix4x4DCreateRotationZCenterTest()
     {
-        var radians = MathHelper.ToRadians(30.0d);
+        var radians = MathHelper.ToRadians(30.0);
         var center = new Vector3D(23, 42, 66);
 
         var rotateAroundZero = Matrix4x4D.CreateRotationZ(radians, Vector3D.Zero);
@@ -906,140 +906,140 @@ public sealed class Matrix4x4DTests
 
         var rotateAroundCenter = Matrix4x4D.CreateRotationZ(radians, center);
         var rotateAroundCenterExpected = Matrix4x4D.CreateTranslation(-center) * Matrix4x4D.CreateRotationZ(radians) * Matrix4x4D.CreateTranslation(center);
-        await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected);
+        await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected).Within(MathHelper.HighQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateLookAtTest()
     {
-        var cameraPosition = new Vector3D(10.0d, 20.0d, 30.0d);
-        var cameraTarget = new Vector3D(3.0d, 2.0d, -4.0d);
-        var cameraUpVector = new Vector3D(0.0d, 1.0d, 0.0d);
+        var cameraPosition = new Vector3D(10.0, 20.0, 30.0);
+        var cameraTarget = new Vector3D(3.0, 2.0, -4.0);
+        var cameraUpVector = new Vector3D(0.0, 1.0, 0.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.979457d,
-            M12 = -0.0928268d,
-            M13 = +0.179017d,
-            M21 = +0.0d,
-            M22 = +0.887748d,
-            M23 = +0.460329d,
-            M31 = -0.201653d,
-            M32 = -0.450873d,
-            M33 = +0.869511d,
-            M41 = -3.74498d,
-            M42 = -3.30051d,
-            M43 = -37.0821d,
-            M44 = +1.0d,
+            M11 = +0.979457,
+            M12 = -0.0928268,
+            M13 = +0.179017,
+            M21 = +0.0,
+            M22 = +0.887748,
+            M23 = +0.460329,
+            M31 = -0.201653,
+            M32 = -0.450873,
+            M33 = +0.869511,
+            M41 = -3.74498,
+            M42 = -3.30051,
+            M43 = -37.0821,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateLookAt(cameraPosition, cameraTarget, cameraUpVector);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateLookAtLeftHandedTest()
     {
-        var cameraPosition = new Vector3D(10.0d, 20.0d, 30.0d);
-        var cameraTarget = new Vector3D(3.0d, 2.0d, -4.0d);
-        var cameraUpVector = new Vector3D(0.0d, 1.0d, 0.0d);
+        var cameraPosition = new Vector3D(10.0, 20.0, 30.0);
+        var cameraTarget = new Vector3D(3.0, 2.0, -4.0);
+        var cameraUpVector = new Vector3D(0.0, 1.0, 0.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = -0.979457d,
-            M12 = -0.0928268d,
-            M13 = -0.179017d,
-            M21 = +0.0d,
-            M22 = +0.887748d,
-            M23 = -0.460329d,
-            M31 = +0.201653d,
-            M32 = -0.450873d,
-            M33 = -0.869511d,
-            M41 = +3.74498d,
-            M42 = -3.30051d,
-            M43 = +37.0821d,
-            M44 = +1.0d,
+            M11 = -0.979457,
+            M12 = -0.0928268,
+            M13 = -0.179017,
+            M21 = +0.0,
+            M22 = +0.887748,
+            M23 = -0.460329,
+            M31 = +0.201653,
+            M32 = -0.450873,
+            M33 = -0.869511,
+            M41 = +3.74498,
+            M42 = -3.30051,
+            M43 = +37.0821,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateLookAtLeftHanded(cameraPosition, cameraTarget, cameraUpVector);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateLookToTest()
     {
-        var cameraPosition = new Vector3D(10.0d, 20.0d, 30.0d);
-        var cameraDirection = new Vector3D(-7.0d, -18.0d, -34.0d);
-        var cameraUpVector = new Vector3D(0.0d, 1.0d, 0.0d);
+        var cameraPosition = new Vector3D(10.0, 20.0, 30.0);
+        var cameraDirection = new Vector3D(-7.0, -18.0, -34.0);
+        var cameraUpVector = new Vector3D(0.0, 1.0, 0.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.979457d,
-            M12 = -0.0928268d,
-            M13 = +0.179017d,
-            M21 = +0.0d,
-            M22 = +0.887748d,
-            M23 = +0.460329d,
-            M31 = -0.201653d,
-            M32 = -0.450873d,
-            M33 = +0.869511d,
-            M41 = -3.74498d,
-            M42 = -3.30051d,
-            M43 = -37.0821d,
-            M44 = +1.0d,
+            M11 = +0.979457,
+            M12 = -0.0928268,
+            M13 = +0.179017,
+            M21 = +0.0,
+            M22 = +0.887748,
+            M23 = +0.460329,
+            M31 = -0.201653,
+            M32 = -0.450873,
+            M33 = +0.869511,
+            M41 = -3.74498,
+            M42 = -3.30051,
+            M43 = -37.0821,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateLookTo(cameraPosition, cameraDirection, cameraUpVector);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateLookToLeftHandedTest()
     {
-        var cameraPosition = new Vector3D(10.0d, 20.0d, 30.0d);
-        var cameraDirection = new Vector3D(-7.0d, -18.0d, -34.0d);
-        var cameraUpVector = new Vector3D(0.0d, 1.0d, 0.0d);
+        var cameraPosition = new Vector3D(10.0, 20.0, 30.0);
+        var cameraDirection = new Vector3D(-7.0, -18.0, -34.0);
+        var cameraUpVector = new Vector3D(0.0, 1.0, 0.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = -0.979457d,
-            M12 = -0.0928268d,
-            M13 = -0.179017d,
-            M21 = +0.0d,
-            M22 = +0.887748d,
-            M23 = -0.460329d,
-            M31 = +0.201653d,
-            M32 = -0.450873d,
-            M33 = -0.869511d,
-            M41 = +3.74498d,
-            M42 = -3.30051d,
-            M43 = +37.0821d,
-            M44 = +1.0d,
+            M11 = -0.979457,
+            M12 = -0.0928268,
+            M13 = -0.179017,
+            M21 = +0.0,
+            M22 = +0.887748,
+            M23 = -0.460329,
+            M31 = +0.201653,
+            M32 = -0.450873,
+            M33 = -0.869511,
+            M41 = +3.74498,
+            M42 = -3.30051,
+            M43 = +37.0821,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateLookToLeftHanded(cameraPosition, cameraDirection, cameraUpVector);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateViewportTest()
     {
-        var x = 10.0d;
-        var y = 20.0d;
-        var width = 80.0d;
-        var height = 160.0d;
-        var minDepth = 1.5d;
-        var maxDepth = 1000.0d;
+        var x = 10.0;
+        var y = 20.0;
+        var width = 80.0;
+        var height = 160.0;
+        var minDepth = 1.5;
+        var maxDepth = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +40.0d,
-            M22 = -80.0d,
-            M33 = -998.5d,
-            M41 = +50.0d,
-            M42 = +100.0d,
-            M43 = +1.5d,
-            M44 = +1.0d,
+            M11 = +40.0,
+            M22 = -80.0,
+            M33 = -998.5,
+            M41 = +50.0,
+            M42 = +100.0,
+            M43 = +1.5,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateViewport(x, y, width, height, minDepth, maxDepth);
@@ -1049,13 +1049,13 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateViewportLeftHandedTest()
     {
-        double x = 10.0d, y = 20.0d;
-        double width = 3.0d, height = 4.0d;
-        double minDepth = 100.0d, maxDepth = 200.0d;
+        double x = 10.0, y = 20.0;
+        double width = 3.0, height = 4.0;
+        double minDepth = 100.0, maxDepth = 200.0;
 
         var expected = Matrix4x4D.Identity;
-        expected.M11 = width * 0.5d;
-        expected.M22 = -height * 0.5d;
+        expected.M11 = width * 0.5;
+        expected.M22 = -height * 0.5;
         expected.M33 = maxDepth - minDepth;
         expected.M41 = x + expected.M11;
         expected.M42 = y - expected.M22;
@@ -1069,28 +1069,28 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateWorldTest()
     {
-        var objectPosition = new Vector3D(10.0d, 20.0d, 30.0d);
-        var objectForwardDirection = new Vector3D(3.0d, 2.0d, -4.0d);
-        var objectUpVector = new Vector3D(0.0d, 1.0d, 0.0d);
+        var objectPosition = new Vector3D(10.0, 20.0, 30.0);
+        var objectForwardDirection = new Vector3D(3.0, 2.0, -4.0);
+        var objectUpVector = new Vector3D(0.0, 1.0, 0.0);
 
         var expected = new Matrix4x4D
         {
-            M11 = 0.799999952d,
+            M11 = 0.799999952,
             M12 = 0,
-            M13 = 0.599999964d,
+            M13 = 0.599999964,
             M14 = 0,
-            M21 = -0.2228344d,
-            M22 = 0.928476632d,
-            M23 = 0.297112525d,
+            M21 = -0.2228344,
+            M22 = 0.928476632,
+            M23 = 0.297112525,
             M24 = 0,
-            M31 = -0.557086d,
-            M32 = -0.371390671d,
-            M33 = 0.742781341d,
+            M31 = -0.557086,
+            M32 = -0.371390671,
+            M33 = 0.742781341,
             M34 = 0,
             M41 = 10,
             M42 = 20,
             M43 = 30,
-            M44 = 1.0d,
+            M44 = 1.0,
         };
 
         var actual = Matrix4x4D.CreateWorld(objectPosition, objectForwardDirection, objectUpVector);
@@ -1098,141 +1098,141 @@ public sealed class Matrix4x4DTests
 
         await Assert.That(actual.Translation).IsEqualTo(objectPosition);
         await Assert.That(Vector3D.Dot(Vector3D.Normalize(objectUpVector), new(actual.M21, actual.M22, actual.M23)) > 0).IsTrue();
-        await Assert.That(Vector3D.Dot(Vector3D.Normalize(objectForwardDirection), new(-actual.M31, -actual.M32, -actual.M33)) > 0.999d).IsTrue();
+        await Assert.That(Vector3D.Dot(Vector3D.Normalize(objectForwardDirection), new(-actual.M31, -actual.M32, -actual.M33)) > 0.999).IsTrue();
     }
 
     [Test]
     public async Task Matrix4x4DCreateOrthoTest()
     {
-        var width = 100.0d;
-        var height = 200.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var width = 100.0;
+        var height = 200.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.02d,
-            M22 = +0.01d,
-            M33 = -0.0010015d,
-            M43 = -0.00150225d,
-            M44 = +1.0d,
+            M11 = +0.02,
+            M22 = +0.01,
+            M33 = -0.0010015,
+            M43 = -0.00150225,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateOrthographic(width, height, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-08);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateOrthoLeftHandedTest()
     {
-        var width = 100.0d;
-        var height = 200.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var width = 100.0;
+        var height = 200.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.02d,
-            M22 = +0.01d,
-            M33 = +0.0010015d,
-            M43 = -0.00150225d,
-            M44 = +1.0d,
+            M11 = +0.02,
+            M22 = +0.01,
+            M33 = +0.0010015,
+            M43 = -0.00150225,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateOrthographicLeftHanded(width, height, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-08);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateOrthoOffCenterTest()
     {
-        var left = 10.0d;
-        var right = 90.0d;
-        var bottom = 20.0d;
-        var top = 180.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var left = 10.0;
+        var right = 90.0;
+        var bottom = 20.0;
+        var top = 180.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.025d,
-            M22 = +0.0125d,
-            M33 = -0.0010015d,
-            M41 = -1.25d,
-            M42 = -1.25d,
-            M43 = -0.00150225d,
-            M44 = +1.0d,
+            M11 = +0.025,
+            M22 = +0.0125,
+            M33 = -0.0010015,
+            M41 = -1.25,
+            M42 = -1.25,
+            M43 = -0.00150225,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateOrthographicOffCenter(left, right, bottom, top, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-08);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreateOrthoOffCenterLeftHandedTest()
     {
-        var left = 10.0d;
-        var right = 90.0d;
-        var bottom = 20.0d;
-        var top = 180.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var left = 10.0;
+        var right = 90.0;
+        var bottom = 20.0;
+        var top = 180.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.025d,
-            M22 = +0.0125d,
-            M33 = +0.0010015d,
-            M41 = -1.25d,
-            M42 = -1.25d,
-            M43 = -0.00150225d,
-            M44 = +1.0d,
+            M11 = +0.025,
+            M22 = +0.0125,
+            M33 = +0.0010015,
+            M41 = -1.25,
+            M42 = -1.25,
+            M43 = -0.00150225,
+            M44 = +1.0,
         };
 
         var actual = Matrix4x4D.CreateOrthographicOffCenterLeftHanded(left, right, bottom, top, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreatePerspectiveTest()
     {
-        var width = 100.0d;
-        var height = 200.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var width = 100.0;
+        var height = 200.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.03d,
-            M22 = +0.015d,
-            M33 = -1.0015d,
-            M34 = -1.0d,
-            M43 = -1.50225d,
+            M11 = +0.03,
+            M22 = +0.015,
+            M33 = -1.0015,
+            M34 = -1.0,
+            M43 = -1.50225,
         };
 
         var actual = Matrix4x4D.CreatePerspective(width, height, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreatePerspectiveLeftHandedTest()
     {
-        var width = 100.0d;
-        var height = 200.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var width = 100.0;
+        var height = 200.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.03d,
-            M22 = +0.015d,
-            M33 = +1.0015d,
-            M34 = +1.0d,
-            M43 = -1.50225d,
+            M11 = +0.03,
+            M22 = +0.015,
+            M33 = +1.0015,
+            M34 = +1.0,
+            M43 = -1.50225,
         };
 
         var actual = Matrix4x4D.CreatePerspectiveLeftHanded(width, height, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for CreatePerspective (double, double, double, double)
@@ -1242,10 +1242,10 @@ public sealed class Matrix4x4DTests
     {
         await Assert.That(() =>
         {
-            var width = 100.0d;
-            var height = 200.0d;
-            var zNearPlane = 0.0d;
-            var zFarPlane = 0.0d;
+            var width = 100.0;
+            var height = 200.0;
+            var zNearPlane = 0.0;
+            var zFarPlane = 0.0;
 
             _ = Matrix4x4D.CreatePerspective(width, height, zNearPlane, zFarPlane);
         }).ThrowsExactly<ArgumentOutOfRangeException>();
@@ -1278,43 +1278,43 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreatePerspectiveFieldOfViewTest()
     {
-        var fieldOfView = MathHelper.ToRadians(30.0d);
-        var aspectRatio = 1280.0d / 720.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var fieldOfView = MathHelper.ToRadians(30.0);
+        var aspectRatio = 1280.0 / 720.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +2.09928d,
-            M22 = +3.73205d,
-            M33 = -1.0015d,
-            M34 = -1.0d,
-            M43 = -1.50225d,
+            M11 = +2.09928,
+            M22 = +3.73205,
+            M33 = -1.0015,
+            M34 = -1.0,
+            M43 = -1.50225,
         };
 
         var actual = Matrix4x4D.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreatePerspectiveFieldOfViewLeftHandedTest()
     {
-        var fieldOfView = MathHelper.ToRadians(30.0d);
-        var aspectRatio = 1280.0d / 720.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var fieldOfView = MathHelper.ToRadians(30.0);
+        var aspectRatio = 1280.0 / 720.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +2.09928d,
-            M22 = +3.73205d,
-            M33 = +1.0015d,
-            M34 = +1.0d,
-            M43 = -1.50225d,
+            M11 = +2.09928,
+            M22 = +3.73205,
+            M33 = +1.0015,
+            M34 = +1.0,
+            M43 = -1.50225,
         };
 
         var actual = Matrix4x4D.CreatePerspectiveFieldOfViewLeftHanded(fieldOfView, aspectRatio, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for CreatePerspectiveFieldOfView (double, double, double, double)
@@ -1330,7 +1330,7 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreatePerspectiveFieldOfViewTest2()
     {
-        await Assert.That(() => Matrix4x4D.CreatePerspectiveFieldOfView(Math.PI + 0.01d, 1, 1, 10)).ThrowsExactly<ArgumentOutOfRangeException>();
+        await Assert.That(() => Matrix4x4D.CreatePerspectiveFieldOfView(Math.PI + 0.01, 1, 1, 10)).ThrowsExactly<ArgumentOutOfRangeException>();
     }
 
     // A test for CreatePerspectiveFieldOfView (double, double, double, double)
@@ -1360,52 +1360,52 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreatePerspectiveOffCenterTest()
     {
-        var left = 10.0d;
-        var right = 90.0d;
-        var bottom = 20.0d;
-        var top = 180.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var left = 10.0;
+        var right = 90.0;
+        var bottom = 20.0;
+        var top = 180.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.0375d,
-            M22 = +0.01875d,
-            M31 = +1.25d,
-            M32 = +1.25d,
-            M33 = -1.0015d,
-            M34 = -1.0d,
-            M43 = -1.50225d,
+            M11 = +0.0375,
+            M22 = +0.01875,
+            M31 = +1.25,
+            M32 = +1.25,
+            M33 = -1.0015,
+            M34 = -1.0,
+            M43 = -1.50225,
         };
 
         var actual = Matrix4x4D.CreatePerspectiveOffCenter(left, right, bottom, top, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     [Test]
     public async Task Matrix4x4DCreatePerspectiveOffCenterLeftHandedTest()
     {
-        var left = 10.0d;
-        var right = 90.0d;
-        var bottom = 20.0d;
-        var top = 180.0d;
-        var zNearPlane = 1.5d;
-        var zFarPlane = 1000.0d;
+        var left = 10.0;
+        var right = 90.0;
+        var bottom = 20.0;
+        var top = 180.0;
+        var zNearPlane = 1.5;
+        var zFarPlane = 1000.0;
 
         var expected = new Matrix4x4D
         {
-            M11 = +0.0375d,
-            M22 = +0.01875d,
-            M31 = -1.25d,
-            M32 = -1.25d,
-            M33 = +1.0015d,
-            M34 = +1.0d,
-            M43 = -1.50225d,
+            M11 = +0.0375,
+            M22 = +0.01875,
+            M31 = -1.25,
+            M32 = -1.25,
+            M33 = +1.0015,
+            M34 = +1.0,
+            M43 = -1.50225,
         };
 
 
         var actual = Matrix4x4D.CreatePerspectiveOffCenterLeftHanded(left, right, bottom, top, zNearPlane, zFarPlane);
-        await Assert.That(actual).IsEqualTo(expected).Within(1e-05);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.LowQualityTolerance);
     }
 
     // A test for CreatePerspectiveOffCenter (double, double, double, double, double, double)
@@ -1415,7 +1415,7 @@ public sealed class Matrix4x4DTests
     {
         await Assert.That(() =>
         {
-            double left = 10.0d, right = 90.0d, bottom = 20.0d, top = 180.0d;
+            double left = 10.0, right = 90.0, bottom = 20.0, top = 180.0;
             _ = Matrix4x4D.CreatePerspectiveOffCenter(left, right, bottom, top, -1, 10);
         }).ThrowsExactly<ArgumentOutOfRangeException>();
     }
@@ -1427,7 +1427,7 @@ public sealed class Matrix4x4DTests
     {
         await Assert.That(() =>
         {
-            double left = 10.0d, right = 90.0d, bottom = 20.0d, top = 180.0d;
+            double left = 10.0, right = 90.0, bottom = 20.0, top = 180.0;
             _ = Matrix4x4D.CreatePerspectiveOffCenter(left, right, bottom, top, 1, -10);
         }).ThrowsExactly<ArgumentOutOfRangeException>();
     }
@@ -1439,7 +1439,7 @@ public sealed class Matrix4x4DTests
     {
         await Assert.That(() =>
         {
-            double left = 10.0d, right = 90.0d, bottom = 20.0d, top = 180.0d;
+            double left = 10.0, right = 90.0, bottom = 20.0, top = 180.0;
             _ = Matrix4x4D.CreatePerspectiveOffCenter(left, right, bottom, top, 10, 1);
         }).ThrowsExactly<ArgumentOutOfRangeException>();
     }
@@ -1451,26 +1451,26 @@ public sealed class Matrix4x4DTests
     {
         var a = new Matrix4x4D
         {
-            M11 = 1.0d,
-            M12 = 2.0d,
-            M13 = 3.0d,
-            M14 = 4.0d,
-            M21 = 5.0d,
-            M22 = 6.0d,
-            M23 = 7.0d,
-            M24 = 8.0d,
-            M31 = 9.0d,
-            M32 = 10.0d,
-            M33 = 11.0d,
-            M34 = 12.0d,
-            M41 = 13.0d,
-            M42 = 14.0d,
-            M43 = 15.0d,
-            M44 = 16.0d,
+            M11 = 1.0,
+            M12 = 2.0,
+            M13 = 3.0,
+            M14 = 4.0,
+            M21 = 5.0,
+            M22 = 6.0,
+            M23 = 7.0,
+            M24 = 8.0,
+            M31 = 9.0,
+            M32 = 10.0,
+            M33 = 11.0,
+            M34 = 12.0,
+            M41 = 13.0,
+            M42 = 14.0,
+            M43 = 15.0,
+            M44 = 16.0,
         };
 
         var detA = a.GetDeterminant();
-        await Assert.That(detA).IsEqualTo(0.0d);
+        await Assert.That(detA).IsEqualTo(0.0);
 
         await Assert.That(Matrix4x4D.Invert(a, out var actual)).IsFalse();
 
@@ -1500,27 +1500,27 @@ public sealed class Matrix4x4DTests
     {
         var a = new Matrix4x4D
         {
-            M11 = 11.0d,
-            M12 = 12.0d,
-            M13 = 13.0d,
-            M14 = 14.0d,
-            M21 = 21.0d,
-            M22 = 22.0d,
-            M23 = 23.0d,
-            M24 = 24.0d,
-            M31 = 31.0d,
-            M32 = 32.0d,
-            M33 = 33.0d,
-            M34 = 34.0d,
-            M41 = 41.0d,
-            M42 = 42.0d,
-            M43 = 43.0d,
-            M44 = 44.0d,
+            M11 = 11.0,
+            M12 = 12.0,
+            M13 = 13.0,
+            M14 = 14.0,
+            M21 = 21.0,
+            M22 = 22.0,
+            M23 = 23.0,
+            M24 = 24.0,
+            M31 = 31.0,
+            M32 = 32.0,
+            M33 = 33.0,
+            M34 = 34.0,
+            M41 = 41.0,
+            M42 = 42.0,
+            M43 = 43.0,
+            M44 = 44.0,
         };
 
         var b = GenerateIncrementalMatrixNumber();
 
-        var t = 0.5d;
+        var t = 0.5;
 
         var expected = new Matrix4x4D
         {
@@ -1554,22 +1554,22 @@ public sealed class Matrix4x4DTests
 
         var expected = new Matrix4x4D
         {
-            M11 = -1.0d,
-            M12 = -2.0d,
-            M13 = -3.0d,
-            M14 = -4.0d,
-            M21 = -5.0d,
-            M22 = -6.0d,
-            M23 = -7.0d,
-            M24 = -8.0d,
-            M31 = -9.0d,
-            M32 = -10.0d,
-            M33 = -11.0d,
-            M34 = -12.0d,
-            M41 = -13.0d,
-            M42 = -14.0d,
-            M43 = -15.0d,
-            M44 = -16.0d,
+            M11 = -1.0,
+            M12 = -2.0,
+            M13 = -3.0,
+            M14 = -4.0,
+            M21 = -5.0,
+            M22 = -6.0,
+            M23 = -7.0,
+            M24 = -8.0,
+            M31 = -9.0,
+            M32 = -10.0,
+            M33 = -11.0,
+            M34 = -12.0,
+            M41 = -13.0,
+            M42 = -14.0,
+            M43 = -15.0,
+            M44 = -16.0,
         };
 
         var actual = -a;
@@ -1581,7 +1581,7 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DSubtractionTest()
     {
         var a = GenerateIncrementalMatrixNumber();
-        var b = GenerateIncrementalMatrixNumber(-8.0d);
+        var b = GenerateIncrementalMatrixNumber(-8.0);
 
         var expected = new Matrix4x4D
         {
@@ -1612,7 +1612,7 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DMultiplyTest1()
     {
         var a = GenerateIncrementalMatrixNumber();
-        var b = GenerateIncrementalMatrixNumber(-8.0d);
+        var b = GenerateIncrementalMatrixNumber(-8.0);
 
         var expected = new Matrix4x4D
         {
@@ -1645,22 +1645,22 @@ public sealed class Matrix4x4DTests
     {
         var a = new Matrix4x4D
         {
-            M11 = 1.0d,
-            M12 = 2.0d,
-            M13 = 3.0d,
-            M14 = 4.0d,
-            M21 = 5.0d,
-            M22 = -6.0d,
-            M23 = 7.0d,
-            M24 = -8.0d,
-            M31 = 9.0d,
-            M32 = 10.0d,
-            M33 = 11.0d,
-            M34 = 12.0d,
-            M41 = 13.0d,
-            M42 = -14.0d,
-            M43 = 15.0d,
-            M44 = -16.0d,
+            M11 = 1.0,
+            M12 = 2.0,
+            M13 = 3.0,
+            M14 = 4.0,
+            M21 = 5.0,
+            M22 = -6.0,
+            M23 = 7.0,
+            M24 = -8.0,
+            M31 = 9.0,
+            M32 = 10.0,
+            M33 = 11.0,
+            M34 = 12.0,
+            M41 = 13.0,
+            M42 = -14.0,
+            M43 = 15.0,
+            M44 = -16.0,
         };
 
         var b = Matrix4x4D.Identity;
@@ -1676,7 +1676,7 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DAdditionTest()
     {
         var a = GenerateIncrementalMatrixNumber();
-        var b = GenerateIncrementalMatrixNumber(-8.0d);
+        var b = GenerateIncrementalMatrixNumber(-8.0);
 
         var expected = new Matrix4x4D
         {
@@ -1748,31 +1748,31 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DFromQuaternionTest1()
     {
-        var axis = Vector3D.Normalize(new(1.0d, 2.0d, 3.0d));
-        var q = QuaternionD.CreateFromAxisAngle(axis, MathHelper.ToRadians(30.0d));
+        var axis = Vector3D.Normalize(new(1.0, 2.0, 3.0));
+        var q = QuaternionD.CreateFromAxisAngle(axis, MathHelper.ToRadians(30.0));
 
         var expected = new Matrix4x4D
         {
-            M11 = 0.875595033d,
-            M12 = 0.420031041d,
-            M13 = -0.2385524d,
-            M14 = 0.0d,
-            M21 = -0.38175258d,
-            M22 = 0.904303849d,
-            M23 = 0.1910483d,
-            M24 = 0.0d,
-            M31 = 0.295970082d,
-            M32 = -0.07621294d,
-            M33 = 0.952151954d,
-            M34 = 0.0d,
-            M41 = 0.0d,
-            M42 = 0.0d,
-            M43 = 0.0d,
-            M44 = 1.0d,
+            M11 = 0.875595033,
+            M12 = 0.420031041,
+            M13 = -0.2385524,
+            M14 = 0.0,
+            M21 = -0.38175258,
+            M22 = 0.904303849,
+            M23 = 0.1910483,
+            M24 = 0.0,
+            M31 = 0.295970082,
+            M32 = -0.07621294,
+            M33 = 0.952151954,
+            M34 = 0.0,
+            M41 = 0.0,
+            M42 = 0.0,
+            M43 = 0.0,
+            M44 = 1.0,
         };
 
         var target = Matrix4x4D.CreateFromQuaternion(q);
-        await Assert.That(target).IsEqualTo(expected).Within(1e-07);
+        await Assert.That(target).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for FromQuaternion (Matrix4x4D)
@@ -1780,17 +1780,17 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DFromQuaternionTest2()
     {
-        for (var angle = 0.0d; angle < 720.0d; angle += 10.0d)
+        for (var angle = 0.0; angle < 720.0; angle += 10.0)
         {
             var quat = QuaternionD.CreateFromAxisAngle(Vector3D.UnitX, angle);
 
             var expected = Matrix4x4D.CreateRotationX(angle);
             var actual = Matrix4x4D.CreateFromQuaternion(quat);
-            await Assert.That(actual).IsEqualTo(expected).Within(1e-15);
+            await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
             // make sure convert back to quaternionD is same as we passed quaternionD.
             var q2 = QuaternionD.CreateFromRotationMatrix(actual);
-            await Assert.That(q2).IsEqualTo(quat).Within(1e-15).Or.IsEqualTo(-quat).Within(1e-15);
+            await Assert.That(q2).IsEqualTo(quat).Within(MathHelper.HighQualityTolerance).Or.IsEqualTo(-quat).Within(MathHelper.HighQualityTolerance);
         }
     }
 
@@ -1799,17 +1799,17 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DFromQuaternionTest3()
     {
-        for (var angle = 0.0d; angle < 720.0d; angle += 10.0d)
+        for (var angle = 0.0; angle < 720.0; angle += 10.0)
         {
             var quat = QuaternionD.CreateFromAxisAngle(Vector3D.UnitY, angle);
 
             var expected = Matrix4x4D.CreateRotationY(angle);
             var actual = Matrix4x4D.CreateFromQuaternion(quat);
-            await Assert.That(actual).IsEqualTo(expected).Within(1e-15);
+            await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
             // make sure convert back to quaternionD is same as we passed quaternionD.
             var q2 = QuaternionD.CreateFromRotationMatrix(actual);
-            await Assert.That(q2).IsEqualTo(quat).Within(1e-15).Or.IsEqualTo(-quat).Within(1e-15);
+            await Assert.That(q2).IsEqualTo(quat).Within(MathHelper.HighQualityTolerance).Or.IsEqualTo(-quat).Within(MathHelper.HighQualityTolerance);
         }
     }
 
@@ -1818,17 +1818,17 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DFromQuaternionTest4()
     {
-        for (var angle = 0.0d; angle < 720.0d; angle += 10.0d)
+        for (var angle = 0.0; angle < 720.0; angle += 10.0)
         {
             var quat = QuaternionD.CreateFromAxisAngle(Vector3D.UnitZ, angle);
 
             var expected = Matrix4x4D.CreateRotationZ(angle);
             var actual = Matrix4x4D.CreateFromQuaternion(quat);
-            await Assert.That(actual).IsEqualTo(expected).Within(1e-15);
+            await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
             // make sure convert back to quaternionD is same as we passed quaternionD.
             var q2 = QuaternionD.CreateFromRotationMatrix(actual);
-            await Assert.That(q2).IsEqualTo(quat).Within(1e-15).Or.IsEqualTo(-quat).Within(1e-15);
+            await Assert.That(q2).IsEqualTo(quat).Within(MathHelper.HighQualityTolerance).Or.IsEqualTo(-quat).Within(MathHelper.HighQualityTolerance);
         }
     }
 
@@ -1837,7 +1837,7 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DFromQuaternionTest5()
     {
-        for (var angle = 0.0d; angle < 720.0d; angle += 10.0d)
+        for (var angle = 0.0; angle < 720.0; angle += 10.0)
         {
             var quat =
                 QuaternionD.CreateFromAxisAngle(Vector3D.UnitZ, angle) *
@@ -1849,11 +1849,11 @@ public sealed class Matrix4x4DTests
                 Matrix4x4D.CreateRotationY(angle) *
                 Matrix4x4D.CreateRotationZ(angle);
             var actual = Matrix4x4D.CreateFromQuaternion(quat);
-            await Assert.That(actual).IsEqualTo(expected).Within(1e-14);
+            await Assert.That(actual).IsEqualTo(expected).Within(1e-12);
 
             // make sure convert back to quaternionD is same as we passed quaternionD.
             var q2 = QuaternionD.CreateFromRotationMatrix(actual);
-            await Assert.That(q2).IsEqualTo(quat).Within(1e-15).Or.IsEqualTo(-quat).Within(1e-15);
+            await Assert.That(q2).IsEqualTo(quat).Within(MathHelper.HighQualityTolerance).Or.IsEqualTo(-quat).Within(MathHelper.HighQualityTolerance);
         }
     }
 
@@ -1863,30 +1863,30 @@ public sealed class Matrix4x4DTests
     {
         var a = new Matrix4x4D
         {
-            M11 = 11.0d,
-            M12 = -12.0d,
-            M13 = -13.3d,
-            M14 = 14.4d,
-            M21 = 21.0d,
-            M22 = 22.0d,
-            M23 = 23.0d,
-            M24 = 24.0d,
-            M31 = 31.0d,
-            M32 = 32.0d,
-            M33 = 33.0d,
-            M34 = 34.0d,
-            M41 = 41.0d,
-            M42 = 42.0d,
-            M43 = 43.0d,
-            M44 = 44.0d,
+            M11 = 11.0,
+            M12 = -12.0,
+            M13 = -13.3,
+            M14 = 14.4,
+            M21 = 21.0,
+            M22 = 22.0,
+            M23 = 23.0,
+            M24 = 24.0,
+            M31 = 31.0,
+            M32 = 32.0,
+            M33 = 33.0,
+            M34 = 34.0,
+            M41 = 41.0,
+            M42 = 42.0,
+            M43 = 43.0,
+            M44 = 44.0,
         };
 
         var expected = string.Format(CultureInfo.CurrentCulture,
             "{{ {{M11:{0} M12:{1} M13:{2} M14:{3}}} {{M21:{4} M22:{5} M23:{6} M24:{7}}} {{M31:{8} M32:{9} M33:{10} M34:{11}}} {{M41:{12} M42:{13} M43:{14} M44:{15}}} }}",
-            11.0d, -12.0d, -13.3d, 14.4d,
-            21.0d, 22.0d, 23.0d, 24.0d,
-            31.0d, 32.0d, 33.0d, 34.0d,
-            41.0d, 42.0d, 43.0d, 44.0d);
+            11.0, -12.0, -13.3, 14.4,
+            21.0, 22.0, 23.0, 24.0,
+            31.0, 32.0, 33.0, 34.0,
+            41.0, 42.0, 43.0, 44.0);
 
         var actual = a.ToString();
         await Assert.That(actual).IsEquivalentTo(expected);
@@ -1897,7 +1897,7 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DAddTest()
     {
         var a = GenerateIncrementalMatrixNumber();
-        var b = GenerateIncrementalMatrixNumber(-8.0d);
+        var b = GenerateIncrementalMatrixNumber(-8.0);
 
         var expected = new Matrix4x4D
         {
@@ -1938,7 +1938,7 @@ public sealed class Matrix4x4DTests
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
-        b.M11 = 11.0d;
+        b.M11 = 11.0;
         obj = b;
         expected = false;
         actual = a.Equals(obj);
@@ -1980,7 +1980,7 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DMultiplyTest3()
     {
         var a = GenerateIncrementalMatrixNumber();
-        var b = GenerateIncrementalMatrixNumber(-8.0d);
+        var b = GenerateIncrementalMatrixNumber(-8.0);
 
         var expected = new Matrix4x4D
         {
@@ -2037,22 +2037,22 @@ public sealed class Matrix4x4DTests
 
         var expected = new Matrix4x4D
         {
-            M11 = -1.0d,
-            M12 = -2.0d,
-            M13 = -3.0d,
-            M14 = -4.0d,
-            M21 = -5.0d,
-            M22 = -6.0d,
-            M23 = -7.0d,
-            M24 = -8.0d,
-            M31 = -9.0d,
-            M32 = -10.0d,
-            M33 = -11.0d,
-            M34 = -12.0d,
-            M41 = -13.0d,
-            M42 = -14.0d,
-            M43 = -15.0d,
-            M44 = -16.0d,
+            M11 = -1.0,
+            M12 = -2.0,
+            M13 = -3.0,
+            M14 = -4.0,
+            M21 = -5.0,
+            M22 = -6.0,
+            M23 = -7.0,
+            M24 = -8.0,
+            M31 = -9.0,
+            M32 = -10.0,
+            M33 = -11.0,
+            M34 = -12.0,
+            M41 = -13.0,
+            M42 = -14.0,
+            M43 = -15.0,
+            M44 = -16.0,
         };
 
         var actual = Matrix4x4D.Negate(m);
@@ -2072,7 +2072,7 @@ public sealed class Matrix4x4DTests
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
-        b.M11 = 11.0d;
+        b.M11 = 11.0;
         expected = true;
         actual = a != b;
         await Assert.That(actual).IsEqualTo(expected);
@@ -2091,7 +2091,7 @@ public sealed class Matrix4x4DTests
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
-        b.M11 = 11.0d;
+        b.M11 = 11.0;
         expected = false;
         actual = a == b;
         await Assert.That(actual).IsEqualTo(expected);
@@ -2102,7 +2102,7 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DSubtractTest()
     {
         var a = GenerateIncrementalMatrixNumber();
-        var b = GenerateIncrementalMatrixNumber(-8.0d);
+        var b = GenerateIncrementalMatrixNumber(-8.0);
 
         var expected = new Matrix4x4D
         {
@@ -2130,20 +2130,20 @@ public sealed class Matrix4x4DTests
 
     private static async Task CreateBillboardTest(Vector3D placeDirection, Vector3D cameraUpVector, Matrix4x4D expectedRotationRightHanded, Matrix4x4D expectedRotationLeftHanded)
     {
-        var cameraPosition = new Vector3D(3.0d, 4.0d, 5.0d);
-        var objectPosition = cameraPosition + placeDirection * 10.0d;
+        var cameraPosition = new Vector3D(3.0, 4.0, 5.0);
+        var objectPosition = cameraPosition + placeDirection * 10.0;
         var expected = expectedRotationRightHanded * Matrix4x4D.CreateTranslation(objectPosition);
         var actualRH = Matrix4x4D.CreateBillboard(objectPosition, cameraPosition, cameraUpVector, new(0, 0, -1));
-        await Assert.That(actualRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         placeDirection = InverseHandedness(placeDirection);
         cameraUpVector = InverseHandedness(cameraUpVector);
 
-        cameraPosition = new(3.0d, 4.0d, -5.0d);
-        objectPosition = cameraPosition + placeDirection * 10.0d;
+        cameraPosition = new(3.0, 4.0, -5.0);
+        objectPosition = cameraPosition + placeDirection * 10.0;
         expected = expectedRotationLeftHanded * Matrix4x4D.CreateTranslation(objectPosition);
         var actualLH = Matrix4x4D.CreateBillboardLeftHanded(objectPosition, cameraPosition, cameraUpVector, Vector3D.UnitZ);
-        await Assert.That(actualLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         await Assert.That(actualRH).IsEqualTo(InverseHandedness(actualLH)).Within(DefaultVarianceMatrix);
         await Assert.That(InverseHandedness(actualRH)).IsEqualTo(actualLH).Within(DefaultVarianceMatrix);
@@ -2158,8 +2158,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             new(0, 0, -1),
             Vector3D.UnitY,
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)));
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)),
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2171,8 +2171,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             Vector3D.UnitZ,
             Vector3D.UnitY,
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0D)),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0D)));
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0.0)),
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2210,8 +2210,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             Vector3D.UnitY,
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2223,8 +2223,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             new(0, -1, 0),
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0D)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0D)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2236,8 +2236,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             Vector3D.UnitX,
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2249,8 +2249,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             new(-1, 0, 0),
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2262,8 +2262,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             Vector3D.UnitY,
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2275,8 +2275,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             new(0, -1, 0),
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2288,8 +2288,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             new(0, 0, -1),
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2301,8 +2301,8 @@ public sealed class Matrix4x4DTests
         await CreateBillboardTest(
             Vector3D.UnitZ,
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0)));
     }
 
     // A test for CreateBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2310,22 +2310,22 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateBillboardTooCloseTest1()
     {
-        var objectPosition = new Vector3D(3.0d, 4.0d, 5.0d);
+        var objectPosition = new Vector3D(3.0, 4.0, 5.0);
         var cameraPosition = objectPosition;
         var cameraUpVector = Vector3D.UnitY;
 
         // Doesn't pass camera face direction. CreateBillboard uses new Vector3(0, 0, -1) direction. Result must be same as 180 degrees rotate along y-axis.
-        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualRH = Matrix4x4D.CreateBillboard(objectPosition, cameraPosition, cameraUpVector, Vector3D.UnitZ);
-        await Assert.That(actualRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
-        objectPosition = new(3.0d, 4.0d, -5.0d);
+        objectPosition = new(3.0, 4.0, -5.0);
         cameraPosition = objectPosition;
         cameraUpVector = Vector3D.UnitY;
 
-        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualLH = Matrix4x4D.CreateBillboardLeftHanded(objectPosition, cameraPosition, cameraUpVector, new(0, 0, -1));
-        await Assert.That(actualLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         await Assert.That(actualRH).IsEqualTo(InverseHandedness(actualLH)).Within(DefaultVarianceMatrix);
         await Assert.That(InverseHandedness(actualRH)).IsEqualTo(actualLH).Within(DefaultVarianceMatrix);
@@ -2336,58 +2336,58 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateBillboardTooCloseTest2()
     {
-        var objectPosition = new Vector3D(3.0d, 4.0d, 5.0d);
+        var objectPosition = new Vector3D(3.0, 4.0, 5.0);
         var cameraPosition = objectPosition;
         var cameraUpVector = Vector3D.UnitY;
 
         // Passes Vector3.Right as camera face direction. Result must be same as -90 degrees rotate along y-axis.
-        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualRH = Matrix4x4D.CreateBillboard(objectPosition, cameraPosition, cameraUpVector, Vector3D.UnitX);
-        await Assert.That(actualRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
-        objectPosition = new(3.0d, 4.0d, -5.0d);
+        objectPosition = new(3.0, 4.0, -5.0);
         cameraPosition = objectPosition;
         cameraUpVector = Vector3D.UnitY;
 
-        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualLH = Matrix4x4D.CreateBillboardLeftHanded(objectPosition, cameraPosition, cameraUpVector, Vector3D.UnitX);
-        await Assert.That(actualLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     private async Task CreateConstrainedBillboardTest(Vector3D placeDirection, Vector3D rotateAxis, Matrix4x4D expectedRotationRightHanded, Matrix4x4D expectedRotationLeftHanded)
     {
-        var cameraPosition = new Vector3D(3.0d, 4.0d, 5.0d);
-        var objectPosition = cameraPosition + placeDirection * 10.0d;
+        var cameraPosition = new Vector3D(3.0, 4.0, 5.0);
+        var objectPosition = cameraPosition + placeDirection * 10.0;
         var expected = expectedRotationRightHanded * Matrix4x4D.CreateTranslation(objectPosition);
         var actualRH = Matrix4x4D.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new(0, 0, -1), new(0, 0, -1));
-        await Assert.That(actualRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         // When you move camera along rotateAxis, result must be same.
-        cameraPosition += rotateAxis * 10.0d;
+        cameraPosition += rotateAxis * 10.0;
         var actualTranslatedUpRH = Matrix4x4D.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new(0, 0, -1), new(0, 0, -1));
-        await Assert.That(actualTranslatedUpRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualTranslatedUpRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
-        cameraPosition -= rotateAxis * 30.0d;
+        cameraPosition -= rotateAxis * 30.0;
         var actualTranslatedDownRH = Matrix4x4D.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, new(0, 0, -1), new(0, 0, -1));
-        await Assert.That(actualTranslatedDownRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualTranslatedDownRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         placeDirection = InverseHandedness(placeDirection);
         rotateAxis = InverseHandedness(rotateAxis);
 
-        cameraPosition = new(3.0d, 4.0d, -5.0d);
-        objectPosition = cameraPosition + placeDirection * 10.0d;
+        cameraPosition = new(3.0, 4.0, -5.0);
+        objectPosition = cameraPosition + placeDirection * 10.0;
         expected = expectedRotationLeftHanded * Matrix4x4D.CreateTranslation(objectPosition);
         var actualLH = Matrix4x4D.CreateConstrainedBillboardLeftHanded(objectPosition, cameraPosition, rotateAxis, new(0, 0, -1), Vector3D.UnitZ);
-        await Assert.That(actualLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         // When you move camera along rotateAxis, result must be same.
-        cameraPosition += rotateAxis * 10.0d;
+        cameraPosition += rotateAxis * 10.0;
         var actualTranslatedUpLH = Matrix4x4D.CreateConstrainedBillboardLeftHanded(objectPosition, cameraPosition, rotateAxis, new(0, 0, -1), Vector3D.UnitZ);
-        await Assert.That(actualTranslatedUpLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualTranslatedUpLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
-        cameraPosition -= rotateAxis * 30.0d;
+        cameraPosition -= rotateAxis * 30.0;
         var actualTranslatedDownLH = Matrix4x4D.CreateConstrainedBillboardLeftHanded(objectPosition, cameraPosition, rotateAxis, new(0, 0, -1), Vector3D.UnitZ);
-        await Assert.That(actualTranslatedDownLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualTranslatedDownLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         await Assert.That(actualRH).IsEqualTo(InverseHandedness(actualLH)).Within(DefaultVarianceMatrix);
         await Assert.That(InverseHandedness(actualRH)).IsEqualTo(actualLH).Within(DefaultVarianceMatrix);
@@ -2408,8 +2408,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             new(0, 0, -1),
             Vector3D.UnitY,
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)));
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)),
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2421,8 +2421,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             Vector3D.UnitZ,
             Vector3D.UnitY,
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0D)),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0D)));
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0.0)),
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(0.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2460,8 +2460,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             Vector3D.UnitY,
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(180D)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2473,8 +2473,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             new(0, -1, 0),
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0D)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0D)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(0.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2486,8 +2486,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             Vector3D.UnitX,
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2499,8 +2499,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             new(-1, 0, 0),
             Vector3D.UnitZ,
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2512,8 +2512,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             Vector3D.UnitY,
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2525,8 +2525,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             new(0, -1, 0),
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2538,8 +2538,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             new(0, 0, -1),
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(180.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2551,8 +2551,8 @@ public sealed class Matrix4x4DTests
         await CreateConstrainedBillboardTest(
             Vector3D.UnitZ,
             new(-1, 0, 0),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0d)),
-            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0d)));
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0)),
+            Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationX(MathHelper.ToRadians(0.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2560,22 +2560,22 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateConstrainedBillboardTooCloseTest1()
     {
-        var objectPosition = new Vector3D(3.0d, 4.0d, 5.0d);
+        var objectPosition = new Vector3D(3.0, 4.0, 5.0);
         var cameraPosition = objectPosition;
         var cameraUpVector = Vector3D.UnitY;
 
         // Doesn't pass camera face direction. CreateConstrainedBillboard uses new Vector3(0, 0, -1) direction. Result must be same as 180 degrees rotate along y-axis.
-        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualRH = Matrix4x4D.CreateConstrainedBillboard(objectPosition, cameraPosition, cameraUpVector, Vector3D.UnitZ, new(0, 0, -1));
-        await Assert.That(actualRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
-        objectPosition = new(3.0d, 4.0d, -5.0d);
+        objectPosition = new(3.0, 4.0, -5.0);
         cameraPosition = objectPosition;
         cameraUpVector = Vector3D.UnitY;
 
-        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualLH = Matrix4x4D.CreateConstrainedBillboardLeftHanded(objectPosition, cameraPosition, cameraUpVector, new(0, 0, -1), Vector3D.UnitZ);
-        await Assert.That(actualLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         await Assert.That(actualRH).IsEqualTo(InverseHandedness(actualLH)).Within(DefaultVarianceMatrix);
         await Assert.That(InverseHandedness(actualRH)).IsEqualTo(actualLH).Within(DefaultVarianceMatrix);
@@ -2586,22 +2586,22 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateConstrainedBillboardTooCloseTest2()
     {
-        var objectPosition = new Vector3D(3.0d, 4.0d, 5.0d);
+        var objectPosition = new Vector3D(3.0, 4.0, 5.0);
         var cameraPosition = objectPosition;
         var cameraUpVector = Vector3D.UnitY;
 
         // Passes Vector3.Right as camera face direction. Result must be same as -90 degrees rotate along y-axis.
-        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        var expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualRH = Matrix4x4D.CreateConstrainedBillboard(objectPosition, cameraPosition, cameraUpVector, Vector3D.UnitX, new(0, 0, -1));
-        await Assert.That(actualRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
-        objectPosition = new(3.0d, 4.0d, -5.0d);
+        objectPosition = new(3.0, 4.0, -5.0);
         cameraPosition = objectPosition;
         cameraUpVector = Vector3D.UnitY;
 
-        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateTranslation(objectPosition);
+        expected = Matrix4x4D.CreateRotationY(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateTranslation(objectPosition);
         var actualLH = Matrix4x4D.CreateConstrainedBillboardLeftHanded(objectPosition, cameraPosition, cameraUpVector, Vector3D.UnitX, Vector3D.UnitZ);
-        await Assert.That(actualLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         await Assert.That(actualRH).IsEqualTo(InverseHandedness(actualLH)).Within(DefaultVarianceMatrix);
         await Assert.That(InverseHandedness(actualRH)).IsEqualTo(actualLH).Within(DefaultVarianceMatrix);
@@ -2610,23 +2610,23 @@ public sealed class Matrix4x4DTests
     private static async Task Matrix4x4DCreateConstrainedBillboardAlongAxisTest(Vector3D rotateAxis, Vector3D cameraForward, Vector3D objectForward, Matrix4x4D expectedRotationRightHanded, Matrix4x4D expectedRotationLeftHanded)
     {
         // Place camera at Up-side of object.
-        var objectPosition = new Vector3D(3.0d, 4.0d, 5.0d);
-        var cameraPosition = objectPosition + rotateAxis * 10.0d;
+        var objectPosition = new Vector3D(3.0, 4.0, 5.0);
+        var cameraPosition = objectPosition + rotateAxis * 10.0;
 
         var expected = expectedRotationRightHanded * Matrix4x4D.CreateTranslation(objectPosition);
         var actualLH = Matrix4x4D.CreateConstrainedBillboard(objectPosition, cameraPosition, rotateAxis, cameraForward, objectForward);
-        await Assert.That(actualLH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualLH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         rotateAxis = InverseHandedness(rotateAxis);
         cameraForward = InverseHandedness(cameraForward);
         objectForward = InverseHandedness(objectForward);
 
-        objectPosition = new(3.0d, 4.0d, -5.0d);
-        cameraPosition = objectPosition + rotateAxis * 10.0d;
+        objectPosition = new(3.0, 4.0, -5.0);
+        cameraPosition = objectPosition + rotateAxis * 10.0;
 
         expected = expectedRotationLeftHanded * Matrix4x4D.CreateTranslation(objectPosition);
         var actualRH = Matrix4x4D.CreateConstrainedBillboardLeftHanded(objectPosition, cameraPosition, rotateAxis, cameraForward, objectForward);
-        await Assert.That(actualRH).IsEqualTo(expected).Within(1e-15);
+        await Assert.That(actualRH).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         await Assert.That(actualRH).IsEqualTo(InverseHandedness(actualLH)).Within(DefaultVarianceMatrix);
         await Assert.That(InverseHandedness(actualRH)).IsEqualTo(actualLH).Within(DefaultVarianceMatrix);
@@ -2640,8 +2640,8 @@ public sealed class Matrix4x4DTests
         // In this case, CreateConstrainedBillboard picks new Vector3(0, 0, -1) as object forward vector.
         await Matrix4x4DCreateConstrainedBillboardAlongAxisTest(
             Vector3D.UnitY, new(0, 0, -1), new(0, 0, -1),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)));
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)),
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2652,8 +2652,8 @@ public sealed class Matrix4x4DTests
         // In this case, CreateConstrainedBillboard picks new Vector3(1, 0, 0) as object forward vector.
         await Matrix4x4DCreateConstrainedBillboardAlongAxisTest(
             new(0, 0, -1), new(0, 0, -1), new(0, 0, -1),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2664,8 +2664,8 @@ public sealed class Matrix4x4DTests
         // User passes correct objectForwardVector.
         await Matrix4x4DCreateConstrainedBillboardAlongAxisTest(
             Vector3D.UnitY, new(0, 0, -1), new(0, 0, -1),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)));
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)),
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2676,8 +2676,8 @@ public sealed class Matrix4x4DTests
         // User passes correct objectForwardVector.
         await Matrix4x4DCreateConstrainedBillboardAlongAxisTest(
             Vector3D.UnitY, new(0, 0, -1), Vector3D.UnitY,
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)),
-            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0d)));
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)),
+            Matrix4x4D.CreateRotationY(MathHelper.ToRadians(180.0)));
     }
 
     // A test for CreateConstrainedBillboard (Vector3, Vector3, Vector3, Vector3?)
@@ -2688,20 +2688,20 @@ public sealed class Matrix4x4DTests
         // In this case, CreateConstrainedBillboard picks Vector3.Right as object forward vector.
         await Matrix4x4DCreateConstrainedBillboardAlongAxisTest(
             new(0, 0, -1), new(0, 0, -1), new(0, 0, -1),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)),
-            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0d)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0d)));
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(-90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)),
+            Matrix4x4D.CreateRotationX(MathHelper.ToRadians(90.0)) * Matrix4x4D.CreateRotationZ(MathHelper.ToRadians(-90.0)));
     }
 
     // A test for CreateScale (Vector3)
     [Test]
     public async Task Matrix4x4DCreateScaleTest1()
     {
-        var scales = new Vector3D(2.0d, 3.0d, 4.0d);
+        var scales = new Vector3D(2.0, 3.0, 4.0);
         var expected = new Matrix4x4D(
-            2.0d, 0.0d, 0.0d, 0.0d,
-            0.0d, 3.0d, 0.0d, 0.0d,
-            0.0d, 0.0d, 4.0d, 0.0d,
-            0.0d, 0.0d, 0.0d, 1.0d);
+            2.0, 0.0, 0.0, 0.0,
+            0.0, 3.0, 0.0, 0.0,
+            0.0, 0.0, 4.0, 0.0,
+            0.0, 0.0, 0.0, 1.0);
         var actual = Matrix4x4D.CreateScale(scales);
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -2726,12 +2726,12 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateScaleTest2()
     {
-        var scale = 2.0d;
+        var scale = 2.0;
         var expected = new Matrix4x4D(
-            2.0d, 0.0d, 0.0d, 0.0d,
-            0.0d, 2.0d, 0.0d, 0.0d,
-            0.0d, 0.0d, 2.0d, 0.0d,
-            0.0d, 0.0d, 0.0d, 1.0d);
+            2.0, 0.0, 0.0, 0.0,
+            0.0, 2.0, 0.0, 0.0,
+            0.0, 0.0, 2.0, 0.0,
+            0.0, 0.0, 0.0, 1.0);
         var actual = Matrix4x4D.CreateScale(scale);
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -2756,14 +2756,14 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateScaleTest3()
     {
-        var xScale = 2.0d;
-        var yScale = 3.0d;
-        var zScale = 4.0d;
+        var xScale = 2.0;
+        var yScale = 3.0;
+        var zScale = 4.0;
         var expected = new Matrix4x4D(
-            2.0d, 0.0d, 0.0d, 0.0d,
-            0.0d, 3.0d, 0.0d, 0.0d,
-            0.0d, 0.0d, 4.0d, 0.0d,
-            0.0d, 0.0d, 0.0d, 1.0d);
+            2.0, 0.0, 0.0, 0.0,
+            0.0, 3.0, 0.0, 0.0,
+            0.0, 0.0, 4.0, 0.0,
+            0.0, 0.0, 0.0, 1.0);
         var actual = Matrix4x4D.CreateScale(xScale, yScale, zScale);
         await Assert.That(actual).IsEqualTo(expected);
     }
@@ -2788,12 +2788,12 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateTranslationTest1()
     {
-        var position = new Vector3D(2.0d, 3.0d, 4.0d);
+        var position = new Vector3D(2.0, 3.0, 4.0);
         var expected = new Matrix4x4D(
-            1.0d, 0.0d, 0.0d, 0.0d,
-            0.0d, 1.0d, 0.0d, 0.0d,
-            0.0d, 0.0d, 1.0d, 0.0d,
-            2.0d, 3.0d, 4.0d, 1.0d);
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            2.0, 3.0, 4.0, 1.0);
 
         var actual = Matrix4x4D.CreateTranslation(position);
         await Assert.That(actual).IsEqualTo(expected);
@@ -2803,15 +2803,15 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task Matrix4x4DCreateTranslationTest2()
     {
-        var xPosition = 2.0d;
-        var yPosition = 3.0d;
-        var zPosition = 4.0d;
+        var xPosition = 2.0;
+        var yPosition = 3.0;
+        var zPosition = 4.0;
 
         var expected = new Matrix4x4D(
-            1.0d, 0.0d, 0.0d, 0.0d,
-            0.0d, 1.0d, 0.0d, 0.0d,
-            0.0d, 0.0d, 1.0d, 0.0d,
-            2.0d, 3.0d, 4.0d, 1.0d);
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            2.0, 3.0, 4.0, 1.0);
 
         var actual = Matrix4x4D.CreateTranslation(xPosition, yPosition, zPosition);
         await Assert.That(actual).IsEqualTo(expected);
@@ -2829,7 +2829,7 @@ public sealed class Matrix4x4DTests
         await Assert.That(a.Translation).IsEqualTo(val);
 
         // Set value and get value must be same.
-        val = new(1.0d, 2.0d, 3.0d);
+        val = new(1.0, 2.0, 3.0);
         a.Translation = val;
         await Assert.That(a.Translation).IsEqualTo(val);
 
@@ -2866,7 +2866,7 @@ public sealed class Matrix4x4DTests
         await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
-        b.M11 = 11.0d;
+        b.M11 = 11.0;
         expected = false;
         actual = a.Equals(b);
         await Assert.That(actual).IsEqualTo(expected);
@@ -2905,22 +2905,22 @@ public sealed class Matrix4x4DTests
 
         await Assert.That(result.M11).IsEqualTo(source.M11);
         await Assert.That(result.M12).IsEqualTo(source.M12);
-        await Assert.That(result.M13).IsEqualTo(0d);
-        await Assert.That(result.M14).IsEqualTo(0d);
+        await Assert.That(result.M13).IsEqualTo(0.0);
+        await Assert.That(result.M14).IsEqualTo(0.0);
 
         await Assert.That(result.M21).IsEqualTo(source.M21);
         await Assert.That(result.M22).IsEqualTo(source.M22);
-        await Assert.That(result.M23).IsEqualTo(0d);
-        await Assert.That(result.M24).IsEqualTo(0d);
+        await Assert.That(result.M23).IsEqualTo(0.0);
+        await Assert.That(result.M24).IsEqualTo(0.0);
 
-        await Assert.That(result.M31).IsEqualTo(0d);
-        await Assert.That(result.M32).IsEqualTo(0d);
+        await Assert.That(result.M31).IsEqualTo(0.0);
+        await Assert.That(result.M32).IsEqualTo(0.0);
         await Assert.That(result.M33).IsEqualTo(1d);
-        await Assert.That(result.M34).IsEqualTo(0d);
+        await Assert.That(result.M34).IsEqualTo(0.0);
 
         await Assert.That(result.M41).IsEqualTo(source.M31);
         await Assert.That(result.M42).IsEqualTo(source.M32);
-        await Assert.That(result.M43).IsEqualTo(0d);
+        await Assert.That(result.M43).IsEqualTo(0.0);
         await Assert.That(result.M44).IsEqualTo(1d);
     }
 
@@ -3151,27 +3151,27 @@ public sealed class Matrix4x4DTests
     [Test]
     public async Task PerspectiveFarPlaneAtInfinityTest()
     {
-        var nearPlaneDistance = 0.125d;
-        var m = Matrix4x4D.CreatePerspective(1.0d, 1.0d, nearPlaneDistance, double.PositiveInfinity);
-        await Assert.That(m.M33).IsEqualTo(-1.0d);
+        var nearPlaneDistance = 0.125;
+        var m = Matrix4x4D.CreatePerspective(1.0, 1.0, nearPlaneDistance, double.PositiveInfinity);
+        await Assert.That(m.M33).IsEqualTo(-1.0);
         await Assert.That(m.M43).IsEqualTo(-nearPlaneDistance);
     }
 
     [Test]
     public async Task PerspectiveFieldOfViewFarPlaneAtInfinityTest()
     {
-        var nearPlaneDistance = 0.125d;
-        var m = Matrix4x4D.CreatePerspectiveFieldOfView(MathHelper.ToRadians(60.0d), 1.5d, nearPlaneDistance, double.PositiveInfinity);
-        await Assert.That(m.M33).IsEqualTo(-1.0d);
+        var nearPlaneDistance = 0.125;
+        var m = Matrix4x4D.CreatePerspectiveFieldOfView(MathHelper.ToRadians(60.0), 1.5, nearPlaneDistance, double.PositiveInfinity);
+        await Assert.That(m.M33).IsEqualTo(-1.0);
         await Assert.That(m.M43).IsEqualTo(-nearPlaneDistance);
     }
 
     [Test]
     public async Task PerspectiveOffCenterFarPlaneAtInfinityTest()
     {
-        var nearPlaneDistance = 0.125d;
-        var m = Matrix4x4D.CreatePerspectiveOffCenter(0.0d, 0.0d, 1.0d, 1.0d, nearPlaneDistance, double.PositiveInfinity);
-        await Assert.That(m.M33).IsEqualTo(-1.0d);
+        var nearPlaneDistance = 0.125;
+        var m = Matrix4x4D.CreatePerspectiveOffCenter(0.0, 0.0, 1.0, 1.0, nearPlaneDistance, double.PositiveInfinity);
+        await Assert.That(m.M33).IsEqualTo(-1.0);
         await Assert.That(m.M43).IsEqualTo(-nearPlaneDistance);
     }
 
@@ -3201,16 +3201,16 @@ public sealed class Matrix4x4DTests
     public async Task Matrix4x4DCreateVectorsTest()
     {
         var a = Matrix4x4D.Create(
-            Vector4D.Create(11.0d, 12.0d, 13.0d, 14.0d),
-            Vector4D.Create(21.0d, 22.0d, 23.0d, 24.0d),
-            Vector4D.Create(31.0d, 32.0d, 33.0d, 34.0d),
-            Vector4D.Create(41.0d, 42.0d, 43.0d, 44.0d)
+            Vector4D.Create(11.0, 12.0, 13.0, 14.0),
+            Vector4D.Create(21.0, 22.0, 23.0, 24.0),
+            Vector4D.Create(31.0, 32.0, 33.0, 34.0),
+            Vector4D.Create(41.0, 42.0, 43.0, 44.0)
         );
 
-        await Assert.That(a.X).IsEqualTo(Vector4D.Create(11.0d, 12.0d, 13.0d, 14.0d));
-        await Assert.That(a.Y).IsEqualTo(Vector4D.Create(21.0d, 22.0d, 23.0d, 24.0d));
-        await Assert.That(a.Z).IsEqualTo(Vector4D.Create(31.0d, 32.0d, 33.0d, 34.0d));
-        await Assert.That(a.W).IsEqualTo(Vector4D.Create(41.0d, 42.0d, 43.0d, 44.0d));
+        await Assert.That(a.X).IsEqualTo(Vector4D.Create(11.0, 12.0, 13.0, 14.0));
+        await Assert.That(a.Y).IsEqualTo(Vector4D.Create(21.0, 22.0, 23.0, 24.0));
+        await Assert.That(a.Z).IsEqualTo(Vector4D.Create(31.0, 32.0, 33.0, 34.0));
+        await Assert.That(a.W).IsEqualTo(Vector4D.Create(41.0, 42.0, 43.0, 44.0));
     }
 
     [Test]
@@ -3314,69 +3314,69 @@ public sealed class Matrix4x4DTests
     {
         var a = Matrix4x4D.Identity;
 
-        a[0, 0] = 11.0d;
-        await Assert.That(a.WithElement(0, 0, 11.5d).M11).IsEqualTo(11.5d);
-        await Assert.That(a.M11).IsEqualTo(11.0d);
+        a[0, 0] = 11.0;
+        await Assert.That(a.WithElement(0, 0, 11.5).M11).IsEqualTo(11.5);
+        await Assert.That(a.M11).IsEqualTo(11.0);
 
-        a[0, 1] = 12.0d;
-        await Assert.That(a.WithElement(0, 1, 12.5d).M12).IsEqualTo(12.5d);
-        await Assert.That(a.M12).IsEqualTo(12.0d);
+        a[0, 1] = 12.0;
+        await Assert.That(a.WithElement(0, 1, 12.5).M12).IsEqualTo(12.5);
+        await Assert.That(a.M12).IsEqualTo(12.0);
 
-        a[0, 2] = 13.0d;
-        await Assert.That(a.WithElement(0, 2, 13.5d).M13).IsEqualTo(13.5d);
-        await Assert.That(a.M13).IsEqualTo(13.0d);
+        a[0, 2] = 13.0;
+        await Assert.That(a.WithElement(0, 2, 13.5).M13).IsEqualTo(13.5);
+        await Assert.That(a.M13).IsEqualTo(13.0);
 
-        a[0, 3] = 14.0d;
-        await Assert.That(a.WithElement(0, 3, 14.5d).M14).IsEqualTo(14.5d);
-        await Assert.That(a.M14).IsEqualTo(14.0d);
+        a[0, 3] = 14.0;
+        await Assert.That(a.WithElement(0, 3, 14.5).M14).IsEqualTo(14.5);
+        await Assert.That(a.M14).IsEqualTo(14.0);
 
-        a[1, 0] = 21.0d;
-        await Assert.That(a.WithElement(1, 0, 21.5d).M21).IsEqualTo(21.5d);
-        await Assert.That(a.M21).IsEqualTo(21.0d);
+        a[1, 0] = 21.0;
+        await Assert.That(a.WithElement(1, 0, 21.5).M21).IsEqualTo(21.5);
+        await Assert.That(a.M21).IsEqualTo(21.0);
 
-        a[1, 1] = 22.0d;
-        await Assert.That(a.WithElement(1, 1, 22.5d).M22).IsEqualTo(22.5d);
-        await Assert.That(a.M22).IsEqualTo(22.0d);
+        a[1, 1] = 22.0;
+        await Assert.That(a.WithElement(1, 1, 22.5).M22).IsEqualTo(22.5);
+        await Assert.That(a.M22).IsEqualTo(22.0);
 
-        a[1, 2] = 23.0d;
-        await Assert.That(a.WithElement(1, 2, 23.5d).M23).IsEqualTo(23.5d);
-        await Assert.That(a.M23).IsEqualTo(23.0d);
+        a[1, 2] = 23.0;
+        await Assert.That(a.WithElement(1, 2, 23.5).M23).IsEqualTo(23.5);
+        await Assert.That(a.M23).IsEqualTo(23.0);
 
-        a[1, 3] = 24.0d;
-        await Assert.That(a.WithElement(1, 3, 24.5d).M24).IsEqualTo(24.5d);
-        await Assert.That(a.M24).IsEqualTo(24.0d);
+        a[1, 3] = 24.0;
+        await Assert.That(a.WithElement(1, 3, 24.5).M24).IsEqualTo(24.5);
+        await Assert.That(a.M24).IsEqualTo(24.0);
 
-        a[2, 0] = 31.0d;
-        await Assert.That(a.WithElement(2, 0, 31.5d).M31).IsEqualTo(31.5d);
-        await Assert.That(a.M31).IsEqualTo(31.0d);
+        a[2, 0] = 31.0;
+        await Assert.That(a.WithElement(2, 0, 31.5).M31).IsEqualTo(31.5);
+        await Assert.That(a.M31).IsEqualTo(31.0);
 
-        a[2, 1] = 32.0d;
-        await Assert.That(a.WithElement(2, 1, 32.5d).M32).IsEqualTo(32.5d);
-        await Assert.That(a.M32).IsEqualTo(32.0d);
+        a[2, 1] = 32.0;
+        await Assert.That(a.WithElement(2, 1, 32.5).M32).IsEqualTo(32.5);
+        await Assert.That(a.M32).IsEqualTo(32.0);
 
-        a[2, 2] = 33.0d;
-        await Assert.That(a.WithElement(2, 2, 33.5d).M33).IsEqualTo(33.5d);
-        await Assert.That(a.M33).IsEqualTo(33.0d);
+        a[2, 2] = 33.0;
+        await Assert.That(a.WithElement(2, 2, 33.5).M33).IsEqualTo(33.5);
+        await Assert.That(a.M33).IsEqualTo(33.0);
 
-        a[2, 3] = 34.0d;
-        await Assert.That(a.WithElement(2, 3, 34.5d).M34).IsEqualTo(34.5d);
-        await Assert.That(a.M34).IsEqualTo(34.0d);
+        a[2, 3] = 34.0;
+        await Assert.That(a.WithElement(2, 3, 34.5).M34).IsEqualTo(34.5);
+        await Assert.That(a.M34).IsEqualTo(34.0);
 
-        a[3, 0] = 41.0d;
-        await Assert.That(a.WithElement(3, 0, 41.5d).M41).IsEqualTo(41.5d);
-        await Assert.That(a.M41).IsEqualTo(41.0d);
+        a[3, 0] = 41.0;
+        await Assert.That(a.WithElement(3, 0, 41.5).M41).IsEqualTo(41.5);
+        await Assert.That(a.M41).IsEqualTo(41.0);
 
-        a[3, 1] = 42.0d;
-        await Assert.That(a.WithElement(3, 1, 42.5d).M42).IsEqualTo(42.5d);
-        await Assert.That(a.M42).IsEqualTo(42.0d);
+        a[3, 1] = 42.0;
+        await Assert.That(a.WithElement(3, 1, 42.5).M42).IsEqualTo(42.5);
+        await Assert.That(a.M42).IsEqualTo(42.0);
 
-        a[3, 2] = 43.0d;
-        await Assert.That(a.WithElement(3, 2, 43.5d).M43).IsEqualTo(43.5d);
-        await Assert.That(a.M43).IsEqualTo(43.0d);
+        a[3, 2] = 43.0;
+        await Assert.That(a.WithElement(3, 2, 43.5).M43).IsEqualTo(43.5);
+        await Assert.That(a.M43).IsEqualTo(43.0);
 
-        a[3, 3] = 44.0d;
-        await Assert.That(a.WithElement(3, 3, 44.5d).M44).IsEqualTo(44.5d);
-        await Assert.That(a.M44).IsEqualTo(44.0d);
+        a[3, 3] = 44.0;
+        await Assert.That(a.WithElement(3, 3, 44.5).M44).IsEqualTo(44.5);
+        await Assert.That(a.M44).IsEqualTo(44.0);
     }
 
     [Test]
@@ -3384,20 +3384,20 @@ public sealed class Matrix4x4DTests
     {
         var a = Matrix4x4D.Identity;
 
-        a[0] = Vector4D.Create(11.0d, 12.0d, 13.0d, 14.0d);
-        await Assert.That(a.WithRow(0, Vector4D.Create(11.5d, 12.5d, 13.5d, 14.5d)).X).IsEqualTo(Vector4D.Create(11.5d, 12.5d, 13.5d, 14.5d));
-        await Assert.That(a.X).IsEqualTo(Vector4D.Create(11.0d, 12.0d, 13.0d, 14.0d));
+        a[0] = Vector4D.Create(11.0, 12.0, 13.0, 14.0);
+        await Assert.That(a.WithRow(0, Vector4D.Create(11.5, 12.5, 13.5, 14.5)).X).IsEqualTo(Vector4D.Create(11.5, 12.5, 13.5, 14.5));
+        await Assert.That(a.X).IsEqualTo(Vector4D.Create(11.0, 12.0, 13.0, 14.0));
 
-        a[1] = Vector4D.Create(21.0d, 22.0d, 23.0d, 24.0d);
-        await Assert.That(a.WithRow(1, Vector4D.Create(21.5d, 22.5d, 23.5d, 24.5d)).Y).IsEqualTo(Vector4D.Create(21.5d, 22.5d, 23.5d, 24.5d));
-        await Assert.That(a.Y).IsEqualTo(Vector4D.Create(21.0d, 22.0d, 23.0d, 24.0d));
+        a[1] = Vector4D.Create(21.0, 22.0, 23.0, 24.0);
+        await Assert.That(a.WithRow(1, Vector4D.Create(21.5, 22.5, 23.5, 24.5)).Y).IsEqualTo(Vector4D.Create(21.5, 22.5, 23.5, 24.5));
+        await Assert.That(a.Y).IsEqualTo(Vector4D.Create(21.0, 22.0, 23.0, 24.0));
 
-        a[2] = Vector4D.Create(31.0d, 32.0d, 33.0d, 34.0d);
-        await Assert.That(a.WithRow(2, Vector4D.Create(31.5d, 32.5d, 33.5d, 34.5d)).Z).IsEqualTo(Vector4D.Create(31.5d, 32.5d, 33.5d, 34.5d));
-        await Assert.That(a.Z).IsEqualTo(Vector4D.Create(31.0d, 32.0d, 33.0d, 34.0d));
+        a[2] = Vector4D.Create(31.0, 32.0, 33.0, 34.0);
+        await Assert.That(a.WithRow(2, Vector4D.Create(31.5, 32.5, 33.5, 34.5)).Z).IsEqualTo(Vector4D.Create(31.5, 32.5, 33.5, 34.5));
+        await Assert.That(a.Z).IsEqualTo(Vector4D.Create(31.0, 32.0, 33.0, 34.0));
 
-        a[3] = Vector4D.Create(41.0d, 42.0d, 43.0d, 44.0d);
-        await Assert.That(a.WithRow(3, Vector4D.Create(41.5d, 42.5d, 43.5d, 44.5d)).W).IsEqualTo(Vector4D.Create(41.5d, 42.5d, 43.5d, 44.5d));
-        await Assert.That(a.W).IsEqualTo(Vector4D.Create(41.0d, 42.0d, 43.0d, 44.0d));
+        a[3] = Vector4D.Create(41.0, 42.0, 43.0, 44.0);
+        await Assert.That(a.WithRow(3, Vector4D.Create(41.5, 42.5, 43.5, 44.5)).W).IsEqualTo(Vector4D.Create(41.5, 42.5, 43.5, 44.5));
+        await Assert.That(a.W).IsEqualTo(Vector4D.Create(41.0, 42.0, 43.0, 44.0));
     }
 }

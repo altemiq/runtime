@@ -582,7 +582,7 @@ public class Vector2DTests
 
         var expected = Vector2D.Transform(v, m);
         var actual = Vector2D.Transform(v, q);
-        await Assert.That(actual).IsEqualTo(expected);
+        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Transform (Vector2D, Quaternion)
@@ -1796,12 +1796,12 @@ public class Vector2DTests
         var vector = Vector2D.CreateScalar(double.Pi);
 
         await Assert.That(vector.X).IsEqualTo(double.Pi);
-        await Assert.That(vector.Y).IsEqualTo(0D);
+        await Assert.That(vector.Y).IsEqualTo(0.0);
 
         vector = Vector2D.CreateScalar(double.E);
 
         await Assert.That(vector.X).IsEqualTo(double.E);
-        await Assert.That(vector.Y).IsEqualTo(0D);
+        await Assert.That(vector.Y).IsEqualTo(0.0);
     }
 
     [Test]

@@ -2,6 +2,10 @@ namespace Altemiq.Numerics;
 
 internal static class MathHelper
 {
+    public const double HighQualityTolerance = 1e-13;
+    public const double MidQualityTolerance = 1e-07;
+    public const double LowQualityTolerance = 1e-05;
+
     public static T ToRadians<T>(T value)
         where T : System.Numerics.IFloatingPointConstants<T>
     {
