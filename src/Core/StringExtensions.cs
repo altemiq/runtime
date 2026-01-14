@@ -49,7 +49,7 @@ public static class StringExtensions
     /// <param name="s">The string to quote.</param>
     /// <param name="options">The options to use to quote the string.</param>
     /// <returns>The quoted string.</returns>
-    public static string Quote(this string? s, StringQuoteOptions options = StringQuoteOptions.None) => Quote(s, [], options);
+    public static string Quote(this string? s, StringQuoteOptions options = StringQuoteOptions.None) => s.Quote([], options);
 
     /// <summary>
     /// Quotes the specified string.
@@ -58,7 +58,7 @@ public static class StringExtensions
     /// <param name="delimiter">The delimiter to quote.</param>
     /// <param name="options">The options to use to quote the string.</param>
     /// <returns>The quoted string.</returns>
-    public static string Quote(this string? s, char delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => Quote(s, [delimiter], options);
+    public static string Quote(this string? s, char delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => s.Quote([delimiter], options);
 
     /// <summary>
     /// Quotes the specified string.

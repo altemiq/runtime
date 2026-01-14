@@ -19,7 +19,8 @@ public static partial class List
     /// <param name="anyOf">The array of <typeparamref name="T"/> sequences to seek.</param>
     /// <returns>The zero-based index position of the first occurrence in this instance where any <typeparamref name="T"/> sequence in <paramref name="anyOf"/> was found; -1 if no byte sequence in <paramref name="anyOf"/> was found.</returns>
     public static int IndexOfAny<T>(this IReadOnlyList<T>? buffer, params IReadOnlyList<T>[] anyOf)
-        where T : IEquatable<T> => IndexOfAny(buffer, 0, anyOf);
+        where T : IEquatable<T> =>
+        buffer.IndexOfAny(0, anyOf);
 
     /// <summary>
     /// Reports the zero-based index of the first occurrence in this specified instance of any sequence of <typeparamref name="T"/> in the specified arguments.
@@ -31,7 +32,7 @@ public static partial class List
     /// <param name="anyOf">The array of <typeparamref name="T"/> sequences to seek.</param>
     /// <returns>The zero-based index position of the first occurrence in this instance where any <typeparamref name="T"/> sequence in <paramref name="anyOf"/> was found; -1 if no byte sequence in <paramref name="anyOf"/> was found.</returns>
     public static int IndexOfAny<T>(this IReadOnlyList<T>? buffer, int startIndex, params IReadOnlyList<T>[] anyOf)
-        where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? IndexOfAny(buffer, startIndex, buffer.Count - startIndex, anyOf) : -1;
+        where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? buffer.IndexOfAny(startIndex, buffer.Count - startIndex, anyOf) : -1;
 
     /// <summary>
     /// Reports the zero-based index of the first occurrence in this specified instance of any sequence of <typeparamref name="T"/> in the specified arguments.

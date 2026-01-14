@@ -69,7 +69,7 @@ public static class RuntimeEnvironmentExtensions
         public static void AddToolsDirectory(EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddToolsDirectory(target);
 
         /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories()" />
-        public static void AddRuntimeDirectories() => AddRuntimeDirectories(EnvironmentVariableTarget.Process);
+        public static void AddRuntimeDirectories() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories(EnvironmentVariableTarget.Process);
 
         /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories(EnvironmentVariableTarget)" />
         public static void AddRuntimeDirectories(EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories(target);

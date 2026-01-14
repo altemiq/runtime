@@ -114,7 +114,7 @@ public static partial class MemoryExtensions
 #if NET9_0_OR_GREATER
     [Obsolete($"Use {nameof(System)}.{nameof(System.MemoryExtensions)}.{nameof(System.MemoryExtensions.Split)} instead")]
 #endif
-    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span) => Split(span, StringSplitOptions.None);
+    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span) => span.Split(StringSplitOptions.None);
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
@@ -135,7 +135,7 @@ public static partial class MemoryExtensions
 #if NET9_0_OR_GREATER
     [Obsolete($"Use {nameof(System)}.{nameof(System.MemoryExtensions)}.{nameof(System.MemoryExtensions.Split)}({nameof(ReadOnlySpan<char>)}, {nameof(Char)}) instead")]
 #endif
-    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, char separator) => Split(span, separator, StringSplitOptions.None);
+    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, char separator) => span.Split(separator, StringSplitOptions.None);
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
@@ -159,7 +159,7 @@ public static partial class MemoryExtensions
 #else
     [Obsolete($"Use {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)}({nameof(ReadOnlySpan<char>)}, {nameof(ReadOnlySpan<char>)}) instead")]
 #endif
-    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator) => Split(span, separator, StringSplitOptions.None);
+    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator) => span.Split(separator, StringSplitOptions.None);
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
@@ -182,7 +182,7 @@ public static partial class MemoryExtensions
     /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
     [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)} methods instead")]
-    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator, StringSplitOptions options) => Split(span, separator.AsSpan(), options);
+    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string separator, StringSplitOptions options) => span.Split(separator.AsSpan(), options);
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
@@ -202,7 +202,7 @@ public static partial class MemoryExtensions
     /// <param name="first">The first separator string to be used to split the provided span.</param>
     /// <param name="second">The second separator string to be used to split the provided span.</param>
     /// <returns>Returns a <see cref="SpanSplitEnumerator{T}"/>.</returns>
-    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string first, string second) => Split(span, first, second, StringSplitOptions.None);
+    public static SpanSplitEnumerator<char> Split(this ReadOnlySpan<char> span, string first, string second) => span.Split(first, second, StringSplitOptions.None);
 
     /// <summary>
     /// Returns a type that allows for enumeration of each element within a split span
@@ -225,7 +225,7 @@ public static partial class MemoryExtensions
     /// <param name="s">The string to split.</param>
     /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
     /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
-    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, char separator) => SplitQuoted(s, separator, StringSplitOptions.None);
+    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, char separator) => s.SplitQuoted(separator, StringSplitOptions.None);
 
     /// <summary>
     /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
@@ -243,7 +243,7 @@ public static partial class MemoryExtensions
     /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
     /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
     [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)} methods instead")]
-    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, string separator) => SplitQuoted(s, separator, StringSplitOptions.None);
+    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, string separator) => s.SplitQuoted(separator, StringSplitOptions.None);
 
     /// <summary>
     /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
@@ -251,7 +251,7 @@ public static partial class MemoryExtensions
     /// <param name="s">The string to split.</param>
     /// <param name="separator">A character that delimits the substrings in <paramref name="s"/>.</param>
     /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
-    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, ReadOnlySpan<char> separator) => SplitQuoted(s, separator, StringSplitOptions.None);
+    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, ReadOnlySpan<char> separator) => s.SplitQuoted(separator, StringSplitOptions.None);
 
     /// <summary>
     /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
@@ -261,7 +261,7 @@ public static partial class MemoryExtensions
     /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
     /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
     [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)} methods instead")]
-    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, string separator, StringSplitOptions options) => SplitQuoted(s, separator.AsSpan(), options);
+    public static JoinedSpanSplitEnumerator<char> SplitQuoted(this ReadOnlySpan<char> s, string separator, StringSplitOptions options) => s.SplitQuoted(separator.AsSpan(), options);
 
     /// <summary>
     /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
@@ -491,7 +491,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
     /// <returns>The value array.</returns>
     [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(GetValues)}<T> instead")]
-    public static T[] GetValues<T>(this ReadOnlySpan<char> input, string separator, int count, Parse<char, T> parser, IFormatProvider? provider) => GetValues(input, separator.AsSpan(), count, parser, provider);
+    public static T[] GetValues<T>(this ReadOnlySpan<char> input, string separator, int count, Parse<char, T> parser, IFormatProvider? provider) => input.GetValues(separator.AsSpan(), count, parser, provider);
 
     /// <summary>
     /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.
@@ -849,7 +849,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="byte"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
-    public static bool TryGetNextByte(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out byte value) => TryGetNextByte(span, ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
+    public static bool TryGetNextByte(this ReadOnlySpan<char> span, ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out byte value) => span.TryGetNextByte(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
     /// <summary>
     /// Tries to get the next value from the span as a <see cref="byte"/>, with the result indicating success.
@@ -907,7 +907,8 @@ public static partial class MemoryExtensions
         int count,
         TryParse<char, T> parser,
         IFormatProvider? provider,
-        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T[]? output) => TryGetValues(input, separator.AsSpan(), count, parser, provider, out output);
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T[]? output) =>
+        input.TryGetValues(separator.AsSpan(), count, parser, provider, out output);
 
     /// <summary>
     /// Tries to get the value array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
@@ -977,7 +978,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
     /// <returns>The value array.</returns>
     [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(GetDoubleValues)} instead")]
-    public static double[] GetDoubleValues(this ReadOnlySpan<char> input, string separator, int count, IFormatProvider? provider) => GetDoubleValues(input, separator.AsSpan(), count, provider);
+    public static double[] GetDoubleValues(this ReadOnlySpan<char> input, string separator, int count, IFormatProvider? provider) => input.GetDoubleValues(separator.AsSpan(), count, provider);
 
     /// <summary>
     /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
@@ -989,7 +990,7 @@ public static partial class MemoryExtensions
     /// <returns>The value array.</returns>
     public static double[] GetDoubleValues(this ReadOnlySpan<char> input, ReadOnlySpan<char> separator, int count, IFormatProvider? provider)
     {
-        return GetValues(input, separator, count, Parse, provider);
+        return input.GetValues(separator, count, Parse, provider);
 
         static double Parse(ReadOnlySpan<char> input, IFormatProvider? provider)
         {
@@ -1007,7 +1008,7 @@ public static partial class MemoryExtensions
     /// <returns>The value array.</returns>
     public static double[] GetDoubleValues(this ReadOnlySpan<char> input, char separator, int count, IFormatProvider? provider)
     {
-        return GetValues(input, separator, count, Parse, provider);
+        return input.GetValues(separator, count, Parse, provider);
 
         static double Parse(ReadOnlySpan<char> input, IFormatProvider? provider)
         {
@@ -1030,7 +1031,8 @@ public static partial class MemoryExtensions
         string separator,
         int count,
         IFormatProvider? provider,
-        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out double[]? output) => TryGetDoubleValues(input, separator.AsSpan(), count, provider, out output);
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out double[]? output) =>
+        input.TryGetDoubleValues(separator.AsSpan(), count, provider, out output);
 
     /// <summary>
     /// Tries to get the value double array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
@@ -1048,7 +1050,7 @@ public static partial class MemoryExtensions
         IFormatProvider? provider,
         [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out double[]? output)
     {
-        return TryGetValues(input, separator, count, TryParse, provider, out output);
+        return input.TryGetValues(separator, count, TryParse, provider, out output);
 
         static bool TryParse(ReadOnlySpan<char> input, IFormatProvider? provider, out double output)
         {
@@ -1072,7 +1074,7 @@ public static partial class MemoryExtensions
         IFormatProvider? provider,
         [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out double[]? output)
     {
-        return TryGetValues(input, separator, count, TryParse, provider, out output);
+        return input.TryGetValues(separator, count, TryParse, provider, out output);
 
         static bool TryParse(ReadOnlySpan<char> input, IFormatProvider? provider, out double output)
         {

@@ -19,7 +19,7 @@ public static partial class BitArrayExtensions
     public static byte GetByte(this System.Collections.BitArray bits)
     {
         ArgumentNullException.ThrowIfNull(bits);
-        return GetByte(bits, 0, bits.Length);
+        return bits.GetByte(0, bits.Length);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public static partial class BitArrayExtensions
     public static string ToHexString(this System.Collections.BitArray bits, IFormatProvider? provider)
     {
         const char Space = ' ';
-        return string.Join(Space, GetHexStringParts(GetBytes(bits).Reverse(), provider));
+        return string.Join(Space, GetHexStringParts(bits.GetBytes().Reverse(), provider));
 
         static IEnumerable<string> GetHexStringParts(IEnumerable<byte> bytes, IFormatProvider? provider = default)
         {

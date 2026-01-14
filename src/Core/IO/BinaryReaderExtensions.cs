@@ -95,7 +95,7 @@ public static class BinaryReaderExtensions
     /// </summary>
     /// <param name="reader">The reader.</param>
     /// <returns>A 2-byte floating point value read from the current stream.</returns>
-    public static Half ReadHalf(this BinaryReader reader) => BitConverter.Int16BitsToHalf(reader.ReadInt16());
+    public static Half ReadHalf(this BinaryReader reader) => System.BitConverter.Int16BitsToHalf(reader.ReadInt16());
 #endif
 
 #if NET5_0_OR_GREATER
@@ -128,11 +128,11 @@ public static class BinaryReaderExtensions
     private static char ReverseEndianness(char value) => (char)Buffers.Binary.BinaryPrimitives.ReverseEndianness(unchecked((short)value));
 
 #if NET5_0_OR_GREATER
-    private static Half ReverseEndianness(Half value) => BitConverter.Int16BitsToHalf(Buffers.Binary.BinaryPrimitives.ReverseEndianness(BitConverter.HalfToInt16Bits(value)));
+    private static Half ReverseEndianness(Half value) => System.BitConverter.Int16BitsToHalf(Buffers.Binary.BinaryPrimitives.ReverseEndianness(System.BitConverter.HalfToInt16Bits(value)));
 #endif
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static float ReverseEndianness(float value) => BitConverter.Int32BitsToSingle(Buffers.Binary.BinaryPrimitives.ReverseEndianness(BitConverter.SingleToInt32Bits(value)));
+    private static float ReverseEndianness(float value) => System.BitConverter.Int32BitsToSingle(Buffers.Binary.BinaryPrimitives.ReverseEndianness(System.BitConverter.SingleToInt32Bits(value)));
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static double ReverseEndianness(double value) => BitConverter.Int64BitsToDouble(Buffers.Binary.BinaryPrimitives.ReverseEndianness(BitConverter.DoubleToInt64Bits(value)));

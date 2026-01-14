@@ -19,7 +19,7 @@ public static partial class List
     /// <param name="value">The value to seek.</param>
     /// <returns>The zero-based index position of <paramref name="value"/> from the start of <paramref name="buffer"/> if found, or -1 if it is not. If <paramref name="value"/> is an empty list, the return value is 0.</returns>
     public static int IndexOf<T>(this IList<T>? buffer, IList<T> value)
-        where T : IEquatable<T> => buffer is not null ? IndexOf(buffer, value, 0) : -1;
+        where T : IEquatable<T> => buffer is not null ? buffer.IndexOf(value, 0) : -1;
 
     /// <summary>
     /// Reports the zero-based index of the first occurrence of the specified value in the specified list. The search starts at a specified position.
@@ -30,7 +30,7 @@ public static partial class List
     /// <param name="startIndex">The search starting position.</param>
     /// <returns>The zero-based index position of <paramref name="value"/> from the start of <paramref name="buffer"/> if found, or -1 if it is not. If <paramref name="value"/> is an empty list, the return value is <paramref name="startIndex"/>.</returns>
     public static int IndexOf<T>(this IList<T>? buffer, IList<T> value, int startIndex)
-        where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? IndexOf(buffer, value, startIndex, buffer.Count - startIndex) : -1;
+        where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? buffer.IndexOf(value, startIndex, buffer.Count - startIndex) : -1;
 
     /// <summary>
     /// Reports the zero-based index of the first occurrence of the specified value in the specified list. The search starts at a specified position and examines a specified number of values.
@@ -87,7 +87,7 @@ public static partial class List
     /// <param name="value">The value to seek.</param>
     /// <returns>The zero-based index position of <paramref name="value"/> from the start of <paramref name="buffer"/> if found, or -1 if it is not.</returns>
     public static int IndexOf<T>(this IList<T>? buffer, T value)
-        where T : IEquatable<T> => buffer is not null ? IndexOf(buffer, value, 0) : -1;
+        where T : IEquatable<T> => buffer is not null ? buffer.IndexOf(value, 0) : -1;
 
     /// <summary>
     /// Reports the zero-based index of the first occurrence of the specified value in the specified list. The search starts at a specified position.
@@ -98,7 +98,7 @@ public static partial class List
     /// <param name="startIndex">The search starting position.</param>
     /// <returns>The zero-based index position of <paramref name="value"/> from the start of <paramref name="buffer"/> if found, or -1 if it is not.</returns>
     public static int IndexOf<T>(this IList<T>? buffer, T value, int startIndex)
-        where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? IndexOf(buffer, value, startIndex, buffer.Count - startIndex) : -1;
+        where T : IEquatable<T> => buffer is not null && buffer.Count > startIndex ? buffer.IndexOf(value, startIndex, buffer.Count - startIndex) : -1;
 
     /// <summary>
     /// Reports the zero-based index of the first occurrence of the specified value in the specified list. The search starts at a specified position and examines a specified number values.

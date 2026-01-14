@@ -25,9 +25,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static byte[] GetVarBytes(sbyte value) =>
 #if NET7_0_OR_GREATER
-            GetVarBytesCore(EncodeZigZag<sbyte, byte>(value, sizeof(sbyte) * 8));
+            System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<sbyte, byte>(value, sizeof(sbyte) * 8));
 #else
-            GetVarBytesCore((ulong)EncodeZigZag(value, sizeof(sbyte) * 8));
+            System.BitConverter.GetVarBytesCore((ulong)System.BitConverter.EncodeZigZag(value, sizeof(sbyte) * 8));
 #endif
 
         /// <summary>
@@ -36,7 +36,7 @@ public static partial class BitConverter
         /// <param name="value">Byte value.</param>
         /// <returns><c>varint</c> array of bytes.</returns>
         [CLSCompliant(false)]
-        public static byte[] GetVarBytes(byte value) => GetVarBytesCore(value);
+        public static byte[] GetVarBytes(byte value) => System.BitConverter.GetVarBytesCore(value);
 
         /// <summary>
         /// Returns the specified 16-bit signed value as <c>varint</c> encoded array of bytes.
@@ -45,9 +45,9 @@ public static partial class BitConverter
         /// <returns><c>varint</c> array of bytes.</returns>
         public static byte[] GetVarBytes(short value) =>
 #if NET7_0_OR_GREATER
-            GetVarBytesCore(EncodeZigZag<short, ushort>(value, sizeof(short) * 8));
+            System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<short, ushort>(value, sizeof(short) * 8));
 #else
-            GetVarBytesCore((ulong)EncodeZigZag(value, sizeof(short) * 8));
+            System.BitConverter.GetVarBytesCore((ulong)System.BitConverter.EncodeZigZag(value, sizeof(short) * 8));
 #endif
 
         /// <summary>
@@ -56,7 +56,7 @@ public static partial class BitConverter
         /// <param name="value">16-bit unsigned value.</param>
         /// <returns><c>varint</c> array of bytes.</returns>
         [CLSCompliant(false)]
-        public static byte[] GetVarBytes(ushort value) => GetVarBytesCore(value);
+        public static byte[] GetVarBytes(ushort value) => System.BitConverter.GetVarBytesCore(value);
 
         /// <summary>
         /// Returns the specified 32-bit signed value as <c>varint</c> encoded array of bytes.
@@ -65,9 +65,9 @@ public static partial class BitConverter
         /// <returns><c>varint</c> array of bytes.</returns>
         public static byte[] GetVarBytes(int value) =>
 #if NET7_0_OR_GREATER
-            GetVarBytesCore(EncodeZigZag<int, uint>(value, sizeof(int) * 8));
+            System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<int, uint>(value, sizeof(int) * 8));
 #else
-            GetVarBytesCore((ulong)EncodeZigZag(value, sizeof(int) * 8));
+            System.BitConverter.GetVarBytesCore((ulong)System.BitConverter.EncodeZigZag(value, sizeof(int) * 8));
 #endif
 
         /// <summary>
@@ -76,7 +76,7 @@ public static partial class BitConverter
         /// <param name="value">32-bit unsigned value.</param>
         /// <returns><c>varint</c> array of bytes.</returns>
         [CLSCompliant(false)]
-        public static byte[] GetVarBytes(uint value) => GetVarBytesCore(value);
+        public static byte[] GetVarBytes(uint value) => System.BitConverter.GetVarBytesCore(value);
 
         /// <summary>
         /// Returns the specified 64-bit signed value as <c>varint</c> encoded array of bytes.
@@ -85,9 +85,9 @@ public static partial class BitConverter
         /// <returns><c>varint</c> array of bytes.</returns>
         public static byte[] GetVarBytes(long value) =>
 #if NET7_0_OR_GREATER
-            GetVarBytesCore(EncodeZigZag<long, ulong>(value, sizeof(long) * 8));
+            System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<long, ulong>(value, sizeof(long) * 8));
 #else
-            GetVarBytesCore((ulong)EncodeZigZag(value, sizeof(long) * 8));
+            System.BitConverter.GetVarBytesCore((ulong)System.BitConverter.EncodeZigZag(value, sizeof(long) * 8));
 #endif
 
         /// <summary>
@@ -96,7 +96,7 @@ public static partial class BitConverter
         /// <param name="value">64-bit unsigned value.</param>
         /// <returns><c>varint</c> array of bytes.</returns>
         [CLSCompliant(false)]
-        public static byte[] GetVarBytes(ulong value) => GetVarBytesCore(value);
+        public static byte[] GetVarBytes(ulong value) => System.BitConverter.GetVarBytesCore(value);
 
 #if NET7_0_OR_GREATER
         /// <summary>
@@ -104,7 +104,7 @@ public static partial class BitConverter
         /// </summary>
         /// <param name="value">64-bit signed value.</param>
         /// <returns><c>varint</c> array of bytes.</returns>
-        public static byte[] GetVarBytes(Int128 value) => GetVarBytesCore(EncodeZigZag<Int128, UInt128>(value, 128));
+        public static byte[] GetVarBytes(Int128 value) => System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<Int128, UInt128>(value, 128));
 
         /// <summary>
         /// Returns the specified 64-bit unsigned value as <c>varint</c> encoded array of bytes.
@@ -112,7 +112,7 @@ public static partial class BitConverter
         /// <param name="value">64-bit unsigned value.</param>
         /// <returns><c>varint</c> array of bytes.</returns>
         [CLSCompliant(false)]
-        public static byte[] GetVarBytes(UInt128 value) => GetVarBytesCore(value);
+        public static byte[] GetVarBytes(UInt128 value) => System.BitConverter.GetVarBytesCore(value);
 #endif
 
         /// <summary>
@@ -125,9 +125,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static sbyte ToSByte(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<byte, sbyte>(ToTarget<byte>(bytes, startIndex, sizeof(sbyte) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<byte, sbyte>(System.BitConverter.ToTarget<byte>(bytes, startIndex, sizeof(sbyte) * 8, out bytesRead));
 #else
-            (sbyte)DecodeZigZag(ToTarget(bytes, startIndex, sizeof(sbyte) * 8, out bytesRead));
+            (sbyte)System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, startIndex, sizeof(sbyte) * 8, out bytesRead));
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -140,9 +140,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static sbyte ToSByte(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<byte, sbyte>(ToTarget<byte>(bytes, sizeof(sbyte) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<byte, sbyte>(System.BitConverter.ToTarget<byte>(bytes, sizeof(sbyte) * 8, out bytesRead));
 #else
-            (sbyte)DecodeZigZag(ToTarget(bytes, sizeof(sbyte) * 8, out bytesRead));
+            (sbyte)System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, sizeof(sbyte) * 8, out bytesRead));
 #endif
 #endif
 
@@ -155,9 +155,9 @@ public static partial class BitConverter
         /// <returns>Byte value.</returns>
         public static byte ToByte(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<byte>(bytes, startIndex, sizeof(byte) * 8, out bytesRead);
+            System.BitConverter.ToTarget<byte>(bytes, startIndex, sizeof(byte) * 8, out bytesRead);
 #else
-            (byte)ToTarget(bytes, startIndex, sizeof(byte) * 8, out bytesRead);
+            (byte)System.BitConverter.ToTarget(bytes, startIndex, sizeof(byte) * 8, out bytesRead);
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -169,9 +169,9 @@ public static partial class BitConverter
         /// <returns>Byte value.</returns>
         public static byte ToByte(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<byte>(bytes, sizeof(byte) * 8, out bytesRead);
+            System.BitConverter.ToTarget<byte>(bytes, sizeof(byte) * 8, out bytesRead);
 #else
-            (byte)ToTarget(bytes, sizeof(byte) * 8, out bytesRead);
+            (byte)System.BitConverter.ToTarget(bytes, sizeof(byte) * 8, out bytesRead);
 #endif
 #endif
 
@@ -184,9 +184,9 @@ public static partial class BitConverter
         /// <returns>16-bit signed value.</returns>
         public static short ToInt16(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<ushort, short>(ToTarget<ushort>(bytes, startIndex, sizeof(short) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<ushort, short>(System.BitConverter.ToTarget<ushort>(bytes, startIndex, sizeof(short) * 8, out bytesRead));
 #else
-            (short)DecodeZigZag(ToTarget(bytes, startIndex, sizeof(short) * 8, out bytesRead));
+            (short)System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, startIndex, sizeof(short) * 8, out bytesRead));
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -198,9 +198,9 @@ public static partial class BitConverter
         /// <returns>16-bit signed value.</returns>
         public static short ToInt16(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<ushort, short>(ToTarget<ushort>(bytes, sizeof(short) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<ushort, short>(System.BitConverter.ToTarget<ushort>(bytes, sizeof(short) * 8, out bytesRead));
 #else
-            (short)DecodeZigZag(ToTarget(bytes, sizeof(short) * 8, out bytesRead));
+            (short)System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, sizeof(short) * 8, out bytesRead));
 #endif
 #endif
 
@@ -214,9 +214,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static ushort ToUInt16(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<ushort>(bytes, startIndex, sizeof(ushort) * 8, out bytesRead);
+            System.BitConverter.ToTarget<ushort>(bytes, startIndex, sizeof(ushort) * 8, out bytesRead);
 #else
-            (ushort)ToTarget(bytes, startIndex, sizeof(ushort) * 8, out bytesRead);
+            (ushort)System.BitConverter.ToTarget(bytes, startIndex, sizeof(ushort) * 8, out bytesRead);
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -229,9 +229,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static ushort ToUInt16(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<ushort>(bytes, sizeof(ushort) * 8, out bytesRead);
+            System.BitConverter.ToTarget<ushort>(bytes, sizeof(ushort) * 8, out bytesRead);
 #else
-            (ushort)ToTarget(bytes, sizeof(ushort) * 8, out bytesRead);
+            (ushort)System.BitConverter.ToTarget(bytes, sizeof(ushort) * 8, out bytesRead);
 #endif
 #endif
 
@@ -244,9 +244,9 @@ public static partial class BitConverter
         /// <returns>32-bit signed value.</returns>
         public static int ToInt32(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<uint, int>(ToTarget<uint>(bytes, startIndex, sizeof(int) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<uint, int>(System.BitConverter.ToTarget<uint>(bytes, startIndex, sizeof(int) * 8, out bytesRead));
 #else
-            (int)DecodeZigZag(ToTarget(bytes, startIndex, sizeof(int) * 8, out bytesRead));
+            (int)System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, startIndex, sizeof(int) * 8, out bytesRead));
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -258,9 +258,9 @@ public static partial class BitConverter
         /// <returns>32-bit signed value.</returns>
         public static int ToInt32(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<uint, int>(ToTarget<uint>(bytes, sizeof(int) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<uint, int>(System.BitConverter.ToTarget<uint>(bytes, sizeof(int) * 8, out bytesRead));
 #else
-            (int)DecodeZigZag(ToTarget(bytes, sizeof(int) * 8, out bytesRead));
+            (int)System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, sizeof(int) * 8, out bytesRead));
 #endif
 #endif
 
@@ -274,9 +274,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static uint ToUInt32(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<uint>(bytes, startIndex, sizeof(uint) * 8, out bytesRead);
+            System.BitConverter.ToTarget<uint>(bytes, startIndex, sizeof(uint) * 8, out bytesRead);
 #else
-            (uint)ToTarget(bytes, startIndex, sizeof(uint) * 8, out bytesRead);
+            (uint)System.BitConverter.ToTarget(bytes, startIndex, sizeof(uint) * 8, out bytesRead);
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -289,9 +289,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static uint ToUInt32(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<uint>(bytes, sizeof(uint) * 8, out bytesRead);
+            System.BitConverter.ToTarget<uint>(bytes, sizeof(uint) * 8, out bytesRead);
 #else
-            (uint)ToTarget(bytes, sizeof(uint) * 8, out bytesRead);
+            (uint)System.BitConverter.ToTarget(bytes, sizeof(uint) * 8, out bytesRead);
 #endif
 #endif
 
@@ -304,9 +304,9 @@ public static partial class BitConverter
         /// <returns>64-bit signed value.</returns>
         public static long ToInt64(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<ulong, long>(ToTarget<ulong>(bytes, startIndex, sizeof(long) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<ulong, long>(System.BitConverter.ToTarget<ulong>(bytes, startIndex, sizeof(long) * 8, out bytesRead));
 #else
-            DecodeZigZag(ToTarget(bytes, startIndex, sizeof(long) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, startIndex, sizeof(long) * 8, out bytesRead));
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -319,9 +319,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static long ToInt64(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            DecodeZigZag<ulong, long>(ToTarget<ulong>(bytes, sizeof(long) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag<ulong, long>(System.BitConverter.ToTarget<ulong>(bytes, sizeof(long) * 8, out bytesRead));
 #else
-            DecodeZigZag(ToTarget(bytes, sizeof(long) * 8, out bytesRead));
+            System.BitConverter.DecodeZigZag(System.BitConverter.ToTarget(bytes, sizeof(long) * 8, out bytesRead));
 #endif
 #endif
 
@@ -335,9 +335,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static ulong ToUInt64(byte[] bytes, int startIndex, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<ulong>(bytes, startIndex, sizeof(ulong) * 8, out bytesRead);
+            System.BitConverter.ToTarget<ulong>(bytes, startIndex, sizeof(ulong) * 8, out bytesRead);
 #else
-            ToTarget(bytes, startIndex, sizeof(ulong) * 8, out bytesRead);
+            System.BitConverter.ToTarget(bytes, startIndex, sizeof(ulong) * 8, out bytesRead);
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -350,9 +350,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static ulong ToUInt64(ReadOnlySpan<byte> bytes, out int bytesRead) =>
 #if NET7_0_OR_GREATER
-            ToTarget<ulong>(bytes, sizeof(ulong) * 8, out bytesRead);
+            System.BitConverter.ToTarget<ulong>(bytes, sizeof(ulong) * 8, out bytesRead);
 #else
-            ToTarget(bytes, sizeof(ulong) * 8, out bytesRead);
+            System.BitConverter.ToTarget(bytes, sizeof(ulong) * 8, out bytesRead);
 #endif
 #endif
 
@@ -364,7 +364,7 @@ public static partial class BitConverter
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit signed value.</returns>
-        public static Int128 ToInt128(byte[] bytes, int startIndex, out int bytesRead) => DecodeZigZag<UInt128, Int128>(ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead));
+        public static Int128 ToInt128(byte[] bytes, int startIndex, out int bytesRead) => System.BitConverter.DecodeZigZag<UInt128, Int128>(System.BitConverter.ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead));
 
         /// <summary>
         /// Returns 64-bit signed value from <c>varint</c> encoded array of bytes.
@@ -373,7 +373,7 @@ public static partial class BitConverter
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit signed value.</returns>
         [CLSCompliant(false)]
-        public static Int128 ToInt128(ReadOnlySpan<byte> bytes, out int bytesRead) => DecodeZigZag<UInt128, Int128>(ToTarget<UInt128>(bytes, 128, out bytesRead));
+        public static Int128 ToInt128(ReadOnlySpan<byte> bytes, out int bytesRead) => System.BitConverter.DecodeZigZag<UInt128, Int128>(System.BitConverter.ToTarget<UInt128>(bytes, 128, out bytesRead));
 
         /// <summary>
         /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
@@ -383,7 +383,7 @@ public static partial class BitConverter
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit unsigned value.</returns>
         [CLSCompliant(false)]
-        public static UInt128 ToUInt128(byte[] bytes, int startIndex, out int bytesRead) => ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead);
+        public static UInt128 ToUInt128(byte[] bytes, int startIndex, out int bytesRead) => System.BitConverter.ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead);
 
         /// <summary>
         /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
@@ -392,7 +392,7 @@ public static partial class BitConverter
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit unsigned value.</returns>
         [CLSCompliant(false)]
-        public static UInt128 ToUInt128(ReadOnlySpan<byte> bytes, out int bytesRead) => ToTarget<UInt128>(bytes, 128, out bytesRead);
+        public static UInt128 ToUInt128(ReadOnlySpan<byte> bytes, out int bytesRead) => System.BitConverter.ToTarget<UInt128>(bytes, 128, out bytesRead);
 #endif
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
@@ -406,9 +406,9 @@ public static partial class BitConverter
         [CLSCompliant(false)]
         public static bool TryWriteBytes(Span<byte> destination, sbyte value, out int bytesWritten) =>
 #if NET7_0_OR_GREATER
-            TryWriteBytesCore(destination, EncodeZigZag<sbyte, byte>(value, sizeof(sbyte) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, System.BitConverter.EncodeZigZag<sbyte, byte>(value, sizeof(sbyte) * 8), out bytesWritten);
 #else
-            TryWriteBytesCore(destination, (ulong)EncodeZigZag(value, sizeof(sbyte) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, (ulong)System.BitConverter.EncodeZigZag(value, sizeof(sbyte) * 8), out bytesWritten);
 #endif
 
         /// <summary>
@@ -418,7 +418,7 @@ public static partial class BitConverter
         /// <param name="value">The 8-bit unsigned integer to convert.</param>
         /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
-        public static bool TryWriteBytes(Span<byte> destination, byte value, out int bytesWritten) => TryWriteBytesCore(destination, value, out bytesWritten);
+        public static bool TryWriteBytes(Span<byte> destination, byte value, out int bytesWritten) => System.BitConverter.TryWriteBytesCore(destination, value, out bytesWritten);
 
         /// <summary>
         /// Converts a 16-bit signed integer into a span of bytes.
@@ -429,9 +429,9 @@ public static partial class BitConverter
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
         public static bool TryWriteBytes(Span<byte> destination, short value, out int bytesWritten) =>
 #if NET7_0_OR_GREATER
-            TryWriteBytesCore(destination, EncodeZigZag<short, ushort>(value, sizeof(short) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, System.BitConverter.EncodeZigZag<short, ushort>(value, sizeof(short) * 8), out bytesWritten);
 #else
-            TryWriteBytesCore(destination, (ulong)EncodeZigZag(value, sizeof(short) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, (ulong)System.BitConverter.EncodeZigZag(value, sizeof(short) * 8), out bytesWritten);
 #endif
 
         /// <summary>
@@ -442,7 +442,7 @@ public static partial class BitConverter
         /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
         [CLSCompliant(false)]
-        public static bool TryWriteBytes(Span<byte> destination, ushort value, out int bytesWritten) => TryWriteBytesCore(destination, value, out bytesWritten);
+        public static bool TryWriteBytes(Span<byte> destination, ushort value, out int bytesWritten) => System.BitConverter.TryWriteBytesCore(destination, value, out bytesWritten);
 
         /// <summary>
         /// Converts a 32-bit signed integer into a span of bytes.
@@ -453,9 +453,9 @@ public static partial class BitConverter
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
         public static bool TryWriteBytes(Span<byte> destination, int value, out int bytesWritten) =>
 #if NET7_0_OR_GREATER
-            TryWriteBytesCore(destination, EncodeZigZag<int, uint>(value, sizeof(int) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, System.BitConverter.EncodeZigZag<int, uint>(value, sizeof(int) * 8), out bytesWritten);
 #else
-            TryWriteBytesCore(destination, (ulong)EncodeZigZag(value, sizeof(int) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, (ulong)System.BitConverter.EncodeZigZag(value, sizeof(int) * 8), out bytesWritten);
 #endif
 
         /// <summary>
@@ -466,7 +466,7 @@ public static partial class BitConverter
         /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
         [CLSCompliant(false)]
-        public static bool TryWriteBytes(Span<byte> destination, uint value, out int bytesWritten) => TryWriteBytesCore(destination, value, out bytesWritten);
+        public static bool TryWriteBytes(Span<byte> destination, uint value, out int bytesWritten) => System.BitConverter.TryWriteBytesCore(destination, value, out bytesWritten);
 
         /// <summary>
         /// Converts a 64-bit signed integer into a span of bytes.
@@ -477,9 +477,9 @@ public static partial class BitConverter
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
         public static bool TryWriteBytes(Span<byte> destination, long value, out int bytesWritten) =>
 #if NET7_0_OR_GREATER
-            TryWriteBytesCore(destination, EncodeZigZag<long, ulong>(value, sizeof(long) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, System.BitConverter.EncodeZigZag<long, ulong>(value, sizeof(long) * 8), out bytesWritten);
 #else
-            TryWriteBytesCore(destination, (ulong)EncodeZigZag(value, sizeof(long) * 8), out bytesWritten);
+            System.BitConverter.TryWriteBytesCore(destination, (ulong)System.BitConverter.EncodeZigZag(value, sizeof(long) * 8), out bytesWritten);
 #endif
 
         /// <summary>
@@ -490,7 +490,7 @@ public static partial class BitConverter
         /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
         [CLSCompliant(false)]
-        public static bool TryWriteBytes(Span<byte> destination, ulong value, out int bytesWritten) => TryWriteBytesCore(destination, value, out bytesWritten);
+        public static bool TryWriteBytes(Span<byte> destination, ulong value, out int bytesWritten) => System.BitConverter.TryWriteBytesCore(destination, value, out bytesWritten);
 
 #if NET7_0_OR_GREATER
         /// <summary>
@@ -500,7 +500,7 @@ public static partial class BitConverter
         /// <param name="value">The 64-bit signed integer to convert.</param>
         /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
-        public static bool TryWriteBytes(Span<byte> destination, Int128 value, out int bytesWritten) => TryWriteBytesCore(destination, EncodeZigZag<Int128, UInt128>(value, 128), out bytesWritten);
+        public static bool TryWriteBytes(Span<byte> destination, Int128 value, out int bytesWritten) => System.BitConverter.TryWriteBytesCore(destination, System.BitConverter.EncodeZigZag<Int128, UInt128>(value, 128), out bytesWritten);
 
         /// <summary>
         /// Converts a 64-bit unsigned integer into a span of bytes.
@@ -510,7 +510,7 @@ public static partial class BitConverter
         /// <param name="bytesWritten">The number of bytes written to <paramref name="destination"/>.</param>
         /// <returns><see langword="true"/> if the conversion was successful; <see langword="false"/> otherwise.</returns>
         [CLSCompliant(false)]
-        public static bool TryWriteBytes(Span<byte> destination, UInt128 value, out int bytesWritten) => TryWriteBytesCore(destination, value, out bytesWritten);
+        public static bool TryWriteBytes(Span<byte> destination, UInt128 value, out int bytesWritten) => System.BitConverter.TryWriteBytesCore(destination, value, out bytesWritten);
 #endif
 #endif
 
@@ -623,7 +623,8 @@ public static partial class BitConverter
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         private static T ToTarget<T>(byte[] bytes, int startIndex, int sizeBites, out int bytesRead)
-            where T : struct, System.Numerics.IBinaryInteger<T>, System.Numerics.IUnsignedNumber<T> => ToTarget<T>(bytes.AsSpan(startIndex), sizeBites, out bytesRead);
+            where T : struct, System.Numerics.IBinaryInteger<T>, System.Numerics.IUnsignedNumber<T> =>
+            System.BitConverter.ToTarget<T>(bytes.AsSpan(startIndex), sizeBites, out bytesRead);
 
         private static T ToTarget<T>(ReadOnlySpan<byte> bytes, int sizeBites, out int bytesRead)
             where T : struct, System.Numerics.IBinaryInteger<T>, System.Numerics.IUnsignedNumber<T>
@@ -695,7 +696,7 @@ public static partial class BitConverter
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        private static ulong ToTarget(byte[] bytes, int startIndex, int sizeBites, out int bytesRead) => ToTarget(bytes.AsSpan(startIndex), sizeBites, out bytesRead);
+        private static ulong ToTarget(byte[] bytes, int startIndex, int sizeBites, out int bytesRead) => System.BitConverter.ToTarget(bytes.AsSpan(startIndex), sizeBites, out bytesRead);
 
         private static ulong ToTarget(ReadOnlySpan<byte> bytes, int sizeBites, out int bytesRead)
         {

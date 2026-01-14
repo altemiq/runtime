@@ -17,7 +17,7 @@ public static class AssemblyExtensions
     /// <param name="assembly">The assembly.</param>
     /// <param name="requiredAssemblyName">The required assembly name.</param>
     /// <returns><see langword="true"/> if <paramref name="assembly"/> is valid for <paramref name="requiredAssemblyName"/>; otherwise <see langword="false"/>.</returns>
-    public static bool IsCompatible(this System.Reflection.Assembly assembly, System.Reflection.AssemblyName requiredAssemblyName) => assembly.FullName is { } fullName && IsCompatible(new System.Reflection.AssemblyName(fullName), requiredAssemblyName);
+    public static bool IsCompatible(this System.Reflection.Assembly assembly, System.Reflection.AssemblyName requiredAssemblyName) => assembly.FullName is { } fullName && new System.Reflection.AssemblyName(fullName).IsCompatible(requiredAssemblyName);
 
     /// <summary>
     /// Checks to see if the supplied assembly name is valid for the required assembly name.

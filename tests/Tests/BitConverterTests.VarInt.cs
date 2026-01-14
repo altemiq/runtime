@@ -78,19 +78,19 @@ public partial class BitConverterTests
             [Test]
             public async Task ToSmall()
             {
-                var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
+                var encoded = System.BitConverter.GetVarBytes(ulong.MaxValue / 2);
                 System.Array.Resize(ref encoded, encoded.Length / 2);
-                await Assert.That(() => BitConverter.ToUInt64(encoded, 0, out _)).Throws<ArgumentException>();
+                await Assert.That(() => System.BitConverter.ToUInt64(encoded, 0, out _)).Throws<ArgumentException>();
             }
 
             [Test]
             public async Task ToBig()
             {
                 const ulong Number = ulong.MaxValue / 2;
-                var encoded = BitConverter.GetVarBytes(Number);
+                var encoded = System.BitConverter.GetVarBytes(Number);
                 var length = encoded.Length;
                 System.Array.Resize(ref encoded, length * 2);
-                var decoded = BitConverter.ToUInt64(encoded, 0, out var bytesRead);
+                var decoded = System.BitConverter.ToUInt64(encoded, 0, out var bytesRead);
                 await Assert.That(decoded).IsEqualTo(Number);
                 await Assert.That(bytesRead).IsEqualTo(length);
             }
@@ -178,18 +178,18 @@ public partial class BitConverterTests
             [Test]
             public async Task ToSmall()
             {
-                var encoded = BitConverter.GetVarBytes(ulong.MaxValue / 2);
-                await Assert.That(() => BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out _)).Throws<ArgumentException>();
+                var encoded = System.BitConverter.GetVarBytes(ulong.MaxValue / 2);
+                await Assert.That(() => System.BitConverter.ToUInt64(encoded.AsSpan(0, encoded.Length / 2), out _)).Throws<ArgumentException>();
             }
 
             [Test]
             public async Task ToBig()
             {
                 const ulong Number = ulong.MaxValue / 2;
-                var encoded = BitConverter.GetVarBytes(Number);
+                var encoded = System.BitConverter.GetVarBytes(Number);
                 var length = encoded.Length;
                 System.Array.Resize(ref encoded, length * 2);
-                var decoded = BitConverter.ToUInt64(encoded.AsSpan(), out var bytesRead);
+                var decoded = System.BitConverter.ToUInt64(encoded.AsSpan(), out var bytesRead);
                 await Assert.That(decoded).IsEqualTo(Number);
                 await Assert.That(bytesRead).IsEqualTo(length);
             }

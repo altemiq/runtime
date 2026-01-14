@@ -31,7 +31,7 @@ public partial class BitConverterTests
     [Arguments(false, 0, ByteOrder.LittleEndian)]
     [Arguments(true, 1, ByteOrder.BigEndian)]
     [Arguments(false, 0, ByteOrder.BigEndian)]
-    public async Task GetBooleanBytesWithByteOrder(bool value, byte expected, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo([expected]);
+    public async Task GetBooleanBytesWithByteOrder(bool value, byte expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo([expected]);
 
     [Test]
     [Arguments(true, 1)]
@@ -52,7 +52,7 @@ public partial class BitConverterTests
     public async Task TryWriteBooleanBytesWithByteOrder(bool value, byte expected, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(byte)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo([expected]);
     }
 
@@ -69,7 +69,7 @@ public partial class BitConverterTests
     [Arguments(0, false, ByteOrder.LittleEndian)]
     [Arguments(1, true, ByteOrder.BigEndian)]
     [Arguments(0, false, ByteOrder.BigEndian)]
-    public async Task ToBooleanBytesWithByteOrder(byte value, bool expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToBoolean([value], 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToBooleanBytesWithByteOrder(byte value, bool expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToBoolean([value], 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(1, true)]
@@ -81,7 +81,7 @@ public partial class BitConverterTests
     [Arguments(0, false, ByteOrder.LittleEndian)]
     [Arguments(1, true, ByteOrder.BigEndian)]
     [Arguments(0, false, ByteOrder.BigEndian)]
-    public async Task ToBooleanSpanWithByteOrder(byte value, bool expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToBoolean([value], byteOrder)).IsEqualTo(expected);
+    public async Task ToBooleanSpanWithByteOrder(byte value, bool expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToBoolean([value], byteOrder)).IsEqualTo(expected);
 
 
     [Test]
@@ -100,7 +100,7 @@ public partial class BitConverterTests
     [Arguments('﴾', 0xFD, 0x3E, ByteOrder.LittleEndian)]
     [Arguments('A', 0x00, 0x41, ByteOrder.BigEndian)]
     [Arguments('﴾', 0xFD, 0x3E, ByteOrder.BigEndian)]
-    public async Task GetCharBytesWithByteOrder(char value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
+    public async Task GetCharBytesWithByteOrder(char value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
 
     [Test]
     [Arguments('A', 0x00, 0x41)]
@@ -120,7 +120,7 @@ public partial class BitConverterTests
     public async Task TryWriteCharBytesWithByteOrder(char value, byte first, byte second, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(char)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, byteOrder));
     }
 
@@ -134,7 +134,7 @@ public partial class BitConverterTests
     [Arguments(0xFD, 0x3E, '﴾', ByteOrder.LittleEndian)]
     [Arguments(0x00, 0x41, 'A', ByteOrder.BigEndian)]
     [Arguments(0xFD, 0x3E, '﴾', ByteOrder.BigEndian)]
-    public async Task ToCharBytesWithByteOrder(byte first, byte second, char expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToChar(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToCharBytesWithByteOrder(byte first, byte second, char expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToChar(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(0x00, 0x41, 'A')]
@@ -146,7 +146,7 @@ public partial class BitConverterTests
     [Arguments(0xFD, 0x3E, '﴾', ByteOrder.LittleEndian)]
     [Arguments(0x00, 0x41, 'A', ByteOrder.BigEndian)]
     [Arguments(0xFD, 0x3E, '﴾', ByteOrder.BigEndian)]
-    public async Task ToCharSpanWithByteOrder(byte first, byte second, char expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToChar(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToCharSpanWithByteOrder(byte first, byte second, char expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToChar(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue)]
@@ -158,7 +158,7 @@ public partial class BitConverterTests
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetInt16BytesWithByteOrder(short value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
+    public async Task GetInt16BytesWithByteOrder(short value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
 
     [Test]
     [Arguments(Int16MaxValue, PositiveByte, ByteMaxValue)]
@@ -178,7 +178,7 @@ public partial class BitConverterTests
     public async Task TryWriteInt16BytesWithByteOrder(short value, byte first, byte second, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(short)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, byteOrder));
     }
 
@@ -192,7 +192,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, ByteMaxValue, -1, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, ByteMaxValue, Int16MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, -1, ByteOrder.BigEndian)]
-    public async Task ToInt16BytesWithByteOrder(byte first, byte second, short expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToInt16(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToInt16BytesWithByteOrder(byte first, byte second, short expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToInt16(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(PositiveByte, ByteMaxValue, Int16MaxValue)]
@@ -204,7 +204,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, ByteMaxValue, -1, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, ByteMaxValue, Int16MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, -1, ByteOrder.BigEndian)]
-    public async Task ToInt16SpanWithByteOrder(byte first, byte second, short expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToInt16(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToInt16SpanWithByteOrder(byte first, byte second, short expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToInt16(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -216,7 +216,7 @@ public partial class BitConverterTests
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetInt32BytesWithByteOrder(int value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
+    public async Task GetInt32BytesWithByteOrder(int value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
 
     [Test]
     [Arguments(int.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -236,7 +236,7 @@ public partial class BitConverterTests
     public async Task TryWriteInt32BytesWithByteOrder(int value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(int)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
     }
 
@@ -250,7 +250,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, int.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.BigEndian)]
-    public async Task ToInt32BytesWithByteOrder(byte first, byte second, byte third, byte forth, int expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToInt32(GetBytes(first, second, third, forth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToInt32BytesWithByteOrder(byte first, byte second, byte third, byte forth, int expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToInt32(GetBytes(first, second, third, forth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, int.MaxValue)]
@@ -262,7 +262,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, int.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.BigEndian)]
-    public async Task ToInt32SpanWithByteOrder(byte first, byte second, byte third, byte forth, int expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToInt32(GetBytes(first, second, third, forth, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToInt32SpanWithByteOrder(byte first, byte second, byte third, byte forth, int expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToInt32(GetBytes(first, second, third, forth, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(long.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -274,7 +274,7 @@ public partial class BitConverterTests
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(long.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(-1, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetInt64BytesWithByteOrder(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
+    public async Task GetInt64BytesWithByteOrder(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
 
     [Test]
     [Arguments(long.MaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -294,7 +294,7 @@ public partial class BitConverterTests
     public async Task TryWriteInt64BytesWithByteOrder(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(long)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
     }
 
@@ -308,7 +308,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, long.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.BigEndian)]
-    public async Task ToInt64BytesWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, long expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToInt64BytesWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, long expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, long.MaxValue)]
@@ -320,7 +320,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, long.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, -1, ByteOrder.BigEndian)]
-    public async Task ToInt64SpanWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, long expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToInt64SpanWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, long expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(ushort.MaxValue, ByteMaxValue, ByteMaxValue)]
@@ -332,7 +332,7 @@ public partial class BitConverterTests
     [Arguments(ushort.MaxValue / 2, PositiveByte, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(ushort.MaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(ushort.MaxValue / 2, PositiveByte, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetUInt16BytesWithByteOrder(ushort value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
+    public async Task GetUInt16BytesWithByteOrder(ushort value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
 
     [Test]
     [Arguments(ushort.MaxValue, ByteMaxValue, ByteMaxValue)]
@@ -352,7 +352,7 @@ public partial class BitConverterTests
     public async Task TryWriteUInt16BytesWithByteOrder(ushort value, byte first, byte second, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(ushort)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, byteOrder));
     }
 
@@ -366,7 +366,7 @@ public partial class BitConverterTests
     [Arguments(PositiveByte, ByteMaxValue, ushort.MaxValue / 2, ByteOrder.LittleEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ushort.MaxValue, ByteOrder.BigEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ushort.MaxValue / 2, ByteOrder.BigEndian)]
-    public async Task ToUInt16BytesWithByteOrder(byte first, byte second, ushort expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToUInt16(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToUInt16BytesWithByteOrder(byte first, byte second, ushort expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToUInt16(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(ByteMaxValue, ByteMaxValue, ushort.MaxValue)]
@@ -378,7 +378,7 @@ public partial class BitConverterTests
     [Arguments(PositiveByte, ByteMaxValue, ushort.MaxValue / 2, ByteOrder.LittleEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ushort.MaxValue, ByteOrder.BigEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ushort.MaxValue / 2, ByteOrder.BigEndian)]
-    public async Task ToUInt16SpanWithByteOrder(byte first, byte second, ushort expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToUInt16(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToUInt16SpanWithByteOrder(byte first, byte second, ushort expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToUInt16(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(uint.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -390,7 +390,7 @@ public partial class BitConverterTests
     [Arguments(uint.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(uint.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(uint.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetUInt32BytesWithByteOrder(uint value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
+    public async Task GetUInt32BytesWithByteOrder(uint value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
 
     [Test]
     [Arguments(uint.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -410,7 +410,7 @@ public partial class BitConverterTests
     public async Task TryWriteUInt32BytesWithByteOrder(uint value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(uint)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(GetBytes(first, second, third, forth, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
     }
 
@@ -424,7 +424,7 @@ public partial class BitConverterTests
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, uint.MaxValue / 2, ByteOrder.LittleEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, uint.MaxValue, ByteOrder.BigEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, uint.MaxValue / 2, ByteOrder.BigEndian)]
-    public async Task ToUInt32BytesWithByteOrder(byte first, byte second, byte third, byte forth, uint expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToUInt32(GetBytes(first, second, third, forth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToUInt32BytesWithByteOrder(byte first, byte second, byte third, byte forth, uint expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToUInt32(GetBytes(first, second, third, forth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, uint.MaxValue)]
@@ -436,7 +436,7 @@ public partial class BitConverterTests
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, uint.MaxValue / 2, ByteOrder.LittleEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, uint.MaxValue, ByteOrder.BigEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, uint.MaxValue / 2, ByteOrder.BigEndian)]
-    public async Task ToUInt32SpanWithByteOrder(byte first, byte second, byte third, byte forth, uint expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToUInt32(GetBytes(first, second, third, forth, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToUInt32SpanWithByteOrder(byte first, byte second, byte third, byte forth, uint expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToUInt32(GetBytes(first, second, third, forth, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(ulong.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -448,7 +448,7 @@ public partial class BitConverterTests
     [Arguments(ulong.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(ulong.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(ulong.MaxValue / 2, PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetUInt64BytesWithByteOrder(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
+    public async Task GetUInt64BytesWithByteOrder(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
 
     [Test]
     [Arguments(ulong.MaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -468,7 +468,7 @@ public partial class BitConverterTests
     public async Task TryWriteUInt64BytesWithByteOrder(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(ulong)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
     }
 
@@ -482,7 +482,7 @@ public partial class BitConverterTests
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ulong.MaxValue / 2, ByteOrder.LittleEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ulong.MaxValue, ByteOrder.BigEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ulong.MaxValue / 2, ByteOrder.BigEndian)]
-    public async Task ToUInt64BytesWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ulong expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToUInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToUInt64BytesWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ulong expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToUInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ulong.MaxValue)]
@@ -494,7 +494,7 @@ public partial class BitConverterTests
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ulong.MaxValue / 2, ByteOrder.LittleEndian)]
     [Arguments(ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ulong.MaxValue, ByteOrder.BigEndian)]
     [Arguments(PositiveByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ulong.MaxValue / 2, ByteOrder.BigEndian)]
-    public async Task ToUInt64SpanWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ulong expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToUInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToUInt64SpanWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ulong expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToUInt64(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), byteOrder)).IsEqualTo(expected);
 
 #if NET5_0_OR_GREATER
     [Test]
@@ -507,7 +507,7 @@ public partial class BitConverterTests
     [Arguments(-65504D, 0xFB, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(65504D, 0x7B, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(-65504D, 0xFB, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetHalfBytesWithByteOrder(Half value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
+    public async Task GetHalfBytesWithByteOrder(Half value, byte first, byte second, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, byteOrder));
 
     [Test]
     [Arguments(65504D, 0x7B, ByteMaxValue)]
@@ -527,7 +527,7 @@ public partial class BitConverterTests
     public async Task TryWriteHalfBytesWithByteOrder(Half value, byte first, byte second, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(short)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, byteOrder));
     }
 
@@ -541,7 +541,7 @@ public partial class BitConverterTests
     [Arguments(0xFB, ByteMaxValue, -65504D, ByteOrder.LittleEndian)]
     [Arguments(0x7B, ByteMaxValue, 65504D, ByteOrder.BigEndian)]
     [Arguments(0xFB, ByteMaxValue, -65504D, ByteOrder.BigEndian)]
-    public async Task ToHalfBytesWithByteOrder(byte first, byte second, Half expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToHalf(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToHalfBytesWithByteOrder(byte first, byte second, Half expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToHalf(GetBytes(first, second, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(0x7B, ByteMaxValue, 65504D)]
@@ -553,7 +553,7 @@ public partial class BitConverterTests
     [Arguments(0xFB, ByteMaxValue, -65504D, ByteOrder.LittleEndian)]
     [Arguments(0x7B, ByteMaxValue, 65504D, ByteOrder.BigEndian)]
     [Arguments(0xFB, ByteMaxValue, -65504D, ByteOrder.BigEndian)]
-    public async Task ToHalfSpanWithByteOrder(byte first, byte second, Half expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToHalf(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToHalfSpanWithByteOrder(byte first, byte second, Half expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToHalf(GetBytes(first, second, byteOrder), byteOrder)).IsEqualTo(expected);
 #endif
 
     [Test]
@@ -566,7 +566,7 @@ public partial class BitConverterTests
     [Arguments(float.MinValue, ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(float.MaxValue, PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(float.MinValue, ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetSingleBytesWithByteOrder(float value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
+    public async Task GetSingleBytesWithByteOrder(float value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
 
     [Test]
     [Arguments(float.MaxValue, PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue)]
@@ -586,7 +586,7 @@ public partial class BitConverterTests
     public async Task TryWriteSingleBytesWithByteOrder(float value, byte first, byte second, byte third, byte forth, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(float)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, third, forth, byteOrder));
     }
 
@@ -600,7 +600,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, float.MinValue, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue, float.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, float.MinValue, ByteOrder.BigEndian)]
-    public async Task ToSingleBytesWithByteOrder(byte first, byte second, byte third, byte forth, float expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToSingle(GetBytes(first, second, third, forth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToSingleBytesWithByteOrder(byte first, byte second, byte third, byte forth, float expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToSingle(GetBytes(first, second, third, forth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue, float.MaxValue)]
@@ -612,7 +612,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, float.MinValue, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, PositiveByte, ByteMaxValue, ByteMaxValue, float.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, PositiveByte, ByteMaxValue, ByteMaxValue, float.MinValue, ByteOrder.BigEndian)]
-    public async Task ToSingleSpanWithByteOrder(byte first, byte second, byte third, byte forth, float expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToSingle(GetBytes(first, second, third, forth, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToSingleSpanWithByteOrder(byte first, byte second, byte third, byte forth, float expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToSingle(GetBytes(first, second, third, forth, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(double.MaxValue, PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -624,7 +624,7 @@ public partial class BitConverterTests
     [Arguments(double.MinValue, ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.LittleEndian)]
     [Arguments(double.MaxValue, PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
     [Arguments(double.MinValue, ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteOrder.BigEndian)]
-    public async Task GetDoubleBytesWithByteOrder(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => await Assert.That(BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
+    public async Task GetDoubleBytesWithByteOrder(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder) => await Assert.That(System.BitConverter.GetBytes(value, byteOrder)).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
 
     [Test]
     [Arguments(double.MaxValue, PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue)]
@@ -644,7 +644,7 @@ public partial class BitConverterTests
     public async Task TryWriteDoubleBytesWithByteOrder(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, ByteOrder byteOrder)
     {
         byte[] span = new byte[sizeof(double)];
-        await Assert.That(BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
+        await Assert.That(System.BitConverter.TryWriteBytes(span, value, byteOrder)).IsTrue();
         await Assert.That(span).IsEquivalentTo(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder));
     }
 
@@ -658,7 +658,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, double.MinValue, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, double.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, double.MinValue, ByteOrder.BigEndian)]
-    public async Task ToDoubleBytesWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, double expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToDouble(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
+    public async Task ToDoubleBytesWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, double expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToDouble(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), 0, byteOrder)).IsEqualTo(expected);
 
     [Test]
     [Arguments(PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, double.MaxValue)]
@@ -670,7 +670,7 @@ public partial class BitConverterTests
     [Arguments(ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, double.MinValue, ByteOrder.LittleEndian)]
     [Arguments(PositiveByte, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, double.MaxValue, ByteOrder.BigEndian)]
     [Arguments(ByteMaxValue, FloatByte, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, ByteMaxValue, double.MinValue, ByteOrder.BigEndian)]
-    public async Task ToDoubleSpanWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, double expected, ByteOrder byteOrder) => await Assert.That(BitConverter.ToDouble(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), byteOrder)).IsEqualTo(expected);
+    public async Task ToDoubleSpanWithByteOrder(byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth, double expected, ByteOrder byteOrder) => await Assert.That(System.BitConverter.ToDouble(GetBytes(first, second, third, forth, fifth, sixth, seventh, eighth, byteOrder), byteOrder)).IsEqualTo(expected);
 
     [Test]
     public async Task ToStringBytes() => await Assert.That(BitConverter.ToString(GetBytes(0x54, 0x65, 0x78, 0x74, byteOrder: DefaultByteOrder))).IsEqualTo("74-78-65-54");

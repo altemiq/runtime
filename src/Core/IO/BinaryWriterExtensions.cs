@@ -7,6 +7,7 @@
 namespace Altemiq.IO;
 
 using System.Reflection;
+using BitConverter = System.BitConverter;
 
 /// <summary>
 /// <see cref="BinaryWriter"/> extensions.
@@ -23,7 +24,7 @@ public static class BinaryWriterExtensions
     /// </summary>
     /// <param name="writer">The writer.</param>
     /// <param name="value">The two-byte floating-point value to write.</param>
-    public static void Write(this BinaryWriter writer, Half value) => writer.Write(BitConverter.HalfToInt16Bits(value));
+    public static void Write(this BinaryWriter writer, Half value) => writer.Write(System.BitConverter.HalfToInt16Bits(value));
 #endif
 
     /// <inheritdoc cref="BinaryWriter.Write(byte)" />
@@ -38,7 +39,7 @@ public static class BinaryWriterExtensions
 
     /// <inheritdoc cref="BinaryWriter.Write(char)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static void Write(this BinaryWriter writer, char value, ByteOrder byteOrder) => Write(writer, value, Cast<System.Text.Encoding>(EncodingFieldInfo.GetValue(writer)), byteOrder);
+    public static void Write(this BinaryWriter writer, char value, ByteOrder byteOrder) => writer.Write(value, Cast<System.Text.Encoding>(EncodingFieldInfo.GetValue(writer)), byteOrder);
 
     /// <inheritdoc cref="BinaryWriter.Write(char)" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -56,7 +57,7 @@ public static class BinaryWriterExtensions
 
     /// <inheritdoc cref="BinaryWriter.Write(char[])" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static void Write(this BinaryWriter writer, char[] buffer, ByteOrder byteOrder) => Write(writer, buffer, Cast<System.Text.Encoding>(EncodingFieldInfo.GetValue(writer)), byteOrder);
+    public static void Write(this BinaryWriter writer, char[] buffer, ByteOrder byteOrder) => writer.Write(buffer, Cast<System.Text.Encoding>(EncodingFieldInfo.GetValue(writer)), byteOrder);
 
     /// <inheritdoc cref="BinaryWriter.Write(char[])" />
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]

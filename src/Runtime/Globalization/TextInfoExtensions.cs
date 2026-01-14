@@ -30,7 +30,7 @@ public static class TextInfoExtensions
         static string ToCamelCaseCore(System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source)
         {
             var destination = System.Buffers.ArrayPool<char>.Shared.Rent(source.Length);
-            var used = ToCamelCase(textInfo, source, destination);
+            var used = textInfo.ToCamelCase(source, destination);
             var returnString = destination.AsSpan(0, used).AsString();
             System.Buffers.ArrayPool<char>.Shared.Return(destination);
             return returnString;
@@ -65,7 +65,7 @@ public static class TextInfoExtensions
         static string ToPascalCaseCore(System.Globalization.TextInfo textInfo, ReadOnlySpan<char> source)
         {
             var destination = System.Buffers.ArrayPool<char>.Shared.Rent(source.Length);
-            var used = ToPascalCase(textInfo, source, destination);
+            var used = textInfo.ToPascalCase(source, destination);
             var returnString = destination.AsSpan(0, used).AsString();
             System.Buffers.ArrayPool<char>.Shared.Return(destination);
             return returnString;

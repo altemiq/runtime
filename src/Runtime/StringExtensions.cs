@@ -21,7 +21,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="input">The string to convert to camel case.</param>
     /// <returns>The specified string converted to camel case.</returns>
-    public static string ToCamelCase(this string input) => ToCamelCase(input, default);
+    public static string ToCamelCase(this string input) => input.ToCamelCase(default);
 
     /// <summary>
     /// Converts the specified string to camel case, using the casing rules of the specified culture.
@@ -46,7 +46,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="input">The string to convert to pascal case.</param>
     /// <returns>The specified string converted to pascal case.</returns>
-    public static string ToPascalCase(this string input) => ToPascalCase(input, default);
+    public static string ToPascalCase(this string input) => input.ToPascalCase(default);
 
     /// <summary>
     /// Converts the specified string to pascal case, using the casing rules of the specified culture.
@@ -71,7 +71,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="input">The string to convert to kebab case.</param>
     /// <returns>The specified string converted to kebab case.</returns>
-    public static string ToKebabCase(this string input) => ToKebabCase(input, default);
+    public static string ToKebabCase(this string input) => input.ToKebabCase(default);
 
     /// <summary>
     /// Converts the specified string to kebab case, using the casing rules of the specified culture.
@@ -95,7 +95,7 @@ public static class StringExtensions
     /// </summary>
     /// <param name="input">The string to convert to snake case.</param>
     /// <returns>The specified string converted to snake case.</returns>
-    public static string ToSnakeCase(this string input) => ToSnakeCase(input, default);
+    public static string ToSnakeCase(this string input) => input.ToSnakeCase(default);
 
     /// <summary>
     /// Converts the specified string to snake case, using the casing rules of the specified culture.
@@ -121,7 +121,7 @@ public static class StringExtensions
     /// <param name="suffix">The suffix to remove.</param>
     /// <returns><paramref name="source"/> with <paramref name="suffix"/> removed.</returns>
     public static string RemoveSuffix(this string source, string suffix) =>
-        RemoveSuffix(source.AsSpan(), suffix.AsSpan()) switch
+        source.AsSpan().RemoveSuffix(suffix.AsSpan()) switch
         {
             -1 => source,
             0 => string.Empty,

@@ -483,7 +483,7 @@ public static partial class MemoryExtensions
     /// <param name="provider">An object that supplies culture-specific information about the format of <paramref name="span"/>. If provider is <see langword="null"/>, the thread current culture is used.</param>
     /// <param name="value">The <see cref="byte"/> result for the next value from <paramref name="span"/>.</param>
     /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from <paramref name="span"/>; otherwise <see langword="false"/>.</returns>
-    public static bool TryGetNextByte(this ReadOnlySpan<char> span, ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out byte value) => TryGetNextByte(span, ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
+    public static bool TryGetNextByte(this ReadOnlySpan<char> span, ref System.MemoryExtensions.SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out byte value) => span.TryGetNextByte(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
     /// <summary>
     /// Tries to get the next value from the span as a <see cref="byte"/>, with the result indicating success.

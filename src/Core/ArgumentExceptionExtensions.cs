@@ -33,7 +33,7 @@ public static class ArgumentExceptionExtensions
         {
             if (T.IsNegative(value))
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 #else
@@ -49,7 +49,7 @@ public static class ArgumentExceptionExtensions
             const sbyte Zero = 0;
             if (value < Zero)
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 
@@ -64,7 +64,7 @@ public static class ArgumentExceptionExtensions
             const short Zero = 0;
             if (value < Zero)
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 
@@ -78,7 +78,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0)
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 
@@ -92,7 +92,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0L)
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 
@@ -106,7 +106,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0F)
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 
@@ -120,7 +120,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0D)
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 
@@ -134,7 +134,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0M)
             {
-                ThrowNegative(value, paramName);
+                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
             }
         }
 #endif
