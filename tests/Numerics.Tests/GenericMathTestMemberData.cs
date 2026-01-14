@@ -14,11 +14,11 @@ internal static class GenericMathTestMemberData
     // CrossPlatformMachineEpsilon for the variance, while an expected result in the format of 0.0xxxxxxxxxxxxxxxxx
     // will use CrossPlatformMachineEpsilon / 10 and expected result in the format of x.xxxxxxxxxxxxxxxx will
     // use CrossPlatformMachineEpsilon * 10.
-    internal const double DoubleCrossPlatformMachineEpsilon = 8.8817841970012523e-16;
+    private const double DoubleCrossPlatformMachineEpsilon = 8.8817841970012523e-16;
 
-    internal const double MinNormalDouble = 2.2250738585072014E-308;
+    private const double MinNormalDouble = 2.2250738585072014E-308;
 
-    internal const double MaxSubnormalDouble = 2.2250738585072009E-308;
+    private const double MaxSubnormalDouble = 2.2250738585072009E-308;
 
     public static IEnumerable<Func<(double, double, double, double)>> ClampDouble
     {
