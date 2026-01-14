@@ -7,7 +7,7 @@
 namespace Altemiq.Runtime;
 
 /// <summary>
-/// Initialises a new instance of the <see cref="RuntimeConfig"/> class.
+/// Initializes a new instance of the <see cref="RuntimeConfig"/> class.
 /// </summary>
 /// <param name="path">The path.</param>
 /// <remarks>
@@ -451,7 +451,7 @@ internal sealed class RuntimeConfig(string path)
     /// The framework class.
     /// </summary>
     /// <remarks>
-    /// Initialises a new instance of the <see cref="Framework"/> class.
+    /// Initializes a new instance of the <see cref="Framework"/> class.
     /// </remarks>
     /// <param name="name">The name.</param>
     /// <param name="version">The version.</param>

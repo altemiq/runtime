@@ -9,7 +9,6 @@
   "settings": {
     "documentationRules": {
       "companyName": "Altemiq",
-      "documentationCulture": "en-GB",
       "headerDecoration": "-----------------------------------------------------------------------",
       "copyrightText": "Copyright (c) {companyName}. All rights reserved."
     }

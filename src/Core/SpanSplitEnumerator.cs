@@ -33,7 +33,7 @@ public ref struct SpanSplitEnumerator<T>
     private int startNext;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="SpanSplitEnumerator{T}"/> struct.
+    /// Initializes a new instance of the <see cref="SpanSplitEnumerator{T}"/> struct.
     /// </summary>
     /// <param name="span">The span.</param>
     /// <param name="separator">The separators.</param>
@@ -55,7 +55,7 @@ public ref struct SpanSplitEnumerator<T>
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="SpanSplitEnumerator{T}"/> struct.
+    /// Initializes a new instance of the <see cref="SpanSplitEnumerator{T}"/> struct.
     /// </summary>
     /// <param name="span">The span.</param>
     /// <param name="firstSeparator">The first separator.</param>
@@ -78,7 +78,7 @@ public ref struct SpanSplitEnumerator<T>
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="SpanSplitEnumerator{T}"/> struct.
+    /// Initializes a new instance of the <see cref="SpanSplitEnumerator{T}"/> struct.
     /// </summary>
     /// <param name="span">The span.</param>
     /// <param name="separator">The separator.</param>

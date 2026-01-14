@@ -19,7 +19,7 @@ public class SeekableStream : Stream
     private long position;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="SeekableStream"/> class.
+    /// Initializes a new instance of the <see cref="SeekableStream"/> class.
     /// </summary>
     /// <param name="stream">The stream.</param>
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
@@ -29,7 +29,7 @@ public class SeekableStream : Stream
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="SeekableStream"/> class.
+    /// Initializes a new instance of the <see cref="SeekableStream"/> class.
     /// </summary>
     /// <param name="stream">The stream.</param>
     /// <param name="initialPosition">The initial position.</param>

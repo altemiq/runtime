@@ -16,7 +16,7 @@ public class SeekableStream : IO.SeekableStream
     private readonly bool closeArchive;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="SeekableStream"/> class.
+    /// Initializes a new instance of the <see cref="SeekableStream"/> class.
     /// </summary>
     /// <param name="archiveEntry">The archive entry.</param>
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
@@ -26,7 +26,7 @@ public class SeekableStream : IO.SeekableStream
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="SeekableStream"/> class.
+    /// Initializes a new instance of the <see cref="SeekableStream"/> class.
     /// </summary>
     /// <param name="archive">The archive.</param>
     /// <param name="stream">The stream.</param>

@@ -30,12 +30,12 @@ public class EchoStream : Stream
     private long position;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="EchoStream"/> class.
+    /// Initializes a new instance of the <see cref="EchoStream"/> class.
     /// </summary>
     public EchoStream() => this.buffers = [];
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="EchoStream"/> class with the specified upper-bound.
+    /// Initializes a new instance of the <see cref="EchoStream"/> class with the specified upper-bound.
     /// </summary>
     /// <param name="boundedCapacity">The bounded size of the collection.</param>
     public EchoStream(int boundedCapacity) => this.buffers = new(boundedCapacity);

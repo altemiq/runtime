@@ -123,11 +123,6 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>3</c>).</exception>
     public Vector2D this[int row]
     {
-        // When row is a known constant, we can use a switch to get
-        // optimal codegen as we are likely coming from register.
-        //
-        // However, if either is non-constant we're going to end up having
-        // to touch memory so just directly compute the relevant index.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get =>
             row switch
@@ -172,13 +167,6 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// </exception>
     public double this[int row, int column]
     {
-        // When both row and column are known constants, we can use a switch to
-        // get optimal codegen as we are likely coming from register.
-        //
-        // However, if either is non-constant we're going to end up having to
-        // touch memory so just directly compute the relevant index.
-        //
-        // The JIT will elide any dead code paths if only one of the inputs is constant.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly get =>
             row switch

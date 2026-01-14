@@ -38,7 +38,7 @@ public ref struct JoinedSpanSplitEnumerator<T>
     private int startNext;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="JoinedSpanSplitEnumerator{T}"/> struct.
+    /// Initializes a new instance of the <see cref="JoinedSpanSplitEnumerator{T}"/> struct.
     /// </summary>
     /// <param name="span">The span.</param>
     /// <param name="separators">The separators.</param>
@@ -63,7 +63,7 @@ public ref struct JoinedSpanSplitEnumerator<T>
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="JoinedSpanSplitEnumerator{T}"/> struct.
+    /// Initializes a new instance of the <see cref="JoinedSpanSplitEnumerator{T}"/> struct.
     /// </summary>
     /// <param name="span">The span.</param>
     /// <param name="separator">The separator.</param>

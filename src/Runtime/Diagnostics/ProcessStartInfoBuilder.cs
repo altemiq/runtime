@@ -16,7 +16,7 @@ public class ProcessStartInfoBuilder
     private readonly string fileName;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="ProcessStartInfoBuilder"/> class.
+    /// Initializes a new instance of the <see cref="ProcessStartInfoBuilder"/> class.
     /// </summary>
     /// <param name="fileName">The file name.</param>
     public ProcessStartInfoBuilder(string fileName)
@@ -25,7 +25,7 @@ public class ProcessStartInfoBuilder
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="ProcessStartInfoBuilder"/> class.
+    /// Initializes a new instance of the <see cref="ProcessStartInfoBuilder"/> class.
     /// </summary>
     /// <param name="startInfo">The start info.</param>
     public ProcessStartInfoBuilder(ProcessStartInfo startInfo)

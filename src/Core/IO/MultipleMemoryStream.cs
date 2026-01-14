@@ -13,7 +13,7 @@ namespace Altemiq.IO;
 public class MultipleMemoryStream : MultipleStream
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="MultipleMemoryStream"/> class.
+    /// Initializes a new instance of the <see cref="MultipleMemoryStream"/> class.
     /// </summary>
     public MultipleMemoryStream()
         : base(default(StringComparer))
@@ -21,7 +21,7 @@ public class MultipleMemoryStream : MultipleStream
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="MultipleMemoryStream"/> class.
+    /// Initializes a new instance of the <see cref="MultipleMemoryStream"/> class.
     /// </summary>
     /// <param name="comparer">The <see cref="IEqualityComparer{T}"/> implementation to use when comparing keys, or <see langword="null"/> to use <see cref="StringComparer.Ordinal"/>.</param>
     public MultipleMemoryStream(IEqualityComparer<string>? comparer)
@@ -30,7 +30,7 @@ public class MultipleMemoryStream : MultipleStream
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="MultipleMemoryStream"/> class.
+    /// Initializes a new instance of the <see cref="MultipleMemoryStream"/> class.
     /// </summary>
     /// <param name="dictionary">The <see cref="IDictionary{TKey,TValue}"/> to use to back this instance.</param>
     public MultipleMemoryStream(IDictionary<string, Stream>? dictionary)
