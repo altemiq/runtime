@@ -1119,10 +1119,10 @@ public partial struct Matrix4x4D
                 row3 = Avx.Permute2x128(vTemp1, vTemp3, 0b_00_11_00_01); // x[2], y[2], z[2], w[2]
                 row4 = Avx.Permute2x128(vTemp2, vTemp4, 0b_00_11_00_01); // x[3], y[3], z[3], w[3]
 
-                var V00 = Vector256.Shuffle(row3, Vector256.Create(0, 0, 1, 1));
-                var V10 = Vector256.Shuffle(row4, Vector256.Create(2, 3, 2, 3));
-                var V01 = Vector256.Shuffle(row1, Vector256.Create(0, 0, 1, 1));
-                var V11 = Vector256.Shuffle(row2, Vector256.Create(2, 3, 2, 3));
+                var V00 = Avx2.Permute4x64(row3, 0b01_01_00_00);
+                var V10 = Avx2.Permute4x64(row4,  0b11_10_11_10);
+                var V01 = Avx2.Permute4x64(row1, 0b01_01_00_00);
+                var V11 = Avx2.Permute4x64(row2, 0b11_10_11_10);
                 var V02 = Avx.Blend(Avx2.Permute4x64(row3, 0b10_00_10_00), Avx2.Permute4x64(row1, 0b10_00_10_00), 0b1100);
                 var V12 = Avx.Blend(Avx2.Permute4x64(row4, 0b11_01_11_01), Avx2.Permute4x64(row2, 0b11_01_11_01), 0b1100);
 
@@ -1130,10 +1130,10 @@ public partial struct Matrix4x4D
                 var D1 = V01 * V11;
                 var D2 = V02 * V12;
 
-                V00 = Vector256.Shuffle(row3, Vector256.Create(2, 3, 2, 3));
-                V10 = Vector256.Shuffle(row4, Vector256.Create(0, 0, 1, 1));
-                V01 = Vector256.Shuffle(row1, Vector256.Create(2, 3, 2, 3));
-                V11 = Vector256.Shuffle(row2, Vector256.Create(0, 0, 1, 1));
+                V00 = Avx2.Permute4x64(row3, 0b11_10_11_10);
+                V10 = Avx2.Permute4x64(row4,  0b01_01_00_00);
+                V01 = Avx2.Permute4x64(row1,  0b11_10_11_10);
+                V11 = Avx2.Permute4x64(row2, 0b01_01_00_00);
                 V02 = Avx.Blend(Avx2.Permute4x64(row3, 0b11_01_11_01), Avx2.Permute4x64(row1, 0b11_01_11_01), 0b1100);
                 V12 = Avx.Blend(Avx2.Permute4x64(row4, 0b10_00_10_00), Avx2.Permute4x64(row2, 0b10_00_10_00), 0b1100);
 
@@ -1143,16 +1143,16 @@ public partial struct Matrix4x4D
 
                 // V11 = D0Y,D0W,D2Y,D2Y
                 V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_01_11_01), Avx2.Permute4x64(D2, 0b01_01_11_01), 0b1100);
-                V00 = Vector256.Shuffle(row2, Vector256.Create(1, 2, 0, 1));
+                V00 = Avx2.Permute4x64(row2,  0b01_00_10_01);
                 V10 = Avx.Blend(Avx2.Permute4x64(V11, 0b00_11_00_10), Avx2.Permute4x64(D0, 0b00_11_00_10), 0b1100);
-                V01 = Vector256.Shuffle(row1, Vector256.Create(2, 0, 1, 0));
+                V01 = Avx2.Permute4x64(row1,  0b00_01_00_10);
                 V11 = Avx.Blend(Avx2.Permute4x64(V11, 0b10_01_10_01), Avx2.Permute4x64(D0, 0b10_01_10_01), 0b1100);
 
                 // V13 = D1Y,D1W,D2W,D2W
                 var V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_11_11_01), Avx2.Permute4x64(D2, 0b11_11_11_01), 0b1100);
-                V02 = Vector256.Shuffle(row4, Vector256.Create(1, 2, 0, 1));
+                V02 = Avx2.Permute4x64(row4,  0b01_00_10_01);
                 V12 = Avx.Blend(Avx2.Permute4x64(V13, 0b00_11_00_10), Avx2.Permute4x64(D1, 0b00_11_00_10), 0b1100);
-                var V03 = Vector256.Shuffle(row3, Vector256.Create(2, 0, 1, 0));
+                var V03 = Avx2.Permute4x64(row3,  0b00_01_00_10);
                 V13 = Avx.Blend(Avx2.Permute4x64(V13, 0b10_01_10_01), Avx2.Permute4x64(D1, 0b10_01_10_01), 0b1100);
 
                 var C0 = V00 * V10;
@@ -1162,16 +1162,16 @@ public partial struct Matrix4x4D
 
                 // V11 = D0X,D0Y,D2X,D2X
                 V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b00_00_01_00), Avx2.Permute4x64(D2, 0b00_00_01_00), 0b1100);
-                V00 = Vector256.Shuffle(row2, Vector256.Create(2, 3, 1, 2));
+                V00 = Avx2.Permute4x64(row2, 0b10_01_11_10);
                 V10 = Avx.Blend(Avx2.Permute4x64(D0, 0b10_01_00_11), Avx2.Permute4x64(V11, 0b10_01_00_11), 0b1100);
-                V01 = Vector256.Shuffle(row1, Vector256.Create(3, 2, 3, 1));
+                V01 = Avx2.Permute4x64(row1,  0b01_11_10_11);
                 V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b00_10_01_10), Avx2.Permute4x64(V11, 0b00_10_01_10), 0b1100);
 
                 // V13 = D1X,D1Y,D2Z,D2Z
                 V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b10_10_01_00), Avx2.Permute4x64(D2, 0b10_10_01_00), 0b1100);
-                V02 = Vector256.Shuffle(row4, Vector256.Create(2, 3, 1, 2));
+                V02 = Avx2.Permute4x64(row4, 0b10_01_11_10);
                 V12 = Avx.Blend(Avx2.Permute4x64(D1, 0b10_01_00_11), Avx2.Permute4x64(V13, 0b10_01_00_11), 0b1100);
-                V03 = Vector256.Shuffle(row3, Vector256.Create(3, 2, 3, 1));
+                V03 = Avx2.Permute4x64(row3,  0b01_11_10_11);
                 V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b_00_10_01_10), Avx2.Permute4x64(V13, 0b_00_10_01_10), 0b1100);
 
                 C0 = Vector256.MultiplyAddEstimate(-V00, V10, C0);
@@ -1179,26 +1179,26 @@ public partial struct Matrix4x4D
                 C4 = Vector256.MultiplyAddEstimate(-V02, V12, C4);
                 C6 = Vector256.MultiplyAddEstimate(-V03, V13, C6);
 
-                V00 = Vector256.Shuffle(row2, Vector256.Create(3, 0, 3, 0));
+                V00 = Avx2.Permute4x64(row2, 0b00_11_00_11);
 
                 // V10 = D0Z,D0Z,D2X,D2Y
                 V10 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_00_10_10), Avx2.Permute4x64(D2, 0b01_00_10_10), 0b1100);
-                V10 = Vector256.Shuffle(V10, Vector256.Create(0, 3, 2, 0));
-                V01 = Vector256.Shuffle(row1, Vector256.Create(1, 3, 0, 2));
+                V10 = Avx2.Permute4x64(V10, 0b00_10_11_00);
+                V01 = Avx2.Permute4x64(row1,  0b10_00_11_01);
 
                 // V11 = D0X,D0W,D2X,D2Y
                 V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_00_11_00), Avx2.Permute4x64(D2, 0b01_00_11_00), 0b1100);
-                V11 = Vector256.Shuffle(V11, Vector256.Create(3, 0, 1, 2));
-                V02 = Vector256.Shuffle(row4, Vector256.Create(3, 0, 3, 0));
+                V11 = Avx2.Permute4x64(V11, 0b10_01_00_11);
+                V02 = Avx2.Permute4x64(row4,  0b00_11_00_11);
 
                 // V12 = D1Z,D1Z,D2Z,D2W
                 V12 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_10_10_10), Avx2.Permute4x64(D2, 0b11_10_10_10), 0b1100);
-                V12 = Vector256.Shuffle(V12, Vector256.Create(0, 3, 2, 0));
-                V03 = Vector256.Shuffle(row3, Vector256.Create(1, 3, 0, 2));
+                V12 = Avx2.Permute4x64(V12, 0b00_10_11_00);
+                V03 = Avx2.Permute4x64(row3, 0b10_00_11_01);
 
                 // V13 = D1X,D1W,D2Z,D2W
                 V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_10_11_00), Avx2.Permute4x64(D2, 0b11_10_11_00), 0b1100);
-                V13 = Vector256.Shuffle(V13, Vector256.Create(3, 0, 1, 2));
+                V13 = Avx2.Permute4x64(V13, 0b10_01_00_11);
 
                 V00 *= V10;
                 V01 *= V11;
@@ -1222,10 +1222,10 @@ public partial struct Matrix4x4D
                 C4 = Avx.Blend(Avx2.Permute4x64(C4, 0b11_01_10_00), Avx2.Permute4x64(C5, 0b11_01_10_00), 0b1100);
                 C6 = Avx.Blend(Avx2.Permute4x64(C6, 0b11_01_10_00), Avx2.Permute4x64(C7, 0b11_01_10_00), 0b1100);
 
-                C0 = Vector256.Shuffle(C0, Vector256.Create(0, 2, 1, 3));
-                C2 = Vector256.Shuffle(C2, Vector256.Create(0, 2, 1, 3));
-                C4 = Vector256.Shuffle(C4, Vector256.Create(0, 2, 1, 3));
-                C6 = Vector256.Shuffle(C6, Vector256.Create(0, 2, 1, 3));
+                C0 = Avx2.Permute4x64(C0, 0b11_01_10_00);
+                C2 = Avx2.Permute4x64(C2,  0b11_01_10_00);
+                C4 = Avx2.Permute4x64(C4, 0b11_01_10_00);
+                C6 = Avx2.Permute4x64(C6, 0b11_01_10_00);
 
                 // Get the determinant
                 var det = Vector4D.Dot(C0.AsVector4D(), row1.AsVector4D());
