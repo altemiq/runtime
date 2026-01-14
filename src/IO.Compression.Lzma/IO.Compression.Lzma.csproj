@@ -13,7 +13,6 @@
       T:System.Diagnostics.CodeAnalysis.NotNullAttribute|
       T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute
     </MeziantouPolyfill_IncludedPolyfills>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
  
 

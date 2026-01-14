@@ -224,7 +224,7 @@ public class SeekableStream : Stream
     public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();
 #elif NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <inheritdoc/>
-    public override object InitializeLifetimeService() => this.stream.InitializeLifetimeService();
+    public override object? InitializeLifetimeService() => this.stream.InitializeLifetimeService();
 #endif
 
     /// <inheritdoc/>

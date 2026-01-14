@@ -6,12 +6,23 @@
 
 namespace Altemiq.Protobuf;
 
+#pragma warning disable SA1101
+
 /// <summary>
 /// <see cref="Protobuf"/> extensions.
 /// </summary>
 public static class ProtobufExtensions
 {
 #if NETSTANDARD2_0_OR_GREATER || NET461_OR_GREATER || NETCOREAPP3_0_OR_GREATER
+    extension(Value value)
+    {
+        /// <inheritdoc cref="Converters.ValueConverter.ToJsonElement"/>
+        public JsonElement ToJsonElement() => Converters.ValueConverter.ToJsonElement(value);
+
+        /// <inheritdoc cref="Converters.ValueConverter.ToJsonNode"/>
+        public JsonNode? ToJsonNode() => Converters.ValueConverter.ToJsonNode(value);
+    }
+
     /// <inheritdoc cref="Converters.StructConverter.ToStruct"/>
     [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(document))]
     public static Struct? ToStruct(this JsonDocument? document) => Converters.StructConverter.ToStruct(document);
@@ -25,12 +36,6 @@ public static class ProtobufExtensions
     /// <inheritdoc cref="Converters.StructConverter.ToJsonDocument"/>
     [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(@struct))]
     public static JsonDocument? ToJsonDocument(this Struct? @struct) => Converters.StructConverter.ToJsonDocument(@struct);
-
-    /// <inheritdoc cref="Converters.ValueConverter.ToJsonElement"/>
-    public static JsonElement ToJsonElement(this Value value) => Converters.ValueConverter.ToJsonElement(value);
-
-    /// <inheritdoc cref="Converters.ValueConverter.ToJsonNode"/>
-    public static JsonNode? ToJsonNode(this Value value) => Converters.ValueConverter.ToJsonNode(value);
 #endif
 
     /// <inheritdoc cref="WellKnownTypes.Uuid.ForGuid"/>

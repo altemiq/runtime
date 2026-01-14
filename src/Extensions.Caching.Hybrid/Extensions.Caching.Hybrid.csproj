@@ -3,7 +3,16 @@
   <PropertyGroup>
     <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.1;netstandard2.0;net462</TargetFrameworks>
     <SuppressTfmSupportBuildWarnings Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net4.0')) ">true</SuppressTfmSupportBuildWarnings>
-    <MeziantouPolyfill_IncludedPolyfills>$(MeziantouPolyfill_IncludedPolyfills)|T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute|T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes|T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute|T:System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute</MeziantouPolyfill_IncludedPolyfills>
+    
+    <MeziantouPolyfill_IncludedPolyfills>
+      $(MeziantouPolyfill_IncludedPolyfills)|
+      T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute|
+      T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes|
+      T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute|
+      T:System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute
+    </MeziantouPolyfill_IncludedPolyfills>
+
+    <NoWarn Condition=" !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0')) ">$(NoWarn);AD0001</NoWarn>
   </PropertyGroup>
   
   <PropertyGroup Label="Packaging">

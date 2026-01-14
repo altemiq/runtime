@@ -24,7 +24,7 @@ public readonly struct CancellationTokenAwaiter : System.Runtime.CompilerService
     internal readonly Threading.CancellationTokenConfigureAwaitOptions Options;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CancellationTokenAwaiter"/> struct.
+    /// Initialises a new instance of the <see cref="CancellationTokenAwaiter"/> struct.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <param name="options">The options.</param>

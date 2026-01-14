@@ -14,7 +14,6 @@ public static partial class BitConverter
     /// <summary>
     /// Extension methods for <see cref="System.BitConverter"/> for variable integers.
     /// </summary>
-#pragma warning disable SA1137, SA1400, S1144
     extension(System.BitConverter)
     {
         /// <summary>
@@ -747,5 +746,5 @@ public static partial class BitConverter
         ValueMask = 0x7F;
 
     private const int BitShift = 7;
-#pragma warning restore SA1137, SA1201, SA1400, S1144
+#pragma warning restore SA1201
 }

@@ -14,6 +14,13 @@ using Microsoft.Extensions.DependencyModel;
 /// </summary>
 public static class RuntimeEnvironment
 {
+#pragma warning disable SA1101
+    extension<T>(IEnumerable<T?> source)
+    {
+        private IEnumerable<T> WhereNotNull() => source.OfType<T>();
+    }
+#pragma warning restore SA1101
+
     private const string NativeDllSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES";
     private const string AppPaths = "APP_PATHS";
     private const string RuntimesDirectory = "runtimes";
@@ -693,6 +700,4 @@ public static class RuntimeEnvironment
 
         return [.. RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal)];
     }
-
-    private static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source) => source.OfType<T>();
 }

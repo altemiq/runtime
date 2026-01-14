@@ -293,21 +293,39 @@ public static class Vector256Extensions
         }
     }
 
-    /// <summary>Reinterprets a <see cref="Numerics.PlaneD" /> as a new <see langword="Vector256{double}" />.</summary>
+    /// <content>
+    /// <see cref="Numerics.PlaneD"/> extensions.
+    /// </content>
     /// <param name="value">The plane to reinterpret.</param>
-    /// <returns>The input reinterpreted as a new <see langword="Vector256{double}" />.</returns>
-    [Intrinsic]
-    public static Vector256<double> AsVector256(this Numerics.PlaneD value) => Unsafe.BitCast<Numerics.PlaneD, Vector256<double>>(value);
+    extension(Numerics.PlaneD value)
+    {
+        /// <summary>Reinterprets a <see cref="Numerics.PlaneD" /> as a new <see langword="Vector256{double}" />.</summary>
+        /// <returns>The input reinterpreted as a new <see langword="Vector256{double}" />.</returns>
+        [Intrinsic]
+        public Vector256<double> AsVector256() => Unsafe.BitCast<Numerics.PlaneD, Vector256<double>>(value);
+    }
 
-    /// <summary>Reinterprets a <see cref="Numerics.QuaternionD" /> as a new <see langword="Vector256{double}" />.</summary>
+    /// <content>
+    /// <see cref="Numerics.QuaternionD"/> extensions.
+    /// </content>
     /// <param name="value">The quaternion to reinterpret.</param>
-    /// <returns>The input reinterpreted as a new <see langword="Vector256{double}" />.</returns>
-    [Intrinsic]
-    public static Vector256<double> AsVector256(this Numerics.QuaternionD value) => Unsafe.BitCast<Numerics.QuaternionD, Vector256<double>>(value);
+    extension(Numerics.QuaternionD value)
+    {
+        /// <summary>Reinterprets a <see cref="Numerics.QuaternionD" /> as a new <see langword="Vector256{double}" />.</summary>
+        /// <returns>The input reinterpreted as a new <see langword="Vector256{double}" />.</returns>
+        [Intrinsic]
+        public Vector256<double> AsVector256() => Unsafe.BitCast<Numerics.QuaternionD, Vector256<double>>(value);
+    }
 
-    /// <summary>Reinterprets a <see langword="Numerics.Vector4D" /> as a new <see cref="Vector256{Double}" />.</summary>
+    /// <content>
+    /// <see cref="Numerics.Vector4D"/> extensions.
+    /// </content>
     /// <param name="value">The vector to reinterpret.</param>
-    /// <returns>The input reinterpreted as a new <see langword="Vector256{Double}" />.</returns>
-    [Intrinsic]
-    public static Vector256<double> AsVector256(this Numerics.Vector4D value) => Unsafe.BitCast<Numerics.Vector4D, Vector256<double>>(value);
+    extension(Numerics.Vector4D value)
+    {
+        /// <summary>Reinterprets a <see langword="Numerics.Vector4D" /> as a new <see cref="Vector256{Double}" />.</summary>
+        /// <returns>The input reinterpreted as a new <see langword="Vector256{Double}" />.</returns>
+        [Intrinsic]
+        public Vector256<double> AsVector256() => Unsafe.BitCast<Numerics.Vector4D, Vector256<double>>(value);
+    }
 }

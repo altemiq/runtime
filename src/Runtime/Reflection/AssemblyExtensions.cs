@@ -6,44 +6,58 @@
 
 namespace Altemiq.Reflection;
 
+#pragma warning disable CA1708, RCS1263, SA1101
+
 /// <summary>
 /// <see cref="System.Reflection.Assembly"/> extensions.
 /// </summary>
 public static class AssemblyExtensions
 {
-    /// <summary>
-    /// Checks to see if the supplied assembly name is valid for the required assembly name.
-    /// </summary>
+    /// <content>
+    /// <see cref="System.Reflection.Assembly"/> extensions.
+    /// </content>
     /// <param name="assembly">The assembly.</param>
-    /// <param name="requiredAssemblyName">The required assembly name.</param>
-    /// <returns><see langword="true"/> if <paramref name="assembly"/> is valid for <paramref name="requiredAssemblyName"/>; otherwise <see langword="false"/>.</returns>
-    public static bool IsCompatible(this System.Reflection.Assembly assembly, System.Reflection.AssemblyName requiredAssemblyName) => assembly.FullName is { } fullName && new System.Reflection.AssemblyName(fullName).IsCompatible(requiredAssemblyName);
-
-    /// <summary>
-    /// Checks to see if the supplied assembly name is valid for the required assembly name.
-    /// </summary>
-    /// <param name="assemblyName">The assembly name.</param>
-    /// <param name="requiredAssemblyName">The required assembly name.</param>
-    /// <returns><see langword="true"/> if <paramref name="assemblyName"/> is valid for <paramref name="requiredAssemblyName"/>; otherwise <see langword="false"/>.</returns>
-    public static bool IsCompatible(this System.Reflection.AssemblyName assemblyName, System.Reflection.AssemblyName requiredAssemblyName)
+    extension(System.Reflection.Assembly assembly)
     {
-        return IsNullOrEqual(requiredAssemblyName.Name).To(assemblyName.Name)
-            && IsNullOrLessThanOrEqual(requiredAssemblyName.Version).To(assemblyName.Version)
-            && IsNullOrEqual(requiredAssemblyName.CultureName).To(assemblyName.CultureName);
+        /// <summary>
+        /// Checks to see if the supplied assembly name is valid for the required assembly name.
+        /// </summary>
+        /// <param name="requiredAssemblyName">The required assembly name.</param>
+        /// <returns><see langword="true"/> if this instance is valid for <paramref name="requiredAssemblyName"/>; otherwise <see langword="false"/>.</returns>
+        public bool IsCompatible(System.Reflection.AssemblyName requiredAssemblyName) => assembly.FullName is { } fullName && new System.Reflection.AssemblyName(fullName).IsCompatible(requiredAssemblyName);
+    }
 
-        static CheckValue<Version> IsNullOrLessThanOrEqual(Version? value)
+    /// <content>
+    /// <see cref="System.Reflection.AssemblyName"/> extensions.
+    /// </content>
+    /// <param name="assemblyName">The assembly name.</param>
+    extension(System.Reflection.AssemblyName assemblyName)
+    {
+        /// <summary>
+        /// Checks to see if the supplied assembly name is valid for the required assembly name.
+        /// </summary>
+        /// <param name="requiredAssemblyName">The required assembly name.</param>
+        /// <returns><see langword="true"/> if this instance is valid for <paramref name="requiredAssemblyName"/>; otherwise <see langword="false"/>.</returns>
+        public bool IsCompatible(System.Reflection.AssemblyName requiredAssemblyName)
         {
-            return IsNullOr(value, static (v, o) => o is not null && v <= o);
-        }
+            return IsNullOrEqual(requiredAssemblyName.Name).To(assemblyName.Name)
+                   && IsNullOrLessThanOrEqual(requiredAssemblyName.Version).To(assemblyName.Version)
+                   && IsNullOrEqual(requiredAssemblyName.CultureName).To(assemblyName.CultureName);
 
-        static CheckValue<string> IsNullOrEqual(string? value)
-        {
-            return IsNullOr(value, static (v, o) => o is not null && string.Equals(v, o, StringComparison.OrdinalIgnoreCase));
-        }
+            static CheckValue<Version> IsNullOrLessThanOrEqual(Version? value)
+            {
+                return IsNullOr(value, static (v, o) => o is not null && v <= o);
+            }
 
-        static CheckValue<T> IsNullOr<T>(T? value, Func<T, T?, bool> check)
-        {
-            return value is null ? CheckValue<T>.True : new(value, check);
+            static CheckValue<string> IsNullOrEqual(string? value)
+            {
+                return IsNullOr(value, static (v, o) => o is not null && string.Equals(v, o, StringComparison.OrdinalIgnoreCase));
+            }
+
+            static CheckValue<T> IsNullOr<T>(T? value, Func<T, T?, bool> check)
+            {
+                return value is null ? CheckValue<T>.True : new(value, check);
+            }
         }
     }
 
@@ -51,8 +65,6 @@ public static class AssemblyExtensions
     {
         public static readonly CheckValue<T> True = new(default!, static (_, _) => true);
 
-        private readonly T actual = actual;
-
-        public bool To(T? expected) => check(this.actual, expected);
+        public bool To(T? expected) => check(actual, expected);
     }
 }

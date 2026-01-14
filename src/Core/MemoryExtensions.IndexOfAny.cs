@@ -6,80 +6,76 @@
 
 namespace Altemiq;
 
+#pragma warning disable RCS1263, SA1101, S2325
+
 /// <content>
 /// Extensions for getting the index of any value.
 /// </content>
 public static partial class MemoryExtensions
 {
-    /// <summary>
-    /// Reports the zero-based index of the first occurrence in this specified instance of any sequence of in the specified arguments.
-    /// The search starts at a specified byte position and examines a specified number of positions.
-    /// </summary>
+    /// <content>
+    /// Extensions for getting the index of any value.
+    /// </content>
     /// <typeparam name="T">The type of elements in <paramref name="buffer"/>.</typeparam>
     /// <param name="buffer">The buffer to search.</param>
-    /// <param name="first">The first value.</param>
-    /// <param name="second">The second value.</param>
-    /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/> or <paramref name="second"/>; -1 if no sequence was found.</returns>
-    public static int IndexOfAny<T>(this ReadOnlySpan<T> buffer, ReadOnlySpan<T> first, ReadOnlySpan<T> second)
-        where T : IEquatable<T> => IndexOfAny(buffer, new(first, second));
+    extension<T>(ReadOnlySpan<T> buffer)
+        where T : IEquatable<T>
+    {
+        /// <summary>
+        /// Reports the zero-based index of the first occurrence in this specified instance of any sequence of in the specified arguments.
+        /// The search starts at a specified byte position and examines a specified number of positions.
+        /// </summary>
+        /// <param name="first">The first value.</param>
+        /// <param name="second">The second value.</param>
+        /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/> or <paramref name="second"/>; -1 if no sequence was found.</returns>
+        public int IndexOfAny(ReadOnlySpan<T> first, ReadOnlySpan<T> second) => IndexOfAny(buffer, new(first, second));
 
-    /// <summary>
-    /// Reports the zero-based index of the first occurrence in this specified instance of any sequence of in the specified arguments.
-    /// The search starts at a specified byte position and examines a specified number of positions.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in <paramref name="buffer"/>.</typeparam>
-    /// <param name="buffer">The buffer to search.</param>
-    /// <param name="first">The first value.</param>
-    /// <param name="second">The second value.</param>
-    /// <param name="third">The third value.</param>
-    /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, or <paramref name="third"/>; -1 if no sequence was found.</returns>
-    public static int IndexOfAny<T>(this ReadOnlySpan<T> buffer, ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third)
-        where T : IEquatable<T> => IndexOfAny(buffer, new(first, second, third));
+        /// <summary>
+        /// Reports the zero-based index of the first occurrence in this specified instance of any sequence of in the specified arguments.
+        /// The search starts at a specified byte position and examines a specified number of positions.
+        /// </summary>
+        /// <param name="first">The first value.</param>
+        /// <param name="second">The second value.</param>
+        /// <param name="third">The third value.</param>
+        /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, or <paramref name="third"/>; -1 if no sequence was found.</returns>
+        public int IndexOfAny(ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third) => IndexOfAny(buffer, new(first, second, third));
 
-    /// <summary>
-    /// Reports the zero-based index of the first occurrence in this specified instance of any sequence in the specified arguments.
-    /// The search starts at a specified byte position and examines a specified number of positions.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in <paramref name="buffer"/>.</typeparam>
-    /// <param name="buffer">The buffer to search.</param>
-    /// <param name="first">The first value.</param>
-    /// <param name="second">The second value.</param>
-    /// <param name="third">The third value.</param>
-    /// <param name="forth">The forth value.</param>
-    /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, <paramref name="third"/>, or <paramref name="forth"/>; -1 if no sequence was found.</returns>
-    public static int IndexOfAny<T>(this ReadOnlySpan<T> buffer, ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third, ReadOnlySpan<T> forth)
-        where T : IEquatable<T> => IndexOfAny(buffer, new(first, second, third, forth));
+        /// <summary>
+        /// Reports the zero-based index of the first occurrence in this specified instance of any sequence in the specified arguments.
+        /// The search starts at a specified byte position and examines a specified number of positions.
+        /// </summary>
+        /// <param name="first">The first value.</param>
+        /// <param name="second">The second value.</param>
+        /// <param name="third">The third value.</param>
+        /// <param name="forth">The forth value.</param>
+        /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, <paramref name="third"/>, or <paramref name="forth"/>; -1 if no sequence was found.</returns>
+        public int IndexOfAny(ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third, ReadOnlySpan<T> forth) => IndexOfAny(buffer, new(first, second, third, forth));
 
-    /// <summary>
-    /// Reports the zero-based index of the first occurrence in this specified instance of any sequence in the specified arguments.
-    /// The search starts at a specified byte position and examines a specified number of positions.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in <paramref name="buffer"/>.</typeparam>
-    /// <param name="buffer">The buffer to search.</param>
-    /// <param name="first">The first value.</param>
-    /// <param name="second">The second value.</param>
-    /// <param name="third">The third value.</param>
-    /// <param name="forth">The forth value.</param>
-    /// <param name="fifth">The fifth value.</param>
-    /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, <paramref name="third"/>, <paramref name="forth"/>, or <paramref name="fifth"/>; -1 if no value sequence was found.</returns>
-    public static int IndexOfAny<T>(this ReadOnlySpan<T> buffer, ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third, ReadOnlySpan<T> forth, ReadOnlySpan<T> fifth)
-        where T : IEquatable<T> => IndexOfAny(buffer, new(first, second, third, forth, fifth));
+        /// <summary>
+        /// Reports the zero-based index of the first occurrence in this specified instance of any sequence in the specified arguments.
+        /// The search starts at a specified byte position and examines a specified number of positions.
+        /// </summary>
+        /// <param name="first">The first value.</param>
+        /// <param name="second">The second value.</param>
+        /// <param name="third">The third value.</param>
+        /// <param name="forth">The forth value.</param>
+        /// <param name="fifth">The fifth value.</param>
+        /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, <paramref name="third"/>, <paramref name="forth"/>, or <paramref name="fifth"/>; -1 if no value sequence was found.</returns>
+        public int IndexOfAny(ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third, ReadOnlySpan<T> forth, ReadOnlySpan<T> fifth) => IndexOfAny(buffer, new(first, second, third, forth, fifth));
 
-    /// <summary>
-    /// Reports the zero-based index of the first occurrence in this specified instance of any sequence in the specified arguments.
-    /// The search starts at a specified byte position and examines a specified number of positions.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in <paramref name="buffer"/>.</typeparam>
-    /// <param name="buffer">The buffer to search.</param>
-    /// <param name="first">The first value.</param>
-    /// <param name="second">The second value.</param>
-    /// <param name="third">The third value.</param>
-    /// <param name="forth">The forth value.</param>
-    /// <param name="fifth">The fifth value.</param>
-    /// <param name="sixth">The sixth value.</param>
-    /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, <paramref name="third"/>, <paramref name="forth"/>, <paramref name="fifth"/>, or <paramref name="sixth"/>; -1 if no byte sequence was found.</returns>
-    public static int IndexOfAny<T>(this ReadOnlySpan<T> buffer, ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third, ReadOnlySpan<T> forth, ReadOnlySpan<T> fifth, ReadOnlySpan<T> sixth)
-        where T : IEquatable<T> => IndexOfAny(buffer, new(first, second, third, forth, fifth, sixth));
+        /// <summary>
+        /// Reports the zero-based index of the first occurrence in this specified instance of any sequence in the specified arguments.
+        /// The search starts at a specified byte position and examines a specified number of positions.
+        /// </summary>
+        /// <param name="first">The first value.</param>
+        /// <param name="second">The second value.</param>
+        /// <param name="third">The third value.</param>
+        /// <param name="forth">The forth value.</param>
+        /// <param name="fifth">The fifth value.</param>
+        /// <param name="sixth">The sixth value.</param>
+        /// <returns>The zero-based index position of the first occurrence in this instance where any sequence in any of <paramref name="first"/>, <paramref name="second"/>, <paramref name="third"/>, <paramref name="forth"/>, <paramref name="fifth"/>, or <paramref name="sixth"/>; -1 if no byte sequence was found.</returns>
+        public int IndexOfAny(ReadOnlySpan<T> first, ReadOnlySpan<T> second, ReadOnlySpan<T> third, ReadOnlySpan<T> forth, ReadOnlySpan<T> fifth, ReadOnlySpan<T> sixth) => IndexOfAny(buffer, new(first, second, third, forth, fifth, sixth));
+    }
 
     private static int IndexOfAny<T>(ReadOnlySpan<T> buffer, ReadOnlySpans<T> spans)
         where T : IEquatable<T>

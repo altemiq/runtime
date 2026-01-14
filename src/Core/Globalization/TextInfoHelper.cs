@@ -8,6 +8,8 @@
 namespace System.Globalization;
 #pragma warning restore IDE0130, CheckNamespace
 
+////#pragma warning disable SA1137, SA1400, S1144
+
 /// <summary>
 /// The <see cref="TextInfo"/> helper.
 /// </summary>
@@ -16,7 +18,6 @@ public static class TextInfoHelper
     /// <summary>
     /// The extensions for <see cref="TextInfo"/>.
     /// </summary>
-#pragma warning disable SA1137, SA1400, S1144
     extension(TextInfo)
     {
         /// <summary>
@@ -30,5 +31,4 @@ public static class TextInfoHelper
             _ => CultureInfo.CurrentCulture.TextInfo,
         };
     }
-#pragma warning restore SA1137, SA1400, S1144
 }

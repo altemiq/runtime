@@ -6,13 +6,21 @@
 
 namespace Altemiq.Numerics;
 
+#pragma warning disable RCS1263, SA1101
+
 /// <content>
 /// <see cref="QuaternionD"/> extensions.
 /// </content>
 public static partial class VectorD
 {
-    /// <summary>Reinterprets a <see cref="QuaternionD"/> as a new <see cref="Vector4D"/>.</summary>
+    /// <content>
+    /// <see cref="QuaternionD"/> extensions.
+    /// </content>
     /// <param name="value">The quaternion to reinterpret.</param>
-    /// <returns><paramref name="value"/> reinterpreted as a new <see cref="QuaternionD" />.</returns>
-    public static Vector4D AsVector4D(this QuaternionD value) => Unsafe.BitCast<QuaternionD, Vector4D>(value);
+    extension(QuaternionD value)
+    {
+        /// <summary>Reinterprets a <see cref="QuaternionD"/> as a new <see cref="Vector4D"/>.</summary>
+        /// <returns>This value reinterpreted as a new <see cref="Vector4D" />.</returns>
+        public Vector4D AsVector4D() => Unsafe.BitCast<QuaternionD, Vector4D>(value);
+    }
 }

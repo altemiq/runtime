@@ -204,7 +204,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="Half"/>.</exception>
-    public static void WriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(destination, System.BitConverter.HalfToInt16Bits(value));
+    public static void WriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(destination, BitConverter.HalfToInt16Bits(value));
 
     /// <summary>
     /// Writes a <see cref="Half"/> into a span of bytes, as little endian.
@@ -212,7 +212,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="Half"/>.</exception>
-    public static void WriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(destination, System.BitConverter.HalfToInt16Bits(value));
+    public static void WriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(destination, BitConverter.HalfToInt16Bits(value));
 #endif
 
 #if NET5_0_OR_GREATER
@@ -318,7 +318,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="Half"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool TryWriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian(destination, System.BitConverter.HalfToInt16Bits(value));
+    public static bool TryWriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian(destination, BitConverter.HalfToInt16Bits(value));
 
     /// <summary>
     /// Writes a <see cref="Half"/> into a span of bytes, as little endian.
