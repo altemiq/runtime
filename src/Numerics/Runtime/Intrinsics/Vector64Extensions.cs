@@ -7,9 +7,6 @@
 #if !NET9_0_OR_GREATER
 namespace Altemiq.Runtime.Intrinsics;
 
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics;
-
 /// <summary>
 /// <see cref="Vector64"/> extensions.
 /// </summary>
@@ -17,6 +14,8 @@ public static class Vector64Extensions
 {
     extension(Vector64)
     {
+        /// <inheritdoc cref="Numerics.Vector4D.MultiplyAddEstimate(Numerics.Vector4D,Numerics.Vector4D,Numerics.Vector4D)" />
+        [Intrinsic]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Vector64<double> MultiplyAddEstimate(Vector64<double> left, Vector64<double> right, Vector64<double> addend)
         {

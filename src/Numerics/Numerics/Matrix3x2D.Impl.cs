@@ -6,8 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-using System.Runtime.CompilerServices;
-
 /// <content>
 /// The Matrix3x2D implementation.
 /// </content>

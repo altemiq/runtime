@@ -6,8 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-using System.Runtime.CompilerServices;
-
 #pragma warning disable CA1708
 
 /// <content>

@@ -6,13 +6,9 @@
 
 namespace Altemiq.Numerics;
 
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics;
-using Altemiq.Runtime.Intrinsics;
-
 /// <summary>Represents a vector that is used to encode three-dimensional physical rotations.</summary>
 /// <remarks>The <see cref="QuaternionD"/> structure is used to efficiently rotate an object about the (x,y,z) vector by the angle theta, where: <c>w = cos(theta/2)</c>.</remarks>
+[Intrinsic]
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
 public struct QuaternionD : IEquatable<QuaternionD>
 {
@@ -38,20 +34,30 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="y">The value to assign to the Y component of the quaternion.</param>
     /// <param name="z">The value to assign to the Z component of the quaternion.</param>
     /// <param name="w">The value to assign to the W component of the quaternion.</param>
+    [Intrinsic]
     public QuaternionD(double x, double y, double z, double w) => this = Create(x, y, z, w);
 
     /// <summary>Initializes a <see cref="QuaternionD"/> from the specified vector and rotation parts.</summary>
     /// <param name="vectorPart">The vector part of the quaternion.</param>
     /// <param name="scalarPart">The rotation part of the quaternion.</param>
+    [Intrinsic]
     public QuaternionD(Vector3D vectorPart, double scalarPart) => this = Create(vectorPart, scalarPart);
 
     /// <summary>Gets a quaternion that represents a zero.</summary>
     /// <value>A quaternion whose values are <c>(0, 0, 0, 0)</c>.</value>
-    public static QuaternionD Zero => default;
+    public static QuaternionD Zero
+    {
+        [Intrinsic]
+        get => default;
+    }
 
     /// <summary>Gets a quaternion that represents no rotation.</summary>
     /// <value>A quaternion whose values are <c>(0, 0, 0, 1)</c>.</value>
-    public static QuaternionD Identity => Create(0.0, 0.0, 0.0, 1.0);
+    public static QuaternionD Identity
+    {
+        [Intrinsic]
+        get => Create(0.0, 0.0, 0.0, 1.0);
+    }
 
     /// <summary>Gets a value indicating whether the current instance is the identity quaternion.</summary>
     /// <value><see langword="true"/> if the current instance is the identity quaternion; otherwise, <see langword="false"/>.</value>
@@ -64,8 +70,10 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> was less than zero or greater than the number of elements.</exception>
     public double this[int index]
     {
+        [Intrinsic]
         readonly get => this.AsVector256().GetElement(index);
 
+        [Intrinsic]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set => this = this.AsVector256().WithElement(index, value).AsQuaternionD();
     }
@@ -75,6 +83,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value2">The second quaternion.</param>
     /// <returns>The quaternion that contains the summed values of <paramref name="value1"/> and <paramref name="value2"/>.</returns>
     /// <remarks>The <see cref="op_Addition"/> method defines the operation of the addition operator for <see cref="QuaternionD"/> objects.</remarks>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QuaternionD operator +(QuaternionD value1, QuaternionD value2) => (value1.AsVector256() + value2.AsVector256()).AsQuaternionD();
 
@@ -91,6 +100,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <returns><see langword="true" /> if the two quaternions are equal; otherwise, <see langword="false" />.</returns>
     /// <remarks>Two quaternions are equal if each of their corresponding components is equal.
     /// The <see cref="op_Equality" /> method defines the operation of the equality operator for <see cref="QuaternionD" /> objects.</remarks>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(QuaternionD value1, QuaternionD value2) => value1.AsVector256() == value2.AsVector256();
 
@@ -98,6 +108,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value1">The first quaternion to compare.</param>
     /// <param name="value2">The second quaternion to compare.</param>
     /// <returns><see langword="true" /> if <paramref name="value1" /> and <paramref name="value2" /> are not equal; otherwise, <see langword="false" />.</returns>
+    [Intrinsic]
     public static bool operator !=(QuaternionD value1, QuaternionD value2) => !(value1 == value2);
 
     /// <summary>Returns the quaternion that results from multiplying two quaternions together.</summary>
@@ -123,6 +134,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value1">The source quaternion.</param>
     /// <param name="value2">The scalar value.</param>
     /// <returns>The scaled quaternion.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QuaternionD operator *(QuaternionD value1, double value2) => (value1.AsVector256() * value2).AsQuaternionD();
 
@@ -131,6 +143,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value2">The second quaternion.</param>
     /// <returns>The quaternion containing the values that result from subtracting each element in <paramref name="value2" /> from its corresponding element in <paramref name="value1" />.</returns>
     /// <remarks>The <see cref="op_Subtraction" /> method defines the operation of the subtraction operator for <see cref="QuaternionD" /> objects.</remarks>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QuaternionD operator -(QuaternionD value1, QuaternionD value2) => (value1.AsVector256() - value2.AsVector256()).AsQuaternionD();
 
@@ -138,6 +151,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value">The quaternion to negate.</param>
     /// <returns>The negated quaternion.</returns>
     /// <remarks>The <see cref="op_UnaryNegation" /> method defines the operation of the unary negation operator for <see cref="QuaternionD" /> objects.</remarks>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QuaternionD operator -(QuaternionD value) => (-value.AsVector256()).AsQuaternionD();
 
@@ -145,6 +159,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value1">The first quaternion.</param>
     /// <param name="value2">The second quaternion.</param>
     /// <returns>The quaternion that contains the summed values of <paramref name="value1" /> and <paramref name="value2" />.</returns>
+    [Intrinsic]
     public static QuaternionD Add(QuaternionD value1, QuaternionD value2) => value1 + value2;
 
     /// <summary>Concatenates two quaternions.</summary>
@@ -156,6 +171,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <summary>Returns the conjugate of a specified quaternion.</summary>
     /// <param name="value">The quaternion.</param>
     /// <returns>A new quaternion that is the conjugate of <see langword="value" />.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QuaternionD Conjugate(QuaternionD value) =>
 
@@ -169,12 +185,14 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="z">The value to assign to the Z component of the quaternion.</param>
     /// <param name="w">The value to assign to the W component of the quaternion.</param>
     /// <returns>A <see cref="QuaternionD" /> created from the specified components.</returns>>
+    [Intrinsic]
     public static QuaternionD Create(double x, double y, double z, double w) => Vector256.Create(x, y, z, w).AsQuaternionD();
 
     /// <summary>Creates a <see cref="QuaternionD" /> from the specified vector and rotation parts.</summary>
     /// <param name="vectorPart">The vector part of the quaternion.</param>
     /// <param name="scalarPart">The rotation part of the quaternion.</param>
     /// <returns>A <see cref="QuaternionD" /> created from the specified vector and rotation parts.</returns>
+    [Intrinsic]
     public static QuaternionD Create(Vector3D vectorPart, double scalarPart) => Vector4D.Create(vectorPart, scalarPart).AsQuaternionD();
 
     /// <summary>Creates a quaternion from a unit vector and an angle to rotate around the vector.</summary>
@@ -291,12 +309,14 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="quaternion1">The first quaternion.</param>
     /// <param name="quaternion2">The second quaternion.</param>
     /// <returns>The dot product.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Dot(QuaternionD quaternion1, QuaternionD quaternion2) => Vector256.Dot(quaternion1.AsVector256(), quaternion2.AsVector256());
 
     /// <summary>Returns the inverse of a quaternion.</summary>
     /// <param name="value">The quaternion.</param>
     /// <returns>The inverted quaternion.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QuaternionD Inverse(QuaternionD value)
     {
@@ -335,22 +355,26 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value1">The first quaternion.</param>
     /// <param name="value2">The second quaternion.</param>
     /// <returns>The product quaternion.</returns>
+    [Intrinsic]
     public static QuaternionD Multiply(QuaternionD value1, QuaternionD value2) => value1 * value2;
 
     /// <summary>Returns the quaternion that results from scaling all the components of a specified quaternion by a scalar factor.</summary>
     /// <param name="value1">The source quaternion.</param>
     /// <param name="value2">The scalar value.</param>
     /// <returns>The scaled quaternion.</returns>
+    [Intrinsic]
     public static QuaternionD Multiply(QuaternionD value1, double value2) => value1 * value2;
 
     /// <summary>Reverses the sign of each component of the quaternion.</summary>
     /// <param name="value">The quaternion to negate.</param>
     /// <returns>The negated quaternion.</returns>
+    [Intrinsic]
     public static QuaternionD Negate(QuaternionD value) => -value;
 
     /// <summary>Divides each component of a specified <see cref="QuaternionD" /> by its length.</summary>
     /// <param name="value">The quaternion to normalize.</param>
     /// <returns>The normalized quaternion.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static QuaternionD Normalize(QuaternionD value) => (value.AsVector256() / value.Length()).AsQuaternionD();
 
@@ -396,13 +420,14 @@ public struct QuaternionD : IEquatable<QuaternionD>
     /// <param name="value1">The first quaternion.</param>
     /// <param name="value2">The second quaternion.</param>
     /// <returns>The quaternion containing the values that result from subtracting each element in <paramref name="value2" /> from its corresponding element in <paramref name="value1" />.</returns>
+    [Intrinsic]
     public static QuaternionD Subtract(QuaternionD value1, QuaternionD value2) => value1 - value2;
 
     /// <summary>Returns a value that indicates whether this instance and a specified object are equal.</summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns><see langword="true" /> if the current instance and <paramref name="obj" /> are equal; otherwise, <see langword="false" />. If <paramref name="obj" /> is <see langword="null" />, the method returns <see langword="false" />.</returns>
     /// <remarks>The current instance and <paramref name="obj" /> are equal if <paramref name="obj" /> is a <see cref="QuaternionD" /> object and the corresponding components of each matrix are equal.</remarks>
-    public override readonly bool Equals([NotNullWhen(true)] object? obj) => (obj is QuaternionD other) && this.Equals(other);
+    public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => (obj is QuaternionD other) && this.Equals(other);
 
     /// <summary>Returns a value that indicates whether this instance and another quaternion are equal.</summary>
     /// <param name="other">The other quaternion.</param>
@@ -417,10 +442,12 @@ public struct QuaternionD : IEquatable<QuaternionD>
 
     /// <summary>Calculates the length of the quaternion.</summary>
     /// <returns>The computed length of the quaternion.</returns>
+    [Intrinsic]
     public readonly double Length() => double.Sqrt(this.LengthSquared());
 
     /// <summary>Calculates the squared length of the quaternion.</summary>
     /// <returns>The length squared of the quaternion.</returns>
+    [Intrinsic]
     public readonly double LengthSquared() => Dot(this, this);
 
     /// <summary>Returns a string that represents this quaternion.</summary>

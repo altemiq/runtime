@@ -6,11 +6,8 @@
 
 namespace Altemiq.Numerics;
 
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics;
-using Altemiq.Runtime.Intrinsics;
-
 /// <summary>Represents a plane in three-dimensional space.</summary>
+[Intrinsic]
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
 public struct PlaneD : IEquatable<PlaneD>
 {
@@ -25,15 +22,18 @@ public struct PlaneD : IEquatable<PlaneD>
     /// <param name="y">The Y component of the normal.</param>
     /// <param name="z">The Z component of the normal.</param>
     /// <param name="d">The distance of the plane along its normal from the origin.</param>
+    [Intrinsic]
     public PlaneD(double x, double y, double z, double d) => this = Create(x, y, z, d);
 
     /// <summary>Initializes a <see cref="PlaneD" /> from a specified normal and the distance along the normal from the origin.</summary>
     /// <param name="normal">The plane's normal vector.</param>
     /// <param name="d">The plane's distance from the origin along its normal vector.</param>
+    [Intrinsic]
     public PlaneD(Vector3D normal, double d) => this = Create(normal, d);
 
     /// <summary>Initializes a <see cref="PlaneD" /> from a specified four-dimensional vector.</summary>
     /// <param name="value">A vector whose first three elements describe the normal vector, and whose <see cref="Vector4D.W" /> defines the distance along that normal from the origin.</param>
+    [Intrinsic]
     public PlaneD(Vector4D value) => this = value.AsPlaneD();
 
     /// <summary>Returns a value that indicates whether two planes are equal.</summary>
@@ -42,6 +42,7 @@ public struct PlaneD : IEquatable<PlaneD>
     /// <returns><see langword="true" /> if <paramref name="value1" /> and <paramref name="value2" /> are equal; otherwise, <see langword="false" />.</returns>
     /// <remarks>Two <see cref="PlaneD" /> objects are equal if their <see cref="Normal" /> and <see cref="D" /> fields are equal.
     /// The <see cref="op_Equality" /> method defines the operation of the equality operator for <see cref="PlaneD" /> objects.</remarks>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(PlaneD value1, PlaneD value2) => value1.AsVector256() == value2.AsVector256();
 
@@ -50,18 +51,21 @@ public struct PlaneD : IEquatable<PlaneD>
     /// <param name="value2">The second plane to compare.</param>
     /// <returns><see langword="true" /> if <paramref name="value1" /> and <paramref name="value2" /> are not equal; otherwise, <see langword="false" />.</returns>
     /// <remarks>The <see cref="op_Inequality" /> method defines the operation of the inequality operator for <see cref="PlaneD" /> objects.</remarks>
+    [Intrinsic]
     public static bool operator !=(PlaneD value1, PlaneD value2) => !(value1 == value2);
 
     /// <summary>Creates a <see cref="PlaneD" /> from a specified four-dimensional vector.</summary>
     /// <param name="value">A vector whose first three elements describe the normal vector, and whose <see cref="Vector4D.W" /> defines the distance along that normal from the origin.</param>
     /// <remarks>A <see cref="PlaneD" /> created using <paramref name="value" />.</remarks>
     /// <returns>The plane.</returns>
+    [Intrinsic]
     public static PlaneD Create(Vector4D value) => value.AsPlaneD();
 
     /// <summary>Creates a <see cref="PlaneD" /> from a specified normal and the distance along the normal from the origin.</summary>
     /// <param name="normal">The plane's normal vector.</param>
     /// <param name="d">The plane's distance from the origin along its normal vector.</param>\
     /// <returns>A <see cref="PlaneD" /> created from a specified normal and the distance along the normal from the origin.</returns>
+    [Intrinsic]
     public static PlaneD Create(Vector3D normal, double d) => Vector4D.Create(normal, d).AsPlaneD();
 
     /// <summary>Creates a <see cref="PlaneD" /> from the X, Y, and Z components of its normal, and its distance from the origin on that normal.</summary>
@@ -70,6 +74,7 @@ public struct PlaneD : IEquatable<PlaneD>
     /// <param name="z">The Z component of the normal.</param>
     /// <param name="d">The distance of the plane along its normal from the origin.</param>
     /// <returns>A <see cref="PlaneD" /> created from the X, Y, and Z components of its normal, and its distance from the origin on that normal.</returns>
+    [Intrinsic]
     public static PlaneD Create(double x, double y, double z, double d) => Vector256.Create(x, y, z, d).AsPlaneD();
 
     /// <summary>Creates a <see cref="PlaneD" /> object that contains three specified points.</summary>
@@ -93,6 +98,7 @@ public struct PlaneD : IEquatable<PlaneD>
     /// <param name="plane">The plane.</param>
     /// <param name="value">The four-dimensional vector.</param>
     /// <returns>The dot product.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Dot(PlaneD plane, Vector4D value) => Vector256.Dot(plane.AsVector256(), value.AsVector256());
 

@@ -6,12 +6,8 @@
 
 namespace Altemiq.Numerics;
 
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics;
-
-using Altemiq.Runtime.Intrinsics;
-
 /// <summary>Represents a vector with two double-precision floating-point values.</summary>
+[Intrinsic]
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
 public struct Vector2D : IEquatable<Vector2D>, IFormattable
 {
@@ -29,57 +25,112 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
     /// <summary>Creates a new <see cref="Vector2D"/> object whose two elements have the same value.</summary>
     /// <param name="value">The value to assign to both elements.</param>
+    [Intrinsic]
     public Vector2D(double value) => this = Create(value);
 
     /// <summary>Creates a vector whose elements have the specified values.</summary>
     /// <param name="x">The value to assign to the <see cref="X"/> field.</param>
     /// <param name="y">The value to assign to the <see cref="Y"/> field.</param>
+    [Intrinsic]
     public Vector2D(double x, double y) => this = Create(x, y);
 
     /// <summary>Constructs a vector from the given <see cref="ReadOnlySpan{Single}"/>. The span must contain at least 2 elements.</summary>
     /// <param name="values">The span of elements to assign to the vector.</param>
+    [Intrinsic]
     public Vector2D(ReadOnlySpan<double> values) => this = Create(values);
 
     /// <inheritdoc cref="Vector4D.AllBitsSet"/>
-    public static Vector2D AllBitsSet => Vector256<double>.AllBitsSet.AsVector2D();
+    public static Vector2D AllBitsSet
+    {
+        [Intrinsic]
+        get => Vector256<double>.AllBitsSet.AsVector2D();
+    }
 
     /// <inheritdoc cref="Vector4D.E"/>
-    public static Vector2D E => Create(double.E);
+    public static Vector2D E
+    {
+        [Intrinsic]
+        get => Create(double.E);
+    }
 
     /// <inheritdoc cref="Vector4D.Epsilon"/>
-    public static Vector2D Epsilon => Create(double.Epsilon);
+    public static Vector2D Epsilon
+    {
+        [Intrinsic]
+        get => Create(double.Epsilon);
+    }
 
     /// <inheritdoc cref="Vector4D.NaN"/>
-    public static Vector2D NaN => Create(double.NaN);
+    public static Vector2D NaN
+    {
+        [Intrinsic]
+        get => Create(double.NaN);
+    }
 
     /// <inheritdoc cref="Vector4D.NegativeInfinity"/>
-    public static Vector2D NegativeInfinity => Create(double.NegativeInfinity);
+    public static Vector2D NegativeInfinity
+    {
+        [Intrinsic]
+        get => Create(double.NegativeInfinity);
+    }
 
     /// <inheritdoc cref="Vector4D.NegativeZero"/>
-    public static Vector2D NegativeZero => Create(double.NegativeZero);
+    public static Vector2D NegativeZero
+    {
+        [Intrinsic]
+        get => Create(double.NegativeZero);
+    }
 
     /// <inheritdoc cref="Vector4D.One" />
-    public static Vector2D One => Create(1.0);
+    public static Vector2D One
+    {
+        [Intrinsic]
+        get => Create(1.0);
+    }
 
     /// <inheritdoc cref="Vector4D.Pi" />
-    public static Vector2D Pi => Create(double.Pi);
+    public static Vector2D Pi
+    {
+        [Intrinsic]
+        get => Create(double.Pi);
+    }
 
     /// <inheritdoc cref="Vector4D.PositiveInfinity" />
-    public static Vector2D PositiveInfinity => Create(double.PositiveInfinity);
+    public static Vector2D PositiveInfinity
+    {
+        [Intrinsic]
+        get => Create(double.PositiveInfinity);
+    }
 
     /// <inheritdoc cref="Vector4D.Tau" />
-    public static Vector2D Tau => Create(double.Tau);
+    public static Vector2D Tau
+    {
+        [Intrinsic]
+        get => Create(double.Tau);
+    }
 
     /// <summary>Gets the vector (1,0).</summary>
     /// <value>The vector <c>(1,0)</c>.</value>
-    public static Vector2D UnitX => CreateScalar(1.0);
+    public static Vector2D UnitX
+    {
+        [Intrinsic]
+        get => CreateScalar(1.0);
+    }
 
     /// <summary>Gets the vector (0,1).</summary>
     /// <value>The vector <c>(0,1)</c>.</value>
-    public static Vector2D UnitY => Create(0.0, 1.0);
+    public static Vector2D UnitY
+    {
+        [Intrinsic]
+        get => Create(0.0, 1.0);
+    }
 
     /// <inheritdoc cref="Vector4D.Zero" />
-    public static Vector2D Zero => default;
+    public static Vector2D Zero
+    {
+        [Intrinsic]
+        get => default;
+    }
 
     /// <summary>Gets or sets the element at the specified index.</summary>
     /// <param name="index">The index of the element to get or set.</param>
@@ -87,8 +138,10 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than the number of elements.</exception>
     public double this[int index]
     {
+        [Intrinsic]
         readonly get => this.GetElement(index);
 
+        [Intrinsic]
         set => this = this.WithElement(index, value);
     }
 
@@ -97,6 +150,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="right">The second vector to add.</param>
     /// <returns>The summed vector.</returns>
     /// <remarks>The <see cref="op_Addition" /> method defines the addition operation for <see cref="Vector2D" /> objects.</remarks>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator +(Vector2D left, Vector2D right) => (left.AsVector256Unsafe() + right.AsVector256Unsafe()).AsVector2D();
 
@@ -104,6 +158,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="left">The first vector.</param>
     /// <param name="right">The second vector.</param>
     /// <returns>The vector that results from dividing <paramref name="left" /> by <paramref name="right" />.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator /(Vector2D left, Vector2D right) => (left.AsVector256Unsafe() / right.AsVector256Unsafe()).AsVector2D();
 
@@ -111,6 +166,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="value1">The vector.</param>
     /// <param name="value2">The scalar value.</param>
     /// <returns>The result of the division.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator /(Vector2D value1, double value2) => (value1.AsVector256Unsafe() / value2).AsVector2D();
 
@@ -119,6 +175,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="right">The second vector to compare.</param>
     /// <returns><see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise, <see langword="false" />.</returns>
     /// <remarks>Two <see cref="Vector2D" /> objects are equal if each value in <paramref name="left" /> is equal to the corresponding value in <paramref name="right" />.</remarks>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Vector2D left, Vector2D right) => left.AsVector256() == right.AsVector256();
 
@@ -126,12 +183,14 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="left">The first vector to compare.</param>
     /// <param name="right">The second vector to compare.</param>
     /// <returns><see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, <see langword="false" />.</returns>
+    [Intrinsic]
     public static bool operator !=(Vector2D left, Vector2D right) => !(left == right);
 
     /// <summary>Returns a new vector whose values are the product of each pair of elements in two specified vectors.</summary>
     /// <param name="left">The first vector.</param>
     /// <param name="right">The second vector.</param>
     /// <returns>The element-wise product vector.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator *(Vector2D left, Vector2D right) => (left.AsVector256Unsafe() * right.AsVector256Unsafe()).AsVector2D();
 
@@ -139,6 +198,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="left">The vector.</param>
     /// <param name="right">The scalar value.</param>
     /// <returns>The scaled vector.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator *(Vector2D left, double right) => (left.AsVector256Unsafe() * right).AsVector2D();
 
@@ -146,56 +206,68 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="left">The vector.</param>
     /// <param name="right">The scalar value.</param>
     /// <returns>The scaled vector.</returns>
+    [Intrinsic]
     public static Vector2D operator *(double left, Vector2D right) => right * left;
 
     /// <summary>Subtracts the second vector from the first.</summary>
     /// <param name="left">The first vector.</param>
     /// <param name="right">The second vector.</param>
     /// <returns>The vector that results from subtracting <paramref name="right" /> from <paramref name="left" />.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator -(Vector2D left, Vector2D right) => (left.AsVector256Unsafe() - right.AsVector256Unsafe()).AsVector2D();
 
     /// <summary>Negates the specified vector.</summary>
     /// <param name="value">The vector to negate.</param>
     /// <returns>The negated vector.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator -(Vector2D value) => (-value.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.op_BitwiseAnd(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator &(Vector2D left, Vector2D right) => (left.AsVector256Unsafe() & right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.op_BitwiseOr(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator |(Vector2D left, Vector2D right) => (left.AsVector256Unsafe() | right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.op_ExclusiveOr(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator ^(Vector2D left, Vector2D right) => (left.AsVector256Unsafe() ^ right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.op_LeftShift(Vector4D, int)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator <<(Vector2D value, int shiftAmount) => (value.AsVector256Unsafe() << shiftAmount).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.op_OnesComplement(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator ~(Vector2D value) => (~value.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.op_RightShift(Vector4D, int)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator >>(Vector2D value, int shiftAmount) => (value.AsVector256Unsafe() >> shiftAmount).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.op_UnaryPlus(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator +(Vector2D value) => value;
 
     /// <inheritdoc cref="Vector4D.op_UnsignedRightShift(Vector4D, int)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D operator >>>(Vector2D value, int shiftAmount) => (value.AsVector256Unsafe() >>> shiftAmount).AsVector2D();
 
     /// <summary>Returns a vector whose elements are the absolute values of each of the specified vector's elements.</summary>
     /// <param name="value">A vector.</param>
     /// <returns>The absolute value vector.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Abs(Vector2D value) => Vector256.Abs(value.AsVector256Unsafe()).AsVector2D();
 
@@ -203,38 +275,47 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="left">The first vector to add.</param>
     /// <param name="right">The second vector to add.</param>
     /// <returns>The summed vector.</returns>
+    [Intrinsic]
     public static Vector2D Add(Vector2D left, Vector2D right) => left + right;
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.All(Vector4D, double)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool All(Vector2D vector, double value) => Vector256.All(vector, value);
 
     /// <inheritdoc cref="Vector4D.AllWhereAllBitsSet(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AllWhereAllBitsSet(Vector2D vector) => Vector256.AllWhereAllBitsSet(vector);
 
     /// <inheritdoc cref="Vector4D.AndNot(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D AndNot(Vector2D left, Vector2D right) => Vector256.AndNot(left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.Any(Vector4D, double)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any(Vector2D vector, double value) => Vector256.Any(vector, value);
 
     /// <inheritdoc cref="Vector4D.AnyWhereAllBitsSet(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AnyWhereAllBitsSet(Vector2D vector) => Vector256.AnyWhereAllBitsSet(vector);
 
     /// <inheritdoc cref="Vector4D.BitwiseAnd(Vector4D, Vector4D)" />
+    [Intrinsic]
     public static Vector2D BitwiseAnd(Vector2D left, Vector2D right) => left & right;
 
     /// <inheritdoc cref="Vector4D.BitwiseOr(Vector4D, Vector4D)" />
+    [Intrinsic]
     public static Vector2D BitwiseOr(Vector2D left, Vector2D right) => left | right;
 #endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Clamp(Vector4D, Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Clamp(Vector2D value1, Vector2D min, Vector2D max) => Vector256.Clamp(value1.AsVector256Unsafe(), min.AsVector256Unsafe(), max.AsVector256Unsafe()).AsVector2D();
 #else
@@ -245,38 +326,45 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="min">The minimum value.</param>
     /// <param name="max">The maximum value.</param>
     /// <returns>The restricted vector.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Clamp(Vector2D value1, Vector2D min, Vector2D max) => Vector256.Min(Vector256.Max(value1.AsVector256(), min.AsVector256()), max.AsVector256()).AsVector2D();
 #endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.ClampNative(Vector4D, Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D ClampNative(Vector2D value1, Vector2D min, Vector2D max) => Vector256.ClampNative(value1.AsVector256Unsafe(), min.AsVector256Unsafe(), max.AsVector256Unsafe()).AsVector2D();
 #endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.ConditionalSelect(Vector4D, Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D ConditionalSelect(Vector2D condition, Vector2D left, Vector2D right) => Vector256.ConditionalSelect(condition.AsVector256Unsafe(), left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 #endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.CopySign(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D CopySign(Vector2D value, Vector2D sign) => Vector256.CopySign(value.AsVector256Unsafe(), sign.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.Cos(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Cos(Vector2D vector) => Vector256.Cos(vector.AsVector256()).AsVector2D();
 #endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Count(Vector4D, double)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Count(Vector2D vector, double value) => Vector256.Count(vector, value);
 
     /// <inheritdoc cref="Vector4D.CountWhereAllBitsSet(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int CountWhereAllBitsSet(Vector2D vector) => Vector256.CountWhereAllBitsSet(vector);
 #endif
@@ -284,17 +372,20 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <summary>Creates a new <see cref="Vector2D" /> object whose two elements have the same value.</summary>
     /// <param name="value">The value to assign to all two elements.</param>
     /// <returns>A new <see cref="Vector2D" /> whose two elements have the same value.</returns>
+    [Intrinsic]
     public static Vector2D Create(double value) => Vector256.Create(value).AsVector2D();
 
     /// <summary>Creates a vector whose elements have the specified values.</summary>
     /// <param name="x">The value to assign to the <see cref="X" /> field.</param>
     /// <param name="y">The value to assign to the <see cref="Y" /> field.</param>
     /// <returns>A new <see cref="Vector2D" /> whose elements have the specified values.</returns>
+    [Intrinsic]
     public static Vector2D Create(double x, double y) => Vector256.Create(x, y, 0, 0).AsVector2D();
 
     /// <summary>Constructs a vector from the given <see cref="ReadOnlySpan{Single}" />. The span must contain at least 2 elements.</summary>
     /// <param name="values">The span of elements to assign to the vector.</param>
     /// <returns>A new <see cref="Vector2D" /> whose elements have the specified values.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Create(ReadOnlySpan<double> values) =>
         values.Length < ElementCount
@@ -304,11 +395,13 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <summary>Creates a vector with <see cref="X" /> initialized to the specified value and the remaining elements initialized to zero.</summary>
     /// <param name="x">The value to assign to the <see cref="X" /> field.</param>
     /// <returns>A new <see cref="Vector2D" /> with <see cref="X" /> initialized <paramref name="x" /> and the remaining elements initialized to zero.</returns>
+    [Intrinsic]
     public static Vector2D CreateScalar(double x) => Vector256.CreateScalar(x).AsVector2D();
 
     /// <summary>Creates a vector with <see cref="X" /> initialized to the specified value and the remaining elements left uninitialized.</summary>
     /// <param name="x">The value to assign to the <see cref="X" /> field.</param>
     /// <returns>A new <see cref="Vector2D" /> with <see cref="X" /> initialized <paramref name="x" /> and the remaining elements left uninitialized.</returns>
+    [Intrinsic]
     public static Vector2D CreateScalarUnsafe(double x) => Vector256.CreateScalarUnsafe(x).AsVector2D();
 
     /// <summary>
@@ -335,6 +428,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.DegreesToRadians(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D DegreesToRadians(Vector2D degrees) => Vector256.DegreesToRadians(degrees.AsVector256Unsafe()).AsVector2D();
 #endif
@@ -343,30 +437,35 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="value1">The first point.</param>
     /// <param name="value2">The second point.</param>
     /// <returns>The distance.</returns>
+    [Intrinsic]
     public static double Distance(Vector2D value1, Vector2D value2) => double.Sqrt(DistanceSquared(value1, value2));
 
     /// <summary>Returns the Euclidean distance squared between two specified points.</summary>
     /// <param name="value1">The first point.</param>
     /// <param name="value2">The second point.</param>
     /// <returns>The distance squared.</returns>
+    [Intrinsic]
     public static double DistanceSquared(Vector2D value1, Vector2D value2) => (value1 - value2).LengthSquared();
 
     /// <summary>Divides the first vector by the second.</summary>
     /// <param name="left">The first vector.</param>
     /// <param name="right">The second vector.</param>
     /// <returns>The vector resulting from the division.</returns>
+    [Intrinsic]
     public static Vector2D Divide(Vector2D left, Vector2D right) => left / right;
 
     /// <summary>Divides the specified vector by a specified scalar value.</summary>
     /// <param name="left">The vector.</param>
     /// <param name="divisor">The scalar value.</param>
     /// <returns>The vector that results from the division.</returns>
+    [Intrinsic]
     public static Vector2D Divide(Vector2D left, double divisor) => left / divisor;
 
     /// <summary>Returns the dot product of two vectors.</summary>
     /// <param name="value1">The first vector.</param>
     /// <param name="value2">The second vector.</param>
     /// <returns>The dot product.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Dot(Vector2D value1, Vector2D value2) => Vector256.Dot(value1.AsVector256(), value2.AsVector256());
 
@@ -377,130 +476,159 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 #endif
 
     /// <inheritdoc cref="Vector4D.Equals(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Equals(Vector2D left, Vector2D right) => Vector256.Equals(left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.EqualsAll(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool EqualsAll(Vector2D left, Vector2D right) => Vector256.EqualsAll(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.EqualsAny(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool EqualsAny(Vector2D left, Vector2D right) => Vector256.EqualsAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D FusedMultiplyAdd(Vector2D left, Vector2D right, Vector2D addend) => Vector256.FusedMultiplyAdd(left.AsVector256Unsafe(), right.AsVector256Unsafe(), addend.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.GreaterThan(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D GreaterThan(Vector2D left, Vector2D right) => Vector256.GreaterThan(left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.GreaterThanAll(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GreaterThanAll(Vector2D left, Vector2D right) => Vector256.GreaterThanAll(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.GreaterThanAny(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GreaterThanAny(Vector2D left, Vector2D right) => Vector256.GreaterThanAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.GreaterThanOrEqual(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D GreaterThanOrEqual(Vector2D left, Vector2D right) => Vector256.GreaterThanOrEqual(left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.GreaterThanOrEqualAll(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GreaterThanOrEqualAll(Vector2D left, Vector2D right) => Vector256.GreaterThanOrEqualAll(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.GreaterThanOrEqualAny(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool GreaterThanOrEqualAny(Vector2D left, Vector2D right) => Vector256.GreaterThanOrEqualAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.Hypot(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Hypot(Vector2D x, Vector2D y) => Vector256.Hypot(x.AsVector256Unsafe(), y.AsVector256Unsafe()).AsVector2D();
 #endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.IndexOf(Vector4D, double)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int IndexOf(Vector2D vector, double value) => Vector256.IndexOf(vector, value);
 
     /// <inheritdoc cref="Vector4D.IndexOfWhereAllBitsSet(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int IndexOfWhereAllBitsSet(Vector2D vector) => Vector256.IndexOfWhereAllBitsSet(vector);
 
     /// <inheritdoc cref="Vector4D.IsEvenInteger(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsEvenInteger(Vector2D vector) => Vector256.IsEvenInteger(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsFinite(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsFinite(Vector2D vector) => Vector256.IsFinite(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsInfinity(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsInfinity(Vector2D vector) => Vector256.IsInfinity(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsInteger(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsInteger(Vector2D vector) => Vector256.IsInteger(vector.AsVector256()).AsVector2D();
 #endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.IsNaN(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsNaN(Vector2D vector) => Vector256.IsNaN(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsNegative(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsNegative(Vector2D vector) => Vector256.IsNegative(vector.AsVector256()).AsVector2D();
 #endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.IsNegativeInfinity(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsNegativeInfinity(Vector2D vector) => Vector256.IsNegativeInfinity(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsNormal(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsNormal(Vector2D vector) => Vector256.IsNormal(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsOddInteger(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsOddInteger(Vector2D vector) => Vector256.IsOddInteger(vector.AsVector256()).AsVector2D();
 #endif
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.IsPositive(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsPositive(Vector2D vector) => Vector256.IsPositive(vector.AsVector256()).AsVector2D();
 #endif
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.IsPositiveInfinity(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsPositiveInfinity(Vector2D vector) => Vector256.IsPositiveInfinity(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsSubnormal(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsSubnormal(Vector2D vector) => Vector256.IsSubnormal(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.IsZero(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D IsZero(Vector2D vector) => Vector256.IsZero(vector.AsVector256()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.LastIndexOf(Vector4D, double)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int LastIndexOf(Vector2D vector, double value) => Vector256.LastIndexOf(vector, value);
 
     /// <inheritdoc cref="Vector4D.LastIndexOfWhereAllBitsSet(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int LastIndexOfWhereAllBitsSet(Vector2D vector) => Vector256.LastIndexOfWhereAllBitsSet(vector);
 #endif
 
     /// <inheritdoc cref="Vector4D.Lerp(Vector4D, Vector4D, double)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Lerp(Vector2D value1, Vector2D value2, double amount) =>
 #if NET9_0_OR_GREATER
@@ -511,38 +639,47 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Lerp(Vector4D, Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Lerp(Vector2D value1, Vector2D value2, Vector2D amount) => Vector256.Lerp(value1.AsVector256Unsafe(), value2.AsVector256Unsafe(), amount.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.LessThan(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LessThan(Vector2D left, Vector2D right) => Vector256.LessThan(left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.LessThanAll(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool LessThanAll(Vector2D left, Vector2D right) => Vector256.LessThanAll(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.LessThanAny(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool LessThanAny(Vector2D left, Vector2D right) => Vector256.LessThanAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.LessThanOrEqual(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LessThanOrEqual(Vector2D left, Vector2D right) => Vector256.LessThanOrEqual(left.AsVector256Unsafe(), right.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.LessThanOrEqualAll(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool LessThanOrEqualAll(Vector2D left, Vector2D right) => Vector256.LessThanOrEqualAll(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 
     /// <inheritdoc cref="Vector4D.LessThanOrEqualAny(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool LessThanOrEqualAny(Vector2D left, Vector2D right) => Vector256.LessThanOrEqualAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 #endif
 
     /// <inheritdoc cref="Vector4D.Load(double*)" />
+    [Intrinsic]
     public static unsafe Vector2D Load(double* source) => LoadUnsafe(in *source);
 
     /// <inheritdoc cref="Vector4D.LoadAligned(double*)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "This is valid")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "This is valid")]
@@ -557,10 +694,12 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     }
 
     /// <inheritdoc cref="Vector4D.LoadAlignedNonTemporal(double*)" />
+    [Intrinsic]
     public static unsafe Vector2D LoadAlignedNonTemporal(double* source) => LoadAligned(source);
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source)
     {
@@ -569,6 +708,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     }
 #else
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source)
     {
@@ -579,6 +719,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.LoadUnsafe(ref readonly double, nuint)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source, nuint elementOffset)
     {
@@ -587,6 +728,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     }
 #else
     /// <inheritdoc cref="Vector4D.LoadUnsafe(ref double, nuint)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source, nuint elementOffset)
     {
@@ -606,45 +748,55 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 #endif
 
     /// <inheritdoc cref="Vector4D.Max(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Max(Vector2D value1, Vector2D value2) => Vector256.Max(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.MaxMagnitude(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MaxMagnitude(Vector2D value1, Vector2D value2) => Vector256.MaxMagnitude(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.MaxMagnitudeNumber(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MaxMagnitudeNumber(Vector2D value1, Vector2D value2) => Vector256.MaxMagnitudeNumber(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.MaxNative(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MaxNative(Vector2D value1, Vector2D value2) => Vector256.MaxNative(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.MaxNumber(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MaxNumber(Vector2D value1, Vector2D value2) => Vector256.MaxNumber(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 #endif
 
     /// <inheritdoc cref="Vector4D.Min(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Min(Vector2D value1, Vector2D value2) => Vector256.Min(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.MinMagnitude(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MinMagnitude(Vector2D value1, Vector2D value2) => Vector256.MinMagnitude(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.MinMagnitudeNumber(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MinMagnitudeNumber(Vector2D value1, Vector2D value2) => Vector256.MinMagnitudeNumber(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.MinNative(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MinNative(Vector2D value1, Vector2D value2) => Vector256.MinNative(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.MinNumber(Vector4D, Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MinNumber(Vector2D value1, Vector2D value2) => Vector256.MinNumber(value1.AsVector256Unsafe(), value2.AsVector256Unsafe()).AsVector2D();
 #endif
@@ -653,18 +805,21 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="left">The first vector.</param>
     /// <param name="right">The second vector.</param>
     /// <returns>The element-wise product vector.</returns>
+    [Intrinsic]
     public static Vector2D Multiply(Vector2D left, Vector2D right) => left * right;
 
     /// <summary>Multiplies a vector by a specified scalar.</summary>
     /// <param name="left">The vector to multiply.</param>
     /// <param name="right">The scalar value.</param>
     /// <returns>The scaled vector.</returns>
+    [Intrinsic]
     public static Vector2D Multiply(Vector2D left, double right) => left * right;
 
     /// <summary>Multiplies a scalar value by a specified vector.</summary>
     /// <param name="left">The scaled value.</param>
     /// <param name="right">The vector.</param>
     /// <returns>The scaled vector.</returns>
+    [Intrinsic]
     public static Vector2D Multiply(double left, Vector2D right) => left * right;
 
 #if NET9_0_OR_GREATER
@@ -672,20 +827,24 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 #else
     /// <inheritdoc cref="Vector256Extensions.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
 #endif
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D MultiplyAddEstimate(Vector2D left, Vector2D right, Vector2D addend) => Vector256.MultiplyAddEstimate(left.AsVector256Unsafe(), right.AsVector256Unsafe(), addend.AsVector256Unsafe()).AsVector2D();
 
     /// <summary>Negates a specified vector.</summary>
     /// <param name="value">The vector to negate.</param>
     /// <returns>The negated vector.</returns>
+    [Intrinsic]
     public static Vector2D Negate(Vector2D value) => -value;
 
 #if NET10_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.None(Vector4D, double)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool None(Vector2D vector, double value) => Vector256.None(vector, value);
 
     /// <inheritdoc cref="Vector4D.NoneWhereAllBitsSet(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool NoneWhereAllBitsSet(Vector2D vector) => Vector256.NoneWhereAllBitsSet(vector);
 #endif
@@ -693,13 +852,16 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <summary>Returns a vector with the same direction as the specified vector, but with a length of one.</summary>
     /// <param name="value">The vector to normalize.</param>
     /// <returns>The normalized vector.</returns>
+    [Intrinsic]
     public static Vector2D Normalize(Vector2D value) => value / value.Length();
 
     /// <inheritdoc cref="Vector4D.OnesComplement(Vector4D)" />
+    [Intrinsic]
     public static Vector2D OnesComplement(Vector2D value) => ~value;
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.RadiansToDegrees(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D RadiansToDegrees(Vector2D radians) => Vector256.RadiansToDegrees(radians.AsVector256Unsafe()).AsVector2D();
 #endif
@@ -711,23 +873,20 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D Reflect(Vector2D vector, Vector2D normal)
     {
-#if NET9_0_OR_GREATER
         // This implementation is based on the DirectX Math Library XMVector2Reflect method
         // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathVector.inl
         var tmp = Create(Dot(vector, normal));
         tmp += tmp;
         return MultiplyAddEstimate(-tmp, normal, vector);
-#else
-        var dot = Dot(vector, normal);
-        return vector - (2D * (dot * normal));
-#endif
     }
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Round(Vector4D)" />
+    [Intrinsic]
     public static Vector2D Round(Vector2D vector) => Vector256.Round(vector.AsVector256Unsafe()).AsVector2D();
 
     /// <inheritdoc cref="Vector4D.Round(Vector4D, MidpointRounding)" />
+    [Intrinsic]
     public static Vector2D Round(Vector2D vector, MidpointRounding mode) => Vector256.Round(vector.AsVector256Unsafe(), mode).AsVector2D();
 #endif
 
@@ -760,6 +919,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <summary>Returns a vector whose elements are the square root of each of a specified vector's elements.</summary>
     /// <param name="value">A vector.</param>
     /// <returns>The square root vector.</returns>
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D SquareRoot(Vector2D value) => Vector256.Sqrt(value.AsVector256Unsafe()).AsVector2D();
 
@@ -767,9 +927,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="left">The first vector.</param>
     /// <param name="right">The second vector.</param>
     /// <returns>The difference vector.</returns>
+    [Intrinsic]
     public static Vector2D Subtract(Vector2D left, Vector2D right) => left - right;
 
     /// <inheritdoc cref="Vector4D.Sum(Vector4D)" />
+    [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Sum(Vector2D value) => Vector256.Sum(value.AsVector256());
 
@@ -815,10 +977,12 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector4D.Truncate(Vector4D)" />
+    [Intrinsic]
     public static Vector2D Truncate(Vector2D vector) => Vector256.Truncate(vector.AsVector256Unsafe()).AsVector2D();
 #endif
 
     /// <inheritdoc cref="Vector4D.Xor(Vector4D, Vector4D)" />
+    [Intrinsic]
     public static Vector2D Xor(Vector2D left, Vector2D right) => left ^ right;
 
     /// <summary>Copies the elements of the vector to a specified array.</summary>
@@ -915,12 +1079,14 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <summary>Returns the length of the vector.</summary>
     /// <returns>The vector's length.</returns>
     /// <altmember cref="LengthSquared" />
+    [Intrinsic]
     public readonly double Length() => double.Sqrt(this.LengthSquared());
 
     /// <summary>Returns the length of the vector squared.</summary>
     /// <returns>The vector's length squared.</returns>
     /// <remarks>This operation offers better performance than a call to the <see cref="Length" /> method.</remarks>
     /// <altmember cref="Length" />
+    [Intrinsic]
     public readonly double LengthSquared() => Dot(this, this);
 
     /// <summary>Returns the string representation of the current instance using default formatting.</summary>

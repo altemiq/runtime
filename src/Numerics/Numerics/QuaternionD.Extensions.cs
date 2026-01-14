@@ -6,8 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-using System.Runtime.CompilerServices;
-
 /// <content>
 /// <see cref="QuaternionD"/> extensions.
 /// </content>

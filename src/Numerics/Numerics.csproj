@@ -24,5 +24,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="System.Runtime.CompilerServices;System.Runtime.Intrinsics;Altemiq.Runtime.Intrinsics" />
+  </ItemGroup>
 
 </Project>

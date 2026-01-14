@@ -6,9 +6,8 @@
 
 namespace Altemiq.Numerics;
 
-using System.Runtime.CompilerServices;
-
 /// <summary>Represents a 3x2 matrix.</summary>
+[Intrinsic]
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S101:Types should be named in PascalCase", Justification = "This is valid")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "This is valid")]

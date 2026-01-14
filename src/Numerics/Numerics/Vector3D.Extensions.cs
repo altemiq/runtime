@@ -6,10 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics;
-using Altemiq.Runtime.Intrinsics;
-
 #pragma warning disable CA1708, RCS1263, SA1101, S2325
 
 /// <content>
