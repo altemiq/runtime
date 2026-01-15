@@ -1182,23 +1182,19 @@ public partial struct Matrix4x4D
                 V00 = Avx2.Permute4x64(row2, 0b00_11_00_11);
 
                 // V10 = D0Z,D0Z,D2X,D2Y
-                V10 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_00_10_10), Avx2.Permute4x64(D2, 0b01_00_10_10), 0b1100);
-                V10 = Avx2.Permute4x64(V10, 0b00_10_11_00);
+                V10 = Avx.Blend(Avx2.Permute4x64(D0, 0b10_10_01_10), Avx2.Permute4x64(D2, 0b11_00_01_10), 0b0110);
                 V01 = Avx2.Permute4x64(row1,  0b10_00_11_01);
 
                 // V11 = D0X,D0W,D2X,D2Y
-                V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b01_00_11_00), Avx2.Permute4x64(D2, 0b01_00_11_00), 0b1100);
-                V11 = Avx2.Permute4x64(V11, 0b10_01_00_11);
+                V11 = Avx.Blend(Avx2.Permute4x64(D0, 0b11_11_00_00), Avx2.Permute4x64(D2, 0b00_10_11_01), 0b1001);
                 V02 = Avx2.Permute4x64(row4,  0b00_11_00_11);
 
                 // V12 = D1Z,D1Z,D2Z,D2W
-                V12 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_10_10_10), Avx2.Permute4x64(D2, 0b11_10_10_10), 0b1100);
-                V12 = Avx2.Permute4x64(V12, 0b00_10_11_00);
+                V12 = Avx.Blend(Avx2.Permute4x64(D1, 0b10_10_01_10), Avx2.Permute4x64(D2, 0b11_10_11_10), 0b0110);
                 V03 = Avx2.Permute4x64(row3, 0b10_00_11_01);
 
                 // V13 = D1X,D1W,D2Z,D2W
-                V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_10_11_00), Avx2.Permute4x64(D2, 0b11_10_11_00), 0b1100);
-                V13 = Avx2.Permute4x64(V13, 0b10_01_00_11);
+                V13 = Avx.Blend(Avx2.Permute4x64(D1, 0b11_11_00_00), Avx2.Permute4x64(D2, 0b10_10_01_11), 0b1001);
 
                 V00 *= V10;
                 V01 *= V11;
@@ -1206,26 +1202,14 @@ public partial struct Matrix4x4D
                 V03 *= V13;
 
                 var C1 = C0 - V00;
-                C0 += V00;
-
                 var C3 = C2 + V01;
-                C2 -= V01;
-
                 var C5 = C4 - V02;
-                C4 += V02;
-
                 var C7 = C6 + V03;
-                C6 -= V03;
 
-                C0 = Avx.Blend(Avx2.Permute4x64(C0, 0b11_01_10_00), Avx2.Permute4x64(C1, 0b11_01_10_00), 0b1100);
-                C2 = Avx.Blend(Avx2.Permute4x64(C2, 0b11_01_10_00), Avx2.Permute4x64(C3, 0b11_01_10_00), 0b1100);
-                C4 = Avx.Blend(Avx2.Permute4x64(C4, 0b11_01_10_00), Avx2.Permute4x64(C5, 0b11_01_10_00), 0b1100);
-                C6 = Avx.Blend(Avx2.Permute4x64(C6, 0b11_01_10_00), Avx2.Permute4x64(C7, 0b11_01_10_00), 0b1100);
-
-                C0 = Avx2.Permute4x64(C0, 0b11_01_10_00);
-                C2 = Avx2.Permute4x64(C2,  0b11_01_10_00);
-                C4 = Avx2.Permute4x64(C4, 0b11_01_10_00);
-                C6 = Avx2.Permute4x64(C6, 0b11_01_10_00);
+                C0 = Avx.Blend(C0 + V00, C1, 0b1010);
+                C2 = Avx.Blend(C2 - V01, C3, 0b1010);
+                C4 = Avx.Blend(C4 + V02, C5, 0b1010);
+                C6 = Avx.Blend(C6 - V03, C7, 0b1010);
 
                 // Get the determinant
                 var det = Vector4D.Dot(C0.AsVector4D(), row1.AsVector4D());
