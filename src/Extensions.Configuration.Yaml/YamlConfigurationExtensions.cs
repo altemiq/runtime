@@ -52,8 +52,7 @@ public static class YamlConfigurationExtensions
         /// Adds a YAML configuration source to <paramref name="builder"/>.
         /// </summary>
         /// <param name="provider">The <see cref="FileProviders.IFileProvider"/> to use to access the file.</param>
-        /// <param name="path">Path relative to the base path stored in
-        /// <see cref="IConfigurationBuilder.Properties"/> of <paramref name="builder"/>.</param>
+        /// <param name="path">Path relative to the base path stored in <see cref="IConfigurationBuilder.Properties"/>.</param>
         /// <param name="optional">Whether the file is optional.</param>
         /// <param name="reloadOnChange">Whether the configuration should be reloaded if the file changes.</param>
         /// <returns>The <see cref="IConfigurationBuilder"/>.</returns>
