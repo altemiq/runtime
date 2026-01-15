@@ -8,12 +8,11 @@ namespace Altemiq.Linq;
 
 using System.Reflection;
 
-#pragma warning disable RCS1263, SA1101
+#pragma warning disable CA1708, RCS1263, SA1101
 
 /// <summary>
 /// Provides a set of static methods for querying objects that implement <see cref="IList{T}"/>.
 /// </summary>
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case", Justification = "Extention Blocks")]
 public static partial class List
 {
     /// <content>
