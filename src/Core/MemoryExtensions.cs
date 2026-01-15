@@ -52,9 +52,11 @@ public delegate bool TryParse<T>(ReadOnlySpan<char> input, [System.Diagnostics.C
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "S1133:Deprecated code should be removed", Justification = "These will be removed later")]
 public static partial class MemoryExtensions
 {
-    /// <content>Memory extensions.</content>
-    /// <param name="span">The span.</param>
-    extension(ReadOnlySpan<char> span)
+    /// <content>
+    /// <see cref="ReadOnlySpan{Char}"/> extensions.
+    /// </content>
+    /// <param name="input">The input.</param>
+    extension(ReadOnlySpan<char> input)
     {
         /// <summary>
         /// Returns a new span in which all occurrences of a specified span in the current instance are replaced with another specified span.
@@ -72,34 +74,34 @@ public static partial class MemoryExtensions
             var oldLength = oldValue.Length;
             var newLength = newValue.Length;
 
-            Span<char> working = default;
+            Span<char> span = default;
 
             var current = 0;
-            var length = span.Length;
+            var length = input.Length;
             int idx;
-            while ((idx = span.IndexOf(oldValue, StringComparison.Ordinal)) is not -1)
+            while ((idx = input.IndexOf(oldValue, StringComparison.Ordinal)) is not -1)
             {
-                Initialise(ref working, length);
-                span[..idx].CopyTo(working[current..]);
+                Initialise(ref span, length);
+                input[..idx].CopyTo(span[current..]);
                 current += idx;
-                newValue.CopyTo(working[current..]);
+                newValue.CopyTo(span[current..]);
                 current += newLength;
 
                 idx += oldLength;
-                span = span[idx..];
+                input = input[idx..];
             }
 
-            if (current is 0)
+            if (current is not 0)
             {
-                // no changes, just return the span.
-                return span;
+                // copy the rest
+                input.CopyTo(span[current..]);
+                current += input.Length;
+
+                return span[..current];
             }
 
-            // copy the rest
-            span.CopyTo(working[current..]);
-            current += span.Length;
-
-            return working[..current];
+            // no changes, just return the input.
+            return input;
 
             void Initialise(ref Span<char> span, int initLength)
             {
@@ -110,6 +112,229 @@ public static partial class MemoryExtensions
             }
         }
 
+        /// <summary>
+        /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of span.</typeparam>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="parser">The parser.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <returns>The value array.</returns>
+        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(GetValues)}<T> instead")]
+        public T[] GetValues<T>(string separator, int count, Parse<char, T> parser, IFormatProvider? provider) => input.GetValues(separator.AsSpan(), count, parser, provider);
+
+        /// <summary>
+        /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of span.</typeparam>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="parser">The parser.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <returns>The value array.</returns>
+        public T[] GetValues<T>(ReadOnlySpan<char> separator, int count, Parse<char, T> parser, IFormatProvider? provider) => GetValues(
+            input,
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(input, separator),
+#else
+            input.Split(separator),
+#endif
+            count,
+            parser,
+            provider);
+
+        /// <summary>
+        /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of span.</typeparam>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="parser">The parser.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <returns>The value array.</returns>
+        public T[] GetValues<T>(char separator, int count, Parse<char, T> parser, IFormatProvider? provider) => GetValues(
+            input,
+#if NET9_0_OR_GREATER
+            System.MemoryExtensions.Split(input, separator),
+#else
+            input.Split(separator),
+#endif
+            count,
+            parser,
+            provider);
+
+        /// <summary>
+        /// Tries to get the value array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
+        /// </summary>
+        /// <typeparam name="T">The type of span.</typeparam>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="parser">The parser.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <param name="output">The output values.</param>
+        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
+        public bool TryGetValues<T>(
+            ReadOnlySpan<char> separator,
+            int count,
+            TryParse<char, T> parser,
+            IFormatProvider? provider,
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            out T[]? output) => TryGetValues(
+                input,
+#if NET9_0_OR_GREATER
+                System.MemoryExtensions.Split(input, separator),
+#else
+                input.Split(separator),
+#endif
+                count,
+                parser,
+                provider,
+                out output);
+
+        /// <summary>
+        /// Tries to get the value array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
+        /// </summary>
+        /// <typeparam name="T">The type of span.</typeparam>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="parser">The parser.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <param name="output">The output values.</param>
+        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
+        public bool TryGetValues<T>(
+            char separator,
+            int count,
+            TryParse<char, T> parser,
+            IFormatProvider? provider,
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            out T[]? output) => TryGetValues(
+                input,
+#if NET9_0_OR_GREATER
+                System.MemoryExtensions.Split(input, separator),
+#else
+                input.Split(separator),
+#endif
+                count,
+                parser,
+                provider,
+                out output);
+
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        /// <summary>
+        /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <returns>The value array.</returns>
+        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(GetDoubleValues)} instead")]
+        public double[] GetDoubleValues(string separator, int count, IFormatProvider? provider) => input.GetDoubleValues(separator.AsSpan(), count, provider);
+
+        /// <summary>
+        /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <returns>The value array.</returns>
+        public double[] GetDoubleValues(ReadOnlySpan<char> separator, int count, IFormatProvider? provider)
+        {
+            return input.GetValues(separator, count, Parse, provider);
+
+            static double Parse(ReadOnlySpan<char> input, IFormatProvider? provider)
+            {
+                return double.Parse(input, provider: provider);
+            }
+        }
+
+        /// <summary>
+        /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
+        /// </summary>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <returns>The value array.</returns>
+        public double[] GetDoubleValues(char separator, int count, IFormatProvider? provider)
+        {
+            return input.GetValues(separator, count, Parse, provider);
+
+            static double Parse(ReadOnlySpan<char> input, IFormatProvider? provider)
+            {
+                return double.Parse(input, provider: provider);
+            }
+        }
+
+        /// <summary>
+        /// Tries to get the value double array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
+        /// </summary>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <param name="output">The output values.</param>
+        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
+        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(TryGetDoubleValues)} instead")]
+        public bool TryGetDoubleValues(
+            string separator,
+            int count,
+            IFormatProvider? provider,
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            out double[]? output) => input.TryGetDoubleValues(separator.AsSpan(), count, provider, out output);
+
+        /// <summary>
+        /// Tries to get the value double array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
+        /// </summary>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <param name="output">The output values.</param>
+        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
+        public bool TryGetDoubleValues(
+            ReadOnlySpan<char> separator,
+            int count,
+            IFormatProvider? provider,
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            out double[]? output)
+        {
+            return input.TryGetValues(separator, count, TryParse, provider, out output);
+
+            static bool TryParse(ReadOnlySpan<char> input, IFormatProvider? provider, out double output)
+            {
+                return double.TryParse(input, System.Globalization.NumberStyles.Float, provider, out output);
+            }
+        }
+
+        /// <summary>
+        /// Tries to get the value double array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
+        /// </summary>
+        /// <param name="separator">The separator.</param>
+        /// <param name="count">The number of elements to parse.</param>
+        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+        /// <param name="output">The output values.</param>
+        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
+        public bool TryGetDoubleValues(
+            char separator,
+            int count,
+            IFormatProvider? provider,
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            out double[]? output)
+        {
+            return input.TryGetValues(separator, count, TryParse, provider, out output);
+
+            static bool TryParse(ReadOnlySpan<char> input, IFormatProvider? provider, out double output)
+            {
+                return double.TryParse(input, System.Globalization.NumberStyles.Float, provider, out output);
+            }
+        }
+#endif
+    }
+
+    /// <content>
+    /// <see cref="ReadOnlySpan{Char}"/> extensions.
+    /// </content>
+    /// <param name="span">The source span to be enumerated.</param>
+    extension(ReadOnlySpan<char> span)
+    {
         /// <summary>
         /// Returns a type that allows for enumeration of each element within a split span
         /// using a single space as a separator character.
@@ -213,36 +438,20 @@ public static partial class MemoryExtensions
             first.AsSpan(),
             second.AsSpan(),
             options);
+    }
 
+    /// <content>
+    /// <see cref="ReadOnlySpan{Char}"/> extensions.
+    /// </content>
+    /// <param name="s">The string to split.</param>
+    extension(ReadOnlySpan<char> s)
+    {
         /// <summary>
         /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
         /// </summary>
         /// <param name="separator">A character that delimits the substrings.</param>
         /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
-        public JoinedSpanSplitEnumerator<char> SplitQuoted(char separator) => span.SplitQuoted(separator, StringSplitOptions.None);
-
-        /// <summary>
-        /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
-        /// </summary>
-        /// <param name="separator">A character that delimits the substrings.</param>
-        /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
-        /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
-        public JoinedSpanSplitEnumerator<char> SplitQuoted(char separator, StringSplitOptions options) => new(span, separator, '\"', options);
-
-        /// <summary>
-        /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
-        /// </summary>
-        /// <param name="separator">A character that delimits the substrings.</param>
-        /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
-        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)} methods instead")]
-        public JoinedSpanSplitEnumerator<char> SplitQuoted(string separator) => span.SplitQuoted(separator, StringSplitOptions.None);
-
-        /// <summary>
-        /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
-        /// </summary>
-        /// <param name="separator">A character that delimits the substrings.</param>
-        /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
-        public JoinedSpanSplitEnumerator<char> SplitQuoted(ReadOnlySpan<char> separator) => span.SplitQuoted(separator, StringSplitOptions.None);
+        public JoinedSpanSplitEnumerator<char> SplitQuoted(char separator) => s.SplitQuoted(separator, StringSplitOptions.None);
 
         /// <summary>
         /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
@@ -250,8 +459,31 @@ public static partial class MemoryExtensions
         /// <param name="separator">A character that delimits the substrings.</param>
         /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
         /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
+        public JoinedSpanSplitEnumerator<char> SplitQuoted(char separator, StringSplitOptions options) => new(s, separator, '\"', options);
+
+        /// <summary>
+        /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
+        /// </summary>
+        /// <param name="separator">A character that delimits the substrings.</param>
+        /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
         [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)} methods instead")]
-        public JoinedSpanSplitEnumerator<char> SplitQuoted(string separator, StringSplitOptions options) => span.SplitQuoted(separator.AsSpan(), options);
+        public JoinedSpanSplitEnumerator<char> SplitQuoted(string separator) => s.SplitQuoted(separator, StringSplitOptions.None);
+
+        /// <summary>
+        /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
+        /// </summary>
+        /// <param name="separator">A character that delimits the substrings.</param>
+        /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
+        public JoinedSpanSplitEnumerator<char> SplitQuoted(ReadOnlySpan<char> separator) => s.SplitQuoted(separator, StringSplitOptions.None);
+
+        /// <summary>
+        /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
+        /// </summary>
+        /// <param name="separator">A character that delimits the substrings.</param>
+        /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
+        /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
+        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(Split)} methods instead")]
+        public JoinedSpanSplitEnumerator<char> SplitQuoted(string separator, StringSplitOptions options) => s.SplitQuoted(separator.AsSpan(), options);
 
         /// <summary>
         /// Splits a string into substrings that are based on the specified separator, ignoring separators in quoted areas.
@@ -260,7 +492,7 @@ public static partial class MemoryExtensions
         /// <param name="options">A bitwise combination of the enumeration values that specifies whether to trim substrings and include empty substrings.</param>
         /// <returns>Returns a <see cref="JoinedSpanSplitEnumerator{T}"/>.</returns>
         public JoinedSpanSplitEnumerator<char> SplitQuoted(ReadOnlySpan<char> separator, StringSplitOptions options) => new(
-            span,
+            s,
             separator,
             "\"".AsSpan(),
             options);
@@ -272,16 +504,23 @@ public static partial class MemoryExtensions
         /// <returns>The next value.</returns>
         /// <exception cref="InvalidOperationException">No more values.</exception>
         public ReadOnlySpan<char> GetNextOrThrow(ref SpanSplitEnumerator<char> enumerator) => enumerator.MoveNext()
-            ? span[enumerator.Current]
+            ? s[enumerator.Current]
             : throw new InvalidOperationException();
+    }
 
+    /// <content>
+    /// <see cref="ReadOnlySpan{Char}"/> extensions.
+    /// </content>
+    /// <param name="span">The span.</param>
+    extension(ReadOnlySpan<char> span)
+    {
         /// <summary>
         /// Gets the next value from the span.
         /// </summary>
         /// <typeparam name="T">The type of value to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
         /// <param name="parser">The parser for <typeparamref name="T"/>.</param>
-        /// <returns>The result from <paramref name="parser"/> for the next value from this instance.</returns>
+        /// <returns>The result from <paramref name="parser"/> for the next value.</returns>
         public T GetNextValue<T>(ref SpanSplitEnumerator<char> enumerator, Parse<T> parser) => parser(span.GetNextOrThrow(ref enumerator));
 
         /// <summary>
@@ -290,8 +529,8 @@ public static partial class MemoryExtensions
         /// <typeparam name="T">The type of value to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
         /// <param name="parser">The parser for <typeparamref name="T"/>.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <returns>The result from <paramref name="parser"/> for the next value from this instance.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <returns>The result from <paramref name="parser"/> for the next value.</returns>
         public T GetNextValue<T>(ref SpanSplitEnumerator<char> enumerator, Parse<char, T> parser, IFormatProvider? provider) => parser(span.GetNextOrThrow(ref enumerator), provider);
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
@@ -300,14 +539,14 @@ public static partial class MemoryExtensions
         /// </summary>
         /// <typeparam name="T">The type of enum to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <returns>The result from <see cref="Enum.Parse{T}(string)"/> for the next value from this instance.</returns>
+        /// <returns>The result from <see cref="Enum.Parse{T}(string)"/> for the next value.</returns>
 #else
         /// <summary>
         /// Gets the next value from the span as the specified enum.
         /// </summary>
         /// <typeparam name="T">The type of enum to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <returns>The result from <see cref="Enum.Parse(Type, string)"/> for the next value from this instance.</returns>
+        /// <returns>The result from <see cref="Enum.Parse(Type, string)"/> for the next value.</returns>
 #endif
         public T GetNextEnum<T>(ref SpanSplitEnumerator<char> enumerator)
             where T : struct, Enum =>
@@ -326,7 +565,7 @@ public static partial class MemoryExtensions
         /// <typeparam name="T">The type of enum to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
         /// <param name="ignoreCase"><see langword="true"/> to ignore case; <see langword="false"/> to regard case.</param>
-        /// <returns>The result from <see cref="Enum.Parse{T}(string, bool)"/> for the next value from this instance.</returns>
+        /// <returns>The result from <see cref="Enum.Parse{T}(string, bool)"/> for the next value.</returns>
 #else
         /// <summary>
         /// Gets the next value from the span as the specified enum.
@@ -334,7 +573,7 @@ public static partial class MemoryExtensions
         /// <typeparam name="T">The type of enum to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
         /// <param name="ignoreCase"><see langword="true"/> to ignore case; <see langword="false"/> to regard case.</param>
-        /// <returns>The result from <see cref="Enum.Parse(Type, string, bool)"/> for the next value from this instance.</returns>
+        /// <returns>The result from <see cref="Enum.Parse(Type, string, bool)"/> for the next value.</returns>
 #endif
         public T GetNextEnum<T>(ref SpanSplitEnumerator<char> enumerator, bool ignoreCase)
             where T : struct, Enum =>
@@ -351,89 +590,94 @@ public static partial class MemoryExtensions
         /// Gets the next value from the span as a <see cref="double"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="double"/> value.</returns>
-        public double GetNextDouble(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float, IFormatProvider? provider = null) =>
-            span.GetNextValue(ref enumerator, v => double.Parse(v, style, provider));
+        public double GetNextDouble(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => double.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="float"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="float"/> value.</returns>
-        public float GetNextSingle(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float, IFormatProvider? provider = null) =>
-            span.GetNextValue(ref enumerator, v => float.Parse(v, style, provider));
+        public float GetNextSingle(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => float.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="short"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="short"/> value.</returns>
-        public short GetNextInt16(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => short.Parse(v, style, provider));
+        public short GetNextInt16(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => short.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="ushort"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="ushort"/> value.</returns>
         [CLSCompliant(false)]
-        public ushort GetNextUInt16(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => ushort.Parse(v, style, provider));
+        public ushort GetNextUInt16(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => ushort.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="int"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="int"/> value.</returns>
-        public int GetNextInt32(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => int.Parse(v, style, provider));
+        public int GetNextInt32(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => int.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="uint"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="uint"/> value.</returns>
         [CLSCompliant(false)]
-        public uint GetNextUInt32(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => uint.Parse(v, style, provider));
+        public uint GetNextUInt32(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => uint.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="long"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="long"/> value.</returns>
-        public long GetNextInt64(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) => span.GetNextValue(ref enumerator, v => long.Parse(v, style, provider));
+        public long GetNextInt64(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => long.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="ulong"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="ulong"/> value.</returns>
         [CLSCompliant(false)]
-        public ulong GetNextUInt64(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) =>
-            span.GetNextValue(ref enumerator, v => ulong.Parse(v, style, provider));
+        public ulong GetNextUInt64(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => ulong.Parse(v, style, provider));
 
         /// <summary>
         /// Gets the next value from the span as a <see cref="byte"/> value.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
         /// <returns>The next value from the span as a <see cref="byte"/> value.</returns>
-        public byte GetNextByte(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null) =>
-            span.GetNextValue(ref enumerator, v => byte.Parse(v, style: style, provider: provider));
+        public byte GetNextByte(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer, IFormatProvider? provider = null)
+            => span.GetNextValue(ref enumerator, v => byte.Parse(v, style: style, provider: provider));
 #endif
 
         /// <summary>
@@ -444,65 +688,13 @@ public static partial class MemoryExtensions
         public string GetNextString(ref SpanSplitEnumerator<char> enumerator) => span.GetNextValue(ref enumerator, static v => v.ToString());
 
         /// <summary>
-        /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of span.</typeparam>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="parser">The parser.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <returns>The value array.</returns>
-        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(GetValues)}<T> instead")]
-        public T[] GetValues<T>(string separator, int count, Parse<char, T> parser, IFormatProvider? provider) => span.GetValues(separator.AsSpan(), count, parser, provider);
-
-        /// <summary>
-        /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of span.</typeparam>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="parser">The parser.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <returns>The value array.</returns>
-        public T[] GetValues<T>(ReadOnlySpan<char> separator, int count, Parse<char, T> parser, IFormatProvider? provider) => GetValues(
-            span,
-#if NET9_0_OR_GREATER
-            System.MemoryExtensions.Split(span, separator),
-#else
-            span.Split(separator),
-#endif
-            count,
-            parser,
-            provider);
-
-        /// <summary>
-        /// Gets the value array from the <see cref="ReadOnlySpan{T}"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of span.</typeparam>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="parser">The parser.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <returns>The value array.</returns>
-        public T[] GetValues<T>(char separator, int count, Parse<char, T> parser, IFormatProvider? provider) => GetValues(
-            span,
-#if NET9_0_OR_GREATER
-            System.MemoryExtensions.Split(span, separator),
-#else
-            span.Split(separator),
-#endif
-            count,
-            parser,
-            provider);
-
-        /// <summary>
         /// Tries to get the next value from the span, with the result indicating success.
         /// </summary>
         /// <typeparam name="T">The type of value to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
         /// <param name="parser">The parser for <typeparamref name="T"/>.</param>
-        /// <param name="value">The result from <paramref name="parser"/> for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="value">The result from <paramref name="parser"/> for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextValue<T>(ref SpanSplitEnumerator<char> enumerator, TryParse<T> parser, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T? value)
         {
             if (enumerator.MoveNext())
@@ -519,8 +711,8 @@ public static partial class MemoryExtensions
         /// </summary>
         /// <typeparam name="T">The type of enum to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="value">The enum result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="value">The enum result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextEnum<T>(ref SpanSplitEnumerator<char> enumerator, out T value)
             where T : struct, Enum
         {
@@ -542,8 +734,8 @@ public static partial class MemoryExtensions
         /// <typeparam name="T">The type of enum to get.</typeparam>
         /// <param name="enumerator">The span enumerator.</param>
         /// <param name="ignoreCase"><see langword="true"/> to ignore case; <see langword="false"/> to regard case.</param>
-        /// <param name="value">The enum result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="value">The enum result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextEnum<T>(ref SpanSplitEnumerator<char> enumerator, bool ignoreCase, out T value)
             where T : struct, Enum
         {
@@ -564,19 +756,19 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="double"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="double"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="double"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextDouble(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out double value) => span.TryGetNextDouble(ref enumerator, System.Globalization.NumberStyles.AllowThousands | System.Globalization.NumberStyles.Float, provider, out value);
 
         /// <summary>
         /// Tries to get the next value from the span as a <see cref="double"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="double"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="double"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextDouble(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out double value)
         {
             return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -591,19 +783,19 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="float"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="float"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="float"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextSingle(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out float value) => span.TryGetNextSingle(ref enumerator, System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands, provider, out value);
 
         /// <summary>
         /// Tries to get the next value from the span as a <see cref="double"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="double"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="double"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextSingle(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out float value)
         {
             return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -618,19 +810,19 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="short"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="short"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="short"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextInt16(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out short value) => span.TryGetNextInt16(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
         /// <summary>
         /// Tries to get the next value from the span as a <see cref="short"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="short"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="short"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextInt16(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out short value)
         {
             return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -645,9 +837,9 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="ushort"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="ushort"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="ushort"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         [CLSCompliant(false)]
         public bool TryGetNextUInt16(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out ushort value) => span.TryGetNextUInt16(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
@@ -655,10 +847,10 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="ushort"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="ushort"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="ushort"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         [CLSCompliant(false)]
         public bool TryGetNextUInt16(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out ushort value)
         {
@@ -674,19 +866,19 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="int"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="int"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="int"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextInt32(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out int value) => span.TryGetNextInt32(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
         /// <summary>
         /// Tries to get the next value from the span as a <see cref="int"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="int"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="int"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextInt32(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out int value)
         {
             return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -701,9 +893,9 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="uint"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="uint"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="uint"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         [CLSCompliant(false)]
         public bool TryGetNextUInt32(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out uint value) => span.TryGetNextUInt32(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
@@ -711,10 +903,10 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="uint"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="uint"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="uint"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         [CLSCompliant(false)]
         public bool TryGetNextUInt32(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out uint value)
         {
@@ -730,19 +922,19 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="long"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="long"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="long"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextInt64(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out long value) => span.TryGetNextInt64(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
         /// <summary>
         /// Tries to get the next value from the span as a <see cref="long"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="long"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="long"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextInt64(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out long value)
         {
             return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -757,9 +949,9 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="ulong"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="ulong"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="ulong"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         [CLSCompliant(false)]
         public bool TryGetNextUInt64(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out ulong value) => span.TryGetNextUInt64(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
@@ -767,10 +959,10 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="ulong"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="ulong"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="ulong"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         [CLSCompliant(false)]
         public bool TryGetNextUInt64(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out ulong value)
         {
@@ -786,19 +978,19 @@ public static partial class MemoryExtensions
         /// Tries to get the next value from the span as a <see cref="byte"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="byte"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="byte"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextByte(ref SpanSplitEnumerator<char> enumerator, IFormatProvider? provider, out byte value) => span.TryGetNextByte(ref enumerator, System.Globalization.NumberStyles.Integer, provider, out value);
 
         /// <summary>
         /// Tries to get the next value from the span as a <see cref="byte"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present in this instance.</param>
-        /// <param name="provider">An object that supplies culture-specific information about the format of this instance. If provider is <see langword="null"/>, the thread current culture is used.</param>
-        /// <param name="value">The <see cref="byte"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="style">A bitwise combination of enumeration values that indicates the style elements that can be present.</param>
+        /// <param name="provider">An object that supplies culture-specific information about the format. If provider is <see langword="null"/>, the thread current culture is used.</param>
+        /// <param name="value">The <see cref="byte"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextByte(ref SpanSplitEnumerator<char> enumerator, System.Globalization.NumberStyles style, IFormatProvider? provider, out byte value)
         {
             return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -808,13 +1000,14 @@ public static partial class MemoryExtensions
                 return byte.TryParse(v, style, provider, out value);
             }
         }
+#endif
 
         /// <summary>
         /// Tries to get the next value from the span as a <see cref="string"/>, with the result indicating success.
         /// </summary>
         /// <param name="enumerator">The span enumerator.</param>
-        /// <param name="value">The <see cref="string"/> result for the next value from this instance.</param>
-        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed from this instance; otherwise <see langword="false"/>.</returns>
+        /// <param name="value">The <see cref="string"/> result for the next value.</param>
+        /// <returns><see langword="true"/> if <paramref name="value"/> was successfully parsed; otherwise <see langword="false"/>.</returns>
         public bool TryGetNextString(ref SpanSplitEnumerator<char> enumerator, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? value)
         {
             return span.TryGetNextValue(ref enumerator, TryParse, out value);
@@ -842,174 +1035,8 @@ public static partial class MemoryExtensions
             int count,
             TryParse<char, T> parser,
             IFormatProvider? provider,
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            out T[]? output) => span.TryGetValues(separator.AsSpan(), count, parser, provider, out output);
-#endif
-
-        /// <summary>
-        /// Tries to get the value array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
-        /// </summary>
-        /// <typeparam name="T">The type of span.</typeparam>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="parser">The parser.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <param name="output">The output values.</param>
-        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
-        public bool TryGetValues<T>(
-            ReadOnlySpan<char> separator,
-            int count,
-            TryParse<char, T> parser,
-            IFormatProvider? provider,
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            out T[]? output) => TryGetValues(
-                span,
-#if NET9_0_OR_GREATER
-                System.MemoryExtensions.Split(span, separator),
-#else
-                span.Split(separator),
-#endif
-                count,
-                parser,
-                provider,
-                out output);
-
-        /// <summary>
-        /// Tries to get the value array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
-        /// </summary>
-        /// <typeparam name="T">The type of span.</typeparam>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="parser">The parser.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <param name="output">The output values.</param>
-        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
-        public bool TryGetValues<T>(
-            char separator,
-            int count,
-            TryParse<char, T> parser,
-            IFormatProvider? provider,
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            out T[]? output) => TryGetValues(
-                span,
-#if NET9_0_OR_GREATER
-                System.MemoryExtensions.Split(span, separator),
-#else
-                span.Split(separator),
-#endif
-                count,
-                parser,
-                provider,
-                out output);
-
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-        /// <summary>
-        /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
-        /// </summary>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <returns>The value array.</returns>
-        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(GetDoubleValues)} instead")]
-        public double[] GetDoubleValues(string separator, int count, IFormatProvider? provider) => span.GetDoubleValues(separator.AsSpan(), count, provider);
-
-        /// <summary>
-        /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
-        /// </summary>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <returns>The value array.</returns>
-        public double[] GetDoubleValues(ReadOnlySpan<char> separator, int count, IFormatProvider? provider)
-        {
-            return span.GetValues(separator, count, Parse, provider);
-
-            static double Parse(ReadOnlySpan<char> input, IFormatProvider? provider)
-            {
-                return double.Parse(input, provider: provider);
-            }
-        }
-
-        /// <summary>
-        /// Gets the value double array from the <see cref="ReadOnlySpan{T}"/>.
-        /// </summary>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <returns>The value array.</returns>
-        public double[] GetDoubleValues(char separator, int count, IFormatProvider? provider)
-        {
-            return span.GetValues(separator, count, Parse, provider);
-
-            static double Parse(ReadOnlySpan<char> input, IFormatProvider? provider)
-            {
-                return double.Parse(input, provider: provider);
-            }
-        }
-
-        /// <summary>
-        /// Tries to get the value double array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
-        /// </summary>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <param name="output">The output values.</param>
-        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
-        [Obsolete($"Use span based {nameof(Altemiq)}.{nameof(MemoryExtensions)}.{nameof(TryGetDoubleValues)} instead")]
-        public bool TryGetDoubleValues(
-            string separator,
-            int count,
-            IFormatProvider? provider,
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            out double[]? output) =>
-            span.TryGetDoubleValues(separator.AsSpan(), count, provider, out output);
-
-        /// <summary>
-        /// Tries to get the value double array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
-        /// </summary>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <param name="output">The output values.</param>
-        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
-        public bool TryGetDoubleValues(
-            ReadOnlySpan<char> separator,
-            int count,
-            IFormatProvider? provider,
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            out double[]? output)
-        {
-            return span.TryGetValues(separator, count, TryParse, provider, out output);
-
-            static bool TryParse(ReadOnlySpan<char> input, IFormatProvider? provider, out double output)
-            {
-                return double.TryParse(input, System.Globalization.NumberStyles.Float, provider, out output);
-            }
-        }
-
-        /// <summary>
-        /// Tries to get the value double array from the <see cref="ReadOnlySpan{T}"/> and returns whether it was successful.
-        /// </summary>
-        /// <param name="separator">The separator.</param>
-        /// <param name="count">The number of elements to parse.</param>
-        /// <param name="provider">An <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-        /// <param name="output">The output values.</param>
-        /// <returns><see langword="true"/> if the values were obtained; otherwise <see langword="false"/>.</returns>
-        public bool TryGetDoubleValues(
-            char separator,
-            int count,
-            IFormatProvider? provider,
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            out double[]? output)
-        {
-            return span.TryGetValues(separator, count, TryParse, provider, out output);
-
-            static bool TryParse(ReadOnlySpan<char> input, IFormatProvider? provider, out double output)
-            {
-                return double.TryParse(input, System.Globalization.NumberStyles.Float, provider, out output);
-            }
-        }
-#endif
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T[]? output) =>
+            span.TryGetValues(separator.AsSpan(), count, parser, provider, out output);
     }
 
     /// <content>
@@ -1074,8 +1101,7 @@ public static partial class MemoryExtensions
         int count,
         TryParse<TInput, TOutput> parser,
         IFormatProvider? provider,
-        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-        out TOutput[]? output)
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TOutput[]? output)
         where TInput : IEquatable<TInput>
     {
         var list = new TOutput[count];
