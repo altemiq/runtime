@@ -221,20 +221,20 @@ public static class BinaryWriterExtensions
 #endif
 
 #if NET6_0_OR_GREATER
-    /// <inheritdoc cref="BinaryWriter.Write(Half)" />
-    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public void Write(Half value, ByteOrder byteOrder)
-    {
-        if (BinaryWriter.IsBigEndian(byteOrder))
+        /// <inheritdoc cref="BinaryWriter.Write(Half)" />
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        public void Write(Half value, ByteOrder byteOrder)
         {
-            Span<byte> buffer = stackalloc byte[sizeof(short)];
-            System.Buffers.Binary.BinaryPrimitives.WriteHalfBigEndian(buffer, value);
-            writer.BaseStream.Write(buffer);
-            return;
-        }
+            if (BinaryWriter.IsBigEndian(byteOrder))
+            {
+                Span<byte> buffer = stackalloc byte[sizeof(short)];
+                System.Buffers.Binary.BinaryPrimitives.WriteHalfBigEndian(buffer, value);
+                writer.BaseStream.Write(buffer);
+                return;
+            }
 
-        writer.Write(value);
-    }
+            writer.Write(value);
+        }
 #elif NET5_0_OR_GREATER
         /// <inheritdoc cref="Write(BinaryWriter, Half)" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
