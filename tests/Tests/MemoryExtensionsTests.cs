@@ -21,7 +21,7 @@ public class MemoryExtensionsTests
 
         static ReadOnlySpan<char> Span(string input)
         {
-            return input.AsSpan();
+            return input;
         }
     }
 

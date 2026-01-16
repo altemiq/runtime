@@ -14,69 +14,55 @@ internal static class TestUtils
         const int Extend = 2;
 
         var compressed = new int[orig.Length + Extend];
-        var compressedInputPosition = 0;
-        var compressedOutputPosition = 0;
-        codec.Compress(orig, ref compressedInputPosition, compressed, ref compressedOutputPosition, orig.Length);
+        var (_, compressedOutputPosition) = codec.Compress(orig, compressed);
 
         await Assert.That(compressedOutputPosition).IsBetween(0, orig.Length + Extend);
 
         // Decompress an array.
         var decompressed = new int[orig.Length];
-        var decompressedInputPosition = 0;
-        var decompressedOutputPosition = 0;
-        codec.Decompress(compressed, ref decompressedInputPosition, decompressed, ref decompressedOutputPosition, compressedOutputPosition);
+        var (_, decompressedOutputPosition) = codec.Decompress(compressed.AsSpan(0, compressedOutputPosition), decompressed);
 
         // Compare between uncompressed and orig arrays.
         Array.Resize(ref decompressed, decompressedOutputPosition);
         await Assert.That(orig).HasSameSequenceAs(decompressed);
     }
 
-    public static int[] Compress(IInt32Codec codec, int[] data)
+    public static int[] Compress(IInt32Codec codec, ReadOnlySpan<int> data)
     {
         var output = new int[data.Length * 4];
-        var inputPosition = 0;
-        var outputPosition = 0;
-        codec.Compress(data, ref inputPosition, output, ref outputPosition, data.Length);
+        var (_, outputPosition) = codec.Compress(data, output);
         Array.Resize(ref output, outputPosition);
         return output;
     }
 
-    public static int[] Decompress(IInt32Codec codec, int[] data, int len)
+    public static int[] Decompress(IInt32Codec codec, ReadOnlySpan<int> data, int length)
     {
-        var output = new int[len + 1024];
-        var inputPosition = 0;
-        var outputPosition = 0;
-        codec.Decompress(data, ref inputPosition, output, ref outputPosition, data.Length);
+        var output = new int[length + 1024];
+        var (_, outputPosition) = codec.Decompress(data, output);
         Array.Resize(ref output, outputPosition);
         return output;
     }
 
-    public static sbyte[] Compress(ISByteCodec codec, int[] data)
+    public static sbyte[] Compress(ISByteCodec codec, ReadOnlySpan<int> data)
     {
         var output = new sbyte[data.Length * 4 * 4];
-        var inputPosition = 0;
-        var outputPosition = 0;
-        codec.Compress(data, ref inputPosition, output, ref outputPosition, data.Length);
+        var (_, outputPosition) = codec.Compress(data, output);
         Array.Resize(ref output, outputPosition);
         return output;
     }
 
-    public static int[] Decompress(ISByteCodec codec, sbyte[] data, int len)
+    public static int[] Decompress(ISByteCodec codec, ReadOnlySpan<sbyte> data, int length)
     {
-        var output = new int[len + 1024];
-        var inputPosition = 0;
-        var outputPosition = 0;
-        codec.Decompress(data, ref inputPosition, output, ref outputPosition, data.Length);
+        var output = new int[length + 1024];
+        var (_, outputPosition) = codec.Decompress(data, output);
         Array.Resize(ref output, outputPosition);
         return output;
     }
 
-    public static int[] CompressHeadless(IHeadlessInt32Codec codec, int[] data)
+    public static int[] CompressHeadless(IHeadlessInt32Codec codec, ReadOnlySpan<int> data)
     {
         var output = new int[data.Length * 4];
-        var inputPosition = 0;
-        var outputPosition = 0;
-        codec.Compress(data, ref inputPosition, output, ref outputPosition, data.Length);
+        var (_, outputPosition) = codec.Compress(data, output);
         Array.Resize(ref output, outputPosition);
         return output;
     }
@@ -84,9 +70,7 @@ internal static class TestUtils
     public static async Task<int[]> DecompressHeadless(IHeadlessInt32Codec codec, int[] data, int length)
     {
         var output = new int[length + 1024];
-        var inputPosition = 0;
-        var outputPosition = 0;
-        codec.Decompress(data, ref inputPosition, output, ref outputPosition, data.Length, length);
+        var (_, outputPosition) = codec.Decompress(data, output.AsSpan(0, length));
         await Assert.That(outputPosition).IsGreaterThanOrEqualTo(length);
         Array.Resize(ref output, outputPosition);
         return output;

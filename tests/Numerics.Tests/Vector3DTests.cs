@@ -958,7 +958,7 @@ public sealed class Vector3DTests
     public async Task Vector3DConstructorTest6()
     {
         var value = 1.0;
-        var target = new Vector3D(new[] { value, value, value });
+        var target = new Vector3D([value, value, value]);
         var expected = new Vector3D(value);
 
         await Assert.That(target).IsEqualTo(expected);
@@ -1293,7 +1293,7 @@ public sealed class Vector3DTests
     struct Vector3DPlusDouble
     {
         private Vector3D _v;
-        private double _f;
+        private readonly double _f;
     }
 
     [StructLayout(LayoutKind.Sequential)]

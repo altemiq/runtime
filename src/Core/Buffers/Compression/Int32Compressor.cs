@@ -12,8 +12,6 @@ namespace Altemiq.Buffers.Compression;
 /// <param name="codec">The codec.</param>
 internal sealed class Int32Compressor(IHeadlessInt32Codec codec)
 {
-    private readonly IHeadlessInt32Codec codec = codec;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Int32Compressor"/> class.
     /// </summary>
@@ -49,10 +47,8 @@ internal sealed class Int32Compressor(IHeadlessInt32Codec codec)
     {
         var compressed = new int[input.Length + 1024];
         compressed[0] = input.Length;
-        var sourceIndex = 0;
-        var destinationIndex = 1;
-        this.codec.Compress(input, ref sourceIndex, compressed, ref destinationIndex, input.Length);
-        Array.Resize(ref compressed, destinationIndex);
+        var (_, written) = codec.Compress(input, compressed.AsSpan(1));
+        Array.Resize(ref compressed, written + 1);
         return compressed;
     }
 
@@ -68,12 +64,10 @@ internal sealed class Int32Compressor(IHeadlessInt32Codec codec)
     public int[] Decompress(int[] compressed)
     {
         var decompressed = new int[compressed[0]];
-        var sourceIndex = 1;
-        var destinationIndex = 0;
-        this.codec.Decompress(compressed, ref sourceIndex, decompressed, ref destinationIndex, compressed.Length - sourceIndex, decompressed.Length);
+        _ = codec.Decompress(compressed.AsSpan(1), decompressed);
         return decompressed;
     }
 
     /// <inheritdoc/>
-    public override string? ToString() => this.codec.ToString();
+    public override string ToString() => $"{nameof(Int32Compressor)}({codec})";
 }

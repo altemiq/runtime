@@ -23,16 +23,6 @@ internal static class Util
     /// <summary>
     /// Gets the maximum number of bits.
     /// </summary>
-    /// <param name="input">The values.</param>
-    /// <param name="start">The position.</param>
-    /// <param name="length">The length.</param>
-    /// <returns>The maximum number of bits.</returns>
-    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static int MaxBits(int[] input, int start, int length) => MaxBits(input.AsSpan(start, length));
-
-    /// <summary>
-    /// Gets the maximum number of bits.
-    /// </summary>
     /// <param name="buffer">The buffer.</param>
     /// <returns>The maximum number of bits.</returns>
     public static int MaxBits(ReadOnlySpan<int> buffer)

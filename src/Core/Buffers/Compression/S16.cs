@@ -42,36 +42,38 @@ internal sealed class S16
     private static readonly int[][] ShiftedS16Bits = [.. S16Bits.Select(static x => x.Select(x => 1 << x).ToArray())];
 
     /// <inheritdoc cref="Compression.Compress" />
-    public static int Compress(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
+    public static int Compress(ReadOnlySpan<int> source, Span<int> destination, int length)
     {
-        var temporaryDestinationIndex = destinationIndex;
-        var endSourceIndex = sourceIndex + length;
+        var sourceIndex = 0;
+        var destinationIndex = 0;
+        var endSourceIndex = length;
         while (sourceIndex < endSourceIndex)
         {
-            var offset = CompressBlock(destination, temporaryDestinationIndex++, source, sourceIndex, length);
+            var offset = CompressBlock(source.Slice(sourceIndex, length), destination[destinationIndex..]);
             if (offset is -1)
             {
                 throw new InvalidDataException("Too big a number");
             }
 
+            destinationIndex++;
             sourceIndex += offset;
             length -= offset;
         }
 
-        return temporaryDestinationIndex - destinationIndex;
+        return destinationIndex;
 
-        static int CompressBlock(int[] destination, int destinationIndex, int[] source, int sourceIndex, int length)
+        static int CompressBlock(ReadOnlySpan<int> source, Span<int> destination)
         {
             for (var i = 0; i < S16NumSize; i++)
             {
-                destination[destinationIndex] = i << S16BitsSize;
-                var offset = Math.Min(S16Num[i], length);
+                destination[0] = i << S16BitsSize;
+                var offset = Math.Min(S16Num[i], source.Length);
 
                 var bits = 0;
                 int j;
-                for (j = 0; (j < offset) && (source[sourceIndex + j] < ShiftedS16Bits[i][j]); j++)
+                for (j = 0; (j < offset) && (source[j] < ShiftedS16Bits[i][j]); j++)
                 {
-                    destination[destinationIndex] |= source[sourceIndex + j] << bits;
+                    destination[0] |= source[j] << bits;
                     bits += S16Bits[i][j];
                 }
 
@@ -128,25 +130,29 @@ internal sealed class S16
     }
 
     /// <inheritdoc cref="Compression.Decompress" />
-    public static void Decompress(int[] source, int sourceIndex, int length, int[] destination, int destinationIndex, int destinationLength)
+    public static void Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var endSourceIndex = sourceIndex + length;
-        while (sourceIndex < endSourceIndex)
+        var sourceIndex = 0;
+        var length = source.Length;
+        var destinationIndex = 0;
+        var destinationLength = destination.Length;
+        while (sourceIndex < length)
         {
-            var count = DecompressBlock(source, sourceIndex, destination, destinationIndex, destinationLength);
+            var count = DecompressBlock(source[sourceIndex..], destination.Slice(destinationIndex, destinationLength));
             destinationLength -= count;
             destinationIndex += count;
             sourceIndex++;
         }
 
-        static int DecompressBlock(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
+        static int DecompressBlock(ReadOnlySpan<int> source, Span<int> destination)
         {
-            var index = source[sourceIndex] >>> S16BitsSize;
+            var length = destination.Length;
+            var index = source[0] >>> S16BitsSize;
             var count = Math.Min(S16Num[index], length);
             var bits = 0;
             for (var j = 0; j < count; j++)
             {
-                destination[destinationIndex + j] = source[sourceIndex] >>> bits & (int)(0xffffffff >> (32 - S16Bits[index][j]));
+                destination[j] = source[0] >>> bits & (int)(0xffffffff >> (32 - S16Bits[index][j]));
                 bits += S16Bits[index][j];
             }
 

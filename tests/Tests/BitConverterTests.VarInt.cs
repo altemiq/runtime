@@ -201,9 +201,7 @@ public partial class BitConverterTests
             {
                 var encoded = new byte[20];
                 await Assert.That(encode(encoded, number, out var bytesWritten)).IsTrue();
-                Range range = new(Index.Start, new(bytesWritten));
-                var decoded = decode(encoded.AsSpan()[range], out var bytesRead);
-                await Assert.That(decoded).IsEqualTo(number);
+                await Assert.That(decode(encoded.AsSpan(0, bytesWritten), out var bytesRead)).IsEqualTo(number);
                 await Assert.That(bytesRead).IsEqualTo(bytesWritten);
             }
 

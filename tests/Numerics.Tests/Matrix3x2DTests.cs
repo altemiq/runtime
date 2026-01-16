@@ -1075,7 +1075,7 @@ public sealed class Matrix3x2DTests
     private struct Matrix3x2DPlusDouble
     {
         private Matrix3x2D _v;
-        private double _f;
+        private readonly double _f;
     }
 
     [StructLayout(LayoutKind.Sequential)]

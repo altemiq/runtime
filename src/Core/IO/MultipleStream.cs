@@ -13,8 +13,6 @@ namespace Altemiq.IO;
 [System.Runtime.CompilerServices.TypeForwardedFrom("Altemiq.IO")]
 public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : Stream
 {
-    private readonly IDictionary<string, Stream> streams = dictionary;
-
     private string currentName = string.Empty;
 
     private Stream currentStream = Null;
@@ -51,7 +49,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override bool CanWrite => this.currentStream.CanWrite;
 
     /// <inheritdoc/>
-    public override long Length => this.streams.Sum(static kvp => kvp.Value.Length);
+    public override long Length => dictionary.Sum(static kvp => kvp.Value.Length);
 
     /// <inheritdoc/>
     public override int ReadTimeout { get => this.currentStream.ReadTimeout; set => this.currentStream.ReadTimeout = value; }
@@ -82,7 +80,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// <inheritdoc/>
     public override void Close()
     {
-        foreach (var stream in this.streams.Values)
+        foreach (var stream in dictionary.Values)
         {
             stream.Flush();
             stream.Close();
@@ -97,7 +95,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override async Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
     {
         // copy from the current stream to the end.
-        using var enumerator = this.streams.GetEnumerator();
+        using var enumerator = dictionary.GetEnumerator();
         var streamOffset = 0L;
         while (enumerator.MoveNext() && enumerator.Current.Value != this.currentStream)
         {
@@ -140,7 +138,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override void Flush()
     {
         // flush all the buffers for this
-        if (this.streams.Values is IEnumerable<Stream> enumerable)
+        if (dictionary.Values is IEnumerable<Stream> enumerable)
         {
             foreach (var stream in enumerable)
             {
@@ -153,7 +151,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     public override async Task FlushAsync(CancellationToken cancellationToken)
     {
         // flush all the buffers for this
-        if (this.streams.Values is IEnumerable<Stream> enumerable)
+        if (dictionary.Values is IEnumerable<Stream> enumerable)
         {
             foreach (var stream in enumerable)
             {
@@ -346,7 +344,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// <inheritdoc/>
     public override void CopyTo(Stream destination, int bufferSize)
     {
-        using var enumerator = this.streams.GetEnumerator();
+        using var enumerator = dictionary.GetEnumerator();
         var streamOffset = 0L;
         while (enumerator.MoveNext() && enumerator.Current.Value != this.currentStream)
         {
@@ -378,7 +376,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// <inheritdoc/>
     public override async ValueTask DisposeAsync()
     {
-        foreach (var stream in this.streams.Values.OfType<IAsyncDisposable>())
+        foreach (var stream in dictionary.Values.OfType<IAsyncDisposable>())
         {
             await stream.DisposeAsync().ConfigureAwait(false);
         }
@@ -398,9 +396,9 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// <returns><see langword="true" /> when the <paramref name="name"/> and result of <paramref name="func"/> are successfully added to this instance; <see langword="false" /> when this instance dictionary contains the specified <paramref name="name"/>, in which case nothing gets added.</returns>
     public bool TryAdd(string name, Func<Stream> func)
     {
-        if (!this.streams.ContainsKey(name))
+        if (!dictionary.ContainsKey(name))
         {
-            this.streams.Add(name, func());
+            dictionary.Add(name, func());
             return true;
         }
 
@@ -412,7 +410,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// </summary>
     /// <param name="name">The name.</param>
     /// <param name="stream">The stream.</param>
-    public void Add(string name, Stream stream) => this.streams.Add(name, stream);
+    public void Add(string name, Stream stream) => dictionary.Add(name, stream);
 
     /// <summary>
     /// Switches the current stream to using the specified name.
@@ -432,7 +430,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
             return true;
         }
 
-        if (!this.streams.TryGetValue(name, out var stream))
+        if (!dictionary.TryGetValue(name, out var stream))
         {
             stream = this.CreateStream(name);
             this.Add(name, stream);
@@ -443,7 +441,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
             return false;
         }
 
-        this.SetCurrent(name, stream, this.streams
+        this.SetCurrent(name, stream, dictionary
             .TakeWhile(kvp => kvp.Value != stream)
             .Sum(kvp => kvp.Value.Length));
 
@@ -455,12 +453,12 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     /// </summary>
     public void Reset()
     {
-        foreach (var kvp in this.streams)
+        foreach (var kvp in dictionary)
         {
             kvp.Value.Position = 0;
         }
 
-        var first = this.streams.First();
+        var first = dictionary.First();
         this.SetCurrent(first.Key, first.Value, 0);
     }
 
@@ -469,12 +467,12 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     {
         if (disposing)
         {
-            foreach (var stream in this.streams.Values.OfType<IDisposable>())
+            foreach (var stream in dictionary.Values.OfType<IDisposable>())
             {
                 stream.Dispose();
             }
 
-            this.streams.Clear();
+            dictionary.Clear();
         }
 
         base.Dispose(disposing);
@@ -505,7 +503,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
         }
 
         var streamOffset = 0L;
-        foreach (var kvp in this.streams)
+        foreach (var kvp in dictionary)
         {
             currentPosition = position - streamOffset;
             var length = kvp.Value.Length;
@@ -524,7 +522,7 @@ public abstract class MultipleStream(IDictionary<string, Stream> dictionary) : S
     {
         // get the current index
         var streamOffset = 0L;
-        using var enumerator = this.streams.GetEnumerator();
+        using var enumerator = dictionary.GetEnumerator();
         while (enumerator.MoveNext())
         {
             var kvp = enumerator.Current;

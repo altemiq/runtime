@@ -12,21 +12,21 @@ namespace Altemiq.Buffers.Compression;
 internal sealed class DeltaZigzagVariableByte : IInt32Codec
 {
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
+        var length = source.Length;
         if (length is 0)
         {
-            return;
+            return default;
         }
 
         var byteBuffer = new MemoryStream((length * 5) + 3);
         var context = new DeltaZigzagEncoding.Encoder(0);
 
         // Delta+Zigzag+VariableByte encoding.
-        var sourcePosition = sourceIndex;
+        var sourcePosition = 0;
 
-        var sourceIndexLast = sourcePosition + length;
-        for (; sourcePosition < sourceIndexLast; sourcePosition++)
+        for (; sourcePosition < length; sourcePosition++)
         {
             // Filter with delta+zigzag encoding.
             var n = context.Encode(source[sourcePosition]);
@@ -66,24 +66,23 @@ internal sealed class DeltaZigzagVariableByte : IInt32Codec
 
         var destinationLength = (int)byteBuffer.Position / 4;
         byteBuffer.Position = 0;
-        byteBuffer.Read(destination, destinationIndex, destinationLength, ByteOrder.BigEndian);
-        sourceIndex += length;
-        destinationIndex += destinationLength;
+        byteBuffer.Read(destination[..destinationLength], ByteOrder.BigEndian);
+        return (length, destinationLength);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
         var context = new DeltaZigzagEncoding.Decoder(0);
 
-        var sourcePosition = sourceIndex;
-        var destinationPosition = destinationIndex;
+        var sourcePosition = 0;
+        var destinationPosition = 0;
 
         // Variable Byte Context.
         var variableByteContextNumber = 0;
         var variableByteContextShift = 24;
 
-        var sourceIndexLast = sourcePosition + length;
+        var sourceIndexLast = source.Length;
         while (sourcePosition < sourceIndexLast)
         {
             // Fetch a byte value.
@@ -107,8 +106,7 @@ internal sealed class DeltaZigzagVariableByte : IInt32Codec
             }
         }
 
-        destinationIndex = destinationPosition;
-        sourceIndex = sourceIndexLast;
+        return (sourceIndexLast, destinationPosition);
     }
 
     /// <inheritdoc/>

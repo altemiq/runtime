@@ -3065,7 +3065,7 @@ public sealed class Matrix4x4DTests
     struct Matrix4x4DPlusDouble
     {
         private Matrix4x4D _v;
-        private double _f;
+        private readonly double _f;
     }
 
     [StructLayout(LayoutKind.Sequential)]

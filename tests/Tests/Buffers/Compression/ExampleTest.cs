@@ -44,9 +44,7 @@ public class ExampleTest
         // compressed might not be large enough in some cases
         // if you get IndexOutOfBoundsException, try
         // allocating more memory
-        var inputOffset = 0;
-        var outputOffset = 0;
-        codec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, this.data.Length);
+        var (_, outputOffset) = codec.Compress(this.data, compressed);
 
         // got it!
         // inputOffset should be at data.Length but outputOffset tells us where we are...
@@ -57,9 +55,7 @@ public class ExampleTest
         // This assumes that we otherwise know how many integers have been
         // compressed. See basicExampleHeadless for a more general case.
         var decompressed = new int[this.data.Length];
-        var decompressedOffset = 0;
-        var decompressedPosition = 0;
-        codec.Decompress(compressed, ref decompressedPosition, decompressed, ref decompressedOffset, compressed.Length);
+        _ = codec.Decompress(compressed, decompressed);
         await Assert.That(decompressed).HasSameSequenceAs(this.data);
     }
 
@@ -81,21 +77,18 @@ public class ExampleTest
 
         // compressed might not be large enough in some cases
         // if you get IndexOutOfBoundsException, try allocating more memory
-        var inputOffset = 0;
-        var outputOffset = 1;
         var initValue = 0;
         compressed[0] = this.data.Length; // we manually store how many integers we
-        codec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, this.data.Length, ref initValue);
+        var (_, written) = codec.Compress(this.data, compressed.AsSpan(1), ref initValue);
+        var outputOffset = written + 1;
 
         // we can repack the data: (optional)
         Array.Resize(ref compressed, outputOffset);
 
         var howMany = compressed[0]; // we manually stored the number of compressed integers
         var decompressed = new int[howMany];
-        var decompressedOffset = 0;
-        var compressedOffset = 1;
         initValue = 0;
-        codec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length, howMany, ref initValue);
+        _ = codec.Decompress(compressed.AsSpan(1), decompressed.AsSpan(0, howMany), ref initValue);
         await Assert.That(decompressed).HasSameSequenceAs(this.data);
     }
 
@@ -125,16 +118,12 @@ public class ExampleTest
         var compressed = new int[N + 1024]; // could need more
         var codec = new Composition(new FastPatchingFrameOfReference256(), new VariableByte());
         // compressing
-        var inputOffset = 0;
-        var compressedOffset = 0;
-        codec.Compress(unsortedData, ref inputOffset, compressed, ref compressedOffset, unsortedData.Length);
+        var (_, compressedOffset) = codec.Compress(unsortedData, compressed);
         // we can repack the data: (optional)
         Array.Resize(ref compressed, compressedOffset);
 
         var decompressed = new int[N];
-        var decompressedOffset = 0;
-        compressedOffset = 0;
-        codec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length);
+        _ = codec.Decompress(compressed, decompressed);
         await Assert.That(decompressed).HasSameSequenceAs(unsortedData);
     }
 
@@ -156,12 +145,16 @@ public class ExampleTest
 
         var inputOffset = 0;
         var outputOffset = 0;
+        int written;
         for (var k = 0; k < this.data.Length / ChunkSize; ++k)
         {
-            regularCodec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, ChunkSize);
+            (var read, written) = regularCodec.Compress(this.data.AsSpan(inputOffset, ChunkSize), compressed.AsSpan(outputOffset));
+            inputOffset += read;
+            outputOffset += written;
         }
 
-        lastCodec.Compress(this.data, ref inputOffset, compressed, ref outputOffset, this.data.Length % ChunkSize);
+        (_, written) = lastCodec.Compress(this.data.AsSpan(inputOffset, this.data.Length % ChunkSize), compressed.AsSpan(outputOffset));
+        outputOffset += written;
 
         // we can repack the data:
         Array.Resize(ref compressed, outputOffset);
@@ -172,13 +165,15 @@ public class ExampleTest
 
         while (compressedOffset < compressed.Length)
         {
-            var decompressedOffset = 0;
-            regularCodec.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length - compressedOffset);
+            var (read, decompressedOffset) = regularCodec.Decompress(compressed.AsSpan(compressedOffset), decompressed);
+            compressedOffset += read;
 
             if (decompressedOffset < ChunkSize)
             {
                 // last chunk detected
-                variableByte.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, compressed.Length - compressedOffset);
+                (read, written) = variableByte.Decompress(compressed.AsSpan(compressedOffset), decompressed.AsSpan(decompressedOffset));
+                compressedOffset += read;
+                decompressedOffset += written;
             }
 
             for (var i = 0; i < decompressedOffset; ++i)
@@ -201,14 +196,11 @@ public class ExampleTest
         var codec = new HeadlessComposition(new BinaryPacking(), new VariableByte());
 
         // compressing
-        var inPos = 0;
-        var outPos = 0;
-
-        codec.Compress(uncompressed1, ref inPos, compressed, ref outPos, uncompressed1.Length);
+        var (_, outPos) = codec.Compress(uncompressed1, compressed);
         var length1 = outPos;
         var previous = outPos;
-        inPos = 0;
-        codec.Compress(uncompressed2, ref inPos, compressed, ref outPos, uncompressed2.Length);
+        var (_, outPos2) = codec.Compress(uncompressed2, compressed.AsSpan(outPos));
+        outPos += outPos2;
         var length2 = outPos - previous;
 
         Array.Resize(ref compressed, length1 + length2);
@@ -216,12 +208,9 @@ public class ExampleTest
         var recovered1 = new int[uncompressed1.Length];
         var recovered2 = new int[uncompressed1.Length];
 
-        inPos = 0;
-        outPos = 0;
-        codec.Decompress(compressed, ref inPos, recovered1, ref outPos, compressed.Length, uncompressed1.Length);
+        var (inPos, _) = codec.Decompress(compressed, recovered1.AsSpan(0, uncompressed1.Length));
 
-        outPos = 0;
-        codec.Decompress(compressed, ref inPos, recovered2, ref outPos, compressed.Length, uncompressed2.Length);
+        _ = codec.Decompress(compressed.AsSpan(inPos), recovered2.AsSpan(0, uncompressed2.Length));
         await Assert.That(recovered1).HasSameSequenceAs(uncompressed1);
         await Assert.That(recovered2).HasSameSequenceAs(uncompressed2);
     }

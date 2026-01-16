@@ -17,61 +17,52 @@ namespace Altemiq.Buffers.Compression;
 /// decoding, a 32-bit zero is first encountered, then there is no
 /// output.</para>
 /// </remarks>
-/// <remarks>
-/// Initializes a new instance of the <see cref="Composition"/> class.
-/// </remarks>
 /// <param name="first">The first codec.</param>
 /// <param name="second">The second codec.</param>
 internal sealed class Composition(IInt32Codec first, IInt32Codec second) : IInt32Codec
 {
-    private readonly IInt32Codec first = first;
-    private readonly IInt32Codec second = second;
-
     /// <summary>
     /// Creates a new instance using the specified codecs.
     /// </summary>
     /// <typeparam name="T1">The first type.</typeparam>
     /// <typeparam name="T2">The second type.</typeparam>
-    /// <returns>The created composision.</returns>
+    /// <returns>The created composition.</returns>
     public static Composition Create<T1, T2>()
         where T1 : IInt32Codec, new()
         where T2 : IInt32Codec, new() => new(new T1(), new T2());
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var initialSourceIndex = sourceIndex;
-        var initialDestinationIndex = destinationIndex;
-        this.first.Compress(source, ref sourceIndex, destination, ref destinationIndex, length);
-        if (destinationIndex == initialDestinationIndex)
+        var (firstRead, firstWritten) = first.Compress(source, destination);
+        if (firstWritten is 0)
         {
-            destination[initialDestinationIndex] = 0;
-            destinationIndex++;
+            destination[0] = 0;
+            firstWritten++;
         }
 
-        length -= sourceIndex - initialSourceIndex;
-        this.second.Compress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        var (secondRead, secondWritten) = second.Compress(source[firstRead..], destination[firstWritten..]);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var init = sourceIndex;
-        this.first.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length);
-        length -= sourceIndex - init;
-        this.second.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        var (firstRead, firstWritten) = first.Decompress(source, destination);
+        var (secondRead, secondWritten) = second.Decompress(source[firstRead..], destination[firstWritten..]);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>
-    public override string ToString() => this.first + " + " + this.second;
+    public override string ToString() => first + " + " + second;
 }

@@ -63,37 +63,36 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => this.HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    (int Read, int Written) ICompressHeadlessCodec<int, int>.Compress(ReadOnlySpan<int> source, Span<int> destination) => this.HeadlessCompress(source, destination);
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        length = Util.GreatestMultiple(length, BlockSize);
+        var length = Util.GreatestMultiple(source.Length, BlockSize);
         if (length is 0)
         {
-            return;
+            return default;
         }
 
-        destination[destinationIndex] = length;
-        destinationIndex++;
-        this.HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        destination[0] = length;
+        var (read, written) = this.HeadlessCompress(source[..length], destination[1..]);
+        return (read, written + 1);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var outputLength = source[sourceIndex];
-        sourceIndex++;
-        this.HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, length, outputLength);
+        var (read, written) = this.HeadlessDecompress(source[1..], destination[..source[0]]);
+        return (read + 1, written);
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => this.HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, length, number);
+    (int Read, int Written) IDecompressHeadlessCodec<int, int>.Decompress(ReadOnlySpan<int> source, Span<int> destination) => this.HeadlessDecompress(source, destination);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(FastPatchingFrameOfReference256);
@@ -101,31 +100,34 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
     /// <inheritdoc/>
     public void Dispose() => this.byteContainer.Dispose();
 
-    private void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    private (int Read, int Written) HeadlessCompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        length = Util.GreatestMultiple(length, BlockSize);
+        var length = Util.GreatestMultiple(source.Length, BlockSize);
 
         // Allocate memory for working area.
-        var finalSourceIndex = sourceIndex + length;
-        while (sourceIndex != finalSourceIndex)
+        var totalRead = 0;
+        var totalWritten = 0;
+        while (totalRead != length)
         {
-            EncodePage(source, ref sourceIndex, destination, ref destinationIndex, Math.Min(this.pageSize, finalSourceIndex - sourceIndex));
+            var (read, written) = EncodePage(source[totalRead..], destination[totalWritten..], Math.Min(this.pageSize, length - totalRead));
+            totalRead += read;
+            totalWritten += written;
         }
 
-        void EncodePage(int[] sourcePage, ref int sourcePageIndex, int[] destinationPage, ref int destinationPageIndex, int size)
+        return (totalRead, totalWritten);
+
+        (int Read, int Written) EncodePage(ReadOnlySpan<int> sourcePage, Span<int> destinationPage, int size)
         {
-            var headerIndex = destinationPageIndex;
-            destinationPageIndex++;
-            var temporaryDestinationIndex = destinationPageIndex;
+            var written = 1;
 
             // Clear working area.
             Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
             this.byteContainer.Clear();
 
-            var temporarySourceIndex = sourcePageIndex;
-            for (var index = temporarySourceIndex + size - BlockSize; temporarySourceIndex <= index; temporarySourceIndex += BlockSize)
+            var read = 0;
+            for (var index = size - BlockSize; read <= index; read += BlockSize)
             {
-                GetBestBFromData(sourcePage, temporarySourceIndex);
+                GetBestBFromData(sourcePage[read..]);
 
                 var temporaryBestBit = this.bestB;
                 this.byteContainer.WriteSByte((sbyte)this.bestB);
@@ -148,24 +150,23 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
 
                     for (var k = 0; k < BlockSize; k++)
                     {
-                        if (sourcePage[k + temporarySourceIndex] >>> this.bestB is not 0)
+                        if (sourcePage[k + read] >>> this.bestB is not 0)
                         {
                             // we have an exception
                             this.byteContainer.WriteSByte((sbyte)k);
-                            this.dataTobePacked[dataIndex][this.dataPointers[dataIndex]++] = sourcePage[k + temporarySourceIndex] >>> temporaryBestBit;
+                            this.dataTobePacked[dataIndex][this.dataPointers[dataIndex]++] = sourcePage[k + read] >>> temporaryBestBit;
                         }
                     }
                 }
 
                 for (var k = 0; k < BlockSize; k += 32)
                 {
-                    BitPacking.Pack(sourcePage.AsSpan(temporarySourceIndex + k, 32), destinationPage.AsSpan(temporaryDestinationIndex, 32), temporaryBestBit);
-                    temporaryDestinationIndex += temporaryBestBit;
+                    BitPacking.Pack(sourcePage.Slice(read + k, 32), destinationPage.Slice(written, 32), temporaryBestBit);
+                    written += temporaryBestBit;
                 }
             }
 
-            sourcePageIndex = temporarySourceIndex;
-            destinationPage[headerIndex] = temporaryDestinationIndex - headerIndex;
+            destinationPage[0] = written;
 
             var byteSize = (int)this.byteContainer.Position;
             while ((this.byteContainer.Position & 3) is not 0)
@@ -173,12 +174,12 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                 this.byteContainer.WriteByte(0);
             }
 
-            destinationPage[temporaryDestinationIndex++] = byteSize;
+            destinationPage[written++] = byteSize;
 
             var count = (int)this.byteContainer.Position / 4;
             this.byteContainer.Position = 0;
-            _ = this.byteContainer.Read(destinationPage, temporaryDestinationIndex, count, ByteOrder.LittleEndian);
-            temporaryDestinationIndex += count;
+            _ = this.byteContainer.Read(destinationPage.Slice(written, count), ByteOrder.LittleEndian);
+            written += count;
             var bitmap = 0;
             for (var k = 2; k <= 32; k++)
             {
@@ -188,32 +189,34 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                 }
             }
 
-            destinationPage[temporaryDestinationIndex++] = bitmap;
+            destinationPage[written++] = bitmap;
 
             for (var k = 2; k <= 32; k++)
             {
-                if (this.dataPointers[k] is not 0)
+                if (this.dataPointers[k] is 0)
                 {
-                    destinationPage[temporaryDestinationIndex++] = this.dataPointers[k]; // size
-                    var j = 0;
-                    for (; j < this.dataPointers[k]; j += 32)
-                    {
-                        BitPacking.Pack(this.dataTobePacked[k].AsSpan(j), destinationPage.AsSpan(temporaryDestinationIndex), k);
-                        temporaryDestinationIndex += k;
-                    }
-
-                    var overflow = j - this.dataPointers[k];
-                    temporaryDestinationIndex -= overflow * k / 32;
+                    continue;
                 }
+
+                destinationPage[written++] = this.dataPointers[k]; // size
+                var j = 0;
+                for (; j < this.dataPointers[k]; j += 32)
+                {
+                    BitPacking.Pack(this.dataTobePacked[k].AsSpan(j), destinationPage[written..], k);
+                    written += k;
+                }
+
+                var overflow = j - this.dataPointers[k];
+                written -= overflow * k / 32;
             }
 
-            destinationPageIndex = temporaryDestinationIndex;
+            return (read, written);
 
-            void GetBestBFromData(int[] input, int index)
+            void GetBestBFromData(ReadOnlySpan<int> input)
             {
                 Array.Clear(this.frequencies, 0, this.frequencies.Length);
-                int end = index + BlockSize;
-                for (var k = index; k < end; k++)
+                int end = BlockSize;
+                for (var k = 0; k < end; k++)
                 {
                     this.frequencies[Util.Bits(input[k])]++;
                 }
@@ -254,34 +257,40 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
         }
     }
 
-    private void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number)
+    private (int Read, int Written) HeadlessDecompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        number = Util.GreatestMultiple(number, BlockSize);
-        var finalOutput = destinationIndex + number;
-        while (destinationIndex != finalOutput)
+        var number = Util.GreatestMultiple(destination.Length, BlockSize);
+        var finalOutput = number;
+        var totalRead = 0;
+        var totalWritten = 0;
+        while (totalWritten != finalOutput)
         {
             var thisSize = Math.Min(
                 this.pageSize,
-                finalOutput - destinationIndex);
-            DecodePage(source, ref sourceIndex, destination, ref destinationIndex, thisSize);
+                finalOutput - totalWritten);
+            var (read, written) = DecodePage(source[totalRead..], destination[totalWritten..], thisSize);
+            totalRead += read;
+            totalWritten += written;
         }
 
-        void DecodePage(int[] sourcePage, ref int sourcePageIndex, int[] destinationPage, ref int destinationPageIndex, int size)
+        return (totalRead, totalWritten);
+
+        (int Read, int Written) DecodePage(ReadOnlySpan<int> sourcePage, Span<int> destinationPage, int size)
         {
-            var initialSourceIndex = sourcePageIndex;
+            var sourcePageIndex = 0;
 
             var metaLocation = sourcePage[sourcePageIndex];
             sourcePageIndex++;
-            var exceptIndex = initialSourceIndex + metaLocation;
+            var exceptIndex = metaLocation;
 
             var byteSize = sourcePage[exceptIndex++];
             this.byteContainer.Clear();
-            this.byteContainer.Write(sourcePage, exceptIndex, (byteSize + 3) / 4);
+            this.byteContainer.Write(sourcePage.Slice(exceptIndex, (byteSize + 3) / 4));
             this.byteContainer.Position = 0;
             exceptIndex += (byteSize + 3) / 4;
 
@@ -302,7 +311,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                         var j = 0;
                         for (; j < currentSize; j += 32)
                         {
-                            BitPacking.Unpack(sourcePage.AsSpan(exceptIndex), this.dataTobePacked[k].AsSpan(j), k);
+                            BitPacking.Unpack(sourcePage[exceptIndex..], this.dataTobePacked[k].AsSpan(j), k);
                             exceptIndex += k;
                         }
 
@@ -313,7 +322,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                     {
                         var buf = new int[roundedUp / 32 * k];
                         var initialExcept = exceptIndex;
-                        Array.Copy(sourcePage, exceptIndex, buf, 0, sourcePage.Length - exceptIndex);
+                        sourcePage[exceptIndex..].CopyTo(buf);
 
                         var j = 0;
                         for (; j < currentSize; j += 32)
@@ -329,18 +338,18 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
             }
 
             Array.Clear(this.dataPointers, 0, this.dataPointers.Length);
-            var temporaryDestinationIndex = destinationPageIndex;
+            var destinationIndex = 0;
             var temporarySourceIndex = sourcePageIndex;
 
             var runEnd = size / BlockSize;
-            for (var run = 0; run < runEnd; run++, temporaryDestinationIndex += BlockSize)
+            for (var run = 0; run < runEnd; run++, destinationIndex += BlockSize)
             {
                 int b = this.byteContainer.ReadSByte();
 
                 var currentExcept = this.byteContainer.ReadSByte() & 0xFF;
                 for (var k = 0; k < BlockSize; k += 32)
                 {
-                    BitPacking.Unpack(sourcePage.AsSpan(temporarySourceIndex), destinationPage.AsSpan(temporaryDestinationIndex + k), b);
+                    BitPacking.Unpack(sourcePage[temporarySourceIndex..], destinationPage[(destinationIndex + k)..], b);
                     temporarySourceIndex += b;
                 }
 
@@ -354,7 +363,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                         for (var k = 0; k < currentExcept; k++)
                         {
                             var position = this.byteContainer.ReadSByte() & 0xFF;
-                            destinationPage[position + temporaryDestinationIndex] |= 1 << b;
+                            destinationPage[position + destinationIndex] |= 1 << b;
                         }
                     }
                     else
@@ -364,14 +373,13 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
                             var position = this.byteContainer.ReadSByte() & 0xFF;
 
                             var exceptValue = this.dataTobePacked[index][this.dataPointers[index]++];
-                            destinationPage[position + temporaryDestinationIndex] |= exceptValue << b;
+                            destinationPage[position + destinationIndex] |= exceptValue << b;
                         }
                     }
                 }
             }
 
-            destinationPageIndex = temporaryDestinationIndex;
-            sourcePageIndex = exceptIndex;
+            return (exceptIndex, destinationIndex);
         }
     }
 }

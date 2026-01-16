@@ -16,89 +16,89 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
     private static readonly int[] CodeNum = [28, 14, 9, 7, 5, 4, 3, 2, 1];
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    (int Read, int Written) ICompressHeadlessCodec<int, int>.Compress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessCompress(source, destination);
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    (int Read, int Written) IDecompressHeadlessCodec<int, int>.Decompress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessUncompress(source, destination);
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        destination[destinationIndex] = length;
-        destinationIndex++;
-        HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        destination[0] = source.Length;
+        var (read, written) = HeadlessCompress(source, destination[1..]);
+        return (read, written + 1);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var outlength = source[sourceIndex];
-        sourceIndex++;
-        HeadlessUncompress(source, ref sourceIndex, destination, ref destinationIndex, outlength);
+        var (read, written) = HeadlessUncompress(source[1..], destination[..source[0]]);
+        return (read + 1, written);
     }
 
     /// <inheritdoc/>
     public override string ToString() => nameof(Simple9);
 
-    private static void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    private static (int Read, int Written) HeadlessCompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var temporaryDestinationIndex = destinationIndex;
-        var currentPos = sourceIndex;
-        var finalin = currentPos + length;
+        var written = 0;
+        var read = 0;
+        var length = source.Length;
 
-        while (currentPos < finalin - 28)
+        while (read < length - 28)
         {
-            if (!TryGetSelector(source, destination, ref temporaryDestinationIndex, ref currentPos))
+            if (!TryGetSelector(source, destination, ref read, ref written))
             {
                 continue;
             }
 
-            if (source[currentPos] >= 1 << BitLength[8])
+            if (source[read] >= 1 << BitLength[8])
             {
                 throw new InvalidDataException("Too big a number");
             }
 
-            destination[temporaryDestinationIndex++] = source[currentPos++] | (8 << 28);
+            destination[written++] = source[read++] | (8 << 28);
 
-            static bool TryGetSelector(int[] source, int[] destination, ref int temporaryDestinationIndex, ref int currentPos)
+            static bool TryGetSelector(ReadOnlySpan<int> source, Span<int> destination, ref int read, ref int written)
             {
                 var selector = 0;
                 while (selector < 8)
                 {
                     var compressedNum = CodeNum[selector];
-                    if (!Check(source, currentPos, compressedNum, ref selector, out var res))
+                    if (!Check(source.Slice(read, compressedNum), ref selector, out var res))
                     {
                         continue;
                     }
 
-                    destination[temporaryDestinationIndex++] = res;
-                    currentPos += compressedNum;
+                    destination[written++] = res;
+                    read += compressedNum;
                     return false;
 
-                    static bool Check(int[] source, int currentPos, int compressedNum, ref int selector, out int res)
+                    static bool Check(ReadOnlySpan<int> source, ref int selector, out int res)
                     {
                         var b = BitLength[selector];
                         var max = 1 << b;
                         res = 0;
+                        var compressedNum = source.Length;
                         for (var i = 0; i < compressedNum; i++)
                         {
-                            if (max <= source[currentPos + i])
+                            if (max <= source[i])
                             {
                                 selector++;
                                 return false;
                             }
 
-                            res = (res << b) + source[currentPos + i];
+                            res = (res << b) + source[i];
                         }
 
                         res |= selector << 28;
@@ -110,54 +110,55 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
             }
         }
 
-        while (currentPos < finalin)
+        while (read < length)
         {
-            if (!TryGetSelector(source, destination, ref temporaryDestinationIndex, ref currentPos, finalin))
+            if (!TryGetSelector(source, destination, ref written, ref read, length))
             {
                 continue;
             }
 
-            if (source[currentPos] >= 1 << BitLength[8])
+            if (source[read] >= 1 << BitLength[8])
             {
                 throw new InvalidDataException("Too big a number");
             }
 
-            destination[temporaryDestinationIndex++] = source[currentPos++] | (8 << 28);
+            destination[written++] = source[read++] | (8 << 28);
 
-            static bool TryGetSelector(int[] source, int[] destination, ref int temporaryDestinationIndex, ref int currentPos, int finalin)
+            static bool TryGetSelector(ReadOnlySpan<int> source, Span<int> destination, ref int destinationIndex, ref int currentPos, int length)
             {
                 var selector = 0;
                 while (selector < 8)
                 {
                     var compressedNum = CodeNum[selector];
-                    if (finalin <= currentPos + compressedNum - 1)
+                    if (length <= currentPos + compressedNum - 1)
                     {
-                        compressedNum = finalin - currentPos;
+                        compressedNum = length - currentPos;
                     }
 
-                    if (!Check(source, currentPos, ref selector, out var res, compressedNum))
+                    if (!Check(source.Slice(currentPos, compressedNum), ref selector, out var res))
                     {
                         continue;
                     }
 
-                    destination[temporaryDestinationIndex++] = res;
+                    destination[destinationIndex++] = res;
                     currentPos += compressedNum;
                     return false;
 
-                    static bool Check(int[] source, int currentPos, ref int selector, out int res, int compressedNum)
+                    static bool Check(ReadOnlySpan<int> source, ref int selector, out int res)
                     {
                         res = default;
                         var b = BitLength[selector];
                         var max = 1 << b;
+                        var compressedNum = source.Length;
                         for (var i = 0; i < compressedNum; i++)
                         {
-                            if (max <= source[currentPos + i])
+                            if (max <= source[i])
                             {
                                 selector++;
                                 return false;
                             }
 
-                            res = (res << b) + source[currentPos + i];
+                            res = (res << b) + source[i];
                         }
 
                         if (compressedNum != CodeNum[selector])
@@ -174,16 +175,15 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
             }
         }
 
-        sourceIndex = currentPos;
-        destinationIndex = temporaryDestinationIndex;
+        return (read, written);
     }
 
-    private static void HeadlessUncompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
+    private static (int Read, int Written) HeadlessUncompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var currentIndex = destinationIndex;
-        var temporarySourceIndex = sourceIndex;
-        var endDestinationIndex = currentIndex + number;
-        while (currentIndex < endDestinationIndex - 28)
+        var currentIndex = 0;
+        var temporarySourceIndex = 0;
+        var number = destination.Length;
+        while (currentIndex < number - 28)
         {
             var value = source[temporarySourceIndex++];
             switch (value >>> 28)
@@ -293,7 +293,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
             }
         }
 
-        while (currentIndex < endDestinationIndex)
+        while (currentIndex < number)
         {
             var val = source[temporarySourceIndex++];
             switch ((int)((uint)val >> 28))
@@ -301,7 +301,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 0:
                     {
                         // number : 28, bitwidth : 1
-                        var count = endDestinationIndex - currentIndex;
+                        var count = number - currentIndex;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << (k + 4)) >> 31);
@@ -313,7 +313,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 1:
                     {
                         // number : 14, bitwidth : 2
-                        var count = endDestinationIndex - currentIndex < 14 ? endDestinationIndex - currentIndex : 14;
+                        var count = number - currentIndex < 14 ? number - currentIndex : 14;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << ((2 * k) + 4)) >> 30);
@@ -325,7 +325,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 2:
                     {
                         // number : 9, bitwidth : 3
-                        var count = endDestinationIndex - currentIndex < 9 ? endDestinationIndex - currentIndex : 9;
+                        var count = number - currentIndex < 9 ? number - currentIndex : 9;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << ((3 * k) + 5)) >> 29);
@@ -337,7 +337,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 3:
                     {
                         // number : 7, bitwidth : 4
-                        var count = endDestinationIndex - currentIndex < 7 ? endDestinationIndex - currentIndex : 7;
+                        var count = number - currentIndex < 7 ? number - currentIndex : 7;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << ((4 * k) + 4)) >> 28);
@@ -349,7 +349,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 4:
                     {
                         // number : 5, bitwidth : 5
-                        var count = endDestinationIndex - currentIndex < 5 ? endDestinationIndex - currentIndex : 5;
+                        var count = number - currentIndex < 5 ? number - currentIndex : 5;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << ((5 * k) + 7)) >> 27);
@@ -361,7 +361,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 5:
                     {
                         // number : 4, bitwidth : 7
-                        var count = endDestinationIndex - currentIndex < 4 ? endDestinationIndex - currentIndex : 4;
+                        var count = number - currentIndex < 4 ? number - currentIndex : 4;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << ((7 * k) + 4)) >> 25);
@@ -373,7 +373,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 6:
                     {
                         // number : 3, bitwidth : 9
-                        var count = endDestinationIndex - currentIndex < 3 ? endDestinationIndex - currentIndex : 3;
+                        var count = number - currentIndex < 3 ? number - currentIndex : 3;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << ((9 * k) + 5)) >> 23);
@@ -385,7 +385,7 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
                 case 7:
                     {
                         // number : 2, bitwidth : 14
-                        var count = endDestinationIndex - currentIndex < 2 ? endDestinationIndex - currentIndex : 2;
+                        var count = number - currentIndex < 2 ? number - currentIndex : 2;
                         for (var k = 0; k < count; k++)
                         {
                             destination[currentIndex++] = (int)((uint)(val << ((14 * k) + 4)) >> 18);
@@ -403,7 +403,6 @@ internal sealed class Simple9 : IInt32Codec, IHeadlessInt32Codec
             }
         }
 
-        destinationIndex = currentIndex;
-        sourceIndex = temporarySourceIndex;
+        return (temporarySourceIndex, currentIndex);
     }
 }

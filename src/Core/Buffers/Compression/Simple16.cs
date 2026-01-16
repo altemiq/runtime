@@ -41,72 +41,70 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
     private static readonly int[][] ShiftedS16Bits = [.. S16Bits.Select(static x => x.Select(x => 1 << x).ToArray())];
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    (int Read, int Written) ICompressHeadlessCodec<int, int>.Compress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessCompress(source, destination);
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    (int Read, int Written) IDecompressHeadlessCodec<int, int>.Decompress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessDecompress(source, destination);
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        destination[destinationIndex] = length;
-        destinationIndex++;
-        HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        destination[0] = source.Length;
+        var (read, written) = HeadlessCompress(source, destination[1..]);
+        return (read, written + 1);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var destinationLength = source[sourceIndex];
-        sourceIndex++;
-        HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, destinationLength);
+        var (read, written) = HeadlessDecompress(source[1..], destination[..source[0]]);
+        return (read + 1, written);
     }
 
     /// <inheritdoc/>
     public override string ToString() => nameof(Simple16);
 
-    private static void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    private static (int Read, int Written) HeadlessCompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var temporarySourceIndex = sourceIndex;
-        var temporaryDestinationIndex = destinationIndex;
-        var endStartIndex = temporarySourceIndex + length;
-        while (temporarySourceIndex < endStartIndex)
+        var length = source.Length;
+        var read = 0;
+        var written = 0;
+        while (read < length)
         {
-            var offset = CompressBlock(source, temporarySourceIndex, destination, temporaryDestinationIndex++, length);
+            var offset = CompressBlock(source[read..], destination[written..]);
             if (offset is -1)
             {
                 throw new InvalidDataException("Too big a number");
             }
 
-            temporarySourceIndex += offset;
-            length -= offset;
+            written++;
+            read += offset;
         }
 
-        sourceIndex = temporarySourceIndex;
-        destinationIndex = temporaryDestinationIndex;
+        return (read, written);
 
-        static int CompressBlock(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
+        static int CompressBlock(ReadOnlySpan<int> source, Span<int> destination)
         {
             for (var i = 0; i < S16NumSize; i++)
             {
-                destination[destinationIndex] = i << S16BitsSize;
-                var offset = Math.Min(S16Num[i], length);
+                destination[0] = i << S16BitsSize;
+                var offset = Math.Min(S16Num[i], source.Length);
 
                 var bits = 0;
                 int j;
-                for (j = 0; (j < offset) && (source[sourceIndex + j] < ShiftedS16Bits[i][j]); j++)
+                for (j = 0; (j < offset) && (source[j] < ShiftedS16Bits[i][j]); j++)
                 {
-                    destination[destinationIndex] |= source[sourceIndex + j] << bits;
+                    destination[0] |= source[j] << bits;
                     bits += S16Bits[i][j];
                 }
 
@@ -120,29 +118,29 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
         }
     }
 
-    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
+    private static (int Read, int Written) HeadlessDecompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var temporarySourceIndex = sourceIndex;
-        var temporaryDestinationIndex = destinationIndex;
+        var temporarySourceIndex = 0;
+        var temporaryDestinationIndex = 0;
+        var number = destination.Length;
         while (number > 0)
         {
-            var count = DecompressBlock(source, temporarySourceIndex, destination, temporaryDestinationIndex, number);
+            var count = DecompressBlock(source[temporarySourceIndex..], destination[temporaryDestinationIndex..]);
             number -= count;
             temporaryDestinationIndex += count;
             temporarySourceIndex++;
         }
 
-        sourceIndex = temporarySourceIndex;
-        destinationIndex = temporaryDestinationIndex;
+        return (temporarySourceIndex, temporaryDestinationIndex);
 
-        static int DecompressBlock(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
+        static int DecompressBlock(ReadOnlySpan<int> source, Span<int> destination)
         {
-            var index = source[sourceIndex] >>> S16BitsSize;
-            var count = Math.Min(S16Num[index], length);
+            var index = source[0] >>> S16BitsSize;
+            var count = Math.Min(S16Num[index], destination.Length);
             var bits = 0;
             for (var j = 0; j < count; j++)
             {
-                destination[destinationIndex + j] = source[sourceIndex] >>> bits & (int)(0xffffffff >> (32 - S16Bits[index][j]));
+                destination[j] = source[0] >>> bits & (int)(0xffffffff >> (32 - S16Bits[index][j]));
                 bits += S16Bits[index][j];
             }
 

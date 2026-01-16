@@ -40,17 +40,9 @@ internal class CodecRunner<T1, T2>
         var decompressBuffer = new int[data.Length + 1024];
         var backupData = new int[data.Length];
         Array.Copy(data, backupData, data.Length);
-
-        var input = 1;
-        var output = 0;
-        this.altemiqCodec.Compress(backupData, ref input, compressBuffer, ref output, backupData.Length - input);
-
-        var compressedSize = output;
-
-        input = 0;
-        output = 1;
+        var (read, output) = this.altemiqCodec.Compress(backupData.AsSpan(1), compressBuffer);
         decompressBuffer[0] = compressBuffer[0];
-        this.altemiqCodec.Decompress(compressBuffer, ref input, decompressBuffer, ref output, compressedSize);
+        this.altemiqCodec.Decompress(compressBuffer.AsSpan(0, output), decompressBuffer.AsSpan(1));
     }
 
     public void BenchmarkGenbox(int[] data)

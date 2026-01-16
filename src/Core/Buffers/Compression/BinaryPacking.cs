@@ -9,113 +9,109 @@ namespace Altemiq.Buffers.Compression;
 /// <summary>
 /// Encodes integers in blocks of 32 integers.
 /// </summary>
-/// <remarks>For arrays containing an arbitrary number of integers, you should use it in conjunction with another codec.
-/// </remarks>
+/// <remarks>For arrays containing an arbitrary number of integers, you should use it in conjunction with another codec.</remarks>
 internal sealed class BinaryPacking : IInt32Codec, IHeadlessInt32Codec
 {
     private const int BlockSize = 32;
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        length = Util.GreatestMultiple(length, BlockSize);
+        var length = Util.GreatestMultiple(source.Length, BlockSize);
         if (length is 0)
         {
-            return;
+            return default;
         }
 
-        destination[destinationIndex] = length;
-        destinationIndex++;
-        HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        destination[0] = length;
+        var (sourceIndex, destinationIndex) = HeadlessCompress(source[..length], destination[1..]);
+        return (sourceIndex, destinationIndex + 1);
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    (int Read, int Written) ICompressHeadlessCodec<int, int>.Compress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessCompress(source, destination);
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var destinationLength = source[sourceIndex];
-        sourceIndex++;
-        HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, destinationLength);
+        var (read, written) = HeadlessDecompress(source[1..], destination[..source[0]]);
+        return (read + 1, written);
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    (int Read, int Written) IDecompressHeadlessCodec<int, int>.Decompress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessDecompress(source, destination);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(BinaryPacking);
 
-    private static void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    private static (int Read, int Written) HeadlessCompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        length = Util.GreatestMultiple(length, BlockSize);
-        var temporaryDestinationIndex = destinationIndex;
-        var s = sourceIndex;
-        for (; s + (BlockSize * 4) - 1 < sourceIndex + length; s += BlockSize * 4)
+        var length = Util.GreatestMultiple(source.Length, BlockSize);
+        var destinationIndex = 0;
+        var sourceIndex = 0;
+        for (; sourceIndex + (BlockSize * 4) - 1 < length; sourceIndex += BlockSize * 4)
         {
-            var firstMaxBits = Util.MaxBits(source, s, BlockSize);
-            var secondMaxBits = Util.MaxBits(source, s + BlockSize, BlockSize);
-            var thirdMaxBits = Util.MaxBits(source, s + (2 * BlockSize), BlockSize);
-            var forthMaxBits = Util.MaxBits(source, s + (3 * BlockSize), BlockSize);
-            destination[temporaryDestinationIndex++] = (firstMaxBits << 24) | (secondMaxBits << 16) | (thirdMaxBits << 8) | forthMaxBits;
-            BitPacking.PackWithoutMask(source.AsSpan(s), destination.AsSpan(temporaryDestinationIndex), firstMaxBits);
-            temporaryDestinationIndex += firstMaxBits;
-            BitPacking.PackWithoutMask(source.AsSpan(s + BlockSize), destination.AsSpan(temporaryDestinationIndex), secondMaxBits);
-            temporaryDestinationIndex += secondMaxBits;
-            BitPacking.PackWithoutMask(source.AsSpan(s + (2 * BlockSize)), destination.AsSpan(temporaryDestinationIndex), thirdMaxBits);
-            temporaryDestinationIndex += thirdMaxBits;
-            BitPacking.PackWithoutMask(source.AsSpan(s + (3 * BlockSize)), destination.AsSpan(temporaryDestinationIndex), forthMaxBits);
-            temporaryDestinationIndex += forthMaxBits;
+            var firstMaxBits = Util.MaxBits(source.Slice(sourceIndex, BlockSize));
+            var secondMaxBits = Util.MaxBits(source.Slice(sourceIndex + BlockSize, BlockSize));
+            var thirdMaxBits = Util.MaxBits(source.Slice(sourceIndex + (2 * BlockSize), BlockSize));
+            var forthMaxBits = Util.MaxBits(source.Slice(sourceIndex + (3 * BlockSize), BlockSize));
+            destination[destinationIndex++] = (firstMaxBits << 24) | (secondMaxBits << 16) | (thirdMaxBits << 8) | forthMaxBits;
+            BitPacking.PackWithoutMask(source[sourceIndex..], destination[destinationIndex..], firstMaxBits);
+            destinationIndex += firstMaxBits;
+            BitPacking.PackWithoutMask(source[(sourceIndex + BlockSize)..], destination[destinationIndex..], secondMaxBits);
+            destinationIndex += secondMaxBits;
+            BitPacking.PackWithoutMask(source[(sourceIndex + (2 * BlockSize))..], destination[destinationIndex..], thirdMaxBits);
+            destinationIndex += thirdMaxBits;
+            BitPacking.PackWithoutMask(source[(sourceIndex + (3 * BlockSize))..], destination[destinationIndex..], forthMaxBits);
+            destinationIndex += forthMaxBits;
         }
 
-        for (; s < sourceIndex + length; s += BlockSize)
+        for (; sourceIndex < length; sourceIndex += BlockSize)
         {
-            var maxBits = Util.MaxBits(source, s, BlockSize);
-            destination[temporaryDestinationIndex++] = maxBits;
-            BitPacking.PackWithoutMask(source.AsSpan(s), destination.AsSpan(temporaryDestinationIndex), maxBits);
-            temporaryDestinationIndex += maxBits;
+            var maxBits = Util.MaxBits(source.Slice(sourceIndex, BlockSize));
+            destination[destinationIndex++] = maxBits;
+            BitPacking.PackWithoutMask(source[sourceIndex..], destination[destinationIndex..], maxBits);
+            destinationIndex += maxBits;
         }
 
-        sourceIndex += length;
-        destinationIndex = temporaryDestinationIndex;
+        return (length, destinationIndex);
     }
 
-    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
+    private static (int Read, int Written) HeadlessDecompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var destinationLength = Util.GreatestMultiple(number, BlockSize);
-        var temporarySourceIndex = sourceIndex;
+        var written = Util.GreatestMultiple(destination.Length, BlockSize);
+        var read = 0;
         int s;
-        for (s = destinationIndex; s + (BlockSize * 4) - 1 < destinationIndex + destinationLength; s += BlockSize * 4)
+        for (s = 0; s + (BlockSize * 4) - 1 < written; s += BlockSize * 4)
         {
-            var firstMaxBits = source[temporarySourceIndex] >>> 24;
-            var secondMaxBits = source[temporarySourceIndex] >>> 16 & 0xFF;
-            var thirdMaxBits = source[temporarySourceIndex] >>> 8 & 0xFF;
-            var forthMaxBits = (int)(uint)source[temporarySourceIndex] & 0xFF;
-            temporarySourceIndex++;
-            BitPacking.Unpack(source.AsSpan(temporarySourceIndex), destination.AsSpan(s), firstMaxBits);
-            temporarySourceIndex += firstMaxBits;
-            BitPacking.Unpack(source.AsSpan(temporarySourceIndex), destination.AsSpan(s + BlockSize), secondMaxBits);
-            temporarySourceIndex += secondMaxBits;
-            BitPacking.Unpack(source.AsSpan(temporarySourceIndex), destination.AsSpan(s + (2 * BlockSize)), thirdMaxBits);
-            temporarySourceIndex += thirdMaxBits;
-            BitPacking.Unpack(source.AsSpan(temporarySourceIndex), destination.AsSpan(s + (3 * BlockSize)), forthMaxBits);
-            temporarySourceIndex += forthMaxBits;
+            var firstMaxBits = source[read] >>> 24;
+            var secondMaxBits = source[read] >>> 16 & 0xFF;
+            var thirdMaxBits = source[read] >>> 8 & 0xFF;
+            var forthMaxBits = (int)(uint)source[read] & 0xFF;
+            read++;
+            BitPacking.Unpack(source[read..], destination[s..], firstMaxBits);
+            read += firstMaxBits;
+            BitPacking.Unpack(source[read..], destination[(s + BlockSize)..], secondMaxBits);
+            read += secondMaxBits;
+            BitPacking.Unpack(source[read..], destination[(s + (2 * BlockSize))..], thirdMaxBits);
+            read += thirdMaxBits;
+            BitPacking.Unpack(source[read..], destination[(s + (3 * BlockSize))..], forthMaxBits);
+            read += forthMaxBits;
         }
 
-        for (; s < destinationIndex + destinationLength; s += BlockSize)
+        for (; s < written; s += BlockSize)
         {
-            var maxBits = source[temporarySourceIndex];
-            temporarySourceIndex++;
-            BitPacking.Unpack(source.AsSpan(temporarySourceIndex), destination.AsSpan(s), maxBits);
-            temporarySourceIndex += maxBits;
+            var maxBits = source[read];
+            read++;
+            BitPacking.Unpack(source[read..], destination[s..], maxBits);
+            read += maxBits;
         }
 
-        destinationIndex += destinationLength;
-        sourceIndex = temporarySourceIndex;
+        return (read, written);
     }
 }

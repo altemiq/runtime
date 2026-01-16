@@ -38,13 +38,10 @@ public class HeadlessBasicTest
         var outBuf = new int[Size + 1024];
         for (var n = 0; n <= Size; ++n)
         {
-            var inputPosition = 0;
-            var outputPosition = 0;
-            c.Compress(data, ref inputPosition, outBuf, ref outputPosition, n);
+            var (_, outputPosition) = c.Compress(data.AsSpan(0, n), outBuf);
 
-            var decompressedInputPosition = 0;
-            var decompressedOutputPosition = 0;
-            c.Decompress(outBuf, ref decompressedInputPosition, rev, ref decompressedOutputPosition, outputPosition, n);
+            var (decompressedInputPosition, decompressedOutputPosition) = c.Decompress(outBuf.AsSpan(0, outputPosition), rev.AsSpan(0, n));
+
             await Assert.That(decompressedOutputPosition).IsEqualTo(n);
             await Assert.That(decompressedInputPosition).IsEqualTo(outputPosition);
             await Assert.That(rev.Take(n)).HasSameSequenceAs(data.Take(n));
@@ -66,13 +63,13 @@ public class HeadlessBasicTest
 
         for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
         for (var l = 128; l <= Size; l *= 2)
         {
-            var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
@@ -94,14 +91,14 @@ public class HeadlessBasicTest
 
         for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= Size; l *= 2)
         {
-            var comp = TestUtils.CompressHeadless(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
             var answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }

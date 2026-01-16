@@ -125,7 +125,7 @@ public static class TextInfoExtensions
             return default;
         }
 
-        ReadOnlySpan<char> source = str.AsSpan();
+        ReadOnlySpan<char> source = str;
         var destination = System.Buffers.ArrayPool<char>.Shared.Rent(source.Length * 2);
         var used = InsertAndConvert(source, destination, separator, convert);
         var returnString = AsString(destination.AsSpan(0, used));

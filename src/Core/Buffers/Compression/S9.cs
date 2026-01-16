@@ -16,14 +16,14 @@ internal sealed class S9
     private static readonly int[] CodeNum = [28, 14, 9, 7, 5, 4, 3, 2, 1];
 
     /// <inheritdoc cref="Compression.Compress"/>
-    public static int Compress(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length)
+    public static int Compress(ReadOnlySpan<int> source, Span<int> destination, int length)
     {
-        var temporaryDestinationIndex = destinationIndex;
-        var endSourceIndex = sourceIndex + length;
+        var sourceIndex = 0;
+        var destinationIndex = 0;
 
-        while (sourceIndex < endSourceIndex)
+        while (sourceIndex < length)
         {
-            if (!TryGetSelector(source, ref sourceIndex, destination, ref destinationIndex, endSourceIndex))
+            if (!TryGetSelector(source, ref sourceIndex, destination, ref destinationIndex, length))
             {
                 continue;
             }
@@ -36,20 +36,20 @@ internal sealed class S9
             destination[destinationIndex++] = source[sourceIndex++] | (8 << 28);
         }
 
-        return destinationIndex - temporaryDestinationIndex;
+        return destinationIndex;
 
-        static bool TryGetSelector(int[] source, ref int startIndex, int[] destination, ref int destinationIndex, int endSourceIndex)
+        static bool TryGetSelector(ReadOnlySpan<int> source, ref int startIndex, Span<int> destination, ref int destinationIndex, int length)
         {
             var selector = 0;
             while (selector < 8)
             {
                 var compressedNum = CodeNum[selector];
-                if (endSourceIndex <= startIndex + compressedNum - 1)
+                if (length <= startIndex + compressedNum - 1)
                 {
-                    compressedNum = endSourceIndex - startIndex;
+                    compressedNum = length - startIndex;
                 }
 
-                if (!Check(source, startIndex, ref selector, out var res, compressedNum))
+                if (!Check(source.Slice(startIndex, compressedNum), ref selector, out var res))
                 {
                     continue;
                 }
@@ -58,25 +58,25 @@ internal sealed class S9
                 startIndex += compressedNum;
                 return false;
 
-                static bool Check(int[] source, int currentPos, ref int selector, out int res, int compressedNum)
+                static bool Check(ReadOnlySpan<int> source, ref int selector, out int res)
                 {
                     res = 0;
                     var b = BitLength[selector];
                     var max = 1 << b;
-                    for (var i = 0; i < compressedNum; i++)
+                    foreach (var value in source)
                     {
-                        if (max <= source[currentPos + i])
+                        if (max <= value)
                         {
                             selector++;
                             return false;
                         }
 
-                        res = (res << b) + source[currentPos + i];
+                        res = (res << b) + value;
                     }
 
-                    if (compressedNum != CodeNum[selector])
+                    if (source.Length != CodeNum[selector])
                     {
-                        res <<= (CodeNum[selector] - compressedNum) * b;
+                        res <<= (CodeNum[selector] - source.Length) * b;
                     }
 
                     res |= selector << 28;
@@ -154,11 +154,13 @@ internal sealed class S9
 
     /// <inheritdoc cref="Compression.Decompress"/>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for the API.")]
-    public static void Decompress(int[] source, int sourceIndex, int sourceLength, int[] destination, int destinationIndex, int destinationLength)
+    public static void Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var endDestinationIndex = destinationIndex + destinationLength;
+        var sourceIndex = 0;
+        var destinationIndex = 0;
+        var destinationLength = destination.Length;
 
-        while (destinationIndex < endDestinationIndex)
+        while (destinationIndex < destinationLength)
         {
             var value = source[sourceIndex++];
             switch (value >>> 28)
@@ -166,7 +168,7 @@ internal sealed class S9
                 case 0:
                     {
                         // number : 28, bit-width : 1
-                        var count = endDestinationIndex - destinationIndex < 28 ? endDestinationIndex - destinationIndex : 28;
+                        var count = destinationLength - destinationIndex < 28 ? destinationLength - destinationIndex : 28;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << (k + 4)) >>> 31;
@@ -178,7 +180,7 @@ internal sealed class S9
                 case 1:
                     {
                         // number : 14, bit-width : 2
-                        var count = endDestinationIndex - destinationIndex < 14 ? endDestinationIndex - destinationIndex : 14;
+                        var count = destinationLength - destinationIndex < 14 ? destinationLength - destinationIndex : 14;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << ((2 * k) + 4)) >>> 30;
@@ -190,7 +192,7 @@ internal sealed class S9
                 case 2:
                     {
                         // number : 9, bit-width : 3
-                        var count = endDestinationIndex - destinationIndex < 9 ? endDestinationIndex - destinationIndex : 9;
+                        var count = destinationLength - destinationIndex < 9 ? destinationLength - destinationIndex : 9;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << ((3 * k) + 5)) >>> 29;
@@ -202,7 +204,7 @@ internal sealed class S9
                 case 3:
                     {
                         // number : 7, bit-width : 4
-                        var count = endDestinationIndex - destinationIndex < 7 ? endDestinationIndex - destinationIndex : 7;
+                        var count = destinationLength - destinationIndex < 7 ? destinationLength - destinationIndex : 7;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << ((4 * k) + 4)) >>> 28;
@@ -214,7 +216,7 @@ internal sealed class S9
                 case 4:
                     {
                         // number : 5, bit-width : 5
-                        var count = endDestinationIndex - destinationIndex < 5 ? endDestinationIndex - destinationIndex : 5;
+                        var count = destinationLength - destinationIndex < 5 ? destinationLength - destinationIndex : 5;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << ((5 * k) + 7)) >>> 27;
@@ -226,7 +228,7 @@ internal sealed class S9
                 case 5:
                     {
                         // number : 4, bit-width : 7
-                        var count = endDestinationIndex - destinationIndex < 4 ? endDestinationIndex - destinationIndex : 4;
+                        var count = destinationLength - destinationIndex < 4 ? destinationLength - destinationIndex : 4;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << ((7 * k) + 4)) >>> 25;
@@ -238,7 +240,7 @@ internal sealed class S9
                 case 6:
                     {
                         // number : 3, bit-width : 9
-                        var count = endDestinationIndex - destinationIndex < 3 ? endDestinationIndex - destinationIndex : 3;
+                        var count = destinationLength - destinationIndex < 3 ? destinationLength - destinationIndex : 3;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << ((9 * k) + 5)) >>> 23;
@@ -250,7 +252,7 @@ internal sealed class S9
                 case 7:
                     {
                         // number : 2, bit-width : 14
-                        var count = endDestinationIndex - destinationIndex < 2 ? endDestinationIndex - destinationIndex : 2;
+                        var count = destinationLength - destinationIndex < 2 ? destinationLength - destinationIndex : 2;
                         for (var k = 0; k < count; k++)
                         {
                             destination[destinationIndex++] = (value << ((14 * k) + 4)) >>> 18;

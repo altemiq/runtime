@@ -28,38 +28,36 @@ internal sealed class DifferentialComposition(IDifferentialInt32Codec first, IDi
         where T2 : IDifferentialInt32Codec, new() => new(new T1(), new T2());
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
+        var length = source.Length;
         if (length is 0)
         {
-            return;
+            return default;
         }
 
-        var sourceIndexInit = sourceIndex;
-        var destinationIndexInit = destinationIndex;
-        first.Compress(source, ref sourceIndex, destination, ref destinationIndex, length);
-        if (destinationIndex == destinationIndexInit)
+        var (firstRead, firstWritten) = first.Compress(source, destination);
+        if (firstWritten is 0)
         {
-            destination[destinationIndexInit] = 0;
-            destinationIndex++;
+            destination[0] = 0;
+            firstWritten++;
         }
 
-        length -= sourceIndex - sourceIndexInit;
-        second.Compress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        var (secondRead, secondWritten) = second.Compress(source[firstRead..], destination[firstWritten..]);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var init = sourceIndex;
-        first.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length);
-        length -= sourceIndex - init;
-        second.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        var (firstRead, firstWritten) = first.Decompress(source, destination);
+        var (secondRead, secondWritten) = second.Decompress(source[firstRead..], destination[firstWritten..]);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>

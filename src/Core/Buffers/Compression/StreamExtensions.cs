@@ -59,17 +59,15 @@ internal static class StreamExtensions
         /// Writes the values to the stream.
         /// </summary>
         /// <param name="buffer">The source buffer.</param>
-        /// <param name="offset">The offset.</param>
-        /// <param name="count">The number of values to write.</param>
-        public void Write(int[] buffer, int offset, int count)
+        public void Write(ReadOnlySpan<int> buffer)
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-            var bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer.AsSpan(offset, count));
+            var bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer);
             stream.Write(bytes);
 #else
             var bytes = new byte[4];
-            var end = offset + count;
-            for (var i = offset; i < end; i++)
+            var end = buffer.Length;
+            for (var i = 0; i < end; i++)
             {
                 if (BitConverter.IsLittleEndian)
                 {
@@ -86,42 +84,46 @@ internal static class StreamExtensions
         }
 
         /// <summary>
+        /// Writes the values to the stream.
+        /// </summary>
+        /// <param name="buffer">The source buffer.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="count">The number of values to write.</param>
+        public void Write(int[] buffer, int offset, int count) => stream.Write(buffer.AsSpan(offset, count));
+
+        /// <summary>
         /// Gets the data.
         /// </summary>
         /// <param name="buffer">The destination.</param>
-        /// <param name="offset">The offset.</param>
-        /// <param name="count">The length.</param>
         /// <param name="byteOrder">The byte ordering.</param>
         /// <returns>The number of values read.</returns>
-        public int Read(int[] buffer, int offset, int count, ByteOrder byteOrder)
+        public int Read(Span<int> buffer, ByteOrder byteOrder)
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-            var bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer.AsSpan(offset, count));
+            var bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer);
             var read = stream.Read(bytes);
-            count = read / 4;
+            var count = read / sizeof(int);
 
             if (!BitConverter.IsLittleEndian || byteOrder is not ByteOrder.BigEndian)
             {
                 return count;
             }
 
-            var end = offset + count;
-            for (var i = offset; i < end; i++)
+            for (var i = 0; i < count; i++)
             {
                 buffer[i] = System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(buffer[i]);
             }
 
             return count;
-
 #else
-            var bytes = new byte[count * 4];
+            var bytes = new byte[buffer.Length * 4];
 
             var read = stream.Read(bytes, 0, bytes.Length);
-            count = read / 4;
+            var count = read / 4;
 
             for (var i = 0; i < count; i++)
             {
-                buffer[offset + i] = byteOrder switch
+                buffer[i] = byteOrder switch
                 {
                     ByteOrder.BigEndian => System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(bytes.AsSpan(i * 4, 4)),
                     _ => System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(i * 4, 4)),
@@ -131,5 +133,15 @@ internal static class StreamExtensions
             return count;
 #endif
         }
+
+        /// <summary>
+        /// Gets the data.
+        /// </summary>
+        /// <param name="buffer">The destination.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="count">The length.</param>
+        /// <param name="byteOrder">The byte ordering.</param>
+        /// <returns>The number of values read.</returns>
+        public int Read(int[] buffer, int offset, int count, ByteOrder byteOrder) => stream.Read(buffer.AsSpan(offset, count), byteOrder);
     }
 }

@@ -11,21 +11,15 @@ public class ByteBasicTest
     [MethodDataSource(nameof(Data))]
     public async Task SaulTest(ByteIntegerCodec codec)
     {
+        int[] data = [2, 3, 4, 5];
+        var compressed = new sbyte[90 * 4];
+        var decompressed = new int[data.Length];
         var c = codec.Codec;
         for (var x = 0; x < 50 * 4; ++x)
         {
-            int[] data = [2, 3, 4, 5];
-            var compressed = new sbyte[90 * 4];
-            var decompressed = new int[data.Length];
+            var (_, len) = c.Compress(data, compressed.AsSpan( x));
 
-            var dataOffset = 0;
-            var compressedOffset = x;
-            c.Compress(data, ref dataOffset, compressed, ref compressedOffset, data.Length);
-            var len = compressedOffset - x;
-
-            compressedOffset = x;
-            var decompressedOffset = 0;
-            c.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, len);
+            _ = c.Decompress(compressed.AsSpan(x, len), decompressed);
             await Assert.That(decompressed).HasSameSequenceAs(data);
         }
     }
@@ -40,14 +34,14 @@ public class ByteBasicTest
         var c = codec.Codec;
         for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
@@ -64,14 +58,14 @@ public class ByteBasicTest
 
         for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }

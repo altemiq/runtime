@@ -9,11 +9,9 @@ namespace Altemiq.Buffers.Compression.Differential;
 /// <summary>
 /// The differential integer compressor.
 /// </summary>
-/// <param name="c">The codec.</param>
-internal sealed class DifferentialInt32Compressor(IHeadlessDifferentialInt32Codec c)
+/// <param name="codec">The codec.</param>
+internal sealed class DifferentialInt32Compressor(IHeadlessDifferentialInt32Codec codec)
 {
-    private readonly IHeadlessDifferentialInt32Codec codec = c;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DifferentialInt32Compressor"/> class.
     /// </summary>
@@ -31,11 +29,9 @@ internal sealed class DifferentialInt32Compressor(IHeadlessDifferentialInt32Code
     {
         var compressed = new int[input.Length + 1024];
         compressed[0] = input.Length;
-        var sourceIndex = 0;
-        var destinationIndex = 1;
         var initValue = 0;
-        this.codec.Compress(input, ref sourceIndex, compressed, ref destinationIndex, input.Length, ref initValue);
-        Array.Resize(ref compressed, destinationIndex);
+        var (_, written) = codec.Compress(input, compressed.AsSpan(1), ref initValue);
+        Array.Resize(ref compressed, written + 1);
         return compressed;
     }
 
@@ -51,17 +47,11 @@ internal sealed class DifferentialInt32Compressor(IHeadlessDifferentialInt32Code
     public int[] Decompress(int[] compressed)
     {
         var decompressed = new int[compressed[0]];
-        var sourceIndex = 1;
-        var destinationIndex = 0;
         var initValue = 0;
-        this.codec.Decompress(
-            compressed,
-            ref sourceIndex,
-            decompressed,
-            ref destinationIndex,
-            compressed.Length - sourceIndex,
-            decompressed.Length,
-            ref initValue);
+        codec.Decompress(compressed.AsSpan(1), decompressed, ref initValue);
         return decompressed;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => $"{nameof(DifferentialInt32Compressor)}({codec})";
 }

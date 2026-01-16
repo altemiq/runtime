@@ -6,9 +6,9 @@
 
 #if !NET8_0_OR_GREATER
 
-#pragma warning disable CheckNamespace
+#pragma warning disable IDE0130, CheckNamespace
 namespace System.Runtime.CompilerServices;
-#pragma warning restore CheckNamespace
+#pragma warning restore IDE0130, CheckNamespace
 
 /// <summary>
 /// The <see cref="Unsafe"/> extensions.

@@ -30,10 +30,15 @@ public static class BufferExtensions
             {
                 null => AssertionResult.Failed($"{metadata.Value} cannot be null"),
                 { } value when value.SequenceEqual(expected) => AssertionResult.Passed,
-                { } value => AssertionResult.Failed($"Expected {expected} to be equivalent to {value}"),
+                { } value => AssertionResult.Failed($"{Format(expected)} is not equivalent to {Format(value)}"),
             };
 
             return Task.FromResult(result);
+
+            static string Format(IEnumerable<TItem> items)
+            {
+                return $"[{string.Join(", ", items)}]";
+            }
         }
     }
 }

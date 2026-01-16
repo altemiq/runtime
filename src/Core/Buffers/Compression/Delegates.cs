@@ -10,12 +10,10 @@ namespace Altemiq.Buffers.Compression;
 /// Compressed data from an input array into an output array.
 /// </summary>
 /// <param name="source">The array to compress.</param>
-/// <param name="sourceIndex">Where to start reading.</param>
 /// <param name="destination">The output array.</param>
-/// <param name="destinationIndex">The location in the output array.</param>
 /// <param name="length">How many integers to read.</param>
 /// <returns>The number of 32-bit words written (in compressed form).</returns>
-internal delegate int Compress(int[] source, int sourceIndex, int[] destination, int destinationIndex, int length);
+internal delegate int Compress(ReadOnlySpan<int> source, Span<int> destination, int length);
 
 /// <summary>
 /// Estimate size of the compressed output.
@@ -30,9 +28,5 @@ internal delegate int EstimateCompress(int[] source, int index, int length);
 /// Uncompressed data from an input array into an output array.
 /// </summary>
 /// <param name="source">The input array (in compressed form).</param>
-/// <param name="sourceIndex">The starting location in the compressed input array.</param>
-/// <param name="sourceLength">How much data we wish the read (in 32-bit words).</param>
 /// <param name="destination">The output array (in decompressed form).</param>
-/// <param name="destinationIndex">The current position in the output array.</param>
-/// <param name="destinationLength">The available data in the output array.</param>
-internal delegate void Decompress(int[] source, int sourceIndex, int sourceLength, int[] destination, int destinationIndex, int destinationLength);
+internal delegate void Decompress(ReadOnlySpan<int> source, Span<int> destination);

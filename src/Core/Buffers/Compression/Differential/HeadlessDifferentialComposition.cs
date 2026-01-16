@@ -24,9 +24,6 @@ namespace Altemiq.Buffers.Compression.Differential;
 /// <param name="second">second codec.</param>
 internal sealed class HeadlessDifferentialComposition(IHeadlessDifferentialInt32Codec first, IHeadlessDifferentialInt32Codec second) : IHeadlessDifferentialInt32Codec
 {
-    private readonly IHeadlessDifferentialInt32Codec first = first;
-    private readonly IHeadlessDifferentialInt32Codec second = second;
-
     /// <summary>
     /// Creates a new instance using the specified codecs.
     /// </summary>
@@ -38,40 +35,31 @@ internal sealed class HeadlessDifferentialComposition(IHeadlessDifferentialInt32
         where T2 : IHeadlessDifferentialInt32Codec, new() => new(new T1(), new T2());
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, ref int initialValue)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination, ref int initialValue)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var init = sourceIndex;
-        this.first.Compress(source, ref sourceIndex, destination, ref destinationIndex, length, ref initialValue);
-        if (destinationIndex is 0)
-        {
-            destination[0] = 0;
-            destinationIndex++;
-        }
-
-        length -= sourceIndex - init;
-        this.second.Compress(source, ref sourceIndex, destination, ref destinationIndex, length, ref initialValue);
+        var (firstRead, firstWritten) = first.Compress(source, destination, ref initialValue);
+        var (secondRead, secondWritten) = second.Compress(source[firstRead..], destination[firstWritten..], ref initialValue);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number, ref int initialValue)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination, ref int initialValue)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var init = sourceIndex;
-        this.first.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length, number, ref initialValue);
-        length -= sourceIndex - init;
-        number -= destinationIndex;
-        this.second.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length, number, ref initialValue);
+        var (firstRead, firstWritten) = first.Decompress(source, destination, ref initialValue);
+        var (secondRead, secondWritten) = second.Decompress(source[firstRead..], destination[firstWritten..], ref initialValue);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>
-    public override string ToString() => $"{this.first} + {this.second}";
+    public override string ToString() => $"{first} + {second}";
 }

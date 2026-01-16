@@ -18,9 +18,6 @@ namespace Altemiq.Buffers.Compression;
 /// <param name="second">The second codec.</param>
 internal sealed class HeadlessComposition(IHeadlessInt32Codec first, IHeadlessInt32Codec second) : IHeadlessInt32Codec
 {
-    private readonly IHeadlessInt32Codec first = first;
-    private readonly IHeadlessInt32Codec second = second;
-
     /// <summary>
     /// Creates a new instance using the specified codecs.
     /// </summary>
@@ -32,24 +29,21 @@ internal sealed class HeadlessComposition(IHeadlessInt32Codec first, IHeadlessIn
         where T2 : IHeadlessInt32Codec, new() => new(new T1(), new T2());
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var init = sourceIndex;
-        this.first.Compress(source, ref sourceIndex, destination, ref destinationIndex, length);
-        length -= sourceIndex - init;
-        this.second.Compress(source, ref sourceIndex, destination, ref destinationIndex, length);
+        var (firstRead, firstWritten) = first.Compress(source, destination);
+        var (secondRead, secondWritten) = second.Compress(source[firstRead..], destination[firstWritten..]);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var initialSourceIndex = sourceIndex;
-        this.first.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length, number);
-        length -= sourceIndex - initialSourceIndex;
-        number -= destinationIndex;
-        this.second.Decompress(source, ref sourceIndex, destination, ref destinationIndex, length, number);
+        var (firstRead, firstWritten) = first.Decompress(source, destination);
+        var (secondRead, secondWritten) = second.Decompress(source[firstRead..], destination[firstWritten..]);
+        return (firstRead + secondRead, firstWritten + secondWritten);
     }
 
     /// <inheritdoc/>
-    public override string ToString() => this.first + "+" + this.second;
+    public override string ToString() => first + "+" + second;
 }

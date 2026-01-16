@@ -28,21 +28,17 @@ public class BasicTests
     public async Task SaulTest(IntegerCodec codec)
     {
         var ic = codec.Codec;
+        int[] data = [2, 3, 4, 5];
+        var compressed = new int[90];
+        var decompressed = new int[data.Length];
 
         for (var x = 0; x < 50; x++)
         {
-            int[] data = [2, 3, 4, 5];
-            var compressed = new int[90];
-            var decompressed = new int[data.Length];
+            Array.Clear(compressed);
+            var (_, length) = ic.Compress(data, compressed.AsSpan(x));
 
-            var dataOffset = 0;
-            var compressedOffset = x;
-            ic.Compress(data, ref dataOffset, compressed, ref compressedOffset, data.Length);
-            var length = compressedOffset - x;
-
-            compressedOffset = x;
-            var decompressedOffset = 0;
-            ic.Decompress(compressed, ref compressedOffset, decompressed, ref decompressedOffset, length);
+            Array.Clear(decompressed);
+            _ = ic.Decompress(compressed.AsSpan(x, length), decompressed);
             await Assert.That(decompressed).HasSameSequenceAs(data);
         }
     }
@@ -62,8 +58,9 @@ public class BasicTests
 
         for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
+            
             for (var k = 0; k < l; ++k)
             {
                 await Assert.That(answer[k]).IsEqualTo(data[k]);
@@ -72,7 +69,7 @@ public class BasicTests
 
         for (var l = 128; l <= N; l *= 2)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
             for (var k = 0; k < l; ++k)
             {
@@ -92,7 +89,7 @@ public class BasicTests
 
         for (var l = 1; l <= 128; l++)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
             for (var k = 0; k < l; ++k)
             {
@@ -101,7 +98,7 @@ public class BasicTests
         }
         for (var l = 128; l <= N; l *= 2)
         {
-            var comp = TestUtils.Compress(c, TestUtils.CopyArray(data, l));
+            var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
             for (var k = 0; k < l; ++k)
             {
@@ -240,8 +237,8 @@ public class BasicTests
         var compressed = new int[N];
         var uncompressed = new int[N];
 
-        BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
-        BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
+        BitPacking.Pack(data, compressed, bit);
+        BitPacking.Unpack(compressed, uncompressed, bit);
 
         await Assert.That(data).HasSameSequenceAs(data);
     }
@@ -264,8 +261,8 @@ public class BasicTests
 
         var compressed = new int[N];
         var uncompressed = new int[N];
-        BitPacking.PackWithoutMask(data.AsSpan(0), compressed.AsSpan(0), bit);
-        BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
+        BitPacking.PackWithoutMask(data, compressed, bit);
+        BitPacking.Unpack(compressed, uncompressed, bit);
 
         await Assert.That(data).HasSameSequenceAs(data);
     }
@@ -291,8 +288,8 @@ public class BasicTests
         var uncompressed = new int[N];
         for (var t = 0; t < Times; ++t)
         {
-            BitPacking.Pack(data.AsSpan(0), compressed.AsSpan(0), bit);
-            BitPacking.Unpack(compressed.AsSpan(0), uncompressed.AsSpan(0), bit);
+            BitPacking.Pack(data, compressed, bit);
+            BitPacking.Unpack(compressed, uncompressed, bit);
 
             // Check assertions.
             MaskArray(data, (1 << bit) - 1);
@@ -408,7 +405,9 @@ public class BasicTests
         var i1 = 0;
         for (var length = 0; length < 32; ++length)
         {
-            c.Compress(x, ref i0, y, ref i1, length);
+            var (read, written) = c.Compress(x.AsSpan(i0, length), y.AsSpan(i1));
+            i0 += read;
+            i1 += written;
             await Assert.That(i1).IsEqualTo(0);
         }
     }
@@ -417,14 +416,11 @@ public class BasicTests
     {
         int[] x = [];
         int[] y = [];
-        var i0 = 0;
-        var i1 = 0;
-        c.Compress(x, ref i0, y, ref i1, 0);
+        var (_, i1) = c.Compress(x, y);
         await Assert.That(i1).IsEqualTo(0);
 
         int[] output = [];
-        var outputPosition = 0;
-        c.Decompress(y, ref i1, output, ref outputPosition, 0);
+        var (_, outputPosition) = c.Decompress(y.AsSpan(i1), output);
         await Assert.That(outputPosition).IsEqualTo(0);
     }
 
@@ -448,21 +444,16 @@ public class BasicTests
         {
             var backupData = TestUtils.CopyArray(data[k], data[k].Length);
 
-            var inputPosition = 1;
-            var outputPosition = 0;
-
             if (c is not Differential.IDifferentialInt32Codec)
             {
                 Differential.Delta.Forward(backupData);
             }
 
-            c.Compress(backupData, ref inputPosition, dataOutput, ref outputPosition, backupData.Length - inputPosition);
-
-            var size = outputPosition + 1;
-            inputPosition = 0;
-            outputPosition = 1;
+            var (_, written) = c.Compress(backupData.AsSpan(1), dataOutput);
+            
             buffer[0] = backupData[0];
-            co.Decompress(dataOutput, ref inputPosition, buffer, ref outputPosition, size - 1);
+            (_, written) = co.Decompress(dataOutput.AsSpan(0, written), buffer.AsSpan(1));
+            var outputPosition = written + 1;
 
             if (c is not Differential.IDifferentialInt32Codec)
             {
@@ -547,16 +538,12 @@ public class BasicTests
         data[5] = -311;
         // could need more compressing
         var compressed = new int[(int)Math.Ceiling(n * 1.01) + 1024];
-        var inputOffset = 0;
-        var outputOffset = 0;
-        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
+        var (_, outputOffset) = codec.Compress(data, compressed);
         // we can repack the data: (optional)
         compressed = TestUtils.CopyArray(compressed, outputOffset);
 
         var decompressed = new int[n];
-        var decompressedOffset = 0;
-        var compressedPosition = 0;
-        codec.Decompress(compressed, ref compressedPosition, decompressed, ref decompressedOffset, compressed.Length);
+        _ = codec.Decompress(compressed, decompressed);
         await Assert.That(decompressed).HasSameSequenceAs(data);
     }
 
@@ -565,16 +552,12 @@ public class BasicTests
         var data = new int[128];
         data[5] = -1;
         var compressed = new int[1024];
-        var inputOffset = 0;
-        var outputOffset = 0;
-        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
+        var (_, outputOffset) = codec.Compress(data, compressed);
         // we can repack the data: (optional)
         compressed = TestUtils.CopyArray(compressed, outputOffset);
 
         var decompressed = new int[128];
-        var decompressedPosition = 0;
-        var compressedPosition = 0;
-        codec.Decompress(compressed, ref compressedPosition, decompressed, ref decompressedPosition, compressed.Length);
+        _ = codec.Decompress(compressed, decompressed);
         await Assert.That(data).HasSameSequenceAs(data);
     }
 
@@ -583,16 +566,12 @@ public class BasicTests
         var data = new int[128];
         data[127] = -1;
         var compressed = new int[1024];
-        var inputOffset = 0;
-        var outputOffset = 0;
-        codec.Compress(data, ref inputOffset, compressed, ref outputOffset, data.Length);
+        var (_, outputOffset) = codec.Compress(data, compressed);
         // we can repack the data: (optional)
         compressed = TestUtils.CopyArray(compressed, outputOffset);
 
         var recovered = new int[128];
-        var decompressedPosition = 0;
-        var compressedPosition = 0;
-        codec.Decompress(compressed, ref compressedPosition, recovered, ref decompressedPosition, compressed.Length);
+        _ = codec.Decompress(compressed, recovered);
         await Assert.That(data).HasSameSequenceAs(data);
     }
 
@@ -624,16 +603,10 @@ public class BasicTests
 
     public sealed class IntegerCodec
     {
-        internal IntegerCodec(IInt32Codec codec)
-        {
-            Codec = codec;
-        }
+        internal IntegerCodec(IInt32Codec codec) => this.Codec = codec;
 
-        internal IInt32Codec Codec { get; private set; }
+        internal IInt32Codec Codec { get; }
 
-        public override string? ToString()
-        {
-            return Codec.ToString();
-        }
+        public override string? ToString() => this.Codec.ToString();
     }
 }

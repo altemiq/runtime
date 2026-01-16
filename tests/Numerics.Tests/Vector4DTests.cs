@@ -1180,7 +1180,7 @@ public sealed class Vector4DTests
     public async Task Vector4DConstructorTest7()
     {
         var value = 1.0;
-        var target = new Vector4D(new[] { value, value, value, value });
+        var target = new Vector4D([value, value, value, value]);
         var expected = new Vector4D(value);
 
         await Assert.That(target).IsEqualTo(expected);
@@ -1528,7 +1528,7 @@ public sealed class Vector4DTests
     struct Vector4DPlusDouble
     {
         private Vector4D _v;
-        private double _f;
+        private readonly double _f;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -1701,25 +1701,25 @@ public sealed class Vector4DTests
 
         public Level0 L0;
 
-        public Vector4D RootEmbeddedObject => L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector;
+        public readonly Vector4D RootEmbeddedObject => L0.L1.L2.L3.L4.L5.L6.L7.EmbeddedVector;
 
         public struct Level0
         {
-            private double buffer0, buffer1;
+            private readonly double buffer0, buffer1;
             public Level1 L1;
-            private double buffer2;
+            private readonly double buffer2;
 
             public struct Level1
             {
-                private double buffer0, buffer1;
+                private readonly double buffer0, buffer1;
                 public Level2 L2;
-                private byte buffer2;
+                private readonly byte buffer2;
 
                 public struct Level2
                 {
                     public Level3 L3;
-                    private double buffer0;
-                    private byte buffer1;
+                    private readonly double buffer0;
+                    private readonly byte buffer1;
 
                     public struct Level3
                     {
@@ -1727,22 +1727,22 @@ public sealed class Vector4DTests
 
                         public struct Level4
                         {
-                            private double buffer0;
+                            private readonly double buffer0;
                             public Level5 L5;
-                            private long buffer1;
-                            private byte buffer2;
-                            private double buffer3;
+                            private readonly long buffer1;
+                            private readonly byte buffer2;
+                            private readonly double buffer3;
 
                             public struct Level5
                             {
-                                private byte buffer0;
+                                private readonly byte buffer0;
                                 public Level6 L6;
 
                                 public struct Level6
                                 {
-                                    private byte buffer0;
+                                    private readonly byte buffer0;
                                     public Level7 L7;
-                                    private byte buffer1, buffer2;
+                                    private readonly byte buffer1, buffer2;
 
                                     public struct Level7
                                     {

@@ -12,73 +12,72 @@ namespace Altemiq.Buffers.Compression;
 internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Codec
 {
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessCompress(source, destination);
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, sbyte[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<sbyte> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
-        var temporaryDestinationIndex = destinationIndex;
-        for (var k = sourceIndex; k < sourceIndex + length; k++)
+        var written = 0;
+        var length = source.Length;
+        for (var k = 0; k < length; k++)
         {
-            var val = source[k] & 0xFFFFFFFFL; // To be consistent with
+            var val = source[k] & 0xFFFFFFFFL; // To be consistent with unsigned integers in C/C++
 
-            // unsigned integers in C/C++
             if (val < (1 << 7))
             {
-                destination[temporaryDestinationIndex++] = (sbyte)(val | (1 << 7));
+                destination[written++] = (sbyte)(val | (1 << 7));
             }
             else if (val < (1 << 14))
             {
-                destination[temporaryDestinationIndex++] = Extract7Bits(0, val);
-                destination[temporaryDestinationIndex++] = (sbyte)(Extract7BitsWithoutMask(1, val) | (1 << 7));
+                destination[written++] = Extract7Bits(0, val);
+                destination[written++] = (sbyte)(Extract7BitsWithoutMask(1, val) | (1 << 7));
             }
             else if (val < (1 << 21))
             {
-                destination[temporaryDestinationIndex++] = Extract7Bits(0, val);
-                destination[temporaryDestinationIndex++] = Extract7Bits(1, val);
-                destination[temporaryDestinationIndex++] = (sbyte)(Extract7BitsWithoutMask(2, val) | (1 << 7));
+                destination[written++] = Extract7Bits(0, val);
+                destination[written++] = Extract7Bits(1, val);
+                destination[written++] = (sbyte)(Extract7BitsWithoutMask(2, val) | (1 << 7));
             }
             else if (val < (1 << 28))
             {
-                destination[temporaryDestinationIndex++] = Extract7Bits(0, val);
-                destination[temporaryDestinationIndex++] = Extract7Bits(1, val);
-                destination[temporaryDestinationIndex++] = Extract7Bits(2, val);
-                destination[temporaryDestinationIndex++] = (sbyte)(Extract7BitsWithoutMask(3, val) | (1 << 7));
+                destination[written++] = Extract7Bits(0, val);
+                destination[written++] = Extract7Bits(1, val);
+                destination[written++] = Extract7Bits(2, val);
+                destination[written++] = (sbyte)(Extract7BitsWithoutMask(3, val) | (1 << 7));
             }
             else
             {
-                destination[temporaryDestinationIndex++] = Extract7Bits(0, val);
-                destination[temporaryDestinationIndex++] = Extract7Bits(1, val);
-                destination[temporaryDestinationIndex++] = Extract7Bits(2, val);
-                destination[temporaryDestinationIndex++] = Extract7Bits(3, val);
-                destination[temporaryDestinationIndex++] = (sbyte)(Extract7BitsWithoutMask(4, val) | (1 << 7));
+                destination[written++] = Extract7Bits(0, val);
+                destination[written++] = Extract7Bits(1, val);
+                destination[written++] = Extract7Bits(2, val);
+                destination[written++] = Extract7Bits(3, val);
+                destination[written++] = (sbyte)(Extract7BitsWithoutMask(4, val) | (1 << 7));
             }
         }
 
-        destinationIndex = temporaryDestinationIndex;
-        sourceIndex += length;
+        return (length, written);
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    (int Read, int Written) ICompressHeadlessCodec<int, int>.Compress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessCompress(source, destination);
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        var index = sourceIndex;
-        var endIndex = sourceIndex + length;
-        var temporaryDestinationIndex = destinationIndex;
+        var length = source.Length;
+        var index = 0;
+        var written = 0;
 
         var s = 0;
         var v = 0;
         var shift = 0;
 
-        while (index < endIndex)
+        while (index < length)
         {
             var value = source[index];
             int c = (sbyte)(value >>> s);
@@ -88,7 +87,7 @@ internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Cod
             v += (c & 127) << shift;
             if ((c & 128) is 128)
             {
-                destination[temporaryDestinationIndex++] = v;
+                destination[written++] = v;
                 v = 0;
                 shift = 0;
             }
@@ -98,67 +97,65 @@ internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Cod
             }
         }
 
-        destinationIndex = temporaryDestinationIndex;
-        sourceIndex += length;
+        return (length, written);
     }
 
     /// <inheritdoc/>
-    public void Decompress(sbyte[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    public (int Read, int Written) Decompress(ReadOnlySpan<sbyte> source, Span<int> destination)
     {
-        var index = sourceIndex;
-        var endIndex = sourceIndex + length;
-        var temporaryDestinationIndex = destinationIndex;
-        while (index < endIndex)
+        var length = source.Length;
+        var read = 0;
+        var written = 0;
+        while (read < length)
         {
-            var value = source[index] & 0x7F;
-            if (source[index] < 0)
+            var value = source[read] & 0x7F;
+            if (source[read] < 0)
             {
-                index++;
-                Update();
+                read++;
+                Update(destination);
                 continue;
             }
 
-            value = ((source[index + 1] & 0x7F) << 7) | value;
-            if (source[index + 1] < 0)
+            value = ((source[read + 1] & 0x7F) << 7) | value;
+            if (source[read + 1] < 0)
             {
-                index += 2;
-                Update();
+                read += 2;
+                Update(destination);
                 continue;
             }
 
-            value = ((source[index + 2] & 0x7F) << 14) | value;
-            if (source[index + 2] < 0)
+            value = ((source[read + 2] & 0x7F) << 14) | value;
+            if (source[read + 2] < 0)
             {
-                index += 3;
-                Update();
+                read += 3;
+                Update(destination);
                 continue;
             }
 
-            value = ((source[index + 3] & 0x7F) << 21) | value;
-            if (source[index + 3] < 0)
+            value = ((source[read + 3] & 0x7F) << 21) | value;
+            if (source[read + 3] < 0)
             {
-                index += 4;
-                Update();
+                read += 4;
+                Update(destination);
                 continue;
             }
 
-            value = ((source[index + 4] & 0x7F) << 28) | value;
-            index += 5;
-            Update();
+            value = ((source[read + 4] & 0x7F) << 28) | value;
+            read += 5;
+            Update(destination);
 
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-            void Update()
+            void Update(Span<int> span)
             {
-                destination[temporaryDestinationIndex++] = value;
+                span[written++] = value;
             }
         }
 
-        destinationIndex = temporaryDestinationIndex;
-        sourceIndex += index;
+        return (read, written);
     }
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    (int Read, int Written) IDecompressHeadlessCodec<int, int>.Decompress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessDecompress(source, destination);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(VariableByte);
@@ -169,46 +166,45 @@ internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Cod
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     private static sbyte Extract7BitsWithoutMask(int i, long val) => (sbyte)(val >> (7 * i));
 
-    private static void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    private static (int Read, int Written) HeadlessCompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        if (length is 0)
+        if (source.Length is 0)
         {
-            return;
+            return default;
         }
 
+        var length = source.Length;
         var buffer = new MemoryStream(length * 8);
-        for (var k = sourceIndex; k < sourceIndex + length; k++)
+        for (var k = 0; k < length; k++)
         {
             var val = source[k] & 0xFFFFFFFFL; // To be consistent with unsigned integers in C/C++
-            if (val < (1 << 7))
+            switch (val)
             {
-                buffer.WriteSByte((sbyte)(val | (1 << 7)));
-            }
-            else if (val < (1 << 14))
-            {
-                buffer.WriteSByte(Extract7Bits(0, val));
-                buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(1, val) | (1 << 7)));
-            }
-            else if (val < (1 << 21))
-            {
-                buffer.WriteSByte(Extract7Bits(0, val));
-                buffer.WriteSByte(Extract7Bits(1, val));
-                buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(2, val) | (1 << 7)));
-            }
-            else if (val < (1 << 28))
-            {
-                buffer.WriteSByte(Extract7Bits(0, val));
-                buffer.WriteSByte(Extract7Bits(1, val));
-                buffer.WriteSByte(Extract7Bits(2, val));
-                buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(3, val) | (1 << 7)));
-            }
-            else
-            {
-                buffer.WriteSByte(Extract7Bits(0, val));
-                buffer.WriteSByte(Extract7Bits(1, val));
-                buffer.WriteSByte(Extract7Bits(2, val));
-                buffer.WriteSByte(Extract7Bits(3, val));
-                buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(4, val) | (1 << 7)));
+                case < 1 << 7:
+                    buffer.WriteSByte((sbyte)(val | (1 << 7)));
+                    break;
+                case < 1 << 14:
+                    buffer.WriteSByte(Extract7Bits(0, val));
+                    buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(1, val) | (1 << 7)));
+                    break;
+                case < 1 << 21:
+                    buffer.WriteSByte(Extract7Bits(0, val));
+                    buffer.WriteSByte(Extract7Bits(1, val));
+                    buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(2, val) | (1 << 7)));
+                    break;
+                case < 1 << 28:
+                    buffer.WriteSByte(Extract7Bits(0, val));
+                    buffer.WriteSByte(Extract7Bits(1, val));
+                    buffer.WriteSByte(Extract7Bits(2, val));
+                    buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(3, val) | (1 << 7)));
+                    break;
+                default:
+                    buffer.WriteSByte(Extract7Bits(0, val));
+                    buffer.WriteSByte(Extract7Bits(1, val));
+                    buffer.WriteSByte(Extract7Bits(2, val));
+                    buffer.WriteSByte(Extract7Bits(3, val));
+                    buffer.WriteSByte((sbyte)(Extract7BitsWithoutMask(4, val) | (1 << 7)));
+                    break;
             }
         }
 
@@ -217,23 +213,22 @@ internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Cod
             buffer.WriteByte(default);
         }
 
-        var bufferPosition = (int)buffer.Position;
+        var destinationLength = (int)(buffer.Position / sizeof(int));
         buffer.Position = 0;
-        _ = buffer.Read(destination, destinationIndex, bufferPosition / 4, ByteOrder.LittleEndian);
-        destinationIndex += bufferPosition / 4;
-        sourceIndex += length;
+        _ = buffer.Read(destination[..destinationLength], ByteOrder.LittleEndian);
+        return (length,  destinationLength);
     }
 
-    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
+    private static (int Read, int Written) HeadlessDecompress(ReadOnlySpan<int> source, Span<int> destination)
     {
+        var number = destination.Length;
         var s = 0;
-        var p = sourceIndex;
-        var temporaryDestinationIndex = destinationIndex;
-        var endDestinationIndex = number + temporaryDestinationIndex;
+        var p = 0;
+        var written = 0;
         var v = 0;
         var shift = 0;
 
-        while (temporaryDestinationIndex < endDestinationIndex)
+        while (written < number)
         {
             var value = source[p];
             var c = value >>> s;
@@ -243,7 +238,7 @@ internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Cod
             v += (c & 127) << shift;
             if ((c & 128) is 128)
             {
-                destination[temporaryDestinationIndex++] = v;
+                destination[written++] = v;
                 v = 0;
                 shift = 0;
             }
@@ -253,7 +248,6 @@ internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Cod
             }
         }
 
-        destinationIndex = temporaryDestinationIndex;
-        sourceIndex = p + (s is not 0 ? 1 : 0);
+        return (p + (s is not 0 ? 1 : 0), written);
     }
 }

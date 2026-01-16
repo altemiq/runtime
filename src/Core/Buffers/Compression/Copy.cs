@@ -12,31 +12,23 @@ namespace Altemiq.Buffers.Compression;
 internal sealed class Copy : IInt32Codec, IHeadlessInt32Codec
 {
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    (int Read, int Written) ICompressHeadlessCodec<int, int>.Compress(ReadOnlySpan<int> source, Span<int> destination) => CopyData(source, destination, source.Length);
 
     /// <inheritdoc/>
-    void IHeadlessInt32Codec.Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length, int number) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, number);
+    (int Read, int Written) IDecompressHeadlessCodec<int, int>.Decompress(ReadOnlySpan<int> source, Span<int> destination) => CopyData(source, destination, source.Length);
 
     /// <inheritdoc/>
-    public void Compress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessCompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    public (int Read, int Written) Compress(ReadOnlySpan<int> source, Span<int> destination) => CopyData(source, destination, source.Length);
 
     /// <inheritdoc/>
-    public void Decompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length) => HeadlessDecompress(source, ref sourceIndex, destination, ref destinationIndex, length);
+    public (int Read, int Written) Decompress(ReadOnlySpan<int> source, Span<int> destination) => CopyData(source, destination, source.Length);
 
     /// <inheritdoc/>
     public override string ToString() => nameof(Copy);
 
-    private static void HeadlessCompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int length)
+    private static (int Read, int Written) CopyData(ReadOnlySpan<int> source, Span<int> destination, int length)
     {
-        Array.Copy(source, sourceIndex, destination, destinationIndex, length);
-        sourceIndex += length;
-        destinationIndex += length;
-    }
-
-    private static void HeadlessDecompress(int[] source, ref int sourceIndex, int[] destination, ref int destinationIndex, int number)
-    {
-        Array.Copy(source, sourceIndex, destination, destinationIndex, number);
-        sourceIndex += number;
-        destinationIndex += number;
+        source[..length].CopyTo(destination);
+        return (length, length);
     }
 }
