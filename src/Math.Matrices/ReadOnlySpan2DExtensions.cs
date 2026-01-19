@@ -271,7 +271,7 @@ public static class ReadOnlySpan2DExtensions
             var returnValue = new T[value.Height * value.Width];
             if (value.TryGetSpan(out var span))
             {
-                for (int i = 0; i < span.Length; i++)
+                for (var i = 0; i < span.Length; i++)
                 {
                     returnValue[i] = span[i] * scale;
                 }

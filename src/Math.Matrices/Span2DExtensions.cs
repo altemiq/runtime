@@ -6,6 +6,8 @@
 
 namespace Altemiq.Math;
 
+using System.Runtime.Intrinsics;
+
 #pragma warning disable CA1708, RCS1263, S2325, SA1101
 
 /// <summary>
@@ -13,8 +15,32 @@ namespace Altemiq.Math;
 /// </summary>
 public static class Span2DExtensions
 {
-    extension(Span2D<float> input)
+    extension(ref Span2D<float> input)
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="Span2D{T}"/> from the scaling of the specified matrix by the specified scale.
+        /// </summary>
+        /// <param name="scale">A value to scale the matrix by.</param>
+        /// <returns>A new instance of <see cref="Span2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Scale{T}(ReadOnlySpan2D{T},T)"/>
+        public void operator *=(float scale) => MultiplyStruct(input, scale);
+
+        /// <summary>
+        /// Creates a new instance of <see cref="Span2D{T}"/> from the addition of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The second instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Add{T}(ReadOnlySpan2D{T}, ReadOnlySpan2D{T})"/>
+        public void operator +=(ReadOnlySpan2D<float> other) => AddStruct(input, other);
+
+        /// <summary>
+        /// Creates a new instance of <see cref="Span2D{T}"/> from the subtraction of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The second instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Add{T}(ReadOnlySpan2D{T}, ReadOnlySpan2D{T})"/>
+        public void operator -=(ReadOnlySpan2D<float> other) => SubtractStruct(input, other);
+
 #pragma warning disable InconsistentNaming
         /// <summary>
         /// Creates a new <see cref="System.Numerics.Matrix4x4" /> from this <see cref="Span2D{Double}"/>.
@@ -89,8 +115,8 @@ public static class Span2DExtensions
                     span[5]);
             }
         }
-#pragma warning restore InconsistentNaming
 
+#pragma warning restore InconsistentNaming
         /// <summary>
         /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="System.Numerics.Matrix4x4"/>.
         /// </summary>
@@ -145,8 +171,32 @@ public static class Span2DExtensions
         }
     }
 
-    extension(Span2D<double> input)
+    extension(ref Span2D<double> input)
     {
+        /// <summary>
+        /// Creates a new instance of <see cref="Span2D{T}"/> from the scaling of the specified matrix by the specified scale.
+        /// </summary>
+        /// <param name="scale">A value to scale the matrix by.</param>
+        /// <returns>A new instance of <see cref="Span2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Scale{T}(ReadOnlySpan2D{T},T)"/>
+        public void operator *=(double scale) => MultiplyStruct(input, scale);
+
+        /// <summary>
+        /// Creates a new instance of <see cref="Span2D{T}"/> from the addition of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The second instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Add{T}(ReadOnlySpan2D{T}, ReadOnlySpan2D{T})"/>
+        public void operator +=(ReadOnlySpan2D<double> other) => AddStruct(input, other);
+
+        /// <summary>
+        /// Creates a new instance of <see cref="Span2D{T}"/> from the subtraction of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The second instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Add{T}(ReadOnlySpan2D{T}, ReadOnlySpan2D{T})"/>
+        public void operator -=(ReadOnlySpan2D<double> other) => SubtractStruct(input, other);
+
 #pragma warning disable InconsistentNaming
         /// <summary>
         /// Creates a new <see cref="Numerics.Matrix4x4D" /> from this <see cref="Span2D{Double}"/>.
@@ -328,7 +378,7 @@ public static class Span2DExtensions
         {
             if (matrix.TryGetSpan(out var span))
             {
-                for (int i = 0; i < span.Length; i++)
+                for (var i = 0; i < span.Length; i++)
                 {
                     span[i] *= scale;
                 }
@@ -458,6 +508,139 @@ public static class Span2DExtensions
                     {
                         matrixRowSpan1[column] -= matrixRowSpan2[column];
                     }
+                }
+            }
+        }
+    }
+
+    private static void MultiplyStruct<T>(Span2D<T> matrix, T scale)
+        where T : struct, System.Numerics.IMultiplyOperators<T, T, T>
+    {
+        if (matrix.TryGetSpan(out var span))
+        {
+            var multiplier = Vector256.Create(scale);
+            var (quotient, remainder) = System.Math.DivRem(span.Length, 4);
+            for (var i = 0; i < quotient; i++)
+            {
+                var current = Vector256.Create(span.Slice(i * 4, 4)) * multiplier;
+                current.CopyTo(span.Slice(i * 4, 4));
+            }
+
+            for (var i = 0; i < remainder; i++)
+            {
+                span[(quotient * 4) + i] *= scale;
+            }
+        }
+        else
+        {
+            for (var row = 0; row < matrix.Height; row++)
+            {
+                var matrixRowSpan = matrix.GetRowSpan(row);
+                for (var column = 0; column < matrix.Width; column++)
+                {
+                    matrixRowSpan[column] *= scale;
+                }
+            }
+        }
+    }
+
+    private static void AddStruct<T>(Span2D<T> matrix, ReadOnlySpan2D<T> other)
+        where T : struct, System.Numerics.IAdditionOperators<T, T, T>
+    {
+        if (matrix.Height != other.Height || matrix.Width != other.Width)
+        {
+            throw new InvalidOperationException();
+        }
+
+        if (matrix.TryGetSpan(out var matrixSpan1))
+        {
+            if (other.TryGetSpan(out var matrixSpan2))
+            {
+                var (quotient, remainder) = System.Math.DivRem(matrixSpan1.Length, 4);
+                for (var i = 0; i < quotient; i++)
+                {
+                    var current = Vector256.Create(matrixSpan1.Slice(i * quotient, 4)) + Vector256.Create(matrixSpan2.Slice(i * quotient, 4));
+                    current.CopyTo(matrixSpan1.Slice(i * quotient, 4));
+                }
+
+                for (var i = 0; i < remainder; i++)
+                {
+                    matrixSpan1[(4 * quotient) + i] += matrixSpan2[(4 * quotient) + i];
+                }
+            }
+            else
+            {
+                for (var row = 0; row < matrix.Height; row++)
+                {
+                    var matrixRowSpan2 = other.GetRowSpan(row);
+                    var rowIndex = row * matrix.Width;
+                    for (var column = 0; column < matrix.Width; column++)
+                    {
+                        matrixSpan1[rowIndex + column] += matrixRowSpan2[column];
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (var row = 0; row < matrix.Height; row++)
+            {
+                var matrixRowSpan1 = matrix.GetRowSpan(row);
+                var matrixRowSpan2 = other.GetRowSpan(row);
+                for (var column = 0; column < matrix.Width; column++)
+                {
+                    matrixRowSpan1[column] += matrixRowSpan2[column];
+                }
+            }
+        }
+    }
+
+    private static void SubtractStruct<T>(Span2D<T> matrix, ReadOnlySpan2D<T> other)
+        where T : struct, System.Numerics.ISubtractionOperators<T, T, T>
+    {
+        if (matrix.Height != other.Height || matrix.Width != other.Width)
+        {
+            throw new InvalidOperationException();
+        }
+
+        if (matrix.TryGetSpan(out var matrixSpan1))
+        {
+            if (other.TryGetSpan(out var matrixSpan2))
+            {
+                var (quotient, remainder) = System.Math.DivRem(matrixSpan1.Length, 4);
+                for (var i = 0; i < quotient; i++)
+                {
+                    var current = Vector256.Create(matrixSpan1.Slice(i * quotient, 4)) - Vector256.Create(matrixSpan2.Slice(i * quotient, 4));
+                    current.CopyTo(matrixSpan1.Slice(i * quotient, 4));
+                }
+
+                for (var i = 0; i < remainder; i++)
+                {
+                    matrixSpan1[(4 * quotient) + i] -= matrixSpan2[(4 * quotient) + i];
+                }
+            }
+            else
+            {
+                for (var row = 0; row < matrix.Height; row++)
+                {
+                    var matrixRowSpan2 = other.GetRowSpan(row);
+                    var rowIndex = row * matrix.Width;
+                    for (var column = 0; column < matrix.Width; column++)
+                    {
+                        matrixSpan1[rowIndex + column] -= matrixRowSpan2[column];
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (var row = 0; row < matrix.Height; row++)
+            {
+                var matrixRowSpan1 = matrix.GetRowSpan(row);
+                var matrixRowSpan2 = other.GetRowSpan(row);
+                for (var column = 0; column < matrix.Width; column++)
+                {
+                    matrixRowSpan1[column] -= matrixRowSpan2[column];
                 }
             }
         }

@@ -70,7 +70,7 @@ public class CayleyHamiltonInverter : IMatrixInverter
 
         var length = a.Height * a.Width;
         using var owner = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(a.Height * a.Width);
-        Span<T> source = owner.Span;
+        var source = owner.Span;
         a.CopyTo(source);
         var ak = Span2D<T>.DangerousCreate(ref source[0], a.Height, a.Width, 0);
         var destination = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(length);

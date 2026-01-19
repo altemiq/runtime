@@ -43,7 +43,7 @@ public class CholeskyInverter : IMatrixInverter
         {
             for (var column = 0; column < returnMatrix.Width; column++)
             {
-                ref T current = ref returnMatrix[row, column];
+                ref var current = ref returnMatrix[row, column];
                 current /= factors[row] * factors[column];
             }
         }
@@ -65,7 +65,7 @@ public class CholeskyInverter : IMatrixInverter
             {
                 if (row == column)
                 {
-                    ref T current = ref returnMatrix[row, column];
+                    ref var current = ref returnMatrix[row, column];
                     current = T.One / current;
                 }
                 else
