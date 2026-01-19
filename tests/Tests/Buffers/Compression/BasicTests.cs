@@ -34,10 +34,10 @@ public class BasicTests
 
         for (var x = 0; x < 50; x++)
         {
-            Array.Clear(compressed);
+            Array.Clear(compressed, 0, compressed.Length);
             var (_, length) = ic.Compress(data, compressed.AsSpan(x));
 
-            Array.Clear(decompressed);
+            Array.Clear(decompressed, 0, decompressed.Length);
             _ = ic.Decompress(compressed.AsSpan(x, length), decompressed);
             await Assert.That(decompressed).HasSameSequenceAs(data);
         }

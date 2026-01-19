@@ -19,6 +19,7 @@ public class DifferentialInt32CompressorTests
         System.Buffers.ArrayPool<int>.Shared.Return(data);
     }
 
+#if !NETFRAMEWORK
     [Test]
     [MatrixDataSource]
     public async Task BasicIntegratedTest([Matrix(1, 10, 100, 1000, 10000)] int n, [MatrixMethod<DifferentialInt32CompressorTests>(nameof(GetCompressors))] Wrapper i)
@@ -49,4 +50,5 @@ public class DifferentialInt32CompressorTests
 
         public override string ToString() => this.compressor.ToString();
     }
+#endif
 }
