@@ -23,5 +23,9 @@ public interface IMatrixInverter
     /// <param name="matrix">The matrix.</param>
     /// <returns>The inverted matrix.</returns>
     ReadOnlySpan2D<T> Invert<T>(ReadOnlySpan2D<T> matrix)
+#if NET8_0_OR_GREATER
         where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>;
+#else
+        where T : struct, System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>;
+#endif
 }

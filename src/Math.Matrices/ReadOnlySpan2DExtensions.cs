@@ -64,7 +64,11 @@ public static class ReadOnlySpan2DExtensions
     /// <typeparam name="T">The type of number in the matrix.</typeparam>
     /// <param name="matrix">The matrix to operate on.</param>
     extension<T>(ReadOnlySpan2D<T> matrix)
+#if NET8_0_OR_GREATER
         where T : System.Numerics.IAdditionOperators<T, T, T>
+#else
+        where T : struct, System.Numerics.IAdditionOperators<T, T, T>
+#endif
     {
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.
@@ -93,10 +97,7 @@ public static class ReadOnlySpan2DExtensions
             {
                 if (matrix2.TryGetSpan(out var matrixSpan2))
                 {
-                    for (var i = 0; i < returnValue.Length; i++)
-                    {
-                        returnValue[i] = matrixSpan1[i] + matrixSpan2[i];
-                    }
+                    matrixSpan1.AddTo(matrixSpan2, returnValue);
                 }
                 else
                 {
@@ -116,13 +117,7 @@ public static class ReadOnlySpan2DExtensions
             {
                 for (var row = 0; row < matrix1.Height; row++)
                 {
-                    var matrixRowSpan1 = matrix1.GetRowSpan(row);
-                    var matrixRowSpan2 = matrix2.GetRowSpan(row);
-                    var rowIndex = row * matrix1.Width;
-                    for (var column = 0; column < matrix1.Width; column++)
-                    {
-                        returnValue[rowIndex + column] = matrixRowSpan1[column] + matrixRowSpan2[column];
-                    }
+                    matrix1.GetRowSpan(row).AddTo(matrix2.GetRowSpan(row), returnValue.AsSpan(row * matrix1.Width, matrix1.Width));
                 }
             }
 
@@ -136,7 +131,11 @@ public static class ReadOnlySpan2DExtensions
     /// <typeparam name="T">The type of number in the matrix.</typeparam>
     /// <param name="matrix">The matrix to operate on.</param>
     extension<T>(ReadOnlySpan2D<T> matrix)
+#if NET8_0_OR_GREATER
         where T : System.Numerics.ISubtractionOperators<T, T, T>
+#else
+        where T : struct, System.Numerics.ISubtractionOperators<T, T, T>
+#endif
     {
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.
@@ -165,10 +164,7 @@ public static class ReadOnlySpan2DExtensions
             {
                 if (matrix2.TryGetSpan(out var matrixSpan2))
                 {
-                    for (var i = 0; i < returnValue.Length; i++)
-                    {
-                        returnValue[i] = matrixSpan1[i] - matrixSpan2[i];
-                    }
+                    matrixSpan1.SubtractTo(matrixSpan2, returnValue);
                 }
                 else
                 {
@@ -188,13 +184,7 @@ public static class ReadOnlySpan2DExtensions
             {
                 for (var row = 0; row < matrix1.Height; row++)
                 {
-                    var matrixRowSpan1 = matrix1.GetRowSpan(row);
-                    var matrixRowSpan2 = matrix2.GetRowSpan(row);
-                    var rowIndex = row * matrix1.Width;
-                    for (var column = 0; column < matrix1.Width; column++)
-                    {
-                        returnValue[rowIndex + column] = matrixRowSpan1[column] - matrixRowSpan2[column];
-                    }
+                    matrix1.GetRowSpan(row).SubtractTo(matrix2.GetRowSpan(row), returnValue.AsSpan(row * matrix1.Width, matrix1.Width));
                 }
             }
 
@@ -208,16 +198,12 @@ public static class ReadOnlySpan2DExtensions
     /// <typeparam name="T">The type of number in the matrix.</typeparam>
     /// <param name="matrix">The matrix to operate on.</param>
     extension<T>(ReadOnlySpan2D<T> matrix)
+#if NET8_0_OR_GREATER
         where T : System.Numerics.IMultiplyOperators<T, T, T>, System.Numerics.IAdditionOperators<T, T, T>
+#else
+        where T : struct, System.Numerics.IMultiplyOperators<T, T, T>, System.Numerics.IAdditionOperators<T, T, T>
+#endif
     {
-        /// <summary>
-        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.
-        /// </summary>
-        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.</returns>
-        /// <seealso cref="ReadOnlySpan2DExtensions.op_Multiply{T}(ReadOnlySpan2D{T},ReadOnlySpan2D{T})"/>
-        public ReadOnlySpan2D<T> Multiply(ReadOnlySpan2D<T> other) => matrix * other;
-
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.
         /// </summary>
@@ -225,25 +211,6 @@ public static class ReadOnlySpan2DExtensions
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
         /// <seealso cref="ReadOnlySpan2DExtensions.op_Multiply{T}(ReadOnlySpan2D{T},T)"/>
         public ReadOnlySpan2D<T> Scale(T multiplier) => matrix * multiplier;
-
-        /// <summary>
-        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.
-        /// </summary>
-        /// <param name="matrix1">The first instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
-        /// <param name="matrix2">The second instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.</returns>
-        /// <seealso cref="ReadOnlySpan2DExtensions.Multiply{T}(ReadOnlySpan2D{T}, ReadOnlySpan2D{T})"/>
-        public static ReadOnlySpan2D<T> operator *(ReadOnlySpan2D<T> matrix1, ReadOnlySpan2D<T> matrix2)
-        {
-            if (matrix1.Height != matrix2.Width)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var returnValue = new T[matrix1.Height * matrix2.Width];
-            ReadOnlySpan2D<T>.Multiply(matrix1, matrix2, returnValue);
-            return new(returnValue, matrix1.Height, matrix2.Width);
-        }
 
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.
@@ -271,25 +238,53 @@ public static class ReadOnlySpan2DExtensions
             var returnValue = new T[value.Height * value.Width];
             if (value.TryGetSpan(out var span))
             {
-                for (var i = 0; i < span.Length; i++)
-                {
-                    returnValue[i] = span[i] * scale;
-                }
+                span.ScaleTo(scale, returnValue);
             }
             else
             {
                 for (var row = 0; row < value.Height; row++)
                 {
-                    var matrixRowSpan1 = value.GetRowSpan(row);
-                    var rowIndex = row * value.Width;
-                    for (var column = 0; column < value.Width; column++)
-                    {
-                        returnValue[rowIndex + column] = matrixRowSpan1[column] * scale;
-                    }
+                    value.GetRowSpan(row).ScaleTo(scale, returnValue.AsSpan(row * value.Width, value.Width));
                 }
             }
 
             return new(returnValue, value.Height, value.Width);
+        }
+    }
+
+    /// <summary>
+    /// The <see cref="ReadOnlySpan2D{T}"/> extension block.
+    /// </summary>
+    /// <typeparam name="T">The type of number in the matrix.</typeparam>
+    /// <param name="matrix">The matrix to operate on.</param>
+    extension<T>(ReadOnlySpan2D<T> matrix)
+        where T : System.Numerics.IMultiplyOperators<T, T, T>, System.Numerics.IAdditionOperators<T, T, T>
+    {
+        /// <summary>
+        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.op_Multiply{T}(ReadOnlySpan2D{T},ReadOnlySpan2D{T})"/>
+        public ReadOnlySpan2D<T> Multiply(ReadOnlySpan2D<T> other) => matrix * other;
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.
+        /// </summary>
+        /// <param name="matrix1">The first instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <param name="matrix2">The second instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.Multiply{T}(ReadOnlySpan2D{T}, ReadOnlySpan2D{T})"/>
+        public static ReadOnlySpan2D<T> operator *(ReadOnlySpan2D<T> matrix1, ReadOnlySpan2D<T> matrix2)
+        {
+            if (matrix1.Height != matrix2.Width)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var returnValue = new T[matrix1.Height * matrix2.Width];
+            ReadOnlySpan2D<T>.Multiply(matrix1, matrix2, returnValue);
+            return new(returnValue, matrix1.Height, matrix2.Width);
         }
 
         internal static void Multiply(ReadOnlySpan2D<T> matrix1, ReadOnlySpan2D<T> matrix2, Span<T> destination)
@@ -324,31 +319,17 @@ public static class ReadOnlySpan2DExtensions
     /// <typeparam name="T">The type of number in the matrix.</typeparam>
     /// <param name="matrix">The matrix to operate on.</param>
     extension<T>(ReadOnlySpan2D<T> matrix)
+#if NET8_0_OR_GREATER
         where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
+#else
+        where T : struct, System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
+#endif
     {
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ReadOnlySpan2D{T}"/> is the identity matrix.
+        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
-        public bool IsIdentity
-        {
-            get
-            {
-                for (var row = 0; row < matrix.Height; row++)
-                {
-                    var rowSpan = matrix.GetRowSpan(row);
-                    for (var column = 0; column < rowSpan.Length; column++)
-                    {
-                        var value = rowSpan[column];
-                        if ((column == row && value != T.One) || (column != row && !T.IsZero(value)))
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                return true;
-            }
-        }
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
+        public ReadOnlySpan2D<T> Pow(int y) => matrix ^ y;
 
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the specified instance of <see cref="ReadOnlySpan2D{T}"/>.
@@ -361,39 +342,6 @@ public static class ReadOnlySpan2DExtensions
         /// </summary>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
         public static ReadOnlySpan2D<T> operator ^(ReadOnlySpan2D<T> x, IMatrixInverter y) => y.Invert(x);
-
-        /// <summary>
-        /// Gets the determinant of the current <see cref="ReadOnlySpan2D{T}"/>.
-        /// </summary>
-        /// <returns>A double value representing the determinant of the matrix.</returns>
-        public T GetDeterminant() =>
-            matrix switch
-            {
-                { Height: var h, Width: var w } when h != w => throw new NotSupportedException(),
-                { Height: 0 } => T.Zero,
-                { Height: 1 } => matrix[0, 0],
-                { Height: 2 } => (matrix[0, 0] * matrix[1, 1]) - (matrix[0, 1] * matrix[1, 0]),
-                _ => ReadOnlySpan2D<T>.ComputeDeterminant(matrix),
-            };
-
-        /// <summary>
-        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
-        /// </summary>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
-        public ReadOnlySpan2D<T> Pow(int y) => matrix ^ y;
-
-        /// <summary>
-        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
-        /// </summary>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
-        public ReadOnlySpan2D<T> Invert(IMatrixInverter inverter) => inverter.Invert(matrix);
-
-        /// <summary>
-        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
-        /// </summary>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
-        public ReadOnlySpan2D<T> Invert<TInverter>()
-            where TInverter : IMatrixInverter => matrix.Invert(TInverter.Instance);
 
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
@@ -480,6 +428,66 @@ public static class ReadOnlySpan2DExtensions
                 }
             }
         }
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
+        /// </summary>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
+        public ReadOnlySpan2D<T> Invert<TInverter>()
+            where TInverter : IMatrixInverter => matrix.Invert(TInverter.Instance);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
+        /// </summary>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
+        public ReadOnlySpan2D<T> Invert(IMatrixInverter inverter) => inverter.Invert(matrix);
+    }
+
+    /// <summary>
+    /// The <see cref="ReadOnlySpan2D{T}"/> extension block.
+    /// </summary>
+    /// <typeparam name="T">The type of number in the matrix.</typeparam>
+    /// <param name="matrix">The matrix to operate on.</param>
+    extension<T>(ReadOnlySpan2D<T> matrix)
+        where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
+    {
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="ReadOnlySpan2D{T}"/> is the identity matrix.
+        /// </summary>
+        public bool IsIdentity
+        {
+            get
+            {
+                for (var row = 0; row < matrix.Height; row++)
+                {
+                    var rowSpan = matrix.GetRowSpan(row);
+                    for (var column = 0; column < rowSpan.Length; column++)
+                    {
+                        var value = rowSpan[column];
+                        if ((column == row && value != T.One) || (column != row && !T.IsZero(value)))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Gets the determinant of the current <see cref="ReadOnlySpan2D{T}"/>.
+        /// </summary>
+        /// <returns>A double value representing the determinant of the matrix.</returns>
+        public T GetDeterminant() =>
+            matrix switch
+            {
+                { Height: var h, Width: var w } when h != w => throw new NotSupportedException(),
+                { Height: 0 } => T.Zero,
+                { Height: 1 } => matrix[0, 0],
+                { Height: 2 } => (matrix[0, 0] * matrix[1, 1]) - (matrix[0, 1] * matrix[1, 0]),
+                _ => ReadOnlySpan2D<T>.ComputeDeterminant(matrix),
+            };
 
         private static T ComputeDeterminant(ReadOnlySpan2D<T> value)
         {

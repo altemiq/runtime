@@ -16,10 +16,19 @@ public class CayleyHamiltonInverter : IMatrixInverter
 
     /// <inheritdoc />
     public ReadOnlySpan2D<T> Invert<T>(ReadOnlySpan2D<T> matrix)
-        where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T> => InvertCayleyHamilton(matrix, out _);
+#if NET8_0_OR_GREATER
+        where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
+#else
+        where T : struct, System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
+#endif
+        => InvertCayleyHamilton(matrix, out _);
 
     private static ReadOnlySpan2D<T> InvertCayleyHamilton<T>(ReadOnlySpan2D<T> matrix, out T determinant)
+#if NET8_0_OR_GREATER
         where T : System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
+#else
+        where T : struct, System.Numerics.INumberBase<T>, System.Numerics.IRootFunctions<T>
+#endif
     {
         using var coefficients = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(matrix.Height + 1);
         FaddeevLeVerrierCoefficients(matrix, coefficients.Span);
