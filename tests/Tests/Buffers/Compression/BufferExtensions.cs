@@ -7,7 +7,7 @@ public static class BufferExtensions
 {
     public static CollectionAssertionBase<TCollection, TItem> HasSameSequenceAs<TCollection, TItem>(
         this CollectionAssertionBase<TCollection, TItem> collection,
-        TCollection expected,
+        IEnumerable<TItem> expected,
         [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expected))] string? expression = null)
         where TCollection : IEnumerable<TItem>
     {
@@ -21,7 +21,7 @@ public static class BufferExtensions
 
     }
 
-    private sealed class SequenceEqualsAssertion<TCollection, TItem>(AssertionContext<TCollection> context, TCollection expected) : CollectionAssertionBase<TCollection, TItem>(context)
+    private sealed class SequenceEqualsAssertion<TCollection, TItem>(AssertionContext<TCollection> context, IEnumerable<TItem> expected) : CollectionAssertionBase<TCollection, TItem>(context)
         where TCollection : IEnumerable<TItem>
     {
         protected override Task<AssertionResult> CheckAsync(EvaluationMetadata<TCollection> metadata)
