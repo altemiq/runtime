@@ -14,13 +14,6 @@ using Microsoft.Extensions.DependencyModel;
 /// </summary>
 public static class RuntimeEnvironment
 {
-#pragma warning disable SA1101
-    extension<T>(IEnumerable<T?> source)
-    {
-        private IEnumerable<T> WhereNotNull() => source.OfType<T>();
-    }
-#pragma warning restore SA1101
-
     private const string NativeDllSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES";
     private const string AppPaths = "APP_PATHS";
     private const string RuntimesDirectory = "runtimes";
@@ -159,7 +152,7 @@ public static class RuntimeEnvironment
         {
             if (Directory.GetDirectories(directory)
                 .Select(Path.GetFileName)
-                .WhereNotNull()
+                .OfType<string>()
                 .ToList() is { Count: not 0 } availableRids)
             {
                 return GetRuntimeRids()
@@ -539,7 +532,7 @@ public static class RuntimeEnvironment
         // get the rids
         if (Directory.GetDirectories(runtimesDirectory)
                 .Select(Path.GetFileName)
-                .WhereNotNull()
+                .OfType<string>()
                 .ToList() is { Count: not 0 } availableRids)
         {
             if (GetRuntimeRids().Intersect(availableRids, GetPathComparer()).ToList() is { Capacity: not 0 } rids)

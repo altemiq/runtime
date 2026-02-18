@@ -21,36 +21,34 @@ public static class Vector64Extensions
         {
             Unsafe.SkipInit(out Vector64<double> result);
 
-            for (int index = 0; index < Vector64<double>.Count; index++)
+            for (var index = 0; index < Vector64<double>.Count; index++)
             {
-                double value = (left.GetElementUnsafe(index) * right.GetElementUnsafe(index)) + addend.GetElementUnsafe(index);
-                result.SetElementUnsafe(index, value);
+                var value = (GetElementUnsafe(left, index) * GetElementUnsafe(right, index)) + GetElementUnsafe(addend, index);
+                SetElementUnsafe(result, index, value);
             }
 
             return result;
         }
     }
 
-#pragma warning disable SA1101
-    extension<T>(in Vector64<T> vector)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static T GetElementUnsafe<T>(in Vector64<T> vector, int index)
 #if !NET8_0_OR_GREATER
         where T : struct
 #endif
     {
-       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private T GetElementUnsafe(int index)
-        {
-            ref T address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
-            return Unsafe.Add(ref address, index);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetElementUnsafe(int index, T value)
-        {
-            ref T address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
-            Unsafe.Add(ref address, index) = value;
-        }
+        ref T address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
+        return Unsafe.Add(ref address, index);
     }
-#pragma warning restore SA1101
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void SetElementUnsafe<T>(in Vector64<T> vector, int index, T value)
+#if !NET8_0_OR_GREATER
+        where T : struct
+#endif
+    {
+        ref T address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
+        Unsafe.Add(ref address, index) = value;
+    }
 }
 #endif
