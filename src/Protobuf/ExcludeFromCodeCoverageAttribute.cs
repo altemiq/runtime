@@ -12,6 +12,6 @@ namespace System.Diagnostics.CodeAnalysis;
 /// <summary>
 /// Specifies that the attributed code should be excluded from code coverage information.
 /// </summary>
-[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Constructor | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Struct, Inherited=false)]
+[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Constructor | AttributeTargets.Event | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Struct, Inherited = false)]
 internal sealed class ExcludeFromCodeCoverageAttribute : Attribute;
 #endif

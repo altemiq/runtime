@@ -99,7 +99,9 @@ public class LzmaDecoder
         {
             return (numPosBits: positionBitCount, numPrevBits: previousBitCount) switch
             {
-                (> 8, _) => throw new ArgumentOutOfRangeException(nameof(positionBitCount)),
+#pragma warning disable SA1008
+                ( > 8, _) => throw new ArgumentOutOfRangeException(nameof(positionBitCount)),
+#pragma warning restore SA1008
                 (_, > 8) => throw new ArgumentOutOfRangeException(nameof(previousBitCount)),
                 _ => new(positionBitCount, previousBitCount),
             };
