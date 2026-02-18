@@ -63,11 +63,11 @@ public class MultipleStreamTests
         var cancellationToken = TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None;
         await multipleStream.FlushAsync(cancellationToken);
 
-        Received.InOrder(async () =>
+        Received.InOrder(() =>
         {
-            await first.FlushAsync(cancellationToken);
-            await second.FlushAsync(cancellationToken);
-            await third.FlushAsync(cancellationToken);
+            first.FlushAsync(cancellationToken);
+            second.FlushAsync(cancellationToken);
+            third.FlushAsync(cancellationToken);
         });
     }
 
@@ -86,11 +86,11 @@ public class MultipleStreamTests
 
         await multipleStream.DisposeAsync();
 
-        Received.InOrder(async () =>
+        Received.InOrder(() =>
         {
-            await first.DisposeAsync();
-            await second.DisposeAsync();
-            await third.DisposeAsync();
+            first.DisposeAsync();
+            second.DisposeAsync();
+            third.DisposeAsync();
         });
     }
 #endif
