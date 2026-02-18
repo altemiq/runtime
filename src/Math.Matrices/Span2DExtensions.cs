@@ -6,8 +6,6 @@
 
 namespace Altemiq.Math;
 
-using System.Runtime.Intrinsics;
-
 #pragma warning disable CA1708, RCS1263, S2325, SA1101
 
 /// <summary>
