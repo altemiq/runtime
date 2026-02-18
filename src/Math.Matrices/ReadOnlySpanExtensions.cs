@@ -29,18 +29,20 @@ public static class ReadOnlySpanExtensions
         {
             var count = System.Numerics.Vector<T>.Count;
             var (quotient, remainder) = System.Math.DivRem(input.Length, count);
-            int index;
-            for (var i = 0; i < quotient; i++)
+            var length = quotient * count;
+            if (quotient > 0)
             {
-                index = i * count;
-                var vector = new System.Numerics.Vector<T>(input[index..]) * multiplier;
-                vector.CopyTo(destination[index..]);
+                var multiplierVector = new System.Numerics.Vector<T>(multiplier);
+                for (var i = 0; i < length; i += count)
+                {
+                    var vector = new System.Numerics.Vector<T>(input[i..]) * multiplierVector;
+                    vector.CopyTo(destination[i..]);
+                }
             }
 
-            index = quotient * count;
             for (var i = 0; i < remainder; i++)
             {
-                destination[index + i] = input[index + i] * multiplier;
+                destination[length + i] = input[length + i] * multiplier;
             }
         }
     }
@@ -66,18 +68,16 @@ public static class ReadOnlySpanExtensions
 
             var count = System.Numerics.Vector<T>.Count;
             var (quotient, remainder) = System.Math.DivRem(input.Length, count);
-            int index;
-            for (var i = 0; i < quotient; i++)
+            var length = quotient * count;
+            for (var i = 0; i < length; i += count)
             {
-                index = i * count;
-                var vector = new System.Numerics.Vector<T>(input[index..]) + new System.Numerics.Vector<T>(other[index..]);
-                vector.CopyTo(destination[index..]);
+                var vector = new System.Numerics.Vector<T>(input[i..]) + new System.Numerics.Vector<T>(other[i..]);
+                vector.CopyTo(destination[i..]);
             }
 
-            index = quotient * count;
             for (var i = 0; i < remainder; i++)
             {
-                destination[index + i] = input[index + i] + other[index + i];
+                destination[length + i] = input[length + i] + other[length + i];
             }
         }
     }
@@ -103,18 +103,16 @@ public static class ReadOnlySpanExtensions
 
             var count = System.Numerics.Vector<T>.Count;
             var (quotient, remainder) = System.Math.DivRem(input.Length, count);
-            int index;
-            for (var i = 0; i < quotient; i++)
+            var length = quotient * count;
+            for (var i = 0; i < length; i += count)
             {
-                index = i * count;
-                var vector = new System.Numerics.Vector<T>(input[index..]) - new System.Numerics.Vector<T>(other[index..]);
-                vector.CopyTo(destination[index..]);
+                var vector = new System.Numerics.Vector<T>(input[i..]) - new System.Numerics.Vector<T>(other[i..]);
+                vector.CopyTo(destination[i..]);
             }
 
-            index = quotient * count;
             for (var i = 0; i < remainder; i++)
             {
-                destination[index + i] = input[index + i] - other[index + i];
+                destination[length + i] = input[length + i] - other[length + i];
             }
         }
     }

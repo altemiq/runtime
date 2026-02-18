@@ -379,12 +379,7 @@ public static class Span2DExtensions
                 {
                     for (var row = 0; row < matrix.Height; row++)
                     {
-                        var matrixRowSpan2 = other.GetRowSpan(row);
-                        var rowIndex = row * matrix.Width;
-                        for (var column = 0; column < matrix.Width; column++)
-                        {
-                            matrixSpan1[rowIndex + column] += matrixRowSpan2[column];
-                        }
+                        matrixSpan1.Slice(row * matrix.Width, matrix.Width).Add(other.GetRowSpan(row));
                     }
                 }
             }
@@ -433,12 +428,7 @@ public static class Span2DExtensions
                 {
                     for (var row = 0; row < matrix.Height; row++)
                     {
-                        var matrixRowSpan2 = other.GetRowSpan(row);
-                        var rowIndex = row * matrix.Width;
-                        for (var column = 0; column < matrix.Width; column++)
-                        {
-                            matrixSpan1[rowIndex + column] -= matrixRowSpan2[column];
-                        }
+                        matrixSpan1.Slice(row * matrix.Width, matrix.Width).Subtract(other.GetRowSpan(row));
                     }
                 }
             }

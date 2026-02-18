@@ -97,18 +97,20 @@ public static class SpanExtensions
         {
             var count = System.Numerics.Vector<T>.Count;
             var (quotient, remainder) = System.Math.DivRem(input.Length, count);
-            int index;
-            for (var i = 0; i < quotient; i++)
+            var length = quotient * count;
+            if (quotient > 0)
             {
-                index = i * count;
-                var vector = new System.Numerics.Vector<T>(input[index..]) * multiplier;
-                vector.CopyTo(input[index..]);
+                var multiplierVector = new System.Numerics.Vector<T>(multiplier);
+                for (var i = 0; i < length; i += count)
+                {
+                    var vector = new System.Numerics.Vector<T>(input[i..]) * multiplierVector;
+                    vector.CopyTo(input[i..]);
+                }
             }
 
-            index = quotient * count;
             for (var i = 0; i < remainder; i++)
             {
-                input[index + i] *= multiplier;
+                input[length + i] *= multiplier;
             }
         }
     }
@@ -134,18 +136,16 @@ public static class SpanExtensions
 
             var count = System.Numerics.Vector<T>.Count;
             var (quotient, remainder) = System.Math.DivRem(input.Length, count);
-            int index;
-            for (var i = 0; i < quotient; i++)
+            var length = quotient * count;
+            for (var i = 0; i < length; i += count)
             {
-                index = i * count;
-                var vector = new System.Numerics.Vector<T>(input[index..]) + new System.Numerics.Vector<T>(other[index..]);
-                vector.CopyTo(input[index..]);
+                var vector = new System.Numerics.Vector<T>(input[i..]) + new System.Numerics.Vector<T>(other[i..]);
+                vector.CopyTo(input[i..]);
             }
 
-            index = quotient * count;
             for (var i = 0; i < remainder; i++)
             {
-                input[index + i] += other[index + i];
+                input[length + i] += other[length + i];
             }
         }
     }
@@ -171,18 +171,16 @@ public static class SpanExtensions
 
             var count = System.Numerics.Vector<T>.Count;
             var (quotient, remainder) = System.Math.DivRem(input.Length, count);
-            int index;
-            for (var i = 0; i < quotient; i++)
+            var length = quotient * count;
+            for (var i = 0; i < length; i += count)
             {
-                index = i * count;
-                var vector = new System.Numerics.Vector<T>(input[index..]) - new System.Numerics.Vector<T>(other[index..]);
-                vector.CopyTo(input[index..]);
+                var vector = new System.Numerics.Vector<T>(input[i..]) - new System.Numerics.Vector<T>(other[i..]);
+                vector.CopyTo(input[i..]);
             }
 
-            index = quotient * count;
             for (var i = 0; i < remainder; i++)
             {
-                input[index + i] -= other[index + i];
+                input[length + i] -= other[length + i];
             }
         }
     }

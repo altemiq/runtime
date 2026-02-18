@@ -104,12 +104,8 @@ public static class ReadOnlySpan2DExtensions
                     matrixSpan1.CopyTo(returnValue);
                     for (var row = 0; row < matrix1.Height; row++)
                     {
-                        var matrixRowSpan2 = matrix2.GetRowSpan(row);
                         var rowIndex = row * matrix1.Width;
-                        for (var column = 0; column < matrix1.Width; column++)
-                        {
-                            returnValue[rowIndex + column] += matrixRowSpan2[column];
-                        }
+                        matrixSpan1.Slice(rowIndex, matrix1.Width).AddTo(matrix2.GetRowSpan(row), returnValue.AsSpan(rowIndex, matrix1.Width));
                     }
                 }
             }
@@ -168,15 +164,10 @@ public static class ReadOnlySpan2DExtensions
                 }
                 else
                 {
-                    matrixSpan1.CopyTo(returnValue);
                     for (var row = 0; row < matrix1.Height; row++)
                     {
-                        var matrixRowSpan2 = matrix2.GetRowSpan(row);
                         var rowIndex = row * matrix1.Width;
-                        for (var column = 0; column < matrix1.Width; column++)
-                        {
-                            returnValue[rowIndex + column] -= matrixRowSpan2[column];
-                        }
+                        matrixSpan1.Slice(rowIndex, matrix1.Width).SubtractTo(matrix2.GetRowSpan(row), returnValue.AsSpan(rowIndex, matrix1.Width));
                     }
                 }
             }
