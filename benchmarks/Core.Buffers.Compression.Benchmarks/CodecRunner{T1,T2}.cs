@@ -40,7 +40,7 @@ internal class CodecRunner<T1, T2>
         var decompressBuffer = new int[data.Length + 1024];
         var backupData = new int[data.Length];
         Array.Copy(data, backupData, data.Length);
-        var (read, output) = this.altemiqCodec.Compress(backupData.AsSpan(1), compressBuffer);
+        var (_, output) = this.altemiqCodec.Compress(backupData.AsSpan(1), compressBuffer);
         decompressBuffer[0] = compressBuffer[0];
         this.altemiqCodec.Decompress(compressBuffer.AsSpan(0, output), decompressBuffer.AsSpan(1));
     }

@@ -131,25 +131,25 @@ public class Vector2DTests
         var v1Str = v1.ToString();
         var expectedV1 = string.Format(CultureInfo.CurrentCulture
             , "<{1:G}{0} {2:G}>"
-            , [separator, 2, 3]);
+            , separator, 2, 3);
         await Assert.That(v1Str).IsEqualTo(expectedV1);
 
         var v1StrFormatted = v1.ToString("c", CultureInfo.CurrentCulture);
         var expectedV1Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}>"
-            , [separator, 2, 3]);
+            , separator, 2, 3);
         await Assert.That(v1StrFormatted).IsEqualTo(expectedV1Formatted);
 
         var v2StrFormatted = v1.ToString("c", enUsCultureInfo);
         var expectedV2Formatted = string.Format(enUsCultureInfo
             , "<{1:c}{0} {2:c}>"
-            , [enUsCultureInfo.NumberFormat.NumberGroupSeparator, 2, 3]);
+            , enUsCultureInfo.NumberFormat.NumberGroupSeparator, 2, 3);
         await Assert.That(v2StrFormatted).IsEqualTo(expectedV2Formatted);
 
         var v3StrFormatted = v1.ToString("c");
         var expectedV3Formatted = string.Format(CultureInfo.CurrentCulture
             , "<{1:c}{0} {2:c}>"
-            , [separator, 2, 3]);
+            , separator, 2, 3);
         await Assert.That(v3StrFormatted).IsEqualTo(expectedV3Formatted);
     }
 

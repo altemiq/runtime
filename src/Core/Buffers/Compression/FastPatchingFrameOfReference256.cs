@@ -215,8 +215,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
             void GetBestBFromData(ReadOnlySpan<int> input)
             {
                 Array.Clear(this.frequencies, 0, this.frequencies.Length);
-                int end = BlockSize;
-                for (var k = 0; k < end; k++)
+                for (var k = 0; k < BlockSize; k++)
                 {
                     this.frequencies[Util.Bits(input[k])]++;
                 }

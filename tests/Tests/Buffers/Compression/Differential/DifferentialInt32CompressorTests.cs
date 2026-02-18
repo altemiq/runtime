@@ -41,11 +41,11 @@ public class DifferentialInt32CompressorTests
     public sealed class Wrapper
     {
         private readonly DifferentialInt32Compressor compressor;
-        
+
         internal Wrapper(DifferentialInt32Compressor compressor) => this.compressor = compressor;
-        
+
         internal int[] Compress(int[] input) => this.compressor.Compress(input);
-        
+
         internal int[] Decompress(int[] input) => this.compressor.Decompress(input);
 
         public override string ToString() => this.compressor.ToString();

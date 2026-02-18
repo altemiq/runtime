@@ -216,7 +216,7 @@ internal sealed class VariableByte : IInt32Codec, ISByteCodec, IHeadlessInt32Cod
         var destinationLength = (int)(buffer.Position / sizeof(int));
         buffer.Position = 0;
         _ = buffer.Read(destination[..destinationLength], ByteOrder.LittleEndian);
-        return (length,  destinationLength);
+        return (length, destinationLength);
     }
 
     private static (int Read, int Written) HeadlessDecompress(ReadOnlySpan<int> source, Span<int> destination)

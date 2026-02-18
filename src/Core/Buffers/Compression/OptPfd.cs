@@ -156,7 +156,7 @@ internal abstract class OptPfd(Compress compress, Decompress decompress, Estimat
 
     private (int Read, int Written) HeadlessDecompress(ReadOnlySpan<int> source, Span<int> destination)
     {
-        return source.Length is 0 ? default : DecodePage(source,  destination[..Util.GreatestMultiple(destination.Length, BlockSize)]);
+        return source.Length is 0 ? default : DecodePage(source, destination[..Util.GreatestMultiple(destination.Length, BlockSize)]);
 
         (int Read, int Written) DecodePage(ReadOnlySpan<int> sourcePage, Span<int> destinationPage)
         {

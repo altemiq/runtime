@@ -60,7 +60,7 @@ public class BasicTests
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             var answer = TestUtils.Decompress(c, comp, l);
-            
+
             for (var k = 0; k < l; ++k)
             {
                 await Assert.That(answer[k]).IsEqualTo(data[k]);
@@ -450,7 +450,7 @@ public class BasicTests
             }
 
             var (_, written) = c.Compress(backupData.AsSpan(1), dataOutput);
-            
+
             buffer[0] = backupData[0];
             (_, written) = co.Decompress(dataOutput.AsSpan(0, written), buffer.AsSpan(1));
             var outputPosition = written + 1;

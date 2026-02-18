@@ -6,8 +6,6 @@
 
 namespace Altemiq.Buffers.Binary;
 
-using BitConverter = System.BitConverter;
-
 /// <summary>
 /// Extensions for the binary primitives class.
 /// </summary>
@@ -34,8 +32,7 @@ public static class BinaryPrimitives
     /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(ulong)" />
     [CLSCompliant(false)]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static ulong ReverseEndianness(ulong value)
-        => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
+    public static ulong ReverseEndianness(ulong value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
 #if NETSTANDARD1_0 || NETSTANDARD1_1
@@ -204,7 +201,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="Half"/>.</exception>
-    public static void WriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(destination, BitConverter.HalfToInt16Bits(value));
+    public static void WriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(destination, System.BitConverter.HalfToInt16Bits(value));
 
     /// <summary>
     /// Writes a <see cref="Half"/> into a span of bytes, as little endian.
@@ -212,7 +209,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="Half"/>.</exception>
-    public static void WriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(destination, BitConverter.HalfToInt16Bits(value));
+    public static void WriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(destination, System.BitConverter.HalfToInt16Bits(value));
 #endif
 
 #if NET5_0_OR_GREATER
@@ -228,7 +225,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="float"/>.</exception>
-    public static void WriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(destination, BitConverter.SingleToInt32Bits(value));
+    public static void WriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(destination, System.BitConverter.SingleToInt32Bits(value));
 
     /// <summary>
     /// Writes a <see cref="float"/> into a span of bytes, as little endian.
@@ -236,7 +233,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="float"/>.</exception>
-    public static void WriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(destination, BitConverter.SingleToInt32Bits(value));
+    public static void WriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(destination, System.BitConverter.SingleToInt32Bits(value));
 #endif
 
 #if NET5_0_OR_GREATER
@@ -252,7 +249,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="double"/>.</exception>
-    public static void WriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64BigEndian(destination, BitConverter.DoubleToInt64Bits(value));
+    public static void WriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64BigEndian(destination, System.BitConverter.DoubleToInt64Bits(value));
 
     /// <summary>
     /// Writes a <see cref="double"/> into a span of bytes, as little endian.
@@ -260,7 +257,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="destination"/> is too small to contain a <see cref="double"/>.</exception>
-    public static void WriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64LittleEndian(destination, BitConverter.DoubleToInt64Bits(value));
+    public static void WriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.WriteInt64LittleEndian(destination, System.BitConverter.DoubleToInt64Bits(value));
 #endif
 
     /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian" />
@@ -318,7 +315,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="Half"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool TryWriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian(destination, BitConverter.HalfToInt16Bits(value));
+    public static bool TryWriteHalfBigEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian(destination, System.BitConverter.HalfToInt16Bits(value));
 
     /// <summary>
     /// Writes a <see cref="Half"/> into a span of bytes, as little endian.
@@ -326,7 +323,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as little endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="Half"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool TryWriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16LittleEndian(destination, BitConverter.HalfToInt16Bits(value));
+    public static bool TryWriteHalfLittleEndian(Span<byte> destination, Half value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt16LittleEndian(destination, System.BitConverter.HalfToInt16Bits(value));
 #endif
 
 #if NET5_0_OR_GREATER
@@ -342,7 +339,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="float"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool TryWriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32BigEndian(destination, BitConverter.SingleToInt32Bits(value));
+    public static bool TryWriteSingleBigEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32BigEndian(destination, System.BitConverter.SingleToInt32Bits(value));
 
     /// <summary>
     /// Writes a <see cref="float"/> into a span of bytes, as little endian.
@@ -350,7 +347,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="float"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool TryWriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32LittleEndian(destination, BitConverter.SingleToInt32Bits(value));
+    public static bool TryWriteSingleLittleEndian(Span<byte> destination, float value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt32LittleEndian(destination, System.BitConverter.SingleToInt32Bits(value));
 #endif
 
 #if NET5_0_OR_GREATER
@@ -366,7 +363,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="double"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool TryWriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64BigEndian(destination, BitConverter.DoubleToInt64Bits(value));
+    public static bool TryWriteDoubleBigEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64BigEndian(destination, System.BitConverter.DoubleToInt64Bits(value));
 
     /// <summary>
     /// Writes a <see cref="double"/> into a span of bytes, as little endian.
@@ -374,7 +371,7 @@ public static class BinaryPrimitives
     /// <param name="destination">The span of bytes where the value is to be written, as big endian.</param>
     /// <param name="value">The value to write into the span of bytes.</param>
     /// <returns><see langword="true"/> if the span is large enough to contain a <see cref="double"/>; otherwise, <see langword="false"/>.</returns>
-    public static bool TryWriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64LittleEndian(destination, BitConverter.DoubleToInt64Bits(value));
+    public static bool TryWriteDoubleLittleEndian(Span<byte> destination, double value) => System.Buffers.Binary.BinaryPrimitives.TryWriteInt64LittleEndian(destination, System.BitConverter.DoubleToInt64Bits(value));
 #endif
 #endif
 }

@@ -17,7 +17,7 @@ public class ByteBasicTest
         var c = codec.Codec;
         for (var x = 0; x < 50 * 4; ++x)
         {
-            var (_, len) = c.Compress(data, compressed.AsSpan( x));
+            var (_, len) = c.Compress(data, compressed.AsSpan(x));
 
             _ = c.Decompress(compressed.AsSpan(x, len), decompressed);
             await Assert.That(decompressed).HasSameSequenceAs(data);

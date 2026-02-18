@@ -20,7 +20,7 @@ public class Span2DExtensionsTests
         first += second;
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundAddFirstSparse()
     {
@@ -37,7 +37,7 @@ public class Span2DExtensionsTests
         first += second;
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundAddSecondSparse()
     {
@@ -54,7 +54,7 @@ public class Span2DExtensionsTests
         first += second;
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundAddBothSparse()
     {
@@ -89,7 +89,7 @@ public class Span2DExtensionsTests
 
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundSubtractFirstSparse()
     {
@@ -106,7 +106,7 @@ public class Span2DExtensionsTests
         first -= second;
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundSubtractSecondSparse()
     {
@@ -131,7 +131,7 @@ public class Span2DExtensionsTests
         first -= second;
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundSubtractBothSparse()
     {
@@ -184,7 +184,7 @@ public class Span2DExtensionsTests
 
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
-    
+
     [Test]
     public async Task CompoundScaleSparse()
     {
@@ -211,7 +211,7 @@ public class Span2DExtensionsTests
     {
         return new([1, 2, 3, 4, 5, 6], 3, 2);
     }
-    
+
     private static Span2D<double> CreateSparse()
     {
         double[,] array =
@@ -222,7 +222,7 @@ public class Span2DExtensionsTests
             { 0, 5, 6, 0 },
             { 0, 0, 0, 0 },
         };
-            
+
         return new(array, 1, 1, 3, 2);
     }
 }
