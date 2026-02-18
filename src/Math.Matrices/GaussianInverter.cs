@@ -24,8 +24,9 @@ public class GaussianInverter : IMatrixInverter
     {
         var degree = matrix.Width * 2;
 
-        // Get the matrix
+        // Get the matrix, ensuring we clear it as we assume the second half is zeroed
         using var workingOwner = CommunityToolkit.HighPerformance.Buffers.SpanOwner<T>.Allocate(matrix.Height * degree);
+        workingOwner.Span.Clear();
         var working = Span2D<T>.DangerousCreate(ref workingOwner.Span[0], matrix.Height, degree, 0);
 
         for (var i = 0; i < matrix.Height; i++)
@@ -38,6 +39,10 @@ public class GaussianInverter : IMatrixInverter
         {
             working[i - matrix.Width, i] = T.One;
         }
+
+        // get the vector count, quotient, and remainder here in case we need it
+        var count = System.Numerics.Vector<T>.Count;
+        var (quotient, remainder) = System.Math.DivRem(degree, count);
 
         // Reduce so we get the leading diagonal
         for (var pivotRow = 0; pivotRow < working.Height; pivotRow++)
@@ -61,9 +66,24 @@ public class GaussianInverter : IMatrixInverter
                 // Invert the value
                 temp = -temp;
 
-                for (var column = 0; column < working.Width; column++)
+                var rowSpan = working.GetRowSpan(row);
+                var pivotSpan = working.GetRowSpan(pivotRow);
+                var length = quotient * count;
+                if (quotient is not 0)
                 {
-                    working[row, column] += working[pivotRow, column] * temp;
+                    var tempVector = new System.Numerics.Vector<T>(temp);
+
+                    for (var i = 0; i < length; i += count)
+                    {
+                        var currentRowSpan = rowSpan[i..];
+                        var updateVector = new System.Numerics.Vector<T>(currentRowSpan) + (new System.Numerics.Vector<T>(pivotSpan[i..]) * tempVector);
+                        updateVector.CopyTo(currentRowSpan);
+                    }
+                }
+
+                for (var i = 0; i < remainder; i++)
+                {
+                    rowSpan[length + i] += pivotSpan[length + i] * temp;
                 }
             }
         }
