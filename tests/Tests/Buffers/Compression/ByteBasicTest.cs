@@ -35,14 +35,14 @@ public class ByteBasicTest
         for (var l = 1; l <= 128; l++)
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
-            var answer = TestUtils.Decompress(c, comp, l);
+            IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
-            var answer = TestUtils.Decompress(c, comp, l);
+            IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
@@ -59,14 +59,14 @@ public class ByteBasicTest
         for (var l = 1; l <= 128; l++)
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
-            var answer = TestUtils.Decompress(c, comp, l);
+            IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
-            var answer = TestUtils.Decompress(c, comp, l);
+            IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }

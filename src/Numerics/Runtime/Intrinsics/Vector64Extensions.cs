@@ -37,7 +37,7 @@ public static class Vector64Extensions
         where T : struct
 #endif
     {
-        ref T address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
+        ref var address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
         return Unsafe.Add(ref address, index);
     }
 
@@ -47,7 +47,7 @@ public static class Vector64Extensions
         where T : struct
 #endif
     {
-        ref T address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
+        ref var address = ref Unsafe.As<Vector64<T>, T>(ref Unsafe.AsRef(in vector));
         Unsafe.Add(ref address, index) = value;
     }
 }

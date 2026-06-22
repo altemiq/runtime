@@ -14,7 +14,7 @@ using YamlDotNet.RepresentationModel;
 /// </summary>
 internal sealed class YamlConfigurationFileParser
 {
-    private readonly Dictionary<string, string?> data = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string?> data = [with(StringComparer.OrdinalIgnoreCase)];
     private readonly Stack<string> paths = new();
     private readonly CustomEmitter customEmitter = new();
 

@@ -287,6 +287,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator ^(Vector4D left, Vector4D right) => (left.AsVector256() ^ right.AsVector256()).AsVector4D();
 
+#pragma warning disable MA0202 // Conditional compilation branches have identical code
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256{T}.op_LeftShift(Vector256{T}, int)" />
 #else
@@ -323,6 +324,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D operator >>>(Vector4D value, int shiftAmount) => (value.AsVector256() >>> shiftAmount).AsVector4D();
+#pragma warning restore MA0202 // Conditional compilation branches have identical code
 
     /// <summary>Returns a vector whose elements are the absolute values of each of the specified vector's elements.</summary>
     /// <param name="value">A vector.</param>
@@ -899,6 +901,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [Intrinsic]
     public static Vector4D Multiply(double left, Vector4D right) => left * right;
 
+#pragma warning disable MA0202 // Conditional compilation branches have identical code
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
 #else
@@ -907,6 +910,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector4D MultiplyAddEstimate(Vector4D left, Vector4D right, Vector4D addend) => Vector256.MultiplyAddEstimate(left.AsVector256(), right.AsVector256(), addend.AsVector256()).AsVector4D();
+#pragma warning restore MA0202 // Conditional compilation branches have identical code
 
     /// <summary>Negates a specified vector.</summary>
     /// <param name="value">The vector to negate.</param>

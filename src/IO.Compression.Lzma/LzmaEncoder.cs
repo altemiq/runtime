@@ -1342,6 +1342,7 @@ public class LzmaEncoder
                 }
             }
 
+            [Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S127:\"for\" loop stop conditions should be invariant", Justification = "Checked")]
             public uint GetPrice(bool matchMode, byte matchByte, byte symbol)
             {
                 var price = 0U;

@@ -71,6 +71,7 @@ public static class BinaryPrimitives
     public static ushort ReverseEndianness(ushort value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
+#pragma warning disable MA0202 // Conditional compilation branches have identical code
 #if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="sbyte"/> value, which effectively does nothing for a <see cref="sbyte"/>.
@@ -78,15 +79,13 @@ public static class BinaryPrimitives
     /// <param name="value">The value to reverse.</param>
     /// <returns>The passed-in value, unmodified.</returns>
     /// <remarks>This method effectively does nothing and was added only for consistency.</remarks>
-    [CLSCompliant(false)]
-    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static sbyte ReverseEndianness(sbyte value) => value;
 #else
     /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(sbyte)" />
+#endif
     [CLSCompliant(false)]
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static sbyte ReverseEndianness(sbyte value) => value;
-#endif
+#pragma warning restore MA0202 // Conditional compilation branches have identical code
 
 #if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
@@ -116,6 +115,7 @@ public static class BinaryPrimitives
     public static int ReverseEndianness(int value) => System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value);
 #endif
 
+#pragma warning disable MA0202 // Conditional compilation branches have identical code
 #if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>
     /// Reverses a primitive value by performing an endianness swap of the specified <see cref="byte"/> value, which effectively does nothing for a <see cref="byte"/>.
@@ -123,13 +123,12 @@ public static class BinaryPrimitives
     /// <param name="value">The value to reverse.</param>
     /// <returns>The passed-in value, unmodified.</returns>
     /// <remarks>This method effectively does nothing and was added only for consistency.</remarks>
-    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static byte ReverseEndianness(byte value) => value;
 #else
     /// <inheritdoc cref="System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(byte)" />
+#endif
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static byte ReverseEndianness(byte value) => value;
-#endif
+#pragma warning restore MA0202 // Conditional compilation branches have identical code
 
 #if NETSTANDARD1_0 || NETSTANDARD1_1
     /// <summary>

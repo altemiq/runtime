@@ -151,6 +151,8 @@ public class Vector2DTests
             , "<{1:c}{0} {2:c}>"
             , separator, 2, 3);
         await Assert.That(v3StrFormatted).IsEqualTo(expectedV3Formatted);
+
+
     }
 
     // A test for Distance (Vector2D, Vector2D)

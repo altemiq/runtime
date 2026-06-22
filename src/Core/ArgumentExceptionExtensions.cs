@@ -8,7 +8,6 @@
 namespace System;
 #pragma warning restore IDE0130, CheckNamespace
 
-#pragma warning disable CA1708
 /// <summary>
 /// Extensions for <see cref="ArgumentException"/> and derived types.
 /// </summary>
@@ -33,7 +32,7 @@ public static class ArgumentExceptionExtensions
         {
             if (T.IsNegative(value))
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 #else
@@ -49,7 +48,7 @@ public static class ArgumentExceptionExtensions
             const sbyte Zero = 0;
             if (value < Zero)
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 
@@ -64,7 +63,7 @@ public static class ArgumentExceptionExtensions
             const short Zero = 0;
             if (value < Zero)
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 
@@ -78,7 +77,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0)
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 
@@ -92,7 +91,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0L)
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 
@@ -106,7 +105,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0F)
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 
@@ -120,7 +119,7 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0D)
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 
@@ -134,13 +133,13 @@ public static class ArgumentExceptionExtensions
         {
             if (value < 0M)
             {
-                ArgumentOutOfRangeException.ThrowNegative(value, paramName);
+                ThrowNegative(value, paramName);
             }
         }
 #endif
-
-        [Diagnostics.CodeAnalysis.DoesNotReturn]
-        private static void ThrowNegative<T>(T value, string? paramName) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNonNegative, paramName, value));
     }
+
+    [Diagnostics.CodeAnalysis.DoesNotReturn]
+    private static void ThrowNegative<T>(T value, string? paramName) => throw new ArgumentOutOfRangeException(paramName, string.Format(Altemiq.Properties.Resources.Culture, Altemiq.Properties.Resources.MustBeNonNegative, paramName, value));
 #endif
 }

@@ -6,6 +6,8 @@
 
 namespace Altemiq;
 
+#pragma warning disable CA1708
+
 /// <content>
 /// The <see cref="BitConverter"/> for variable integers.
 /// </content>

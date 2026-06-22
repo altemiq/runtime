@@ -65,9 +65,11 @@ public class MultipleStreamTests
 
         Received.InOrder(() =>
         {
+#pragma warning disable CA2012 // Use ValueTasks correctly
             first.FlushAsync(cancellationToken);
             second.FlushAsync(cancellationToken);
             third.FlushAsync(cancellationToken);
+#pragma warning restore CA2012 // Use ValueTasks correctly
         });
     }
 
@@ -88,9 +90,11 @@ public class MultipleStreamTests
 
         Received.InOrder(() =>
         {
+#pragma warning disable CA2012 // Use ValueTasks correctly
             first.DisposeAsync();
             second.DisposeAsync();
             third.DisposeAsync();
+#pragma warning restore CA2012 // Use ValueTasks correctly
         });
     }
 #endif

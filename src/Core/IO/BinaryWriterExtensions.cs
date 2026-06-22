@@ -322,19 +322,15 @@ public static class BinaryWriterExtensions
         [System.Runtime.CompilerServices.UnsafeAccessor(System.Runtime.CompilerServices.UnsafeAccessorKind.Field, Name = "_encoding")]
         public static extern ref System.Text.Encoding GetEncoding(BinaryWriter writer);
 #else
-#pragma warning disable MA0169
+#if !NETSTANDARD2_0_OR_GREATER
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0169:Use Equals method instead of operator", Justification = "This does not work with `Equals`")]
+#endif
         private static readonly System.Reflection.FieldInfo EncodingFieldInfo = System.Reflection.IntrospectionExtensions.GetTypeInfo(typeof(BinaryWriter)).DeclaredFields.Single(static f => f.FieldType == typeof(System.Text.Encoding));
-#pragma warning restore MA0169
 
-        public static System.Text.Encoding GetEncoding(BinaryWriter writer) => Cast<System.Text.Encoding>(EncodingFieldInfo.GetValue(writer));
-
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        private static T Cast<T>(object? value)
-            where T : class
-        {
-            ArgumentNullException.ThrowIfNull(value);
-            return (T)value;
-        }
+        public static System.Text.Encoding GetEncoding(BinaryWriter writer) =>
+            EncodingFieldInfo.GetValue(writer) is System.Text.Encoding encoding
+                ? encoding
+                : throw new InvalidCastException();
 #endif
     }
 }

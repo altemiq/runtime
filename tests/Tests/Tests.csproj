@@ -7,7 +7,7 @@
     <NoWarn>$(NoWarn);CA1861</NoWarn>
     <LangVersion>preview</LangVersion>
 
-    <MeziantouPolyfill_IncludedPolyfills>T:System.Runtime.CompilerServices.IsExternalInit</MeziantouPolyfill_IncludedPolyfills>
+    <MeziantouPolyfill_IncludedPolyfills>T:System.Runtime.CompilerServices.IsExternalInit|T:System.Runtime.CompilerServices.CallerArgumentExpression</MeziantouPolyfill_IncludedPolyfills>
   </PropertyGroup>
 
   <ItemGroup>

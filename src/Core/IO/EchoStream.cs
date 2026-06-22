@@ -38,7 +38,7 @@ public class EchoStream : Stream
     /// Initializes a new instance of the <see cref="EchoStream"/> class with the specified upper-bound.
     /// </summary>
     /// <param name="boundedCapacity">The bounded size of the collection.</param>
-    public EchoStream(int boundedCapacity) => this.buffers = new(boundedCapacity);
+    public EchoStream(int boundedCapacity) => this.buffers = [with(boundedCapacity)];
 
     /// <inheritdoc/>
     public override bool CanTimeout { get; } = true;

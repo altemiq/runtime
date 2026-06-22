@@ -344,6 +344,7 @@ public static partial class List
 
                 void SwapIfGreaterWithItems(int firstIndex, int secondIndex)
                 {
+#pragma warning disable MA0194 // Merge is expressions on the same value
                     if (firstIndex == secondIndex
                         || values[firstIndex] is not { } first
                         || values[secondIndex] is not { } second
@@ -351,6 +352,7 @@ public static partial class List
                     {
                         return;
                     }
+#pragma warning restore MA0194 // Merge is expressions on the same value
 
                     values[firstIndex] = second;
                     values[secondIndex] = first;

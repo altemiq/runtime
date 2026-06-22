@@ -1662,7 +1662,7 @@ public sealed class Vector4DTests
     }
 
     // Contrived test for strangely-sized and shaped embedded structures, with unused buffer fields.
-#pragma warning disable 0169
+#pragma warning disable CS0169, IDE0044, IDE0251
     private struct DeeplyEmbeddedStruct
     {
         public static DeeplyEmbeddedStruct Create()
@@ -1756,7 +1756,7 @@ public sealed class Vector4DTests
             }
         }
     }
-#pragma warning restore 0169
+#pragma warning restore CS0169, IDE0044, IDE0251
 
 #if NET9_0_OR_GREATER
     [Test]

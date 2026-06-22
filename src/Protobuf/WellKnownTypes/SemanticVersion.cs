@@ -259,7 +259,7 @@ public partial class SemanticVersion :
 
                 if (dashPosition < 0)
                 {
-                    if (!end && value[i] is not '-' && value[i] is not '+')
+                    if (!end && value[i] is not '-' and not '+')
                     {
                         continue;
                     }

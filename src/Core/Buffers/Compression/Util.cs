@@ -51,12 +51,9 @@ internal static class Util
     /// <returns>The number of leading zeros in <paramref name="value"/>.</returns>
 #if USE_GENERIC_MATH
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-    public static int LeadingZeroCount(int value)
-
-#if USE_GENERIC_MATH
-        => int.LeadingZeroCount(value);
+    public static int LeadingZeroCount(int value) => int.LeadingZeroCount(value);
 #else
+    public static int LeadingZeroCount(int value)
     {
         const int NumberOfIntegerBits = sizeof(int) * 8;
 

@@ -1,10 +1,10 @@
 ﻿<Project>
 
   <ItemGroup>
-    <PackageVersion Include="Google.Protobuf" Version="3.33.5" />
-    <PackageVersion Include="Grpc.Tools" Version="2.78.0" />
+    <PackageVersion Include="Google.Protobuf" Version="3.35.1" />
+    <PackageVersion Include="Grpc.Tools" Version="2.81.1" />
     <PackageVersion Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" />
-    <PackageVersion Include="Meziantou.Polyfill" Version="1.0.101" />
+    <PackageVersion Include="Meziantou.Polyfill" Version="1.0.152" />
   </ItemGroup>
 
 </Project>

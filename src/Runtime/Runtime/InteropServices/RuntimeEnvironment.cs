@@ -422,12 +422,19 @@ public static class RuntimeEnvironment
     {
         if (Environment.GetEnvironmentVariable(variable) is { } path)
         {
-            if (path.Contains(directory))
+            if (path.Contains(directory, GetPlatformStringComparison()))
             {
                 return;
             }
 
             Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path);
+
+            static StringComparison GetPlatformStringComparison()
+            {
+                return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal;
+            }
         }
         else
         {

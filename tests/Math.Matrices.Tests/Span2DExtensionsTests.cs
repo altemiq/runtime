@@ -2,6 +2,8 @@ namespace Altemiq.Math.Matrices;
 
 using CommunityToolkit.HighPerformance;
 
+public record class ThreeArrays(double[,] First, double[,] Second, double[,] Expected);
+
 public class Span2DExtensionsTests
 {
     [Test]
@@ -159,14 +161,14 @@ public class Span2DExtensionsTests
 
     [Test]
     [MethodDataSource(nameof(GetMatricesToMultiply))]
-    public async Task CompoundMultiply(double[,] firstArray, double[,] secondArray, double[,] expected)
+    public async Task CompoundMultiply(ThreeArrays values)
     {
-        var first = new Span2D<double>(firstArray);
-        var second = new ReadOnlySpan2D<double>(secondArray);
+        var first = new Span2D<double>(values.First);
+        var second = new ReadOnlySpan2D<double>(values.Second);
 
         first *= second;
 
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        await Assert.That(first.ToArray()).IsEquivalentTo(values.Expected);
     }
 
     [Test]
@@ -201,10 +203,10 @@ public class Span2DExtensionsTests
         await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
-    public static IEnumerable<Func<(double[,], double[,], double[,])>> GetMatricesToMultiply()
+    public static IEnumerable<Func<ThreeArrays>> GetMatricesToMultiply()
     {
-        yield return () => (new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 7, 10 }, { 15, 22 }, });
-        yield return () => (new double[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } }, new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, new double[,] { { 9, 12, 15 }, { 19, 26, 33 }, { 29, 40, 51 }, });
+        yield return () => new ThreeArrays(new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 7, 10 }, { 15, 22 }, });
+        yield return () => new ThreeArrays(new double[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } }, new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, new double[,] { { 9, 12, 15 }, { 19, 26, 33 }, { 29, 40, 51 }, });
     }
 
     private static Span2D<double> Create()

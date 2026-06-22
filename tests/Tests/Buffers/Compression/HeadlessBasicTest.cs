@@ -64,13 +64,13 @@ public class HeadlessBasicTest
         for (var l = 1; l <= 128; l++)
         {
             var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
-            var answer = await TestUtils.DecompressHeadless(c, comp, l);
+            IEnumerable<int> answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
         for (var l = 128; l <= Size; l *= 2)
         {
             var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
-            var answer = await TestUtils.DecompressHeadless(c, comp, l);
+            IEnumerable<int> answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
@@ -92,14 +92,14 @@ public class HeadlessBasicTest
         for (var l = 1; l <= 128; l++)
         {
             var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
-            var answer = await TestUtils.DecompressHeadless(c, comp, l);
+            IEnumerable<int> answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= Size; l *= 2)
         {
             var comp = TestUtils.CompressHeadless(c, data.AsSpan(0, l));
-            var answer = await TestUtils.DecompressHeadless(c, comp, l);
+            IEnumerable<int> answer = await TestUtils.DecompressHeadless(c, comp, l);
             await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }

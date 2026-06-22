@@ -2,6 +2,10 @@ namespace Altemiq.Math.Matrices;
 
 using CommunityToolkit.HighPerformance;
 
+public record class SingleArray(double[,] Array);
+
+public record class DeterminantData(double[,] Array, double Expected);
+
 public class ReadOnlySpan2DExtensionsTests
 {
     [Test]
@@ -13,9 +17,9 @@ public class ReadOnlySpan2DExtensionsTests
 
     [Test]
     [MethodDataSource(nameof(GetNotIdentityData))]
-    public async Task IsNotIdentity(double[,] matrix)
+    public async Task IsNotIdentity(SingleArray matrix)
     {
-        await Assert.That(new ReadOnlySpan2D<double>(matrix).IsIdentity).IsFalse();
+        await Assert.That(new ReadOnlySpan2D<double>(matrix.Array).IsIdentity).IsFalse();
     }
 
     [Test]
@@ -97,10 +101,10 @@ public class ReadOnlySpan2DExtensionsTests
 
     [Test]
     [MethodDataSource(nameof(GetDeterminantData))]
-    public async Task Determinant(double[,] matrix, double determinant)
+    public async Task Determinant(DeterminantData data)
     {
-        ReadOnlySpan2D<double> input = matrix;
-        await Assert.That(input.GetDeterminant()).IsEqualTo(determinant);
+        ReadOnlySpan2D<double> input = data.Array;
+        await Assert.That(input.GetDeterminant()).IsEqualTo(data.Expected);
     }
 
     [Test]
@@ -163,18 +167,18 @@ public class ReadOnlySpan2DExtensionsTests
         await Assert.That(check.IsIdentity).IsTrue();
     }
 
-    public static IEnumerable<Func<double[,]>> GetNotIdentityData()
+    public static IEnumerable<Func<SingleArray>> GetNotIdentityData()
     {
-        yield return () => new double[,] { { 1, 0 }, { 0, 0 } };
-        yield return () => new double[,] { { 1, 1 }, { 0, 1 } };
+        yield return () => new SingleArray(new double[2, 2] { { 1, 0 }, { 0, 0 } });
+        yield return () => new SingleArray(new double[2, 2] { { 1, 1 }, { 0, 1 } });
     }
 
-    public static IEnumerable<Func<(double[,], double)>> GetDeterminantData()
+    public static IEnumerable<Func<DeterminantData>> GetDeterminantData()
     {
-        yield return () => (new double[,] { }, 0);
-        yield return () => (new double[,] { { 3 } }, 3);
-        yield return () => (new double[,] { { 3, 2 }, { 1, 4 } }, 10);
-        yield return () => (new double[,] { { 1, 2, 3 }, { 0, 4, 5 }, { 1, 0, 6 } }, 22);
+        yield return () => new DeterminantData(new double[0, 0], 0);
+        yield return () => new DeterminantData(new double[1, 1] { { 3 } }, 3);
+        yield return () => new DeterminantData(new double[2, 2] { { 3, 2 }, { 1, 4 } }, 10);
+        yield return () => new DeterminantData(new double[3, 3] { { 1, 2, 3 }, { 0, 4, 5 }, { 1, 0, 6 } }, 22);
     }
 
     private static double[,] Round(double[,] matrix, int decimals)

@@ -700,15 +700,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "This is valid")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "This is valid")]
-    public static unsafe Vector3D LoadAligned(double* source)
-    {
-        if (((nuint)source % Alignment) != 0)
-        {
-            throw new AccessViolationException();
-        }
-
-        return *(Vector3D*)source;
-    }
+    public static unsafe Vector3D LoadAligned(double* source) => ((nuint)source % Alignment) != 0 ? throw new AccessViolationException() : *(Vector3D*)source;
 
     /// <inheritdoc cref="Vector4D.LoadAlignedNonTemporal(double*)" />
     [Intrinsic]
@@ -839,6 +831,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     [Intrinsic]
     public static Vector3D Multiply(double left, Vector3D right) => left * right;
 
+#pragma warning disable MA0202 // Conditional compilation branches have identical code
 #if NET9_0_OR_GREATER
     /// <inheritdoc cref="Vector256.MultiplyAddEstimate(Vector256{double}, Vector256{double}, Vector256{double})" />
 #else
@@ -847,6 +840,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3D MultiplyAddEstimate(Vector3D left, Vector3D right, Vector3D addend) => Vector256.MultiplyAddEstimate(left.AsVector256Unsafe(), right.AsVector256Unsafe(), addend.AsVector256Unsafe()).AsVector3D();
+#pragma warning restore MA0202 // Conditional compilation branches have identical code
 
     /// <summary>Negates a specified vector.</summary>
     /// <param name="value">The vector to negate.</param>
