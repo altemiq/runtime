@@ -131,14 +131,9 @@ public partial struct Matrix4x4D
 
             // When object and camera position are approximately the same, the object should just face the
             // same direction as the camera is facing.
-            if (axisZ.LengthSquared() < BillboardEpsilon)
-            {
-                axisZ = -cameraForwardVector;
-            }
-            else
-            {
-                axisZ = Vector3D.Normalize(axisZ);
-            }
+            axisZ = axisZ.LengthSquared() < BillboardEpsilon
+                ? -cameraForwardVector
+                : Vector3D.Normalize(axisZ);
 
             var axisX = Vector3D.Normalize(Vector3D.Cross(cameraUpVector, axisZ));
             var axisY = Vector3D.Cross(axisZ, axisX);
@@ -186,14 +181,9 @@ public partial struct Matrix4x4D
 
             // When object and camera position are approximately the same this indicates that the object should also just face the
             // same direction as the camera is facing.
-            if (faceDir.LengthSquared() < BillboardEpsilon)
-            {
-                faceDir = -cameraForwardVector;
-            }
-            else
-            {
-                faceDir = Vector3D.Normalize(faceDir);
-            }
+            faceDir = faceDir.LengthSquared() < BillboardEpsilon
+                ? -cameraForwardVector
+                : Vector3D.Normalize(faceDir);
 
             var axisY = rotateAxis;
 
@@ -1009,32 +999,18 @@ public partial struct Matrix4x4D
 
             if (scales[b] < DecomposeEpsilon)
             {
-                uint cc;
+                uint cc = default;
 
                 var fAbsX = double.Abs(vectorBasis[a]->X);
                 var fAbsY = double.Abs(vectorBasis[a]->Y);
                 var fAbsZ = double.Abs(vectorBasis[a]->Z);
-                if (fAbsX < fAbsY)
+                if ((fAbsY >= fAbsZ && fAbsX >= fAbsZ) || (fAbsX >= fAbsZ && fAbsY >= fAbsZ))
                 {
-                    if (fAbsY < fAbsZ)
-                    {
-                        cc = 0U;
-                    }
-                    else
-                    {
-                        cc = fAbsX < fAbsZ ? 0U : 2U;
-                    }
+                    cc = 2U;
                 }
-                else
+                else if (fAbsX >= fAbsY)
                 {
-                    if (fAbsX < fAbsZ)
-                    {
-                        cc = 1U;
-                    }
-                    else
-                    {
-                        cc = fAbsY < fAbsZ ? 1U : 2U;
-                    }
+                    cc = 1U;
                 }
 
                 *vectorBasis[b] = Vector3D.Cross(*vectorBasis[a], canonicalBasis[cc]);
@@ -1056,7 +1032,7 @@ public partial struct Matrix4x4D
             {
                 // switch coordinate system by negating the scale and inverting the basis vector on the x-axis
                 scales[a] = -scales[a];
-                *vectorBasis[a] = -(*vectorBasis[a]);
+                *vectorBasis[a] = -*vectorBasis[a];
 
                 det = -det;
             }

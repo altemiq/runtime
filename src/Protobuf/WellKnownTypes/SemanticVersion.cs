@@ -132,15 +132,10 @@ public partial class SemanticVersion :
     /// <param name="s">The string to parse.</param>
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
-    public static SemanticVersion Parse(string s)
-    {
-        if (!TryParse(s, out var ver))
-        {
-            throw new ArgumentException("Invalid format", nameof(s));
-        }
-
-        return ver;
-    }
+    public static SemanticVersion Parse(string s) =>
+        !TryParse(s, out var ver)
+            ? throw new ArgumentException("Invalid format", nameof(s))
+            : ver;
 
     /// <summary>
     /// Parses a span of characters into a value.
@@ -148,38 +143,23 @@ public partial class SemanticVersion :
     /// <param name="s">The span of characters to parse.</param>
     /// <returns>The result of parsing <paramref name="s"/>.</returns>
     /// <exception cref="ArgumentException"><paramref name="s"/> could not be parsed.</exception>
-    public static SemanticVersion Parse(ReadOnlySpan<char> s)
-    {
-        if (!TryParse(s, out var ver))
-        {
-            throw new ArgumentException("Invalid format", nameof(s));
-        }
-
-        return ver;
-    }
+    public static SemanticVersion Parse(ReadOnlySpan<char> s) =>
+        !TryParse(s, out var ver)
+            ? throw new ArgumentException("Invalid format", nameof(s))
+            : ver;
 
 #if NET7_0_OR_GREATER
     /// <inheritdoc />
-    static SemanticVersion IParsable<SemanticVersion>.Parse(string s, IFormatProvider? provider)
-    {
-        if (!TryParse(s, out var ver))
-        {
-            throw new ArgumentException("Invalid format", nameof(s));
-        }
-
-        return ver;
-    }
+    static SemanticVersion IParsable<SemanticVersion>.Parse(string s, IFormatProvider? provider) =>
+        !TryParse(s, out var ver)
+            ? throw new ArgumentException("Invalid format", nameof(s))
+            : ver;
 
     /// <inheritdoc />
-    static SemanticVersion ISpanParsable<SemanticVersion>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
-    {
-        if (!TryParse(s, out var ver))
-        {
-            throw new ArgumentException("Invalid format", nameof(s));
-        }
-
-        return ver;
-    }
+    static SemanticVersion ISpanParsable<SemanticVersion>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider) =>
+        !TryParse(s, out var ver)
+            ? throw new ArgumentException("Invalid format", nameof(s))
+            : ver;
 #endif
 
     /// <summary>

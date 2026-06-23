@@ -187,19 +187,17 @@ public sealed class LzmaStream : Stream
     /// <inheritdoc/>
     public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
     {
-        if (this.bytesLeft is 0)
+        return (this.bytesLeft, this.decoder) switch
         {
-            return Task.CompletedTask;
-        }
+            (0, _) => Task.CompletedTask,
+            (_, { } d) => Task.Run(() => CopyToImpl(destination, d, ref this.bytesLeft), cancellationToken),
+            _ => throw new InvalidOperationException(),
+        };
 
-        return this.decoder is null
-            ? throw new InvalidOperationException()
-            : Task.Run(CopyToImpl, cancellationToken);
-
-        void CopyToImpl()
+        static void CopyToImpl(Stream destination, LzmaDecoder decoder, ref long bytesLeft)
         {
-            this.decoder.Decompress(destination, this.bytesLeft);
-            this.bytesLeft = 0;
+            decoder.Decompress(destination, bytesLeft);
+            bytesLeft = 0;
         }
     }
 

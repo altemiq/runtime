@@ -237,17 +237,9 @@ public static class StringExtensions
 
                 static bool IsDelimiter(char character, string s, int index, IList<char> delimiter)
                 {
-                    return delimiter[0] == character && CheckDelimiter(s, index, delimiter);
-
-                    static bool CheckDelimiter(string s, int index, IList<char> delimiter)
-                    {
-                        if (delimiter.Count > s.Length - index)
-                        {
-                            return false;
-                        }
-
-                        return !delimiter.Where((t, i) => s[index + i] != t).Any();
-                    }
+                    return delimiter[0] == character
+                        && delimiter.Count <= s.Length - index
+                        && !delimiter.Where((t, i) => s[index + i] != t).Any();
                 }
 
                 [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]

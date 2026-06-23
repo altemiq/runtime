@@ -97,14 +97,9 @@ public static partial class VectorD
 
         /// <inheritdoc cref="WithElement(Vector4D, int, double)" />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Vector2D WithElement(int index, double value1)
-        {
-            if ((uint)index >= Vector2D.ElementCount)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
-
-            return value.AsVector256Unsafe().WithElement(index, value1).AsVector2D();
-        }
+        public Vector2D WithElement(int index, double value1) =>
+            (uint)index >= Vector2D.ElementCount
+                ? throw new ArgumentOutOfRangeException(nameof(index))
+                : value.AsVector256Unsafe().WithElement(index, value1).AsVector2D();
     }
 }

@@ -215,15 +215,7 @@ public static class TextInfoExtensions
             var whiteSpaceOrPunctuation = char.IsWhiteSpace(chr) || char.IsPunctuation(chr);
             if (!whiteSpaceOrPunctuation)
             {
-                if (previousWhiteSpaceOrPunctuation)
-                {
-                    destination[current] = toUpper(chr);
-                }
-                else
-                {
-                    destination[current] = chr;
-                }
-
+                destination[current] = previousWhiteSpaceOrPunctuation ? toUpper(chr) : chr;
                 current++;
             }
 
