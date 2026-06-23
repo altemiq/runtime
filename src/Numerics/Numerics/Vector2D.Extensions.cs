@@ -11,7 +11,7 @@ namespace Altemiq.Numerics;
 /// <content>
 /// <see cref="Vector2D"/> extensions.
 /// </content>
-public static unsafe partial class VectorD
+public static partial class VectorD
 {
     /// <summary>
     /// <see cref="Vector2D"/> extensions.
@@ -41,19 +41,14 @@ public static unsafe partial class VectorD
 
         /// <inheritdoc cref="GetElement(Vector4D, int)" />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public double GetElement(int index)
-        {
-            if ((uint)index >= Vector2D.ElementCount)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
-
-            return value.AsVector256Unsafe().GetElement(index);
-        }
+        public double GetElement(int index) =>
+            (uint)index >= Vector2D.ElementCount
+                ? throw new ArgumentOutOfRangeException(nameof(index))
+                : value.AsVector256Unsafe().GetElement(index);
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
-        public void Store(double* destination) => value.StoreUnsafe(ref *destination);
+        public unsafe void Store(double* destination) => value.StoreUnsafe(ref *destination);
 
         /// <summary>Stores a vector at the given 8-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
@@ -61,7 +56,7 @@ public static unsafe partial class VectorD
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "This is valid")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "This is valid")]
-        public void StoreAligned(double* destination)
+        public unsafe void StoreAligned(double* destination)
         {
             if (((nuint)destination % Vector2D.Alignment) != 0)
             {
@@ -75,7 +70,7 @@ public static unsafe partial class VectorD
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 8-byte aligned.</exception>
         /// <remarks>This method may bypass the cache on certain platforms.</remarks>
-        public void StoreAlignedNonTemporal(double* destination) => value.StoreAligned(destination);
+        public unsafe void StoreAlignedNonTemporal(double* destination) => value.StoreAligned(destination);
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>

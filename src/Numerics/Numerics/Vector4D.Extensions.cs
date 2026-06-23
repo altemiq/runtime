@@ -11,7 +11,7 @@ namespace Altemiq.Numerics;
 /// <content>
 /// <see cref="Vector4D"/> extensions.
 /// </content>
-public static unsafe partial class VectorD
+public static partial class VectorD
 {
     /// <summary>
     /// <see cref="Vector4D"/> extensions.
@@ -45,19 +45,19 @@ public static unsafe partial class VectorD
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
-        public void Store(double* destination) => value.AsVector256().Store(destination);
+        public unsafe void Store(double* destination) => value.AsVector256().Store(destination);
 
         /// <summary>Stores a vector at the given 16-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 16-byte aligned.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void StoreAligned(double* destination) => value.AsVector256().StoreAligned(destination);
+        public unsafe void StoreAligned(double* destination) => value.AsVector256().StoreAligned(destination);
 
         /// <summary>Stores a vector at the given 16-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 16-byte aligned.</exception>
         /// <remarks>This method may bypass the cache on certain platforms.</remarks>
-        public void StoreAlignedNonTemporal(double* destination) => value.AsVector256().StoreAlignedNonTemporal(destination);
+        public unsafe void StoreAlignedNonTemporal(double* destination) => value.AsVector256().StoreAlignedNonTemporal(destination);
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
