@@ -38,7 +38,7 @@ public class BoundaryTest
             // Compress an array.
             var compressed = new int[length];
             var (_, compressedOutputPosition) = c.Compress(source, compressed);
-            await Assert.That(compressedOutputPosition).IsLessThanOrEqualTo(length);
+            _ = await Assert.That(compressedOutputPosition).IsLessThanOrEqualTo(length);
 
             // Decompress an array.
             var decompressed = new int[length];
@@ -46,7 +46,7 @@ public class BoundaryTest
 
             // Compare between decompressed and original arrays.
             var target = TestUtils.CopyArray(decompressed, decompressedOutputPosition);
-            await Assert.That(target).HasSameSequenceAs(source);
+            _ = await Assert.That(target).HasSameSequenceAs(source);
         }
     }
 }

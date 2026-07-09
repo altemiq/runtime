@@ -1,9 +1,8 @@
 ﻿namespace Altemiq.Buffers.Compression;
 
-using Altemiq.Buffers.Compression;
 using Altemiq.Buffers.Compression.Differential;
 
-internal class CodecRunner<T1, T2>
+internal sealed class CodecRunner<T1, T2>
     where T1 : IInt32Codec, new()
     where T2 : Genbox.CSharpFastPFOR.IntegerCODEC, new()
 {
@@ -42,7 +41,7 @@ internal class CodecRunner<T1, T2>
         Array.Copy(data, backupData, data.Length);
         var (_, output) = this.altemiqCodec.Compress(backupData.AsSpan(1), compressBuffer);
         decompressBuffer[0] = compressBuffer[0];
-        this.altemiqCodec.Decompress(compressBuffer.AsSpan(0, output), decompressBuffer.AsSpan(1));
+        _ = this.altemiqCodec.Decompress(compressBuffer.AsSpan(0, output), decompressBuffer.AsSpan(1));
     }
 
     public void BenchmarkGenbox(int[] data)

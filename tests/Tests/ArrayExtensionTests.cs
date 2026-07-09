@@ -13,7 +13,7 @@ public class ArrayExtensionTests
     {
         var array = new[] { 1, 2, 3, 4 };
         var result = array.PadLeft(10);
-        await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
+        _ = await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
     }
 
     [Test]
@@ -21,7 +21,7 @@ public class ArrayExtensionTests
     {
         int[]? array = default;
         var result = array.PadLeft(10);
-        await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        _ = await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class ArrayExtensionTests
     {
         var array = new[] { 1, 2, 3, 4 };
         var result = array.PadRight(10);
-        await Assert.That(result).IsEquivalentTo([1, 2, 3, 4, 0, 0, 0, 0, 0, 0]);
+        _ = await Assert.That(result).IsEquivalentTo([1, 2, 3, 4, 0, 0, 0, 0, 0, 0]);
     }
 
     [Test]
@@ -37,6 +37,6 @@ public class ArrayExtensionTests
     {
         int[]? array = default;
         var result = array.PadRight(10);
-        await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        _ = await Assert.That(result).IsEquivalentTo([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     }
 }

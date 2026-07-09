@@ -20,7 +20,7 @@ public class LzmaEncoder
 
     private readonly uint[] repDistances = new uint[RegisteredDistances];
 
-    private readonly Optimal[] optimum = [.. Enumerable.Range(0, (int)OptimalCount).Select(_ => new Optimal())];
+    private readonly Optimal[] optimum = [.. Enumerable.Range(0, (int)OptimalCount).Select(static _ => new Optimal())];
     private readonly RangeCoder.RangeEncoder rangeEncoder = new();
 
     private readonly RangeCoder.BitEncoder[] matchEncoders = new RangeCoder.BitEncoder[States << PositionStatesBitsMaximum];
@@ -141,7 +141,7 @@ public class LzmaEncoder
                 var numHashBytes = this.matchFinderType switch
                 {
                     LzmaMatchFinder.BinaryTree2 => 2,
-                    _ => 4,
+                    LzmaMatchFinder.BinaryTree4 or _ => 4,
                 };
 
                 this.matchFinder = new(numHashBytes);
@@ -232,6 +232,7 @@ public class LzmaEncoder
     /// <param name="inSize">The input size.</param>
     /// <param name="outSize">The output size.</param>
     /// <returns>Whether this is finished.</returns>
+    /// <exception cref="InvalidOperationException">The match finder is <see langword="null"/>.</exception>
     public bool EncodeOneBlock(out long inSize, out long outSize)
     {
         if (this.matchFinder is null)

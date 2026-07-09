@@ -3,8 +3,8 @@ namespace Altemiq.Buffers.Compression;
 public class ByteBasicTest
 {
     private static readonly IEnumerable<Func<ISByteCodec>> Codecs = [
-        () => new VariableByte(),
-        () => new Differential.DifferentialVariableByte(),
+        static () => new VariableByte(),
+        static () => new Differential.DifferentialVariableByte(),
     ];
 
     [Test]
@@ -20,7 +20,7 @@ public class ByteBasicTest
             var (_, len) = c.Compress(data, compressed.AsSpan(x));
 
             _ = c.Decompress(compressed.AsSpan(x, len), decompressed);
-            await Assert.That(decompressed).HasSameSequenceAs(data);
+            _ = await Assert.That(decompressed).HasSameSequenceAs(data);
         }
     }
 
@@ -36,14 +36,14 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
+            _ = await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
+            _ = await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
 
@@ -60,14 +60,14 @@ public class ByteBasicTest
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
+            _ = await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
 
         for (var l = 128; l <= N; l *= 2)
         {
             var comp = TestUtils.Compress(c, data.AsSpan(0, l));
             IEnumerable<int> answer = TestUtils.Decompress(c, comp, l);
-            await Assert.That(answer).HasSameSequenceAs(data.Take(l));
+            _ = await Assert.That(answer).HasSameSequenceAs(data.Take(l));
         }
     }
 

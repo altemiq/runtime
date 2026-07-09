@@ -67,7 +67,7 @@ public partial class SemanticVersion :
     /// <summary>
     /// Gets a value indicating whether pre-release labels exist for the version.
     /// </summary>
-    public bool IsPrerelease => this.releaseLabels_?.Any(t => !string.IsNullOrEmpty(t)) is true;
+    public bool IsPrerelease => this.releaseLabels_?.Any(static t => !string.IsNullOrEmpty(t)) is true;
 
     /// <summary>
     /// Implements the equals operator.
@@ -326,7 +326,7 @@ public partial class SemanticVersion :
 
             static bool IsLetterOrDigitOrDash(char c)
             {
-                return c is >= '0' and <= '9' or >= 'A' and <= 'Z' or >= 'a' and <= 'z' or '-';
+                return c is (>= '0' and <= '9') or (>= 'A' and <= 'Z') or (>= 'a' and <= 'z') or '-';
             }
         }
 

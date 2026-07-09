@@ -16,7 +16,7 @@ internal static class TestUtils
         var compressed = new int[orig.Length + Extend];
         var (_, compressedOutputPosition) = codec.Compress(orig, compressed);
 
-        await Assert.That(compressedOutputPosition).IsBetween(0, orig.Length + Extend);
+        _ = await Assert.That(compressedOutputPosition).IsBetween(0, orig.Length + Extend);
 
         // Decompress an array.
         var decompressed = new int[orig.Length];
@@ -24,7 +24,7 @@ internal static class TestUtils
 
         // Compare between uncompressed and orig arrays.
         Array.Resize(ref decompressed, decompressedOutputPosition);
-        await Assert.That(orig).HasSameSequenceAs(decompressed);
+        _ = await Assert.That(orig).HasSameSequenceAs(decompressed);
     }
 
     public static int[] Compress(IInt32Codec codec, ReadOnlySpan<int> data)
@@ -71,7 +71,7 @@ internal static class TestUtils
     {
         var output = new int[length + 1024];
         var (_, outputPosition) = codec.Decompress(data, output.AsSpan(0, length));
-        await Assert.That(outputPosition).IsGreaterThanOrEqualTo(length);
+        _ = await Assert.That(outputPosition).IsGreaterThanOrEqualTo(length);
         Array.Resize(ref output, outputPosition);
         return output;
     }

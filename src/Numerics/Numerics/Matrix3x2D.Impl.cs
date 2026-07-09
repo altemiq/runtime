@@ -49,7 +49,8 @@ public partial struct Matrix3x2D
         public Vector2D Y;
         public Vector2D Z;
 
-        private const double RotationEpsilon = 0.001 * double.Pi / 180D; // 0.1% of a degree
+        /* 0.1% of a degree */
+        private const double RotationEpsilon = 0.001 * double.Pi / 180D;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl operator +(in Impl left, in Impl right)
@@ -147,7 +148,7 @@ public partial struct Matrix3x2D
                 c = 0;
                 s = 1;
             }
-            else if (radians < -double.Pi + RotationEpsilon || radians > double.Pi - RotationEpsilon)
+            else if (radians is < -double.Pi + RotationEpsilon or > double.Pi - RotationEpsilon)
             {
                 // Exact case for 180 degree rotation.
                 c = -1;
@@ -196,7 +197,7 @@ public partial struct Matrix3x2D
                 c = 0;
                 s = 1;
             }
-            else if (radians < -double.Pi + RotationEpsilon || radians > double.Pi - RotationEpsilon)
+            else if (radians is < -double.Pi + RotationEpsilon or > double.Pi - RotationEpsilon)
             {
                 // Exact case for 180 degree rotation.
                 c = -1;
@@ -406,8 +407,10 @@ public partial struct Matrix3x2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => (obj is Matrix3x2D other) && this.Equals(in other.AsImpl());
 
-        // This function needs to account for floating-point equality around NaN
-        // and so must behave equivalently to the underlying double/double.Equals
+        /*
+          This function needs to account for floating-point equality around NaN
+          and so must behave equivalently to the underlying double/double.Equals
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool Equals(in Impl other) => this.X.Equals(other.X) && this.Y.Equals(other.Y) && this.Z.Equals(other.Z);
 

@@ -4,10 +4,10 @@ public class ProtoTests
 {
     [Test]
     [MethodDataSource(nameof(GuidData))]
-    public async Task Uuid(Guid guid)
+    public async Task Uuid(Guid input)
     {
-        var testMessage = new Protobuf.WellKnownTypes.Tests.Test { Uuid = Protobuf.WellKnownTypes.Uuid.ForGuid(guid) };
-        await Assert.That(testMessage.Uuid.ToGuid()).IsEqualTo(guid);
+        var testMessage = new Protobuf.WellKnownTypes.Tests.Test { Uuid = Protobuf.WellKnownTypes.Uuid.ForGuid(input) };
+        _ = await Assert.That(testMessage.Uuid.ToGuid()).IsEqualTo(input);
     }
 
     public static IEnumerable<Func<Guid>> GuidData()

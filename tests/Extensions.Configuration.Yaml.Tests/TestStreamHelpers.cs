@@ -10,7 +10,7 @@ public class TestStreamHelpers
 
     }
 
-    private class TestFile(string str) : Microsoft.Extensions.FileProviders.IFileInfo
+    private sealed class TestFile(string str) : Microsoft.Extensions.FileProviders.IFileInfo
     {
         public bool Exists => true;
         public bool IsDirectory => false;
@@ -18,14 +18,28 @@ public class TestStreamHelpers
         public long Length => 0;
         public string Name => null!;
         public string PhysicalPath => null!;
-        public Stream CreateReadStream() => StringToStream(str);
+        public Stream CreateReadStream()
+        {
+            return StringToStream(str);
+        }
     }
 
-    private class TestFileProvider(string str) : Microsoft.Extensions.FileProviders.IFileProvider
+    private sealed class TestFileProvider(string str) : Microsoft.Extensions.FileProviders.IFileProvider
     {
-        public Microsoft.Extensions.FileProviders.IDirectoryContents GetDirectoryContents(string subpath) => throw new InvalidOperationException();
-        public Microsoft.Extensions.FileProviders.IFileInfo GetFileInfo(string subpath) => new TestFile(str);
-        public Microsoft.Extensions.Primitives.IChangeToken Watch(string filter) => throw new InvalidOperationException();
+        public Microsoft.Extensions.FileProviders.IDirectoryContents GetDirectoryContents(string subpath)
+        {
+            throw new InvalidOperationException();
+        }
+
+        public Microsoft.Extensions.FileProviders.IFileInfo GetFileInfo(string subpath)
+        {
+            return new TestFile(str);
+        }
+
+        public Microsoft.Extensions.Primitives.IChangeToken Watch(string filter)
+        {
+            throw new InvalidOperationException();
+        }
     }
 
     public static Stream StringToStream(string str)
@@ -34,14 +48,14 @@ public class TestStreamHelpers
         var textWriter = new StreamWriter(memStream);
         textWriter.Write(str);
         textWriter.Flush();
-        memStream.Seek(0, SeekOrigin.Begin);
+        _ = memStream.Seek(0, SeekOrigin.Begin);
 
         return memStream;
     }
 
     public static string StreamToString(Stream stream)
     {
-        stream.Seek(0, SeekOrigin.Begin);
+        _ = stream.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(stream);
 
         return reader.ReadToEnd();

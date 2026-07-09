@@ -23,5 +23,8 @@ public class AssemblyExtensionsTests
     [Arguments("Altemiq, Version=1.0.0.0, Culture=neutral", "Altemiq, Version=2.0.0.0, Culture=neutral", false)]
     [Arguments("Altemiq, Version=1.0.0.0, Culture=neutral", "Altemiq, Version=2.0.0.0", false)]
     [Arguments("Altemiq, Version=2.0.0.0, Culture=en-US", "Altemiq, Version=1.0.0.0, Culture=neutral", false)]
-    public async Task IsCompatible(string assemblyName, string requiredAssemblyName, bool expected) => await Assert.That(new System.Reflection.AssemblyName(assemblyName).IsCompatible(new(requiredAssemblyName))).IsEqualTo(expected);
+    public async Task IsCompatible(string assemblyName, string requiredAssemblyName, bool expected)
+    {
+        _ = await Assert.That(new System.Reflection.AssemblyName(assemblyName).IsCompatible(new(requiredAssemblyName))).IsEqualTo(expected);
+    }
 }

@@ -55,6 +55,7 @@ internal sealed class RangeDecoder
     /// <summary>
     /// Normalizes the decoder.
     /// </summary>
+    /// <exception cref="InvalidOperationException"><see cref="Stream"/> is <see langword="null"/>.</exception>
     public void Normalize()
     {
         if (this.Stream is null)
@@ -74,6 +75,7 @@ internal sealed class RangeDecoder
     /// </summary>
     /// <param name="numTotalBits">The number of total bits.</param>
     /// <returns>The decided bits.</returns>
+    /// <exception cref="InvalidOperationException"><see cref="Stream"/> is <see langword="null"/>.</exception>
     public uint DecodeDirectBits(int numTotalBits)
     {
         if (this.Stream is null)

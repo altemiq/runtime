@@ -14,8 +14,7 @@
 
       <PropertyGroup>
         <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-        <MeziantouPolyfill_IncludedPolyfills>T:System.Runtime.CompilerServices.IsExternalInit</MeziantouPolyfill_IncludedPolyfills>
-      </PropertyGroup>    
+      </PropertyGroup>
     </When>
   </Choose>
 

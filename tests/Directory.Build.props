@@ -16,6 +16,8 @@
 
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+
+    <MeziantouPolyfill_GenerateDebugFile Condition=" '$(Condition)' == 'Debug' ">true</MeziantouPolyfill_GenerateDebugFile>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">

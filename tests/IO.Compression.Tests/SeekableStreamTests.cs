@@ -8,7 +8,7 @@ public class SeekableStreamTests
         var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0]);
         stream.Dispose();
-        await Assert.That(archive.IsDisposed).IsTrue();
+        _ = await Assert.That(archive.IsDisposed).IsTrue();
     }
 
     [Test]
@@ -17,7 +17,7 @@ public class SeekableStreamTests
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0], true);
         stream.Dispose();
-        await Assert.That(archive.IsDisposed).IsFalse();
+        _ = await Assert.That(archive.IsDisposed).IsFalse();
     }
 
 #if NETCOREAPP
@@ -27,7 +27,7 @@ public class SeekableStreamTests
         var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0]);
         await stream.DisposeAsync();
-        await Assert.That(archive.IsDisposed).IsTrue();
+        _ = await Assert.That(archive.IsDisposed).IsTrue();
     }
 
     [Test]
@@ -36,7 +36,7 @@ public class SeekableStreamTests
         using var archive = ZipArchiveHelpers.CreateArchiveShim();
         var stream = new SeekableStream(archive.Entries[0], true);
         await stream.DisposeAsync();
-        await Assert.That(archive.IsDisposed).IsFalse();
+        _ = await Assert.That(archive.IsDisposed).IsFalse();
     }
 #endif
 
@@ -45,8 +45,8 @@ public class SeekableStreamTests
     {
         using var archive = ZipArchiveHelpers.CreateArchiveShim(fillData: true);
         using var stream = new SeekableStream(archive.Entries[0]);
-        await Assert.That(stream)
-            .Member(s => s.Length, length => length.IsEqualTo(1024))
-            .And.Member(s => s.Seek(512, SeekOrigin.Begin), position => position.IsEqualTo(512));
+        _ = await Assert.That(stream)
+            .Member(static s => s.Length, static length => length.IsEqualTo(1024))
+            .And.Member(static s => s.Seek(512, SeekOrigin.Begin), static position => position.IsEqualTo(512));
     }
 }

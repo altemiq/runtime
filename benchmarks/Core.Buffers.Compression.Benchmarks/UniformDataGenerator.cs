@@ -13,7 +13,7 @@ namespace Altemiq.Buffers.Compression;
 /// Initializes a new instance of the <see cref="UniformDataGenerator"/> class.
 /// </remarks>
 /// <param name="seed">The initial seed.</param>
-internal class UniformDataGenerator(int seed)
+internal sealed class UniformDataGenerator(int seed)
 {
 
     /// <summary>
@@ -123,7 +123,7 @@ internal class UniformDataGenerator(int seed)
                 _ = i.MoveNext();
             }
 
-            System.Array.Sort(ans);
+            Array.Sort(ans);
             return ans;
         }
     }

@@ -23,7 +23,7 @@ internal sealed class FastPatchingFrameOfReference128 : IInt32Codec, IHeadlessIn
     private readonly int[][] dataTobePacked = new int[33][];
     private readonly MemoryStream byteContainer;
 
-    // Working area for compress and decompress.
+    /* Working area for compress and decompress. */
     private readonly int[] dataPointers = new int[33];
     private readonly int[] frequencies = new int[33];
 

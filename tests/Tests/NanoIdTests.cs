@@ -12,56 +12,80 @@ public class NanoIds
     private const string DefaultAlphabet = "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     [Test]
-    public async Task Default() => await Assert.That(NanoId.Generate()).Length().IsEqualTo(DefaultSize);
+    public async Task Default()
+    {
+        _ = await Assert.That(NanoId.Generate()).Length().IsEqualTo(DefaultSize);
+    }
 
     [Test]
-    public async Task DefaultAsync() => await Assert.That(await NanoId.GenerateAsync()).Length().IsEqualTo(DefaultSize);
+    public async Task DefaultAsync()
+    {
+        _ = await Assert.That(await NanoId.GenerateAsync()).Length().IsEqualTo(DefaultSize);
+    }
 
     [Test]
     public async Task CustomSize()
     {
         const int Size = 10;
-        await Assert.That(NanoId.Generate(size: Size)).Length().IsEqualTo(Size);
+        _ = await Assert.That(NanoId.Generate(size: Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
     public async Task CustomSizeAsync()
     {
         const int Size = 10;
-        await Assert.That(await NanoId.GenerateAsync(size: Size)).Length().IsEqualTo(Size);
+        _ = await Assert.That(await NanoId.GenerateAsync(size: Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
-    public async Task CustomAlphabet() => await Assert.That(NanoId.Generate("1234abcd")).Length().IsEqualTo(DefaultSize);
+    public async Task CustomAlphabet()
+    {
+        _ = await Assert.That(NanoId.Generate("1234abcd")).Length().IsEqualTo(DefaultSize);
+    }
 
     [Test]
-    public async Task CustomAlphabetAsync() => await Assert.That(await NanoId.GenerateAsync("1234abcd")).Length().IsEqualTo(DefaultSize);
+    public async Task CustomAlphabetAsync()
+    {
+        _ = await Assert.That(await NanoId.GenerateAsync("1234abcd")).Length().IsEqualTo(DefaultSize);
+    }
 
     [Test]
     public async Task CustomAlphabetAndSize()
     {
         const int Size = 7;
-        await Assert.That(NanoId.Generate("1234abcd", Size)).Length().IsEqualTo(Size);
+        _ = await Assert.That(NanoId.Generate("1234abcd", Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
     public async Task CustomAlphabetAndSizeAsync()
     {
         const int Size = 7;
-        await Assert.That(await NanoId.GenerateAsync("1234abcd", Size)).Length().IsEqualTo(Size);
+        _ = await Assert.That(await NanoId.GenerateAsync("1234abcd", Size)).Length().IsEqualTo(Size);
     }
 
     [Test]
-    public async Task CustomRandom() => await Assert.That(NanoId.Generate(new Random(10))).Length().IsEqualTo(DefaultSize);
+    public async Task CustomRandom()
+    {
+        _ = await Assert.That(NanoId.Generate(new Random(10))).Length().IsEqualTo(DefaultSize);
+    }
 
     [Test]
-    public async Task CustomRandomAsync() => await Assert.That(await NanoId.GenerateAsync(new Random(10))).Length().IsEqualTo(DefaultSize);
+    public async Task CustomRandomAsync()
+    {
+        _ = await Assert.That(await NanoId.GenerateAsync(new Random(10))).Length().IsEqualTo(DefaultSize);
+    }
 
     [Test]
-    public async Task SingleLetterAlphabet() => await Assert.That(NanoId.Generate("a", 5)).IsEqualTo("aaaaa");
+    public async Task SingleLetterAlphabet()
+    {
+        _ = await Assert.That(NanoId.Generate("a", 5)).IsEqualTo("aaaaa");
+    }
 
     [Test]
-    public async Task SingleLetterAlphabetAsync() => await Assert.That(await NanoId.GenerateAsync("a", 5)).IsEqualTo("aaaaa");
+    public async Task SingleLetterAlphabetAsync()
+    {
+        _ = await Assert.That(await NanoId.GenerateAsync("a", 5)).IsEqualTo("aaaaa");
+    }
 
     [Test]
     [Arguments(4, "adca")]
@@ -69,7 +93,7 @@ public class NanoIds
     public async Task PredefinedRandomSequence(int size, string expected)
     {
         var random = new PredefinedRandom([2, 255, 3, 7, 7, 7, 7, 7, 0, 1]);
-        await Assert.That(NanoId.Generate(random, "abcde", size)).IsEqualTo(expected);
+        _ = await Assert.That(NanoId.Generate(random, "abcde", size)).IsEqualTo(expected);
     }
 
     [Test]
@@ -78,7 +102,7 @@ public class NanoIds
     public async Task PredefinedRandomSequenceAsync(int size, string expected)
     {
         var random = new PredefinedRandom([2, 255, 3, 7, 7, 7, 7, 7, 0, 1]);
-        await Assert.That(await NanoId.GenerateAsync(random, "abcde", size)).IsEqualTo(expected);
+        _ = await Assert.That(await NanoId.GenerateAsync(random, "abcde", size)).IsEqualTo(expected);
     }
 
     [Test]
@@ -89,11 +113,11 @@ public class NanoIds
         while (count > 0)
         {
             var result = NanoId.Generate();
-            await Assert.That(result).Length().IsEqualTo(DefaultSize);
+            _ = await Assert.That(result).Length().IsEqualTo(DefaultSize);
 
             foreach (var c in result)
             {
-                await Assert.That(result).Contains($"{c}");
+                _ = await Assert.That(result).Contains($"{c}");
             }
 
             count--;
@@ -108,11 +132,11 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            await Assert.That(result).Length().IsEqualTo(DefaultSize);
+            _ = await Assert.That(result).Length().IsEqualTo(DefaultSize);
 
             foreach (var c in result)
             {
-                await Assert.That(result).Contains($"{c}");
+                _ = await Assert.That(result).Contains($"{c}");
             }
 
             count--;
@@ -129,7 +153,7 @@ public class NanoIds
         while (count > 0)
         {
             var result = NanoId.Generate();
-            await Assert.That(dictUsed.TryGetValue(result, out _)).IsFalse();
+            _ = await Assert.That(dictUsed.TryGetValue(result, out _)).IsFalse();
             dictUsed.Add(result, true);
 
             count--;
@@ -146,7 +170,7 @@ public class NanoIds
         while (count > 0)
         {
             var result = await NanoId.GenerateAsync();
-            await Assert.That(dictUsed.TryGetValue(result, out _)).IsFalse();
+            _ = await Assert.That(dictUsed.TryGetValue(result, out _)).IsFalse();
             dictUsed.Add(result, true);
 
             count--;
@@ -180,7 +204,7 @@ public class NanoIds
             count--;
         }
 
-        foreach (var distribution in chars.Select(c => c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize)))
+        foreach (var distribution in chars.Select(static c => c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize)))
         {
 #if NET7_0_OR_GREATER
             await Assert.That(distribution).IsEqualTo(1.0).Within(0.05);
@@ -217,7 +241,7 @@ public class NanoIds
             count--;
         }
 
-        foreach (var distribution in chars.Select(c => c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize)))
+        foreach (var distribution in chars.Select(static c => c.Value * DefaultAlphabet.Length / (double)(Total * DefaultSize)))
         {
 #if NET7_0_OR_GREATER
             await Assert.That(distribution).IsEqualTo(1.0).Within(0.05);
@@ -236,17 +260,17 @@ public class NanoIds
 #if NET7_0_OR_GREATER
             var mask2 = (2 << (31 - int.LeadingZeroCount((length - 1) | 1))) - 1;
 #else
-            var mask2 = (2 << 31 - NanoId.LeadingZeroCount((length - 1) | 1)) - 1;
+            var mask2 = (2 << (31 - NanoId.LeadingZeroCount((length - 1) | 1))) - 1;
 #endif
             await Assert.That(mask1).IsEqualTo(mask2);
         }
     }
 
-    private class PredefinedRandom(byte[] sequence) : Random
+    private sealed class PredefinedRandom(byte[] sequence) : Random
     {
         public override void NextBytes(byte[] buffer)
         {
-            using var seq = this.GetSequence(buffer.Length).GetEnumerator();
+            using var seq = GetSequence(buffer.Length).GetEnumerator();
             var i = 0;
             while (seq.MoveNext())
             {
@@ -258,7 +282,7 @@ public class NanoIds
         public override void NextBytes(Span<byte> buffer)
         {
             var bytes = new byte[buffer.Length];
-            this.NextBytes(bytes);
+            NextBytes(bytes);
             bytes.CopyTo(buffer);
         }
 #endif
@@ -270,7 +294,7 @@ public class NanoIds
             var remainder = size % sequence.Length;
 
             // do the remainder first
-            for (int i = remainder - 1; i >= 0; i--)
+            for (var i = remainder - 1; i >= 0; i--)
             {
                 yield return sequence[i];
             }
@@ -278,7 +302,7 @@ public class NanoIds
             // return the number of full counts.
             while (count > 0)
             {
-                for (int i = sequence.Length - 1; i >= 0; i--)
+                for (var i = sequence.Length - 1; i >= 0; i--)
                 {
                     yield return sequence[i];
                 }

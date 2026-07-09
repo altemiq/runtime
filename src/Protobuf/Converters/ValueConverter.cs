@@ -21,6 +21,7 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
     /// </summary>
     /// <param name="element">The <see cref="JsonElement"/> instance.</param>
     /// <returns>The <see cref="Value"/> instance.</returns>
+    /// <exception cref="InvalidCastException"><paramref name="element"/>.<see cref="JsonElement.ValueKind"/> is not valid.</exception>
     public static Value ToValue(JsonElement element)
     {
         return element switch
@@ -37,7 +38,7 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
 
         static Value ToList(JsonElement element)
         {
-            return Value.ForList([.. element.EnumerateArray().Select(item => item.ToValue())]);
+            return Value.ForList([.. element.EnumerateArray().Select(static item => item.ToValue())]);
         }
 
         static Value ToStruct(JsonElement element)
@@ -57,6 +58,7 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
     /// </summary>
     /// <param name="node">The <see cref="JsonNode"/> instance.</param>
     /// <returns>The <see cref="Value"/> instance.</returns>
+    /// <exception cref="InvalidCastException"><paramref name="node"/> is not valid.</exception>
     public static Value ToValue(JsonNode? node)
     {
         return (node, node?.GetValueKind() ?? JsonValueKind.Undefined) switch
@@ -100,6 +102,8 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
     /// </summary>
     /// <param name="value">The <see cref="Value"/> instance.</param>
     /// <returns>The <see cref="JsonDocument"/> instance.</returns>
+    /// <exception cref="InvalidOperationException"><paramref name="value"/>.<see cref="Value.KindCase"/> is <see cref="Value.KindOneofCase.None"/>.</exception>
+    /// <exception cref="InvalidCastException"><paramref name="value"/>.<see cref="Value.KindCase"/> is not valid.</exception>
     public static JsonNode? ToJsonNode(Value value)
     {
         return value.KindCase switch
@@ -142,6 +146,7 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
     /// <inheritdoc/>
     public override Value? Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
     {
+#pragma warning disable IDE0072
         // read the value
         return reader.TokenType switch
         {
@@ -154,6 +159,7 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
             JsonTokenType.StartArray => ReadArray(ref reader, typeToConvert, options),
             _ => throw new InvalidOperationException(),
         };
+#pragma warning restore IDE0072
 
         static Value ReadArray(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
         {
@@ -201,6 +207,8 @@ public class ValueConverter : System.Text.Json.Serialization.JsonConverter<Value
                 }
 
                 writer.WriteEndArray();
+                break;
+            case Value.KindOneofCase.None:
                 break;
         }
     }

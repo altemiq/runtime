@@ -24,6 +24,7 @@ internal static class Benchmark
     /// <param name="iterations">The number of iterations.</param>
     /// <param name="dictionarySize">The dictionary size.</param>
     /// <returns>The return value.</returns>
+    /// <exception cref="InvalidOperationException">Operation was not valid.</exception>
     public static int Run(int iterations, uint dictionarySize)
     {
         if (iterations <= 0)
@@ -154,7 +155,7 @@ internal static class Benchmark
 
             static long MyMultDiv64(long value, long elapsedTime)
             {
-                long frequency = TimeSpan.TicksPerSecond;
+                var frequency = TimeSpan.TicksPerSecond;
                 while (frequency > 1000000)
                 {
                     frequency >>= 1;

@@ -5,12 +5,13 @@
     <File Path=".github/workflows/docs.yml" />
   </Folder>
   <Folder Name="/benchmarks/">
-    <Project Path="benchmarks/Core.Buffers.Compression.Benchmarks/Core.Buffers.Compression.Benchmarks.csproj" />
-    <Project Path="benchmarks/Numerics.Benchmarks/Numerics.Benchmarks.csproj" />
-    <Project Path="benchmarks/Protobuf.Benchmarks/Protobuf.Benchmarks.csproj" />
+    <File Path="benchmarks/.editorconfig" />
     <File Path="benchmarks/Directory.Build.props" />
     <File Path="benchmarks/Directory.Build.targets" />
     <File Path="benchmarks/Directory.Packages.props" />
+    <Project Path="benchmarks/Core.Buffers.Compression.Benchmarks/Core.Buffers.Compression.Benchmarks.csproj" />
+    <Project Path="benchmarks/Numerics.Benchmarks/Numerics.Benchmarks.csproj" />
+    <Project Path="benchmarks/Protobuf.Benchmarks/Protobuf.Benchmarks.csproj" />
   </Folder>
   <Folder Name="/generators/">
     <Project Path="generators/OneOf.CodeGeneration/OneOf.CodeGeneration.csproj" />
@@ -28,6 +29,7 @@
     <File Path="testenvironments.json" />
   </Folder>
   <Folder Name="/src/">
+    <File Path="src/.editorconfig" />
     <File Path="src\Directory.Packages.props" />
     <Project Path="src/Core/Core.csproj" />
     <Project Path="src/Extensions.Caching.Hybrid/Extensions.Caching.Hybrid.csproj" />
@@ -41,6 +43,10 @@
     <Project Path="src\Math.Matrices\Math.Matrices.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <File Path="tests/.editorconfig" />
+    <File Path="tests/Directory.Build.props" />
+    <File Path="tests/Directory.Build.targets" />
+    <File Path="tests/Directory.Packages.props" />
     <Project Path="tests/Dummy/Dummy.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
@@ -67,10 +73,6 @@
     <Project Path="tests/Tests/Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>
-    <File Path="tests/.editorconfig" />
-    <File Path="tests/Directory.Build.props" />
-    <File Path="tests/Directory.Build.targets" />
-    <File Path="tests/Directory.Packages.props" />
     <Project Path="tests\Math.Matrices.Tests\Math.Matrices.Tests.csproj">
       <Build Solution="Release|*" Project="false" />
     </Project>

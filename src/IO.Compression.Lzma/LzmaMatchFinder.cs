@@ -15,11 +15,11 @@ public enum LzmaMatchFinder
     /// Binary Tree with 2 hash bytes.
     /// </summary>
     [Runtime.Serialization.EnumMember(Value = "bt2")]
-    BinaryTree2,
+    BinaryTree2 = 0,
 
     /// <summary>
     /// Binary Tree with 4 hash bytes.
     /// </summary>
     [Runtime.Serialization.EnumMember(Value = "bt4")]
-    BinaryTree4,
+    BinaryTree4 = 1,
 }

@@ -58,6 +58,7 @@ public readonly struct Range(Index start, Index end) : IEquatable<Range>
     /// </summary>
     /// <param name="length">The length.</param>
     /// <returns>The offset and length.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="length"/> is out of range.</exception>
     [Runtime.CompilerServices.MethodImpl(Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public (int Offset, int Length) GetOffsetAndLength(int length)
     {

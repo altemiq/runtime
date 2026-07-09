@@ -13,10 +13,10 @@ public class LzmaDecoderTests
     {
         using var lzma = typeof(LzmaDecoderTests).Assembly.GetManifestResourceStream(typeof(LzmaDecoderTests), "lorem-ipsum.lzma");
 
-        await Assert.That(lzma).IsNotNull();
+        _ = await Assert.That(lzma).IsNotNull();
 
         var properties = new byte[5];
-        _ = lzma!.Read(properties, 0, 5);
+        _ = lzma.Read(properties, 0, 5);
 
         var decoder = new LzmaDecoder(properties);
 
@@ -33,7 +33,7 @@ public class LzmaDecoderTests
             outSize |= (long)v << (8 * i);
         }
 
-        await Assert.That(outSize).IsNotEqualTo(0L);
+        _ = await Assert.That(outSize).IsNotEqualTo(0L);
 
         var compressedSize = lzma.Length - lzma.Position;
 
@@ -41,6 +41,6 @@ public class LzmaDecoderTests
         decoder.Decode(lzma, output, outSize);
 
         output.Position = 0;
-        await Assert.That(output.Length).IsNotEqualTo(0L);
+        _ = await Assert.That(output.Length).IsNotEqualTo(0L);
     }
 }

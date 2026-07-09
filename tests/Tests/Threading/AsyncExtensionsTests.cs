@@ -7,7 +7,7 @@ public class AsyncExtensionsTests
     {
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.CancelAfter(100);
-        await Assert.That(async () => await cancellationTokenSource.Token).Throws<OperationCanceledException>();
+        _ = await Assert.That(async () => await cancellationTokenSource.Token).Throws<OperationCanceledException>();
     }
 
     [Test]
@@ -15,7 +15,7 @@ public class AsyncExtensionsTests
     {
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.CancelAfter(100);
-        await Assert.That(async () => await cancellationTokenSource.Token.ConfigureAwait(false)).ThrowsNothing();
+        _ = await Assert.That(async () => await cancellationTokenSource.Token.ConfigureAwait(false)).ThrowsNothing();
     }
 
     [Test]
@@ -23,6 +23,6 @@ public class AsyncExtensionsTests
     {
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.CancelAfter(100);
-        await Assert.That(async () => await cancellationTokenSource.Token.ConfigureAwait(CancellationTokenConfigureAwaitOptions.SuppressThrowing)).ThrowsNothing();
+        _ = await Assert.That(async () => await cancellationTokenSource.Token.ConfigureAwait(CancellationTokenConfigureAwaitOptions.SuppressThrowing)).ThrowsNothing();
     }
 }

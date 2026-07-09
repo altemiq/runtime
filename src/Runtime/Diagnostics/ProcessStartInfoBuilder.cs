@@ -151,7 +151,12 @@ public class ProcessStartInfoBuilder
 #if NET5_0_OR_GREATER
             if (OperatingSystem.IsWindows())
             {
-                processStartInfo.Domain = this.Domain!;
+                processStartInfo.Domain =
+#if NET6_0_OR_GREATER
+                    this.Domain;
+#else
+                    this.Domain!;
+#endif
                 processStartInfo.LoadUserProfile = this.LoadUserProfile;
                 processStartInfo.Password = this.Password;
                 processStartInfo.PasswordInClearText = this.PasswordInClearText;
@@ -204,6 +209,7 @@ public class ProcessStartInfoBuilder
     /// </summary>
     /// <param name="processStartInfo">The process start info to get the arguments from.</param>
     /// <returns>The arguments.</returns>
+    /// <exception cref="System.Diagnostics.UnreachableException"><paramref name="processStartInfo"/> is not valid.</exception>
     public static string GetArguments(ProcessStartInfo processStartInfo) =>
         processStartInfo switch
         {
@@ -211,6 +217,7 @@ public class ProcessStartInfoBuilder
             { ArgumentList: { Count: > 0 } argumentList } => string.Join(' ', argumentList),
 #endif
             { Arguments: var arguments } => arguments,
+            _ => throw new System.Diagnostics.UnreachableException(),
         };
 
     /// <summary>

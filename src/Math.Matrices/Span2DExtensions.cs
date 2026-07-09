@@ -20,6 +20,7 @@ public static class Span2DExtensions
         /// Creates a new <see cref="System.Numerics.Matrix4x4" /> from this <see cref="Span2D{Double}"/>.
         /// </summary>
         /// <returns>The new <see cref="System.Numerics.Matrix4x4"/>.</returns>
+        /// <exception cref="NotSupportedException"><paramref name="input"/> is not square with a size of 4.</exception>
         public System.Numerics.Matrix4x4 ToMatrix4x4()
         {
             if (input is not { Height: 4, Width: 4 })
@@ -62,6 +63,7 @@ public static class Span2DExtensions
         /// Creates a new <see cref="System.Numerics.Matrix3x2" /> from this <see cref="Span2D{Double}"/>.
         /// </summary>
         /// <returns>The new <see cref="System.Numerics.Matrix3x2"/>.</returns>
+        /// <exception cref="NotSupportedException"><paramref name="input"/> does not have a height of 3 and a width of 2.</exception>
         public System.Numerics.Matrix3x2 ToMatrix3x2()
         {
             if (input is not { Height: 3, Width: 2 })
@@ -152,6 +154,7 @@ public static class Span2DExtensions
         /// Creates a new <see cref="Numerics.Matrix4x4D" /> from this <see cref="Span2D{Double}"/>.
         /// </summary>
         /// <returns>The new <see cref="Numerics.Matrix4x4D"/>.</returns>
+        /// <exception cref="NotSupportedException"><paramref name="input"/> is not square with a size of 4.</exception>
         public Numerics.Matrix4x4D ToMatrix4x4()
         {
             if (input is not { Height: 4, Width: 4 })
@@ -194,6 +197,7 @@ public static class Span2DExtensions
         /// Creates a new <see cref="Numerics.Matrix3x2D" /> from this <see cref="Span2D{Double}"/>.
         /// </summary>
         /// <returns>The new <see cref="Numerics.Matrix3x2D"/>.</returns>
+        /// <exception cref="NotSupportedException"><paramref name="input"/> does not have a height of 3 and a width of 2.</exception>
         public Numerics.Matrix3x2D ToMatrix3x2()
         {
             if (input is not { Height: 3, Width: 2 })

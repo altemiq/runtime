@@ -13,8 +13,8 @@ public class SeekableStreamTests
     {
         var stream = new SeekableStream(new ForwardOnlyStream());
         await Assert.That(stream)
-            .Member(static s => s.Length, length => length.IsEqualTo(1024))
-            .And.Member(static s => s.Seek(512, SeekOrigin.Begin), position => position.IsEqualTo(512));
+            .Member(static s => s.Length, static length => length.IsEqualTo(1024))
+            .And.Member(static s => s.Seek(512, SeekOrigin.Begin), static position => position.IsEqualTo(512));
 #if NET
         await stream.DisposeAsync();
 #else
@@ -60,7 +60,7 @@ public class SeekableStreamTests
 #endif
     }
 
-    private class ForwardOnlyStream() : MemoryStream(new byte[1024])
+    private sealed class ForwardOnlyStream() : MemoryStream(new byte[1024])
     {
         public override bool CanSeek => false;
     }

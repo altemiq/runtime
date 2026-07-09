@@ -32,6 +32,8 @@ public sealed class LzmaStream : Stream
     {
         this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
         this.leaveOpen = leaveOpen;
+
+#pragma warning disable IDE0010
         switch (mode)
         {
             case CompressionMode.Compress when this.stream.CanWrite:
@@ -64,6 +66,7 @@ public sealed class LzmaStream : Stream
             default:
                 throw new ArgumentOutOfRangeException(nameof(mode));
         }
+#pragma warning restore IDE0010
     }
 
     /// <summary>

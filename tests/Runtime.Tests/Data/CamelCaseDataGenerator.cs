@@ -4,14 +4,14 @@ public class CamelCaseDataGenerator : DataSourceGeneratorAttribute<string, strin
 {
     protected override IEnumerable<Func<(string, string)>> GenerateDataSources(DataGeneratorMetadata dataGeneratorMetadata)
     {
-        yield return () => ("customer", "customer");
-        yield return () => ("CUSTOMER", "cUSTOMER");
-        yield return () => ("CUStomer", "cUStomer");
-        yield return () => ("customer_name", "customerName");
-        yield return () => ("customer_first_name", "customerFirstName");
-        yield return () => ("customer_first_name goes here", "customerFirstNameGoesHere");
-        yield return () => ("customer name", "customerName");
-        yield return () => ("customer   name", "customerName");
-        yield return () => ("", "");
+        yield return static () => ("customer", "customer");
+        yield return static () => ("CUSTOMER", "cUSTOMER");
+        yield return static () => ("CUStomer", "cUStomer");
+        yield return static () => ("customer_name", "customerName");
+        yield return static () => ("customer_first_name", "customerFirstName");
+        yield return static () => ("customer_first_name goes here", "customerFirstNameGoesHere");
+        yield return static () => ("customer name", "customerName");
+        yield return static () => ("customer   name", "customerName");
+        yield return static () => ("", "");
     }
 }

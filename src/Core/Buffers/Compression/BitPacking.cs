@@ -49,6 +49,7 @@ internal static class BitPacking
     /// <param name="source">source array.</param>
     /// <param name="destination">output array.</param>
     /// <param name="bit">number of bits to use per integer.</param>
+    /// <exception cref="ArgumentException">Unsupported bit width.</exception>
     public static void Pack(ReadOnlySpan<int> source, Span<int> destination, int bit)
     {
         switch (bit)
@@ -1379,6 +1380,7 @@ internal static class BitPacking
     /// <param name="source">source array.</param>
     /// <param name="destination">output array.</param>
     /// <param name="bit">number of bits to use per integer.</param>
+    /// <exception cref="ArgumentException">Unsupported bit width.</exception>
     public static void PackWithoutMask(ReadOnlySpan<int> source, Span<int> destination, int bit)
     {
         switch (bit)
@@ -2674,6 +2676,7 @@ internal static class BitPacking
     /// <param name="source">source array.</param>
     /// <param name="destination">output array.</param>
     /// <param name="bit">number of bits to use per integer.</param>
+    /// <exception cref="ArgumentException">Unsupported bit width.</exception>
     public static void Unpack(ReadOnlySpan<int> source, Span<int> destination, int bit)
     {
         switch (bit)

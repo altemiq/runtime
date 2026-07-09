@@ -21,6 +21,7 @@ public class StructConverter : System.Text.Json.Serialization.JsonConverter<Stru
     /// </summary>
     /// <param name="document">The <see cref="JsonDocument"/> instance.</param>
     /// <returns>The <see cref="Struct"/> instance.</returns>
+    /// <exception cref="JsonException">The document.</exception>
     public static Struct? ToStruct(JsonDocument? document) =>
         document switch
         {

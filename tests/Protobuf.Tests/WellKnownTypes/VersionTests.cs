@@ -8,7 +8,7 @@ public class VersionTests
     [Arguments("1.2.3.4", 1, 2, 3, 4)]
     public async Task Parse(string input, int major, int minor, int build, int revision)
     {
-        await Assert.That(Version.Parse(input))
+        _ = await Assert.That(Version.Parse(input))
             .Member(x => x.Major, m => m.IsEqualTo(major)).And
             .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
             .Member(x => x.HasBuild, m => m.IsEqualTo(build >= 0)).And
@@ -23,8 +23,8 @@ public class VersionTests
     [Arguments("1.2.3.4", 1, 2, 3, 4)]
     public async Task TryParse(string input, int major, int minor, int build, int revision)
     {
-        await Assert.That(Version.TryParse(input, out var output)).IsTrue();
-        await Assert.That(output)
+        _ = await Assert.That(Version.TryParse(input, out var output)).IsTrue();
+        _ = await Assert.That(output)
             .IsNotNull().And
             .Member(x => x.Major, m => m.IsEqualTo(major)).And
             .Member(x => x.Minor, m => m.IsEqualTo(minor)).And
@@ -46,7 +46,7 @@ public class VersionTests
             (_, < 0) => 3,
             _ => 4,
         };
-        await Assert.That(Version.ForVersion(
+        _ = await Assert.That(Version.ForVersion(
             fieldCount switch
             {
                 4 => new(major, minor, build, revision),
@@ -63,7 +63,7 @@ public class VersionTests
     public async Task FormatSpan(string input, int major, int minor, int build, int revision)
     {
         string? output = default;
-        await Assert.That(() =>
+        _ = await Assert.That(() =>
         {
             Span<char> outputSpan = stackalloc char[input.Length];
             var response = ((ISpanFormattable)Version.ForVersion(
@@ -76,7 +76,7 @@ public class VersionTests
             output = outputSpan[..charsWritten].ToString();
             return response;
         }).IsTrue();
-        await Assert.That(output).IsEqualTo(input);
+        _ = await Assert.That(output).IsEqualTo(input);
     }
 #endif
 
@@ -90,7 +90,7 @@ public class VersionTests
     [Arguments(1, 2, 3, 4, 1, 2, 3, -1, 1)]
     public async Task CompareTo(int leftMajor, int leftMinor, int leftBuild, int leftRevision, int rightMajor, int rightMinor, int rightBuild, int rightRevision, int expected)
     {
-        await Assert.That(Create(leftMajor, leftMinor, leftBuild, leftRevision).CompareTo(Create(rightMajor, rightMinor, rightBuild, rightRevision))).IsEqualTo(expected);
+        _ = await Assert.That(Create(leftMajor, leftMinor, leftBuild, leftRevision).CompareTo(Create(rightMajor, rightMinor, rightBuild, rightRevision))).IsEqualTo(expected);
 
         static Version Create(int major, int minor, int build, int revision)
         {
@@ -108,5 +108,4 @@ public class VersionTests
             return version;
         }
     }
-
 }

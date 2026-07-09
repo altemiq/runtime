@@ -368,6 +368,7 @@ public static partial class List
     /// <typeparam name="TResult">The base type to cast the elements of <paramref name="source"/> to.</typeparam>
     /// <param name="source">The <see cref="IList{T}"/> that contains the elements to be cast.</param>
     /// <returns>An <see cref="IList{T}"/> that contains each element of <paramref name="source"/> cast to <typeparamref name="TResult"/>.</returns>
+    /// <exception cref="InvalidOperationException">Failed to create list.</exception>
     [System.Diagnostics.CodeAnalysis.RequiresDynamicCode($"Requires reflection on {nameof(source)}")]
     [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull(nameof(source))]
     public static IList<TResult>? Cast<TSource, TResult>(this IList<TSource>? source)

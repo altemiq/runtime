@@ -228,10 +228,15 @@ public static class TextInfoExtensions
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
     private static string AsString(Span<char> source) => new(source);
 #else
-    private static unsafe string AsString(Span<char> source)
+    private static string AsString(Span<char> source)
     {
-        var ptr = (char*)System.Runtime.CompilerServices.Unsafe.AsPointer(ref source.GetPinnableReference());
-        return new(ptr, 0, source.Length);
+#pragma warning disable S6640
+        unsafe
+        {
+            var ptr = (char*)System.Runtime.CompilerServices.Unsafe.AsPointer(ref source.GetPinnableReference());
+            return new(ptr, 0, source.Length);
+        }
+#pragma warning restore S6640
     }
 #endif
 }

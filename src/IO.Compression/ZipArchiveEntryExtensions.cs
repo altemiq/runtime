@@ -26,6 +26,7 @@ public static class ZipArchiveEntryExtensions
         /// </summary>
         /// <returns>The seekable stream that represents the contents of the entry.</returns>
         /// <param name="leaveOpen"><see langword="true"/> to leave this entry open after the <see cref="Stream"/> object is disposed; otherwise, <see langword="false"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="entry"/> is <see langword="null"/>.</exception>
         public Stream OpenSeekable(bool leaveOpen = true)
         {
             if (entry is not { Archive: { } archive, Length: var length })

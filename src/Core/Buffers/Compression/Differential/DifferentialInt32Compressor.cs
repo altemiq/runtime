@@ -48,7 +48,7 @@ internal sealed class DifferentialInt32Compressor(IHeadlessDifferentialInt32Code
     {
         var decompressed = new int[compressed[0]];
         var initValue = 0;
-        codec.Decompress(compressed.AsSpan(1), decompressed, ref initValue);
+        _ = codec.Decompress(compressed.AsSpan(1), decompressed, ref initValue);
         return decompressed;
     }
 

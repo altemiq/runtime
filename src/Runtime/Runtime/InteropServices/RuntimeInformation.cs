@@ -36,6 +36,7 @@ public static class RuntimeInformation
     /// <summary>
     /// Gets the target framework.
     /// </summary>
+    /// <exception cref="InvalidOperationException">Failed to get the framework name.</exception>
     [field: System.Diagnostics.CodeAnalysis.MaybeNull]
     public static string TargetFramework
     {
@@ -274,6 +275,9 @@ public static class RuntimeInformation
             System.Runtime.InteropServices.Architecture.X64 => X64,
 #if NET5_0_OR_GREATER
             System.Runtime.InteropServices.Architecture.Wasm => Wasm,
+#endif
+#if NET6_0_OR_GREATER
+            System.Runtime.InteropServices.Architecture.S390x => throw new NotSupportedException(),
 #endif
             _ => throw new InvalidOperationException(),
         };

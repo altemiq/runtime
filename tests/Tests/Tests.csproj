@@ -6,8 +6,7 @@
     <TargetFrameworks Condition="$([System.OperatingSystem]::IsWindows())">$(TargetFrameworks);net472</TargetFrameworks>
     <NoWarn>$(NoWarn);CA1861</NoWarn>
     <LangVersion>preview</LangVersion>
-
-    <MeziantouPolyfill_IncludedPolyfills>T:System.Runtime.CompilerServices.IsExternalInit|T:System.Runtime.CompilerServices.CallerArgumentExpression</MeziantouPolyfill_IncludedPolyfills>
+    <MeziantouPolyfill_ExcludedPolyfills>$(MeziantouPolyfill_ExcludedPolyfills)|M:System.BitConverter|M:System.Buffers.Binary|M:System.Linq.AsyncEnumerable|M:System.Random.NextInt64</MeziantouPolyfill_ExcludedPolyfills>
   </PropertyGroup>
 
   <ItemGroup>

@@ -20,7 +20,7 @@ public class Span2DExtensionsTests
         };
 
         first += second;
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class Span2DExtensionsTests
         };
 
         first += second;
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class Span2DExtensionsTests
         };
 
         first += second;
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -71,7 +71,7 @@ public class Span2DExtensionsTests
         };
 
         first += second;
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -89,7 +89,7 @@ public class Span2DExtensionsTests
 
         first -= second;
 
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -106,7 +106,7 @@ public class Span2DExtensionsTests
         };
 
         first -= second;
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -131,7 +131,7 @@ public class Span2DExtensionsTests
         };
 
         first -= second;
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -156,7 +156,7 @@ public class Span2DExtensionsTests
         };
 
         first -= second;
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -168,7 +168,7 @@ public class Span2DExtensionsTests
 
         first *= second;
 
-        await Assert.That(first.ToArray()).IsEquivalentTo(values.Expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(values.Expected);
     }
 
     [Test]
@@ -184,7 +184,7 @@ public class Span2DExtensionsTests
 
         first *= 2D;
 
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -200,13 +200,13 @@ public class Span2DExtensionsTests
 
         first *= 2D;
 
-        await Assert.That(first.ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.ToArray()).IsEquivalentTo(expected);
     }
 
     public static IEnumerable<Func<ThreeArrays>> GetMatricesToMultiply()
     {
-        yield return () => new ThreeArrays(new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 7, 10 }, { 15, 22 }, });
-        yield return () => new ThreeArrays(new double[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } }, new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, new double[,] { { 9, 12, 15 }, { 19, 26, 33 }, { 29, 40, 51 }, });
+        yield return static () => new ThreeArrays(new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 1, 2 }, { 3, 4 } }, new double[,] { { 7, 10 }, { 15, 22 }, });
+        yield return static () => new ThreeArrays(new double[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } }, new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, new double[,] { { 9, 12, 15 }, { 19, 26, 33 }, { 29, 40, 51 }, });
     }
 
     private static Span2D<double> Create()

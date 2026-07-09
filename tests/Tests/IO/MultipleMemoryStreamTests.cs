@@ -13,10 +13,10 @@ public class MultipleMemoryStreamTests
     {
         var dictionary = new Dictionary<string, Stream>();
         var stream = new MultipleMemoryStream(dictionary);
-        await Assert.That(stream.SwitchTo("first")).IsTrue();
-        await Assert.That(stream.SwitchTo("second")).IsTrue();
-        await Assert.That(dictionary.Values)
+        _ = await Assert.That(stream.SwitchTo("first")).IsTrue();
+        _ = await Assert.That(stream.SwitchTo("second")).IsTrue();
+        _ = await Assert.That(dictionary.Values)
             .All()
-            .Satisfy(x => x.IsTypeOf<MemoryStream>().And.IsTypeOf<Stream>());
+            .Satisfy(static x => x.IsTypeOf<MemoryStream>().And.IsTypeOf<Stream>());
     }
 }

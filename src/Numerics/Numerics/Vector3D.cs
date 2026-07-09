@@ -414,10 +414,13 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     /// <returns>A new <see cref="Vector3D" /> whose elements have the specified values.</returns>
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector3D Create(ReadOnlySpan<double> values) =>
-        values.Length < ElementCount
-            ? throw new ArgumentOutOfRangeException(nameof(values))
-            : Unsafe.ReadUnaligned<Vector3D>(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(values)));
+    public static Vector3D Create(ReadOnlySpan<double> values)
+    {
+#pragma warning disable S3236 // Caller information arguments should not be provided explicitly
+        ArgumentOutOfRangeException.ThrowIfLessThan(values.Length, ElementCount, nameof(values));
+#pragma warning restore S3236 // Caller information arguments should not be provided explicitly
+        return Unsafe.ReadUnaligned<Vector3D>(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(values)));
+    }
 
     /// <summary>Creates a vector with <see cref="X" /> initialized to the specified value and the remaining elements initialized to zero.</summary>
     /// <param name="x">The value to assign to the <see cref="X" /> field.</param>
@@ -691,6 +694,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     public static bool LessThanOrEqualAny(Vector3D left, Vector3D right) => Vector256.LessThanOrEqualAny(left.AsVector256Unsafe(), right.AsVector256Unsafe());
 #endif
 
+#pragma warning disable S6640 // Unsafe code blocks should not be used
     /// <inheritdoc cref="Vector4D.Load(double*)" />
     [Intrinsic]
     public static unsafe Vector3D Load(double* source) => LoadUnsafe(in *source);
@@ -705,6 +709,7 @@ public struct Vector3D : IEquatable<Vector3D>, IFormattable
     /// <inheritdoc cref="Vector4D.LoadAlignedNonTemporal(double*)" />
     [Intrinsic]
     public static unsafe Vector3D LoadAlignedNonTemporal(double* source) => LoadAligned(source);
+#pragma warning restore S6640 // Unsafe code blocks should not be used
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />

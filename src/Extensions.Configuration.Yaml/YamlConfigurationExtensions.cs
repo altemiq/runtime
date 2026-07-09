@@ -59,11 +59,7 @@ public static class YamlConfigurationExtensions
         public IConfigurationBuilder AddYamlFile(FileProviders.IFileProvider? provider, string path, bool optional, bool reloadOnChange)
         {
             ArgumentNullException.ThrowIfNull(builder);
-
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentException(Altemiq.Extensions.Configuration.Yaml.Properties.Resources.Error_InvalidFilePath, nameof(path));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(path);
 
             return builder.AddYamlFile(s =>
             {

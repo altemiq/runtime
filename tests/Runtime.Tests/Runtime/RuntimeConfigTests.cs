@@ -4,14 +4,18 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+
 namespace Altemiq.Runtime;
 
-using InteropServices;
+using Altemiq.Runtime.InteropServices;
 
 public class RuntimeConfigTests
 {
     [Test]
-    public async Task ReadRuntimeConfig() => await Assert.That(RuntimeEnvironment.GetRuntimeConfig()).IsNotNull();
+    public async Task ReadRuntimeConfig()
+    {
+        _ = await Assert.That(RuntimeEnvironment.GetRuntimeConfig()).IsNotNull();
+    }
 
     [Test]
     public async Task SaveRuntimeConfig()

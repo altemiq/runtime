@@ -53,7 +53,9 @@ public partial struct Matrix4x4D
         public Vector4D W;
 
         private const double BillboardEpsilon = 1e-4;
-        private const double BillboardMinAngle = 1.0 - (0.1 * (double.Pi / 180.0)); // 0.1 degrees
+
+        /* 0.1 degrees */
+        private const double BillboardMinAngle = 1.0 - (0.1 * (double.Pi / 180.0));
         private const double DecomposeEpsilon = 0.0001;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -331,14 +333,18 @@ public partial struct Matrix4x4D
             return CreateFromQuaternion(q);
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixLookToRH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixLookToRH method
+         https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreateLookTo(in Vector3D cameraPosition, in Vector3D cameraDirection, in Vector3D cameraUpVector) =>
             CreateLookToLeftHanded(cameraPosition, -cameraDirection, cameraUpVector);
 
-        // This implementation is based on the DirectX Math Library XMMatrixLookToLH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixLookToLH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreateLookToLeftHanded(in Vector3D cameraPosition, in Vector3D cameraDirection, in Vector3D cameraUpVector)
         {
@@ -357,8 +363,10 @@ public partial struct Matrix4x4D
             return Transpose(result);
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixOrthographicRH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixOrthographicRH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreateOrthographic(double width, double height, double zNearPlane, double zFarPlane)
         {
@@ -374,8 +382,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixOrthographicLH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixOrthographicLH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreateOrthographicLeftHanded(double width, double height, double zNearPlane, double zFarPlane)
         {
@@ -391,8 +401,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixOrthographicOffCenterRH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixOrthographicOffCenterRH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreateOrthographicOffCenter(double left, double right, double bottom, double top, double zNearPlane, double zFarPlane)
         {
@@ -414,8 +426,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixOrthographicOffCenterLH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixOrthographicOffCenterLH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreateOrthographicOffCenterLeftHanded(double left, double right, double bottom, double top, double zNearPlane, double zFarPlane)
         {
@@ -437,8 +451,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixPerspectiveRH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixPerspectiveRH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreatePerspective(double width, double height, double nearPlaneDistance, double farPlaneDistance)
         {
@@ -459,8 +475,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixPerspectiveLH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixPerspectiveLH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreatePerspectiveLeftHanded(double width, double height, double nearPlaneDistance, double farPlaneDistance)
         {
@@ -481,8 +499,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixPerspectiveFovRH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixPerspectiveFovRH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreatePerspectiveFieldOfView(double fieldOfView, double aspectRatio, double nearPlaneDistance, double farPlaneDistance)
         {
@@ -507,8 +527,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixPerspectiveFovLH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixPerspectiveFovLH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreatePerspectiveFieldOfViewLeftHanded(double fieldOfView, double aspectRatio, double nearPlaneDistance, double farPlaneDistance)
         {
@@ -533,8 +555,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixPerspectiveOffCenterRH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixPerspectiveOffCenterRH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreatePerspectiveOffCenter(double left, double right, double bottom, double top, double nearPlaneDistance, double farPlaneDistance)
         {
@@ -561,8 +585,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixPerspectiveOffCenterLH method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixPerspectiveOffCenterLH method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreatePerspectiveOffCenterLeftHanded(double left, double right, double bottom, double top, double nearPlaneDistance, double farPlaneDistance)
         {
@@ -589,8 +615,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixReflect method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixReflect method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl CreateReflection(in PlaneD value)
         {
@@ -920,6 +948,7 @@ public partial struct Matrix4x4D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Vulnerability", "S6640:Unsafe code blocks should not be used", Justification = "Checked")]
         public static unsafe bool Decompose(in Impl matrix, out Vector3D scale, out QuaternionD rotation, out Vector3D translation)
         {
             var matTemp = Identity.AsImpl();
@@ -965,28 +994,25 @@ public partial struct Matrix4x4D
                     }
                 }
             }
+            else if (x < z)
+            {
+                a = 2;
+                b = 0;
+                c = 1;
+            }
             else
             {
-                if (x < z)
+                a = 0;
+
+                if (y < z)
                 {
-                    a = 2;
-                    b = 0;
+                    b = 2;
                     c = 1;
                 }
                 else
                 {
-                    a = 0;
-
-                    if (y < z)
-                    {
-                        b = 2;
-                        c = 1;
-                    }
-                    else
-                    {
-                        b = 1;
-                        c = 2;
-                    }
+                    b = 1;
+                    c = 2;
                 }
             }
 
@@ -1059,8 +1085,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixInverse method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixInverse method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Invert(in Impl matrix, out Impl result)
         {
@@ -1364,8 +1392,10 @@ public partial struct Matrix4x4D
             return result;
         }
 
-        // This implementation is based on the DirectX Math Library XMMatrixTranspose method
-        // https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        /*
+          This implementation is based on the DirectX Math Library XMMatrixTranspose method
+          https://github.com/microsoft/DirectXMath/blob/master/Inc/DirectXMathMatrix.inl
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Impl Transpose(in Impl matrix)
         {
@@ -1402,8 +1432,10 @@ public partial struct Matrix4x4D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => obj is Matrix4x4D other && this.Equals(in other.AsImpl());
 
-        // This function needs to account for floating-point equality around NaN
-        // and so must behave equivalently to the underlying double/double.Equals
+        /*
+          This function needs to account for floating-point equality around NaN
+          and so must behave equivalently to the underlying double/double.Equals
+        */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool Equals(in Impl other) =>
             this.X.Equals(other.X)

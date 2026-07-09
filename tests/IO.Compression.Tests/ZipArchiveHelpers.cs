@@ -1,15 +1,15 @@
 ﻿namespace Altemiq.IO.Compression;
 
-internal class ZipArchiveHelpers
+internal sealed class ZipArchiveHelpers
 {
-    public class ZipArchiveShim(Stream stream, System.IO.Compression.ZipArchiveMode mode) : System.IO.Compression.ZipArchive(stream, mode)
+    public sealed class ZipArchiveShim(Stream stream, System.IO.Compression.ZipArchiveMode mode) : System.IO.Compression.ZipArchive(stream, mode)
     {
         public bool IsDisposed { get; private set; }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            this.IsDisposed = true;
+            IsDisposed = true;
         }
     }
 

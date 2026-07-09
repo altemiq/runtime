@@ -319,18 +319,23 @@ public static class ReadOnlySpan2DExtensions
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
+        /// <param name="y">A double-precision floating-point number that specifies a power.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
-        public ReadOnlySpan2D<T> Pow(int y) => matrix ^ y;
+        public ReadOnlySpan2D<T> Pow(double y) => matrix ^ y;
 
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the specified instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
+        /// <param name="x">A <see cref="ReadOnlySpan2D{T}"/> to be raised to a power.</param>
+        /// <param name="y">A double-precision floating-point number that specifies a power.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
-        public static ReadOnlySpan2D<T> operator ^(ReadOnlySpan2D<T> x, int y) => y is not -1 ? throw new NotSupportedException() : x.Invert();
+        public static ReadOnlySpan2D<T> operator ^(ReadOnlySpan2D<T> x, double y) => y is not -1 ? throw new NotSupportedException() : x.Invert();
 
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the specified instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
+        /// <param name="x">A <see cref="ReadOnlySpan2D{T}"/> to be raised to a power.</param>
+        /// <param name="y">The inverter to use to invert <paramref name="x"/>.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
         public static ReadOnlySpan2D<T> operator ^(ReadOnlySpan2D<T> x, IMatrixInverter y) => y.Invert(x);
 
@@ -338,6 +343,8 @@ public static class ReadOnlySpan2DExtensions
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
+        /// <exception cref="InvalidOperationException"><paramref name="matrix"/> is not square.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The determinant is zero.</exception>
         public ReadOnlySpan2D<T> Invert()
         {
             if (matrix.Height != matrix.Width)
@@ -423,6 +430,7 @@ public static class ReadOnlySpan2DExtensions
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
+        /// <typeparam name="TInverter">The type of inverter.</typeparam>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
         public ReadOnlySpan2D<T> Invert<TInverter>()
             where TInverter : IMatrixInverter => matrix.Invert(TInverter.Instance);
@@ -430,6 +438,7 @@ public static class ReadOnlySpan2DExtensions
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
+        /// <param name="inverter">The inverter to use.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
         public ReadOnlySpan2D<T> Invert(IMatrixInverter inverter) => inverter.Invert(matrix);
     }
@@ -470,6 +479,7 @@ public static class ReadOnlySpan2DExtensions
         /// Gets the determinant of the current <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
         /// <returns>A double value representing the determinant of the matrix.</returns>
+        /// <exception cref="NotSupportedException"><paramref name="matrix"/> is not square.</exception>
         public T GetDeterminant() =>
             matrix switch
             {

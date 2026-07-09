@@ -12,20 +12,20 @@ public class ReadOnlySpan2DExtensionsTests
     public async Task IsIdentity()
     {
         var matrix = new ReadOnlySpan2D<double>([1D, 0D, 0D, 1D], 2, 2);
-        await Assert.That(matrix.IsIdentity).IsTrue();
+        _ = await Assert.That(matrix.IsIdentity).IsTrue();
     }
 
     [Test]
     [MethodDataSource(nameof(GetNotIdentityData))]
     public async Task IsNotIdentity(SingleArray matrix)
     {
-        await Assert.That(new ReadOnlySpan2D<double>(matrix.Array).IsIdentity).IsFalse();
+        _ = await Assert.That(new ReadOnlySpan2D<double>(matrix.Array).IsIdentity).IsFalse();
     }
 
     [Test]
     public async Task IsNotSquare()
     {
-        await Assert.That(new ReadOnlySpan2D<double>([0, 0, 0, 0, 0, 0], 3, 2).IsSquare).IsFalse();
+        _ = await Assert.That(new ReadOnlySpan2D<double>([0, 0, 0, 0, 0, 0], 3, 2).IsSquare).IsFalse();
     }
 
     [Test]
@@ -41,7 +41,7 @@ public class ReadOnlySpan2DExtensionsTests
             { 10, 12 },
         };
 
-        await Assert.That(first.Add(second).ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.Add(second).ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -57,7 +57,7 @@ public class ReadOnlySpan2DExtensionsTests
             { 3, 5 },
         };
 
-        await Assert.That(first.Subtract(second).ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.Subtract(second).ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class ReadOnlySpan2DExtensionsTests
             { 29, 40, 51 },
         };
 
-        await Assert.That(first.Multiply(second).ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.Multiply(second).ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -87,7 +87,7 @@ public class ReadOnlySpan2DExtensionsTests
             { 10, 12 },
         };
 
-        await Assert.That(first.Scale(2D).ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(first.Scale(2D).ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -96,7 +96,7 @@ public class ReadOnlySpan2DExtensionsTests
         var first = new ReadOnlySpan2D<double>([1, 2, 3, 4, 5, 6], 3, 2);
         var expected = new ReadOnlySpan2D<double>([1, 3, 5, 2, 4, 6], 2, 3);
 
-        await Assert.That(first.Transpose().ToArray()).IsEquivalentTo(expected.ToArray());
+        _ = await Assert.That(first.Transpose().ToArray()).IsEquivalentTo(expected.ToArray());
     }
 
     [Test]
@@ -104,7 +104,7 @@ public class ReadOnlySpan2DExtensionsTests
     public async Task Determinant(DeterminantData data)
     {
         ReadOnlySpan2D<double> input = data.Array;
-        await Assert.That(input.GetDeterminant()).IsEqualTo(data.Expected);
+        _ = await Assert.That(input.GetDeterminant()).IsEqualTo(data.Expected);
     }
 
     [Test]
@@ -118,7 +118,7 @@ public class ReadOnlySpan2DExtensionsTests
             { -1, 0, 1 },
         };
 
-        await Assert.That((matrix ^ -1).ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That((matrix ^ -1).ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -132,7 +132,7 @@ public class ReadOnlySpan2DExtensionsTests
             { -1, 0, 1 },
         };
 
-        await Assert.That(matrix.Invert<double, GaussianInverter>().ToArray()).IsEquivalentTo(expected);
+        _ = await Assert.That(matrix.Invert<double, GaussianInverter>().ToArray()).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -146,7 +146,7 @@ public class ReadOnlySpan2DExtensionsTests
             { 2.111, -0.556, 0.111 },
         };
 
-        await Assert.That(Round(matrix.Invert(CholeskyInverter.Instance).ToArray(), 3)).IsEquivalentTo(expected);
+        _ = await Assert.That(Round(matrix.Invert(CholeskyInverter.Instance).ToArray(), 3)).IsEquivalentTo(expected);
     }
 
     [Test]
@@ -164,21 +164,21 @@ public class ReadOnlySpan2DExtensionsTests
 
         var check = new ReadOnlySpan2D<double>(Round((CayleyHamiltonInverter.Instance.Invert(input) * input).ToArray(), 10));
 
-        await Assert.That(check.IsIdentity).IsTrue();
+        _ = await Assert.That(check.IsIdentity).IsTrue();
     }
 
     public static IEnumerable<Func<SingleArray>> GetNotIdentityData()
     {
-        yield return () => new SingleArray(new double[2, 2] { { 1, 0 }, { 0, 0 } });
-        yield return () => new SingleArray(new double[2, 2] { { 1, 1 }, { 0, 1 } });
+        yield return static () => new SingleArray(new double[2, 2] { { 1, 0 }, { 0, 0 } });
+        yield return static () => new SingleArray(new double[2, 2] { { 1, 1 }, { 0, 1 } });
     }
 
     public static IEnumerable<Func<DeterminantData>> GetDeterminantData()
     {
-        yield return () => new DeterminantData(new double[0, 0], 0);
-        yield return () => new DeterminantData(new double[1, 1] { { 3 } }, 3);
-        yield return () => new DeterminantData(new double[2, 2] { { 3, 2 }, { 1, 4 } }, 10);
-        yield return () => new DeterminantData(new double[3, 3] { { 1, 2, 3 }, { 0, 4, 5 }, { 1, 0, 6 } }, 22);
+        yield return static () => new DeterminantData(new double[0, 0], 0);
+        yield return static () => new DeterminantData(new double[1, 1] { { 3 } }, 3);
+        yield return static () => new DeterminantData(new double[2, 2] { { 3, 2 }, { 1, 4 } }, 10);
+        yield return static () => new DeterminantData(new double[3, 3] { { 1, 2, 3 }, { 0, 4, 5 }, { 1, 0, 6 } }, 22);
     }
 
     private static double[,] Round(double[,] matrix, int decimals)

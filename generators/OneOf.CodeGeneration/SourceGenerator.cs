@@ -38,8 +38,10 @@ public partial class SourceGenerator : IIncrementalGenerator
     private const string TripleSlash = "///";
     private const string Period = ".";
     private const string Space = " ";
+#pragma warning disable MA0101
     private const string NewLine = @"
 ";
+#pragma warning restore MA0101
 
     private static AttributeSyntax? generatedCodeAttribute;
 

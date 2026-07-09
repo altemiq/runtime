@@ -126,7 +126,7 @@ internal static class StreamExtensions
                 buffer[i] = byteOrder switch
                 {
                     ByteOrder.BigEndian => System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(bytes.AsSpan(i * 4, 4)),
-                    _ => System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(i * 4, 4)),
+                    ByteOrder.LittleEndian or _ => System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(i * 4, 4)),
                 };
             }
 

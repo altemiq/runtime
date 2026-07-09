@@ -227,35 +227,32 @@ public struct QuaternionD : IEquatable<QuaternionD>
             q.Y = (matrix.M31 - matrix.M13) * s;
             q.Z = (matrix.M12 - matrix.M21) * s;
         }
+        else if (matrix.M11 >= matrix.M22 && matrix.M11 >= matrix.M33)
+        {
+            var s = double.Sqrt(1.0 + matrix.M11 - matrix.M22 - matrix.M33);
+            var invS = 0.5 / s;
+            q.X = 0.5 * s;
+            q.Y = (matrix.M12 + matrix.M21) * invS;
+            q.Z = (matrix.M13 + matrix.M31) * invS;
+            q.W = (matrix.M23 - matrix.M32) * invS;
+        }
+        else if (matrix.M22 > matrix.M33)
+        {
+            var s = double.Sqrt(1.0 + matrix.M22 - matrix.M11 - matrix.M33);
+            var invS = 0.5 / s;
+            q.X = (matrix.M21 + matrix.M12) * invS;
+            q.Y = 0.5 * s;
+            q.Z = (matrix.M32 + matrix.M23) * invS;
+            q.W = (matrix.M31 - matrix.M13) * invS;
+        }
         else
         {
-            if (matrix.M11 >= matrix.M22 && matrix.M11 >= matrix.M33)
-            {
-                var s = double.Sqrt(1.0 + matrix.M11 - matrix.M22 - matrix.M33);
-                var invS = 0.5 / s;
-                q.X = 0.5 * s;
-                q.Y = (matrix.M12 + matrix.M21) * invS;
-                q.Z = (matrix.M13 + matrix.M31) * invS;
-                q.W = (matrix.M23 - matrix.M32) * invS;
-            }
-            else if (matrix.M22 > matrix.M33)
-            {
-                var s = double.Sqrt(1.0 + matrix.M22 - matrix.M11 - matrix.M33);
-                var invS = 0.5 / s;
-                q.X = (matrix.M21 + matrix.M12) * invS;
-                q.Y = 0.5 * s;
-                q.Z = (matrix.M32 + matrix.M23) * invS;
-                q.W = (matrix.M31 - matrix.M13) * invS;
-            }
-            else
-            {
-                var s = double.Sqrt(1.0 + matrix.M33 - matrix.M11 - matrix.M22);
-                var invS = 0.5 / s;
-                q.X = (matrix.M31 + matrix.M13) * invS;
-                q.Y = (matrix.M32 + matrix.M23) * invS;
-                q.Z = 0.5 * s;
-                q.W = (matrix.M12 - matrix.M21) * invS;
-            }
+            var s = double.Sqrt(1.0 + matrix.M33 - matrix.M11 - matrix.M22);
+            var invS = 0.5 / s;
+            q.X = (matrix.M31 + matrix.M13) * invS;
+            q.Y = (matrix.M32 + matrix.M23) * invS;
+            q.Z = 0.5 * s;
+            q.W = (matrix.M12 - matrix.M21) * invS;
         }
 
         return q;

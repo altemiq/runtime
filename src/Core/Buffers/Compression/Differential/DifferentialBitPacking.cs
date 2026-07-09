@@ -50,6 +50,7 @@ internal static class DifferentialBitPacking
     /// <param name="source">The input array.</param>
     /// <param name="destination">The output array.</param>
     /// <param name="bit">The number of bits to use per integer.</param>
+    /// <exception cref="ArgumentException">Unsupported bit width.</exception>
     public static void Pack(int initialOffset, ReadOnlySpan<int> source, Span<int> destination, int bit)
     {
         switch (bit)
@@ -1405,6 +1406,7 @@ internal static class DifferentialBitPacking
     /// <param name="source">The source array.</param>
     /// <param name="destination">The output array.</param>
     /// <param name="bit">The number of bits to use per integer.</param>
+    /// <exception cref="ArgumentException">Unsupported bit width.</exception>
     public static void Unpack(int initialOffset, ReadOnlySpan<int> source, Span<int> destination, int bit)
     {
         switch (bit)

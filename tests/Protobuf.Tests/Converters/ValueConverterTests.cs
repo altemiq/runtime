@@ -33,19 +33,19 @@ public class ValueConverterTests
         [Test]
         public async Task CreateFromJson()
         {
-            await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse(Json).RootElement)).IsNotNull();
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse(Json).RootElement)).IsNotNull();
         }
 
         [Test]
         public async Task CreateFromEmpty()
         {
-            await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("{}").RootElement)).IsNotNull();
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("{}").RootElement)).IsNotNull();
         }
 
         [Test]
         public async Task CreateFromNull()
         {
-            await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("null").RootElement).KindCase).IsEqualTo(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("null").RootElement).KindCase).IsEqualTo(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
         }
 
         [Test]
@@ -53,19 +53,19 @@ public class ValueConverterTests
         public async Task CreateFromValue(Google.Protobuf.WellKnownTypes.Value value, System.Text.Json.JsonValueKind valueKind, Func<System.Text.Json.JsonElement, object?> getValue, object? expected)
         {
             var element = ValueConverter.ToJsonElement(value);
-            await Assert.That(element.ValueKind).IsEqualTo(valueKind);
-            await Assert.That(getValue(element)).IsEquivalentTo(expected);
+            _ = await Assert.That(element.ValueKind).IsEqualTo(valueKind);
+            _ = await Assert.That(getValue(element)).IsEquivalentTo(expected);
         }
 
         public static IEnumerable<Func<(Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.JsonElement, object?>, object?)>> GetElementData()
         {
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, element => element.GetUInt32(), 1U);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, element => element.GetDouble(), 123.456);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, element => element.GetBoolean(), false);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, element => element.GetBoolean(), true);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, _ => null, null);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, element => element.GetString(), "value");
-            yield return () => (
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, static element => element.GetUInt32(), 1U);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, static element => element.GetDouble(), 123.456);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, static element => element.GetBoolean(), false);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, static element => element.GetBoolean(), true);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, static _ => null, null);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, static element => element.GetString(), "value");
+            yield return static () => (
                 Google.Protobuf.WellKnownTypes.Value.ForList(
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(1),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(2),
@@ -73,13 +73,14 @@ public class ValueConverterTests
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(4),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(5)),
                 System.Text.Json.JsonValueKind.Array,
-                element => element.EnumerateArray().Select(e => e.GetInt32()),
+                static element => element.EnumerateArray().Select(static e => e.GetInt32()),
                 Int32Array);
-            yield return () => (
+            yield return static () => (
                 Google.Protobuf.WellKnownTypes.Value.ForStruct(new() { Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } } }),
                 System.Text.Json.JsonValueKind.Object,
-                element => element.ToString(),
-                """{ "Id": 1 }""");
+                static element => element.ToString(),
+                                     /*lang=json,strict*/
+                                     """{ "Id": 1 }""");
         }
     }
 
@@ -88,19 +89,19 @@ public class ValueConverterTests
         [Test]
         public async Task CreateFromJson()
         {
-            await Assert.That(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(Json))).IsNotNull();
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse(Json))).IsNotNull();
         }
 
         [Test]
         public async Task CreateFromEmpty()
         {
-            await Assert.That(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("{}"))).IsNotNull();
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("{}"))).IsNotNull();
         }
 
         [Test]
         public async Task CreateFromNull()
         {
-            await Assert.That(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("null")).KindCase).IsEqualTo(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.Nodes.JsonNode.Parse("null")).KindCase).IsEqualTo(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
         }
 
         [Test]
@@ -109,19 +110,17 @@ public class ValueConverterTests
         {
             if (ValueConverter.ToJsonNode(value) is { } node)
             {
-                await Assert.That(node.GetValueKind()).IsEqualTo(valueKind);
+                _ = await Assert.That(node.GetValueKind()).IsEqualTo(valueKind);
                 var nodeValue = getValue(node);
                 if (nodeValue is System.Collections.IEnumerable enumerable && expected is not null)
                 {
                     await IsEquivalentTo(enumerable, expected);
                 }
-                else if (expected is null)
-                {
-                    await Assert.That(nodeValue).IsNull();
-                }
                 else
                 {
-                    await Assert.That(nodeValue).IsEqualTo(expected);
+                    _ = expected is null
+                        ? await Assert.That(nodeValue).IsNull()
+                        : await Assert.That(nodeValue).IsEqualTo(expected);
                 }
             }
 
@@ -144,8 +143,8 @@ public class ValueConverterTests
                     return o
                         .GetType()
                         .GetInterfaces()
-                        .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                        .Select(t => t.GetGenericArguments()[0])
+                        .Where(static t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                        .Select(static t => t.GetGenericArguments()[0])
                         .Single();
                 }
             }
@@ -155,13 +154,13 @@ public class ValueConverterTests
 
         public static IEnumerable<Func<(Google.Protobuf.WellKnownTypes.Value, System.Text.Json.JsonValueKind, Func<System.Text.Json.Nodes.JsonNode, object?>, object?)>> GetElementData()
         {
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, node => (int)node.GetValue<double>(), 1);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, node => node.GetValue<double>(), 123.456);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, node => node.GetValue<bool>(), false);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, node => node.GetValue<bool>(), true);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, _ => null, null);
-            yield return () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, node => node.GetValue<string>(), "value");
-            yield return () => (
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(1), System.Text.Json.JsonValueKind.Number, static node => (int)node.GetValue<double>(), 1);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForNumber(123.456), System.Text.Json.JsonValueKind.Number, static node => node.GetValue<double>(), 123.456);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForBool(false), System.Text.Json.JsonValueKind.False, static node => node.GetValue<bool>(), false);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForBool(true), System.Text.Json.JsonValueKind.True, static node => node.GetValue<bool>(), true);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForNull(), System.Text.Json.JsonValueKind.Null, static _ => null, null);
+            yield return static () => (Google.Protobuf.WellKnownTypes.Value.ForString("value"), System.Text.Json.JsonValueKind.String, static node => node.GetValue<string>(), "value");
+            yield return static () => (
                 Google.Protobuf.WellKnownTypes.Value.ForList(
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(1),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(2),
@@ -169,17 +168,18 @@ public class ValueConverterTests
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(4),
                     Google.Protobuf.WellKnownTypes.Value.ForNumber(5)),
                 System.Text.Json.JsonValueKind.Array,
-                node => node.AsArray().Select(i => i!.GetValue<double>()),
+                static node => node.AsArray().Select(static i => i!.GetValue<double>()),
                 DoubleArray);
-            yield return () => (
+            yield return static () => (
                 Google.Protobuf.WellKnownTypes.Value.ForStruct(
                     new()
                     {
                         Fields = { { "Id", Google.Protobuf.WellKnownTypes.Value.ForNumber(1) } }
                     }),
                 System.Text.Json.JsonValueKind.Object,
-                node => node.AsObject().ToJsonString(new() { WriteIndented = false }),
-                """{"Id":1}""");
+                static node => node.AsObject().ToJsonString(new() { WriteIndented = false }),
+                                     /*lang=json,strict*/
+                                     """{"Id":1}""");
         }
     }
 
@@ -189,6 +189,6 @@ public class ValueConverterTests
 
     private static async Task AssertIsEquivalentTo<T, TInner>(IEnumerable<T> actual, IEnumerable<TInner> expected)
     {
-        await Assert.That(actual).IsEquivalentTo(expected);
+        _ = await Assert.That(actual).IsEquivalentTo(expected);
     }
 }

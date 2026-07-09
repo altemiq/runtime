@@ -21,7 +21,7 @@ public class SeekableStream : IO.SeekableStream
     /// <param name="archiveEntry">The archive entry.</param>
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
     public SeekableStream(System.IO.Compression.ZipArchiveEntry archiveEntry, bool leaveOpen = false)
-        : this(archiveEntry.Archive!, archiveEntry.Open(), archiveEntry.Length, leaveOpen)
+        : this(archiveEntry.Archive, archiveEntry.Open(), archiveEntry.Length, leaveOpen)
     {
     }
 

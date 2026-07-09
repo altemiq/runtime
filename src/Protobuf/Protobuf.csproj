@@ -6,14 +6,14 @@
     
     <MeziantouPolyfill_IncludedPolyfills>
       $(MeziantouPolyfill_IncludedPolyfills)|
+      M:System.String.Join``1(System.Char,System.Collections.Generic.IEnumerable{``0})|
+      T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute|
+      T:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute|
+      T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute|
+      T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|
+      T:System.Diagnostics.CodeAnalysis.StringSyntaxAttribute|
       T:System.Index|
       T:System.Range|
-      T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute|
-      T:System.Diagnostics.CodeAnalysis.StringSyntaxAttribute|
-      T:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute|
-      T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|
-      T:System.Diagnostics.CodeAnalysis.NotNullIfNotNullAttribute|
-      M:System.String.Join``1(System.Char,System.Collections.Generic.IEnumerable{``0})
     </MeziantouPolyfill_IncludedPolyfills>
     
     <_ProtoRoot>..\Grpc.Tools\native\include</_ProtoRoot>

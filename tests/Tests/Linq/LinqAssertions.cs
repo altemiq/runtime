@@ -11,8 +11,8 @@ public class LinqIndexOfWrapper<T>(AssertionContext<IEnumerable<T>> context, IEn
         [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expectedIndex))]
         string? expression = null)
     {
-        this.Context.ExpressionBuilder.Append($".EqualTo({expression})");
-        return new(this.Context, other, expectedIndex, readOnly);
+        _ = Context.ExpressionBuilder.Append($".EqualTo({expression})");
+        return new(Context, other, expectedIndex, readOnly);
     }
 }
 
@@ -78,8 +78,8 @@ public class LinqIndexOfAnyWrapper<T>(AssertionContext<IEnumerable<T>> context, 
         [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expectedIndex))]
         string? expression = null)
     {
-        this.Context.ExpressionBuilder.Append($".EqualTo({expression})");
-        return new(this.Context, other, expectedIndex, readOnly);
+        _ = Context.ExpressionBuilder.Append($".EqualTo({expression})");
+        return new(Context, other, expectedIndex, readOnly);
     }
 }
 
@@ -140,7 +140,10 @@ public class LinqIndexOfAnyAssertion<T>(AssertionContext<IEnumerable<T>> context
 public class LinqEqualsAssertion<T>(AssertionContext<IEnumerable<T>> context, IEnumerable<T> other, int sourceIndex, int otherIndex, int count, bool sourceReadOnly, bool otherReadOnly, bool result = true) : CollectionAssertionBase<IEnumerable<T>, T>(context)
     where T : IEquatable<T>
 {
-    protected override string GetExpectation() => result ? $"to be equal to {other}" : $"to not be equal to {other}";
+    protected override string GetExpectation()
+    {
+        return result ? $"to be equal to {other}" : $"to not be equal to {other}";
+    }
 
     protected override Task<AssertionResult> CheckAsync(EvaluationMetadata<IEnumerable<T>> metadata)
     {

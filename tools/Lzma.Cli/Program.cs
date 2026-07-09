@@ -194,6 +194,6 @@ static void SetHelpCustomSource(Command command, Symbol symbol, string defaultVa
         && helpAction.GetType().GetProperty("Builder", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)?.GetValue(helpAction) is { } builder
         && builder.GetType().GetMethod("CustomizeSymbol", [typeof(Symbol), typeof(string), typeof(string), typeof(string)]) is { } method)
     {
-        method.Invoke(builder, [symbol, default(string), default(string), defaultValue]);
+        _ = method.Invoke(builder, [symbol, default(string), default(string), defaultValue]);
     }
 }

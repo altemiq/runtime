@@ -37,7 +37,7 @@ public sealed partial class Uuid :
     /// <param name="left">The left hand side.</param>
     /// <param name="right">The right hand side.</param>
     /// <returns>The result of the operator.</returns>
-    public static bool operator ==(Uuid? left, Uuid? right) => left?.Equals(right) ?? right is null;
+    public static bool operator ==(Uuid? left, Uuid? right) => left?.Equals(right) ?? (right is null);
 
     /// <summary>
     /// Implements the not-equals operator.
@@ -45,7 +45,7 @@ public sealed partial class Uuid :
     /// <param name="left">The left hand side.</param>
     /// <param name="right">The right hand side.</param>
     /// <returns>The result of the operator.</returns>
-    public static bool operator !=(Uuid? left, Uuid? right) => !left?.Equals(right) ?? right is not null;
+    public static bool operator !=(Uuid? left, Uuid? right) => !left?.Equals(right) ?? (right is not null);
 
     /// <summary>
     /// Implements the less than operator.

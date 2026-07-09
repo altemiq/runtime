@@ -11,19 +11,19 @@ public class RuntimeInformationTests
     [Test]
     public async Task SystemVsAltemiq()
     {
-        await Assert.That(System.Runtime.InteropServices.RuntimeInformation.TargetFramework).IsEquivalentTo(RuntimeInformation.TargetFramework);
+        _ = await Assert.That(System.Runtime.InteropServices.RuntimeInformation.TargetFramework).IsEquivalentTo(RuntimeInformation.TargetFramework);
     }
 
     [Test]
     public async Task GetRuntimeIdentifier()
     {
-        await Assert.That(RuntimeInformation.RuntimeIdentifier).IsNotEmpty();
+        _ = await Assert.That(RuntimeInformation.RuntimeIdentifier).IsNotEmpty();
     }
 
     [Test]
     public async Task GetTargetFramework()
     {
-        await Assert.That(RuntimeInformation.TargetFramework).IsNotEmpty();
+        _ = await Assert.That(RuntimeInformation.TargetFramework).IsNotEmpty();
     }
 
     [Test]

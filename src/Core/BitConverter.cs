@@ -7,6 +7,11 @@
 namespace Altemiq;
 
 #pragma warning disable CA1708
+
+#if !NET6_0_OR_GREATER
+#pragma warning disable S6640
+#endif
+
 /// <summary>
 /// Extended <see cref="System.BitConverter"/>.
 /// </summary>
@@ -1090,9 +1095,6 @@ public static partial class BitConverter
 #pragma warning restore IDE0051, S1144, IDE0079, RCS1222
     }
 
-#pragma warning disable SA1201
     /// <inheritdoc cref="System.BitConverter.IsLittleEndian" />
     public static readonly bool IsLittleEndian = System.BitConverter.IsLittleEndian;
-#pragma warning restore SA1137, SA1201, SA1400, S1144
 }
-#pragma warning restore CA1708

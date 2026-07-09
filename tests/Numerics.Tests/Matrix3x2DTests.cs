@@ -35,12 +35,12 @@ public sealed class Matrix3x2DTests
     {
         var matrix = new Matrix3x2D(m11, m12, m21, m22, m31, m32);
 
-        await Assert.That(matrix[0, 0]).IsEqualTo(m11);
-        await Assert.That(matrix[0, 1]).IsEqualTo(m12);
-        await Assert.That(matrix[1, 0]).IsEqualTo(m21);
-        await Assert.That(matrix[1, 1]).IsEqualTo(m22);
-        await Assert.That(matrix[2, 0]).IsEqualTo(m31);
-        await Assert.That(matrix[2, 1]).IsEqualTo(m32);
+        _ = await Assert.That(matrix[0, 0]).IsEqualTo(m11);
+        _ = await Assert.That(matrix[0, 1]).IsEqualTo(m12);
+        _ = await Assert.That(matrix[1, 0]).IsEqualTo(m21);
+        _ = await Assert.That(matrix[1, 1]).IsEqualTo(m22);
+        _ = await Assert.That(matrix[2, 0]).IsEqualTo(m31);
+        _ = await Assert.That(matrix[2, 1]).IsEqualTo(m32);
     }
 
     [Test]
@@ -60,12 +60,12 @@ public sealed class Matrix3x2DTests
             [2, 1] = m32,
         };
 
-        await Assert.That(matrix[0, 0]).IsEqualTo(m11);
-        await Assert.That(matrix[0, 1]).IsEqualTo(m12);
-        await Assert.That(matrix[1, 0]).IsEqualTo(m21);
-        await Assert.That(matrix[1, 1]).IsEqualTo(m22);
-        await Assert.That(matrix[2, 0]).IsEqualTo(m31);
-        await Assert.That(matrix[2, 1]).IsEqualTo(m32);
+        _ = await Assert.That(matrix[0, 0]).IsEqualTo(m11);
+        _ = await Assert.That(matrix[0, 1]).IsEqualTo(m12);
+        _ = await Assert.That(matrix[1, 0]).IsEqualTo(m21);
+        _ = await Assert.That(matrix[1, 1]).IsEqualTo(m22);
+        _ = await Assert.That(matrix[2, 0]).IsEqualTo(m31);
+        _ = await Assert.That(matrix[2, 1]).IsEqualTo(m32);
     }
 
     // A test for Identity
@@ -75,7 +75,7 @@ public sealed class Matrix3x2DTests
         var val = new Matrix3x2D();
         val.M11 = val.M22 = 1.0;
 
-        await Assert.That(Matrix3x2D.Identity).IsEqualTo(val);
+        _ = await Assert.That(Matrix3x2D.Identity).IsEqualTo(val);
     }
 
     // A test for Determinant
@@ -87,7 +87,7 @@ public sealed class Matrix3x2DTests
         var val = 1.0;
         var det = target.GetDeterminant();
 
-        await Assert.That(det).IsEqualTo(val).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(det).IsEqualTo(val).Within(MathHelper.HighQualityTolerance);
     }
 
     // Determinant test |A| = 1 / |A'|
@@ -103,18 +103,18 @@ public sealed class Matrix3x2DTests
             M31 = 6.5,
             M32 = 1.0,
         };
-        await Assert.That(Matrix3x2D.Invert(a, out var i)).IsTrue();
+        _ = await Assert.That(Matrix3x2D.Invert(a, out var i)).IsTrue();
 
         var detA = a.GetDeterminant();
         var detI = i.GetDeterminant();
         var t = 1.0 / detI;
 
         // only accurate to 3 precision
-        await Assert.That(detA).IsEqualTo(t).Within(MathHelper.LowQualityTolerance);
+        _ = await Assert.That(detA).IsEqualTo(t).Within(MathHelper.LowQualityTolerance);
 
         // sanity check against 4x4 version
-        await Assert.That(detA).IsEqualTo(new Matrix4x4D(a).GetDeterminant());
-        await Assert.That(detI).IsEqualTo(new Matrix4x4D(i).GetDeterminant());
+        _ = await Assert.That(detA).IsEqualTo(new Matrix4x4D(a).GetDeterminant());
+        _ = await Assert.That(detI).IsEqualTo(new Matrix4x4D(i).GetDeterminant());
     }
 
     // A test for Invert (Matrix3x2D)
@@ -133,11 +133,11 @@ public sealed class Matrix3x2DTests
             M32 = 0,
         };
 
-        await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
-        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
+        _ = await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix3x2D.Identity).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(i).IsEqualTo(Matrix3x2D.Identity).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Invert (Matrix3x2D)
@@ -146,9 +146,9 @@ public sealed class Matrix3x2DTests
     {
         var mtx = Matrix3x2D.Identity;
 
-        await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
+        _ = await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
 
-        await Assert.That(actual).IsEqualTo(Matrix3x2D.Identity);
+        _ = await Assert.That(actual).IsEqualTo(Matrix3x2D.Identity);
     }
 
     // A test for Invert (Matrix3x2D)
@@ -157,10 +157,10 @@ public sealed class Matrix3x2DTests
     {
         var mtx = Matrix3x2D.CreateTranslation(23, 42);
 
-        await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
+        _ = await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix3x2D.Identity);
+        _ = await Assert.That(i).IsEqualTo(Matrix3x2D.Identity);
     }
 
     // A test for Invert (Matrix3x2D)
@@ -169,10 +169,10 @@ public sealed class Matrix3x2DTests
     {
         var mtx = Matrix3x2D.CreateRotation(2);
 
-        await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
+        _ = await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix3x2D.Identity);
+        _ = await Assert.That(i).IsEqualTo(Matrix3x2D.Identity);
     }
 
     // A test for Invert (Matrix3x2D)
@@ -181,10 +181,10 @@ public sealed class Matrix3x2DTests
     {
         var mtx = Matrix3x2D.CreateScale(23, -42);
 
-        await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
+        _ = await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix3x2D.Identity).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(i).IsEqualTo(Matrix3x2D.Identity).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for Invert (Matrix3x2D)
@@ -195,10 +195,10 @@ public sealed class Matrix3x2DTests
                   Matrix3x2D.CreateScale(23, -42) *
                   Matrix3x2D.CreateTranslation(17, 53);
 
-        await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
+        _ = await Assert.That(Matrix3x2D.Invert(mtx, out var actual)).IsTrue();
 
         var i = mtx * actual;
-        await Assert.That(i).IsEqualTo(Matrix3x2D.Identity).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(i).IsEqualTo(Matrix3x2D.Identity).Within(MathHelper.HighQualityTolerance);
     }
 
 
@@ -218,7 +218,7 @@ public sealed class Matrix3x2DTests
         };
 
         var actual = Matrix3x2D.CreateRotation(radians);
-        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for CreateRotation (double, Vector2Df)
@@ -230,11 +230,11 @@ public sealed class Matrix3x2DTests
 
         var rotateAroundZero = Matrix3x2D.CreateRotation(radians, Vector2D.Zero);
         var rotateAroundZeroExpected = Matrix3x2D.CreateRotation(radians);
-        await Assert.That(rotateAroundZero).IsEqualTo(rotateAroundZeroExpected).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(rotateAroundZero).IsEqualTo(rotateAroundZeroExpected).Within(MathHelper.HighQualityTolerance);
 
         var rotateAroundCenter = Matrix3x2D.CreateRotation(radians, center);
         var rotateAroundCenterExpected = Matrix3x2D.CreateTranslation(-center) * Matrix3x2D.CreateRotation(radians) * Matrix3x2D.CreateTranslation(center);
-        await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(rotateAroundCenter).IsEqualTo(rotateAroundCenterExpected).Within(MathHelper.HighQualityTolerance);
     }
 
     // A test for CreateRotation (double)
@@ -243,34 +243,34 @@ public sealed class Matrix3x2DTests
     {
         // 90 degree rotations must be exact!
         var actual = Matrix3x2D.CreateRotation(0);
-        await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI / 2);
-        await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI);
-        await Assert.That(actual).IsEqualTo(new(-1, 0, 0, -1, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(-1, 0, 0, -1, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI * 3 / 2);
-        await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI * 2);
-        await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI * 5 / 2);
-        await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(-Math.PI / 2);
-        await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, 0, 0));
 
         // But merely close-to-90 rotations should not be excessively clamped.
         var delta = MathHelper.ToRadians(0.01);
 
         actual = Matrix3x2D.CreateRotation(Math.PI + delta);
-        await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 0, 0));
+        _ = await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI - delta);
-        await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 0, 0));
+        _ = await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 0, 0));
     }
 
     // A test for CreateRotation (double, Vector2Df)
@@ -281,34 +281,34 @@ public sealed class Matrix3x2DTests
 
         // 90 degree rotations must be exact!
         var actual = Matrix3x2D.CreateRotation(0, center);
-        await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI / 2, center);
-        await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 10, 4));
+        _ = await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 10, 4));
 
         actual = Matrix3x2D.CreateRotation(Math.PI, center);
-        await Assert.That(actual).IsEqualTo(new(-1, 0, 0, -1, 6, 14));
+        _ = await Assert.That(actual).IsEqualTo(new(-1, 0, 0, -1, 6, 14));
 
         actual = Matrix3x2D.CreateRotation(Math.PI * 3 / 2, center);
-        await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, -4, 10));
+        _ = await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, -4, 10));
 
         actual = Matrix3x2D.CreateRotation(Math.PI * 2, center);
-        await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
+        _ = await Assert.That(actual).IsEqualTo(new(1, 0, 0, 1, 0, 0));
 
         actual = Matrix3x2D.CreateRotation(Math.PI * 5 / 2, center);
-        await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 10, 4));
+        _ = await Assert.That(actual).IsEqualTo(new(0, 1, -1, 0, 10, 4));
 
         actual = Matrix3x2D.CreateRotation(-Math.PI / 2, center);
-        await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, -4, 10));
+        _ = await Assert.That(actual).IsEqualTo(new(0, -1, 1, 0, -4, 10));
 
         // But merely close-to-90 rotations should not be excessively clamped.
         var delta = MathHelper.ToRadians(0.01);
 
         actual = Matrix3x2D.CreateRotation(Math.PI + delta, center);
-        await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 6, 14));
+        _ = await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 6, 14));
 
         actual = Matrix3x2D.CreateRotation(Math.PI - delta, center);
-        await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 6, 14));
+        _ = await Assert.That(actual).IsNotEqualTo(new(-1, 0, 0, -1, 6, 14));
     }
 
     // Non-invertible matrix - determinant is zero - singular matrix
@@ -326,12 +326,12 @@ public sealed class Matrix3x2DTests
         };
 
         var detA = a.GetDeterminant();
-        await Assert.That(detA).IsEqualTo(0.0);
+        _ = await Assert.That(detA).IsEqualTo(0.0);
 
-        await Assert.That(Matrix3x2D.Invert(a, out var actual)).IsFalse();
+        _ = await Assert.That(Matrix3x2D.Invert(a, out var actual)).IsFalse();
 
         // all the elements in Actual is NaN
-        await Assert.That(actual)
+        _ = await Assert.That(actual)
             .Member(static actual => actual.M11, static actual => actual.IsNaN()).And
             .Member(static actual => actual.M11, static actual => actual.IsNaN()).And
             .Member(static actual => actual.M12, static actual => actual.IsNaN()).And
@@ -361,16 +361,16 @@ public sealed class Matrix3x2DTests
 
         var expected = new Matrix3x2D
         {
-            M11 = a.M11 + (b.M11 - a.M11) * t,
-            M12 = a.M12 + (b.M12 - a.M12) * t,
-            M21 = a.M21 + (b.M21 - a.M21) * t,
-            M22 = a.M22 + (b.M22 - a.M22) * t,
-            M31 = a.M31 + (b.M31 - a.M31) * t,
-            M32 = a.M32 + (b.M32 - a.M32) * t,
+            M11 = a.M11 + ((b.M11 - a.M11) * t),
+            M12 = a.M12 + ((b.M12 - a.M12) * t),
+            M21 = a.M21 + ((b.M21 - a.M21) * t),
+            M22 = a.M22 + ((b.M22 - a.M22) * t),
+            M31 = a.M31 + ((b.M31 - a.M31) * t),
+            M32 = a.M32 + ((b.M32 - a.M32) * t),
         };
 
         var actual = Matrix3x2D.Lerp(a, b, t);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for operator - (Matrix3x2D)
@@ -390,7 +390,7 @@ public sealed class Matrix3x2DTests
         };
 
         var actual = -a;
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for operator - (Matrix3x2D, Matrix3x2D)
@@ -410,7 +410,7 @@ public sealed class Matrix3x2DTests
         };
 
         var actual = a - b;
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for operator * (Matrix3x2D, Matrix3x2D)
@@ -422,16 +422,16 @@ public sealed class Matrix3x2DTests
 
         var expected = new Matrix3x2D
         {
-            M11 = a.M11 * b.M11 + a.M12 * b.M21,
-            M12 = a.M11 * b.M12 + a.M12 * b.M22,
-            M21 = a.M21 * b.M11 + a.M22 * b.M21,
-            M22 = a.M21 * b.M12 + a.M22 * b.M22,
-            M31 = a.M31 * b.M11 + a.M32 * b.M21 + b.M31,
-            M32 = a.M31 * b.M12 + a.M32 * b.M22 + b.M32,
+            M11 = (a.M11 * b.M11) + (a.M12 * b.M21),
+            M12 = (a.M11 * b.M12) + (a.M12 * b.M22),
+            M21 = (a.M21 * b.M11) + (a.M22 * b.M21),
+            M22 = (a.M21 * b.M12) + (a.M22 * b.M22),
+            M31 = (a.M31 * b.M11) + (a.M32 * b.M21) + b.M31,
+            M32 = (a.M31 * b.M12) + (a.M32 * b.M22) + b.M32,
         };
 
         var actual = a * b;
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // Sanity check by comparison with 4x4 multiply.
         a = Matrix3x2D.CreateRotation(MathHelper.ToRadians(30D)) * Matrix3x2D.CreateTranslation(23, 42);
@@ -444,7 +444,7 @@ public sealed class Matrix3x2DTests
         var expected44 = a44 * b44;
         var actual44 = new Matrix4x4D(actual);
 
-        await Assert.That(actual44).IsEqualTo(expected44);
+        _ = await Assert.That(actual44).IsEqualTo(expected44);
     }
 
     // A test for operator * (Matrix3x2D, Matrix3x2D)
@@ -467,7 +467,7 @@ public sealed class Matrix3x2DTests
         var expected = a;
         var actual = a * b;
 
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for operator + (Matrix3x2D, Matrix3x2D)
@@ -489,7 +489,7 @@ public sealed class Matrix3x2DTests
 
         var actual = a + b;
 
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for ToString ()
@@ -511,7 +511,7 @@ public sealed class Matrix3x2DTests
                        "{M31:31 M32:32} }";
 
         var actual = a.ToString();
-        await Assert.That(actual).IsEquivalentTo(expected);
+        _ = await Assert.That(actual).IsEquivalentTo(expected);
     }
 
     // A test for Add (Matrix3x2D, Matrix3x2D)
@@ -532,7 +532,7 @@ public sealed class Matrix3x2DTests
         };
 
         var actual = Matrix3x2D.Add(a, b);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for Equals (object)
@@ -547,26 +547,26 @@ public sealed class Matrix3x2DTests
 
         var expected = true;
         var actual = a.Equals(obj);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
         b.M11 = 11.0;
         obj = b;
         expected = false;
         actual = a.Equals(obj);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // case 3: compare between different types.
         obj = new Vector4D();
         expected = false;
         actual = a.Equals(obj);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // case 3: compare against null.
         obj = null!;
         expected = false;
         actual = a.Equals(obj);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for GetHashCode ()
@@ -583,7 +583,7 @@ public sealed class Matrix3x2DTests
 
         var actual = target.GetHashCode();
 
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for Multiply (Matrix3x2D, Matrix3x2D)
@@ -595,17 +595,17 @@ public sealed class Matrix3x2DTests
 
         var expected = new Matrix3x2D
         {
-            M11 = a.M11 * b.M11 + a.M12 * b.M21,
-            M12 = a.M11 * b.M12 + a.M12 * b.M22,
-            M21 = a.M21 * b.M11 + a.M22 * b.M21,
-            M22 = a.M21 * b.M12 + a.M22 * b.M22,
-            M31 = a.M31 * b.M11 + a.M32 * b.M21 + b.M31,
-            M32 = a.M31 * b.M12 + a.M32 * b.M22 + b.M32,
+            M11 = (a.M11 * b.M11) + (a.M12 * b.M21),
+            M12 = (a.M11 * b.M12) + (a.M12 * b.M22),
+            M21 = (a.M21 * b.M11) + (a.M22 * b.M21),
+            M22 = (a.M21 * b.M12) + (a.M22 * b.M22),
+            M31 = (a.M31 * b.M11) + (a.M32 * b.M21) + b.M31,
+            M32 = (a.M31 * b.M12) + (a.M32 * b.M22) + b.M32,
         };
 
         var actual = Matrix3x2D.Multiply(a, b);
 
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // Sanity check by comparison with 4x4 multiply.
         a = Matrix3x2D.CreateRotation(MathHelper.ToRadians(30D)) * Matrix3x2D.CreateTranslation(23, 42);
@@ -618,7 +618,7 @@ public sealed class Matrix3x2DTests
         var expected44 = Matrix4x4D.Multiply(a44, b44);
         var actual44 = new Matrix4x4D(actual);
 
-        await Assert.That(actual44).IsEqualTo(expected44);
+        _ = await Assert.That(actual44).IsEqualTo(expected44);
     }
 
     // A test for Multiply (Matrix3x2D, double)
@@ -629,7 +629,7 @@ public sealed class Matrix3x2DTests
         var expected = new Matrix3x2D(3, 6, 9, 12, 15, 18);
         var actual = Matrix3x2D.Multiply(a, 3);
 
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for Multiply (Matrix3x2D, double)
@@ -640,7 +640,7 @@ public sealed class Matrix3x2DTests
         var expected = new Matrix3x2D(3, 6, 9, 12, 15, 18);
         var actual = a * 3;
 
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for Negate (Matrix3x2D)
@@ -660,7 +660,7 @@ public sealed class Matrix3x2DTests
         };
 
         var actual = Matrix3x2D.Negate(m);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for operator != (Matrix3x2D, Matrix3x2D)
@@ -673,13 +673,13 @@ public sealed class Matrix3x2DTests
         // case 1: compare between same values
         var expected = false;
         var actual = a != b;
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
         b.M11 = 11.0;
         expected = true;
         actual = a != b;
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for operator == (Matrix3x2D, Matrix3x2D)
@@ -692,13 +692,13 @@ public sealed class Matrix3x2DTests
         // case 1: compare between same values
         var expected = true;
         var actual = a == b;
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
         b.M11 = 11.0;
         expected = false;
         actual = a == b;
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for Subtract (Matrix3x2D, Matrix3x2D)
@@ -718,7 +718,7 @@ public sealed class Matrix3x2DTests
         };
 
         var actual = Matrix3x2D.Subtract(a, b);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for CreateScale (Vector2Df)
@@ -731,7 +731,7 @@ public sealed class Matrix3x2DTests
             0.0, 3.0,
             0.0, 0.0);
         var actual = Matrix3x2D.CreateScale(scales);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for CreateScale (Vector2Df, Vector2Df)
@@ -743,11 +743,11 @@ public sealed class Matrix3x2DTests
 
         var scaleAroundZero = Matrix3x2D.CreateScale(scale, Vector2D.Zero);
         var scaleAroundZeroExpected = Matrix3x2D.CreateScale(scale);
-        await Assert.That(scaleAroundZero).IsEqualTo(scaleAroundZeroExpected);
+        _ = await Assert.That(scaleAroundZero).IsEqualTo(scaleAroundZeroExpected);
 
         var scaleAroundCenter = Matrix3x2D.CreateScale(scale, center);
         var scaleAroundCenterExpected = Matrix3x2D.CreateTranslation(-center) * Matrix3x2D.CreateScale(scale) * Matrix3x2D.CreateTranslation(center);
-        await Assert.That(scaleAroundCenter).IsEqualTo(scaleAroundCenterExpected);
+        _ = await Assert.That(scaleAroundCenter).IsEqualTo(scaleAroundCenterExpected);
     }
 
     // A test for CreateScale (double)
@@ -760,7 +760,7 @@ public sealed class Matrix3x2DTests
             0.0, 2.0,
             0.0, 0.0);
         var actual = Matrix3x2D.CreateScale(scale);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for CreateScale (double, Vector2Df)
@@ -772,11 +772,11 @@ public sealed class Matrix3x2DTests
 
         var scaleAroundZero = Matrix3x2D.CreateScale(scale, Vector2D.Zero);
         var scaleAroundZeroExpected = Matrix3x2D.CreateScale(scale);
-        await Assert.That(scaleAroundZero).IsEqualTo(scaleAroundZeroExpected);
+        _ = await Assert.That(scaleAroundZero).IsEqualTo(scaleAroundZeroExpected);
 
         var scaleAroundCenter = Matrix3x2D.CreateScale(scale, center);
         var scaleAroundCenterExpected = Matrix3x2D.CreateTranslation(-center) * Matrix3x2D.CreateScale(scale) * Matrix3x2D.CreateTranslation(center);
-        await Assert.That(scaleAroundCenter).IsEqualTo(scaleAroundCenterExpected);
+        _ = await Assert.That(scaleAroundCenter).IsEqualTo(scaleAroundCenterExpected);
     }
 
     // A test for CreateScale (double, double)
@@ -790,7 +790,7 @@ public sealed class Matrix3x2DTests
             0.0, 3.0,
             0.0, 0.0);
         var actual = Matrix3x2D.CreateScale(xScale, yScale);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for CreateScale (double, double, Vector2Df)
@@ -802,11 +802,11 @@ public sealed class Matrix3x2DTests
 
         var scaleAroundZero = Matrix3x2D.CreateScale(scale.X, scale.Y, Vector2D.Zero);
         var scaleAroundZeroExpected = Matrix3x2D.CreateScale(scale.X, scale.Y);
-        await Assert.That(scaleAroundZero).IsEqualTo(scaleAroundZeroExpected);
+        _ = await Assert.That(scaleAroundZero).IsEqualTo(scaleAroundZeroExpected);
 
         var scaleAroundCenter = Matrix3x2D.CreateScale(scale.X, scale.Y, center);
         var scaleAroundCenterExpected = Matrix3x2D.CreateTranslation(-center) * Matrix3x2D.CreateScale(scale.X, scale.Y) * Matrix3x2D.CreateTranslation(center);
-        await Assert.That(scaleAroundCenter).IsEqualTo(scaleAroundCenterExpected);
+        _ = await Assert.That(scaleAroundCenter).IsEqualTo(scaleAroundCenterExpected);
     }
 
     // A test for CreateTranslation (Vector2Df)
@@ -820,7 +820,7 @@ public sealed class Matrix3x2DTests
             2.0, 3.0);
 
         var actual = Matrix3x2D.CreateTranslation(position);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for CreateTranslation (double, double)
@@ -836,7 +836,7 @@ public sealed class Matrix3x2DTests
             2.0, 3.0);
 
         var actual = Matrix3x2D.CreateTranslation(xPosition, yPosition);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for Translation
@@ -848,21 +848,21 @@ public sealed class Matrix3x2DTests
 
         // Transformed vector that has same semantics of property must be same.
         var val = new Vector2D(a.M31, a.M32);
-        await Assert.That(a.Translation).IsEqualTo(val);
+        _ = await Assert.That(a.Translation).IsEqualTo(val);
 
         // Set value and get value must be same.
         val = new(1.0, 2.0);
         a.Translation = val;
-        await Assert.That(a.Translation).IsEqualTo(val);
+        _ = await Assert.That(a.Translation).IsEqualTo(val);
 
         // Make sure it only modifies expected value of matrix.
 
-        await Assert.That(a.M11).IsEqualTo(b.M11);
-        await Assert.That(a.M12).IsEqualTo(b.M12);
-        await Assert.That(a.M21).IsEqualTo(b.M21);
-        await Assert.That(a.M22).IsEqualTo(b.M22);
-        await Assert.That(a.M31).IsNotEqualTo(b.M31);
-        await Assert.That(a.M32).IsNotEqualTo(b.M32);
+        _ = await Assert.That(a.M11).IsEqualTo(b.M11);
+        _ = await Assert.That(a.M12).IsEqualTo(b.M12);
+        _ = await Assert.That(a.M21).IsEqualTo(b.M21);
+        _ = await Assert.That(a.M22).IsEqualTo(b.M22);
+        _ = await Assert.That(a.M31).IsNotEqualTo(b.M31);
+        _ = await Assert.That(a.M32).IsNotEqualTo(b.M32);
     }
 
     // A test for Equals (Matrix3x2D)
@@ -875,13 +875,13 @@ public sealed class Matrix3x2DTests
         // case 1: compare between same values
         var expected = true;
         var actual = a.Equals(b);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
 
         // case 2: compare between different values
         b.M11 = 11.0;
         expected = false;
         actual = a.Equals(b);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for CreateSkew (double, double)
@@ -890,7 +890,7 @@ public sealed class Matrix3x2DTests
     {
         var expected = Matrix3x2D.Identity;
         var actual = Matrix3x2D.CreateSkew(0, 0);
-        await Assert.That(actual).IsEqualTo(expected);
+        _ = await Assert.That(actual).IsEqualTo(expected);
     }
 
     // A test for CreateSkew (double, double)
@@ -899,23 +899,23 @@ public sealed class Matrix3x2DTests
     {
         var expected = new Matrix3x2D(1, 0, -0.414213562373095, 1, 0, 0);
         var actual = Matrix3x2D.CreateSkew(-Math.PI / 8, 0);
-        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         expected = new(1, 0, 0.414213562373095, 1, 0, 0);
         actual = Matrix3x2D.CreateSkew(Math.PI / 8, 0);
-        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         var result = Vector2D.Transform(new(0, 0), actual);
-        await Assert.That(result).IsEqualTo(new(0, 0));
+        _ = await Assert.That(result).IsEqualTo(new(0, 0));
 
         result = Vector2D.Transform(new(0, 1), actual);
-        await Assert.That(result).IsEqualTo(new(0.414213568, 1)).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(0.414213568, 1)).Within(MathHelper.MidQualityTolerance);
 
         result = Vector2D.Transform(new(0, -1), actual);
-        await Assert.That(result).IsEqualTo(new(-0.414213568, -1)).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(-0.414213568, -1)).Within(MathHelper.MidQualityTolerance);
 
         result = Vector2D.Transform(new(3, 10), actual);
-        await Assert.That(result).IsEqualTo(new(7.14213568, 10)).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(7.14213568, 10)).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for CreateSkew (double, double)
@@ -924,23 +924,23 @@ public sealed class Matrix3x2DTests
     {
         var expected = new Matrix3x2D(1, -0.414213562373095, 0, 1, 0, 0);
         var actual = Matrix3x2D.CreateSkew(0, -Math.PI / 8);
-        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         expected = new(1, 0.414213562373095, 0, 1, 0, 0);
         actual = Matrix3x2D.CreateSkew(0, Math.PI / 8);
-        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         var result = Vector2D.Transform(new(0, 0), actual);
-        await Assert.That(result).IsEqualTo(new(0, 0));
+        _ = await Assert.That(result).IsEqualTo(new(0, 0));
 
         result = Vector2D.Transform(new(1, 0), actual);
-        await Assert.That(result).IsEqualTo(new(1, 0.414213568)).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(1, 0.414213568)).Within(MathHelper.MidQualityTolerance);
 
         result = Vector2D.Transform(new(-1, 0), actual);
-        await Assert.That(result).IsEqualTo(new(-1, -0.414213568)).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(-1, -0.414213568)).Within(MathHelper.MidQualityTolerance);
 
         result = Vector2D.Transform(new(10, 3), actual);
-        await Assert.That(result).IsEqualTo(new(10, 7.14213568)).Within(MathHelper.MidQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(10, 7.14213568)).Within(MathHelper.MidQualityTolerance);
     }
 
     // A test for CreateSkew (double, double)
@@ -949,19 +949,19 @@ public sealed class Matrix3x2DTests
     {
         var expected = new Matrix3x2D(1, -0.414213562373095, 1, 1, 0, 0);
         var actual = Matrix3x2D.CreateSkew(Math.PI / 4, -Math.PI / 8);
-        await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(actual).IsEqualTo(expected).Within(MathHelper.HighQualityTolerance);
 
         var result = Vector2D.Transform(new(0, 0), actual);
-        await Assert.That(result).IsEqualTo(new(0, 0));
+        _ = await Assert.That(result).IsEqualTo(new(0, 0));
 
         result = Vector2D.Transform(new(1, 0), actual);
-        await Assert.That(result).IsEqualTo(new(1, -0.414213562373095)).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(1, -0.414213562373095)).Within(MathHelper.HighQualityTolerance);
 
         result = Vector2D.Transform(new(0, 1), actual);
-        await Assert.That(result).IsEqualTo(new(1, 1)).Within(MathHelper.HighQualityTolerance);
+        _ = await Assert.That(result).IsEqualTo(new(1, 1)).Within(MathHelper.HighQualityTolerance);
 
         result = Vector2D.Transform(new(1, 1), actual);
-        await Assert.That(result).IsEqualTo(new(2, 0.585786437626905));
+        _ = await Assert.That(result).IsEqualTo(new(2, 0.585786437626905));
     }
 
     // A test for CreateSkew (double, double, Vector2Df)
@@ -973,25 +973,25 @@ public sealed class Matrix3x2DTests
 
         var skewAroundZero = Matrix3x2D.CreateSkew(skewX, skewY, Vector2D.Zero);
         var skewAroundZeroExpected = Matrix3x2D.CreateSkew(skewX, skewY);
-        await Assert.That(skewAroundZero).IsEqualTo(skewAroundZeroExpected);
+        _ = await Assert.That(skewAroundZero).IsEqualTo(skewAroundZeroExpected);
 
         var skewAroundCenter = Matrix3x2D.CreateSkew(skewX, skewY, center);
         var skewAroundCenterExpected = Matrix3x2D.CreateTranslation(-center) * Matrix3x2D.CreateSkew(skewX, skewY) * Matrix3x2D.CreateTranslation(center);
-        await Assert.That(skewAroundCenter).IsEqualTo(skewAroundCenterExpected);
+        _ = await Assert.That(skewAroundCenter).IsEqualTo(skewAroundCenterExpected);
     }
 
     // A test for IsIdentity
     [Test]
     public async Task Matrix3x2DIsIdentityTest()
     {
-        await Assert.That(Matrix3x2D.Identity.IsIdentity).IsTrue();
-        await Assert.That(new Matrix3x2D(1, 0, 0, 1, 0, 0).IsIdentity).IsTrue();
-        await Assert.That(new Matrix3x2D(0, 0, 0, 1, 0, 0).IsIdentity).IsFalse();
-        await Assert.That(new Matrix3x2D(1, 1, 0, 1, 0, 0).IsIdentity).IsFalse();
-        await Assert.That(new Matrix3x2D(1, 0, 1, 1, 0, 0).IsIdentity).IsFalse();
-        await Assert.That(new Matrix3x2D(1, 0, 0, 0, 0, 0).IsIdentity).IsFalse();
-        await Assert.That(new Matrix3x2D(1, 0, 0, 1, 1, 0).IsIdentity).IsFalse();
-        await Assert.That(new Matrix3x2D(1, 0, 0, 1, 0, 1).IsIdentity).IsFalse();
+        _ = await Assert.That(Matrix3x2D.Identity.IsIdentity).IsTrue();
+        _ = await Assert.That(new Matrix3x2D(1, 0, 0, 1, 0, 0).IsIdentity).IsTrue();
+        _ = await Assert.That(new Matrix3x2D(0, 0, 0, 1, 0, 0).IsIdentity).IsFalse();
+        _ = await Assert.That(new Matrix3x2D(1, 1, 0, 1, 0, 0).IsIdentity).IsFalse();
+        _ = await Assert.That(new Matrix3x2D(1, 0, 1, 1, 0, 0).IsIdentity).IsFalse();
+        _ = await Assert.That(new Matrix3x2D(1, 0, 0, 0, 0, 0).IsIdentity).IsFalse();
+        _ = await Assert.That(new Matrix3x2D(1, 0, 0, 1, 1, 0).IsIdentity).IsFalse();
+        _ = await Assert.That(new Matrix3x2D(1, 0, 0, 1, 0, 1).IsIdentity).IsFalse();
     }
 
     // A test for Matrix3x2D comparison involving NaN values
@@ -1005,40 +1005,40 @@ public sealed class Matrix3x2DTests
         var e = new Matrix3x2D(0, 0, 0, 0, double.NaN, 0);
         var f = new Matrix3x2D(0, 0, 0, 0, 0, double.NaN);
 
-        await Assert.That(a == new Matrix3x2D()).IsFalse();
-        await Assert.That(b == new Matrix3x2D()).IsFalse();
-        await Assert.That(c == new Matrix3x2D()).IsFalse();
-        await Assert.That(d == new Matrix3x2D()).IsFalse();
-        await Assert.That(e == new Matrix3x2D()).IsFalse();
-        await Assert.That(f == new Matrix3x2D()).IsFalse();
+        _ = await Assert.That(a == new Matrix3x2D()).IsFalse();
+        _ = await Assert.That(b == new Matrix3x2D()).IsFalse();
+        _ = await Assert.That(c == new Matrix3x2D()).IsFalse();
+        _ = await Assert.That(d == new Matrix3x2D()).IsFalse();
+        _ = await Assert.That(e == new Matrix3x2D()).IsFalse();
+        _ = await Assert.That(f == new Matrix3x2D()).IsFalse();
 
-        await Assert.That(a != new Matrix3x2D()).IsTrue();
-        await Assert.That(b != new Matrix3x2D()).IsTrue();
-        await Assert.That(c != new Matrix3x2D()).IsTrue();
-        await Assert.That(d != new Matrix3x2D()).IsTrue();
-        await Assert.That(e != new Matrix3x2D()).IsTrue();
-        await Assert.That(f != new Matrix3x2D()).IsTrue();
+        _ = await Assert.That(a != new Matrix3x2D()).IsTrue();
+        _ = await Assert.That(b != new Matrix3x2D()).IsTrue();
+        _ = await Assert.That(c != new Matrix3x2D()).IsTrue();
+        _ = await Assert.That(d != new Matrix3x2D()).IsTrue();
+        _ = await Assert.That(e != new Matrix3x2D()).IsTrue();
+        _ = await Assert.That(f != new Matrix3x2D()).IsTrue();
 
-        await Assert.That(a.Equals(new())).IsFalse();
-        await Assert.That(b.Equals(new())).IsFalse();
-        await Assert.That(c.Equals(new())).IsFalse();
-        await Assert.That(d.Equals(new())).IsFalse();
-        await Assert.That(e.Equals(new())).IsFalse();
-        await Assert.That(f.Equals(new())).IsFalse();
+        _ = await Assert.That(a.Equals(new())).IsFalse();
+        _ = await Assert.That(b.Equals(new())).IsFalse();
+        _ = await Assert.That(c.Equals(new())).IsFalse();
+        _ = await Assert.That(d.Equals(new())).IsFalse();
+        _ = await Assert.That(e.Equals(new())).IsFalse();
+        _ = await Assert.That(f.Equals(new())).IsFalse();
 
-        await Assert.That(a.IsIdentity).IsFalse();
-        await Assert.That(b.IsIdentity).IsFalse();
-        await Assert.That(c.IsIdentity).IsFalse();
-        await Assert.That(d.IsIdentity).IsFalse();
-        await Assert.That(e.IsIdentity).IsFalse();
-        await Assert.That(f.IsIdentity).IsFalse();
+        _ = await Assert.That(a.IsIdentity).IsFalse();
+        _ = await Assert.That(b.IsIdentity).IsFalse();
+        _ = await Assert.That(c.IsIdentity).IsFalse();
+        _ = await Assert.That(d.IsIdentity).IsFalse();
+        _ = await Assert.That(e.IsIdentity).IsFalse();
+        _ = await Assert.That(f.IsIdentity).IsFalse();
 
-        await Assert.That(a.Equals(a)).IsTrue();
-        await Assert.That(b.Equals(b)).IsTrue();
-        await Assert.That(c.Equals(c)).IsTrue();
-        await Assert.That(d.Equals(d)).IsTrue();
-        await Assert.That(e.Equals(e)).IsTrue();
-        await Assert.That(f.Equals(f)).IsTrue();
+        _ = await Assert.That(a.Equals(a)).IsTrue();
+        _ = await Assert.That(b.Equals(b)).IsTrue();
+        _ = await Assert.That(c.Equals(c)).IsTrue();
+        _ = await Assert.That(d.Equals(d)).IsTrue();
+        _ = await Assert.That(e.Equals(e)).IsTrue();
+        _ = await Assert.That(f.Equals(f)).IsTrue();
     }
 
     // A test to make sure these types are blittable directly into GPU buffer memory layouts
@@ -1058,10 +1058,10 @@ public sealed class Matrix3x2DTests
             sizeofMatrix3x2DPlusDouble2 = sizeof(Matrix3x2DPlusDouble_2x);
         }
 
-        await Assert.That(sizeofMatrix3x2D).IsEqualTo(48);
-        await Assert.That(sizeofMatrix3x2D2).IsEqualTo(96);
-        await Assert.That(sizeofMatrix3x2DPlusDouble).IsEqualTo(56);
-        await Assert.That(sizeofMatrix3x2DPlusDouble2).IsEqualTo(112);
+        _ = await Assert.That(sizeofMatrix3x2D).IsEqualTo(48);
+        _ = await Assert.That(sizeofMatrix3x2D2).IsEqualTo(96);
+        _ = await Assert.That(sizeofMatrix3x2DPlusDouble).IsEqualTo(56);
+        _ = await Assert.That(sizeofMatrix3x2DPlusDouble2).IsEqualTo(112);
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -1113,13 +1113,13 @@ public sealed class Matrix3x2DTests
 #pragma warning restore CS9123 // The '&' operator should not be used on parameters or local variables in async methods.
         }
 
-        await Assert.That(intPtrMat).IsEqualTo(basePtr);
-        await Assert.That(intPtrMatM11).IsEqualTo(basePtr + 0);
-        await Assert.That(intPtrMatM12).IsEqualTo(basePtr + 8);
-        await Assert.That(intPtrMatM21).IsEqualTo(basePtr + 16);
-        await Assert.That(intPtrMatM22).IsEqualTo(basePtr + 24);
-        await Assert.That(intPtrMatM31).IsEqualTo(basePtr + 32);
-        await Assert.That(intPtrMatM32).IsEqualTo(basePtr + 40);
+        _ = await Assert.That(intPtrMat).IsEqualTo(basePtr);
+        _ = await Assert.That(intPtrMatM11).IsEqualTo(basePtr + 0);
+        _ = await Assert.That(intPtrMatM12).IsEqualTo(basePtr + 8);
+        _ = await Assert.That(intPtrMatM21).IsEqualTo(basePtr + 16);
+        _ = await Assert.That(intPtrMatM22).IsEqualTo(basePtr + 24);
+        _ = await Assert.That(intPtrMatM31).IsEqualTo(basePtr + 32);
+        _ = await Assert.That(intPtrMatM32).IsEqualTo(basePtr + 40);
     }
 
     [Test]
@@ -1127,9 +1127,9 @@ public sealed class Matrix3x2DTests
     {
         var a = Matrix3x2D.Create(double.Pi);
 
-        await Assert.That(a.X).IsEqualTo(Vector2D.Pi);
-        await Assert.That(a.Y).IsEqualTo(Vector2D.Pi);
-        await Assert.That(a.Z).IsEqualTo(Vector2D.Pi);
+        _ = await Assert.That(a.X).IsEqualTo(Vector2D.Pi);
+        _ = await Assert.That(a.Y).IsEqualTo(Vector2D.Pi);
+        _ = await Assert.That(a.Z).IsEqualTo(Vector2D.Pi);
     }
 
     [Test]
@@ -1137,9 +1137,9 @@ public sealed class Matrix3x2DTests
     {
         var a = Matrix3x2D.Create(Vector2D.Create(double.Pi, double.E));
 
-        await Assert.That(a.X).IsEqualTo(Vector2D.Create(double.Pi, double.E));
-        await Assert.That(a.Y).IsEqualTo(Vector2D.Create(double.Pi, double.E));
-        await Assert.That(a.Z).IsEqualTo(Vector2D.Create(double.Pi, double.E));
+        _ = await Assert.That(a.X).IsEqualTo(Vector2D.Create(double.Pi, double.E));
+        _ = await Assert.That(a.Y).IsEqualTo(Vector2D.Create(double.Pi, double.E));
+        _ = await Assert.That(a.Z).IsEqualTo(Vector2D.Create(double.Pi, double.E));
     }
 
     [Test]
@@ -1151,9 +1151,9 @@ public sealed class Matrix3x2DTests
             Vector2D.Create(31.0, 32.0)
         );
 
-        await Assert.That(a.X).IsEqualTo(Vector2D.Create(11.0, 12.0));
-        await Assert.That(a.Y).IsEqualTo(Vector2D.Create(21.0, 22.0));
-        await Assert.That(a.Z).IsEqualTo(Vector2D.Create(31.0, 32.0));
+        _ = await Assert.That(a.X).IsEqualTo(Vector2D.Create(11.0, 12.0));
+        _ = await Assert.That(a.Y).IsEqualTo(Vector2D.Create(21.0, 22.0));
+        _ = await Assert.That(a.Z).IsEqualTo(Vector2D.Create(31.0, 32.0));
     }
 
     [Test]
@@ -1161,29 +1161,29 @@ public sealed class Matrix3x2DTests
     {
         var a = GenerateTestMatrix();
 
-        await Assert.That(a.X.X).IsEqualTo(a.M11);
-        await Assert.That(a[0, 0]).IsEqualTo(a.M11);
-        await Assert.That(a.GetElement(0, 0)).IsEqualTo(a.M11);
+        _ = await Assert.That(a.X.X).IsEqualTo(a.M11);
+        _ = await Assert.That(a[0, 0]).IsEqualTo(a.M11);
+        _ = await Assert.That(a.GetElement(0, 0)).IsEqualTo(a.M11);
 
-        await Assert.That(a.X.Y).IsEqualTo(a.M12);
-        await Assert.That(a[0, 1]).IsEqualTo(a.M12);
-        await Assert.That(a.GetElement(0, 1)).IsEqualTo(a.M12);
+        _ = await Assert.That(a.X.Y).IsEqualTo(a.M12);
+        _ = await Assert.That(a[0, 1]).IsEqualTo(a.M12);
+        _ = await Assert.That(a.GetElement(0, 1)).IsEqualTo(a.M12);
 
-        await Assert.That(a.Y.X).IsEqualTo(a.M21);
-        await Assert.That(a[1, 0]).IsEqualTo(a.M21);
-        await Assert.That(a.GetElement(1, 0)).IsEqualTo(a.M21);
+        _ = await Assert.That(a.Y.X).IsEqualTo(a.M21);
+        _ = await Assert.That(a[1, 0]).IsEqualTo(a.M21);
+        _ = await Assert.That(a.GetElement(1, 0)).IsEqualTo(a.M21);
 
-        await Assert.That(a.Y.Y).IsEqualTo(a.M22);
-        await Assert.That(a[1, 1]).IsEqualTo(a.M22);
-        await Assert.That(a.GetElement(1, 1)).IsEqualTo(a.M22);
+        _ = await Assert.That(a.Y.Y).IsEqualTo(a.M22);
+        _ = await Assert.That(a[1, 1]).IsEqualTo(a.M22);
+        _ = await Assert.That(a.GetElement(1, 1)).IsEqualTo(a.M22);
 
-        await Assert.That(a.Z.X).IsEqualTo(a.M31);
-        await Assert.That(a[2, 0]).IsEqualTo(a.M31);
-        await Assert.That(a.GetElement(2, 0)).IsEqualTo(a.M31);
+        _ = await Assert.That(a.Z.X).IsEqualTo(a.M31);
+        _ = await Assert.That(a[2, 0]).IsEqualTo(a.M31);
+        _ = await Assert.That(a.GetElement(2, 0)).IsEqualTo(a.M31);
 
-        await Assert.That(a.Z.Y).IsEqualTo(a.M32);
-        await Assert.That(a[2, 1]).IsEqualTo(a.M32);
-        await Assert.That(a.GetElement(2, 1)).IsEqualTo(a.M32);
+        _ = await Assert.That(a.Z.Y).IsEqualTo(a.M32);
+        _ = await Assert.That(a[2, 1]).IsEqualTo(a.M32);
+        _ = await Assert.That(a.GetElement(2, 1)).IsEqualTo(a.M32);
     }
 
     [Test]
@@ -1192,19 +1192,19 @@ public sealed class Matrix3x2DTests
         var a = GenerateTestMatrix();
 
         var vx = new Vector2D(a.M11, a.M12);
-        await Assert.That(a.X).IsEqualTo(vx);
-        await Assert.That(a[0]).IsEqualTo(vx);
-        await Assert.That(a.GetRow(0)).IsEqualTo(vx);
+        _ = await Assert.That(a.X).IsEqualTo(vx);
+        _ = await Assert.That(a[0]).IsEqualTo(vx);
+        _ = await Assert.That(a.GetRow(0)).IsEqualTo(vx);
 
         var vy = new Vector2D(a.M21, a.M22);
-        await Assert.That(a.Y).IsEqualTo(vy);
-        await Assert.That(a[1]).IsEqualTo(vy);
-        await Assert.That(a.GetRow(1)).IsEqualTo(vy);
+        _ = await Assert.That(a.Y).IsEqualTo(vy);
+        _ = await Assert.That(a[1]).IsEqualTo(vy);
+        _ = await Assert.That(a.GetRow(1)).IsEqualTo(vy);
 
         var vz = new Vector2D(a.M31, a.M32);
-        await Assert.That(a.Z).IsEqualTo(vz);
-        await Assert.That(a[2]).IsEqualTo(vz);
-        await Assert.That(a.GetRow(2)).IsEqualTo(vz);
+        _ = await Assert.That(a.Z).IsEqualTo(vz);
+        _ = await Assert.That(a[2]).IsEqualTo(vz);
+        _ = await Assert.That(a.GetRow(2)).IsEqualTo(vz);
     }
 
     [Test]
@@ -1213,28 +1213,28 @@ public sealed class Matrix3x2DTests
         var a = Matrix3x2D.Identity;
 
         a[0, 0] = 11.0;
-        await Assert.That(a.WithElement(0, 0, 11.5).M11).IsEqualTo(11.5);
-        await Assert.That(a.M11).IsEqualTo(11.0);
+        _ = await Assert.That(a.WithElement(0, 0, 11.5).M11).IsEqualTo(11.5);
+        _ = await Assert.That(a.M11).IsEqualTo(11.0);
 
         a[0, 1] = 12.0;
-        await Assert.That(a.WithElement(0, 1, 12.5).M12).IsEqualTo(12.5);
-        await Assert.That(a.M12).IsEqualTo(12.0);
+        _ = await Assert.That(a.WithElement(0, 1, 12.5).M12).IsEqualTo(12.5);
+        _ = await Assert.That(a.M12).IsEqualTo(12.0);
 
         a[1, 0] = 21.0;
-        await Assert.That(a.WithElement(1, 0, 21.5).M21).IsEqualTo(21.5);
-        await Assert.That(a.M21).IsEqualTo(21.0);
+        _ = await Assert.That(a.WithElement(1, 0, 21.5).M21).IsEqualTo(21.5);
+        _ = await Assert.That(a.M21).IsEqualTo(21.0);
 
         a[1, 1] = 22.0;
-        await Assert.That(a.WithElement(1, 1, 22.5).M22).IsEqualTo(22.5);
-        await Assert.That(a.M22).IsEqualTo(22.0);
+        _ = await Assert.That(a.WithElement(1, 1, 22.5).M22).IsEqualTo(22.5);
+        _ = await Assert.That(a.M22).IsEqualTo(22.0);
 
         a[2, 0] = 31.0;
-        await Assert.That(a.WithElement(2, 0, 31.5).M31).IsEqualTo(31.5);
-        await Assert.That(a.M31).IsEqualTo(31.0);
+        _ = await Assert.That(a.WithElement(2, 0, 31.5).M31).IsEqualTo(31.5);
+        _ = await Assert.That(a.M31).IsEqualTo(31.0);
 
         a[2, 1] = 32.0;
-        await Assert.That(a.WithElement(2, 1, 32.5).M32).IsEqualTo(32.5);
-        await Assert.That(a.M32).IsEqualTo(32.0);
+        _ = await Assert.That(a.WithElement(2, 1, 32.5).M32).IsEqualTo(32.5);
+        _ = await Assert.That(a.M32).IsEqualTo(32.0);
     }
 
     [Test]
@@ -1243,15 +1243,15 @@ public sealed class Matrix3x2DTests
         var a = Matrix3x2D.Identity;
 
         a[0] = Vector2D.Create(11.0, 12.0);
-        await Assert.That(a.WithRow(0, Vector2D.Create(11.5, 12.5)).X).IsEqualTo(Vector2D.Create(11.5, 12.5));
-        await Assert.That(a.X).IsEqualTo(Vector2D.Create(11.0, 12.0));
+        _ = await Assert.That(a.WithRow(0, Vector2D.Create(11.5, 12.5)).X).IsEqualTo(Vector2D.Create(11.5, 12.5));
+        _ = await Assert.That(a.X).IsEqualTo(Vector2D.Create(11.0, 12.0));
 
         a[1] = Vector2D.Create(21.0, 22.0);
-        await Assert.That(a.WithRow(1, Vector2D.Create(21.5, 22.5)).Y).IsEqualTo(Vector2D.Create(21.5, 22.5));
-        await Assert.That(a.Y).IsEqualTo(Vector2D.Create(21.0, 22.0));
+        _ = await Assert.That(a.WithRow(1, Vector2D.Create(21.5, 22.5)).Y).IsEqualTo(Vector2D.Create(21.5, 22.5));
+        _ = await Assert.That(a.Y).IsEqualTo(Vector2D.Create(21.0, 22.0));
 
         a[2] = Vector2D.Create(31.0, 32.0);
-        await Assert.That(a.WithRow(2, Vector2D.Create(31.5, 32.5)).Z).IsEqualTo(Vector2D.Create(31.5, 32.5));
-        await Assert.That(a.Z).IsEqualTo(Vector2D.Create(31.0, 32.0));
+        _ = await Assert.That(a.WithRow(2, Vector2D.Create(31.5, 32.5)).Z).IsEqualTo(Vector2D.Create(31.5, 32.5));
+        _ = await Assert.That(a.Z).IsEqualTo(Vector2D.Create(31.0, 32.0));
     }
 }

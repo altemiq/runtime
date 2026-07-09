@@ -9,7 +9,7 @@ namespace Altemiq.Buffers.Compression;
 /// <summary>
 /// The clustered data generator.
 /// </summary>
-internal class ClusteredDataGenerator
+internal sealed class ClusteredDataGenerator
 {
     private readonly UniformDataGenerator generator = new(123456);
 
@@ -34,21 +34,21 @@ internal class ClusteredDataGenerator
                 return;
             }
 
-            var cut = length / 2 + (range - length > 1 ? this.generator.Random.Next(range - length - 1) : 0);
+            var cut = (length / 2) + (range - length > 1 ? this.generator.Random.Next(range - length - 1) : 0);
             var p = this.generator.Random.NextDouble();
             switch (p)
             {
                 case < 0.25:
                     FillUniform(this.generator, array, offset, length / 2, min, min + cut);
-                    FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
+                    FillClustered(array, offset + (length / 2), length - (length / 2), min + cut, max);
                     break;
                 case < 0.5:
                     FillClustered(array, offset, length / 2, min, min + cut);
-                    FillUniform(this.generator, array, offset + length / 2, length - length / 2, min + cut, max);
+                    FillUniform(this.generator, array, offset + (length / 2), length - (length / 2), min + cut, max);
                     break;
                 default:
                     FillClustered(array, offset, length / 2, min, min + cut);
-                    FillClustered(array, offset + length / 2, length - length / 2, min + cut, max);
+                    FillClustered(array, offset + (length / 2), length - (length / 2), min + cut, max);
                     break;
             }
 

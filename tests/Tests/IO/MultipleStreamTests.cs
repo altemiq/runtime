@@ -65,11 +65,9 @@ public class MultipleStreamTests
 
         Received.InOrder(() =>
         {
-#pragma warning disable CA2012 // Use ValueTasks correctly
-            first.FlushAsync(cancellationToken);
-            second.FlushAsync(cancellationToken);
-            third.FlushAsync(cancellationToken);
-#pragma warning restore CA2012 // Use ValueTasks correctly
+            _ = first.FlushAsync(cancellationToken);
+            _ = second.FlushAsync(cancellationToken);
+            _ = third.FlushAsync(cancellationToken);
         });
     }
 
@@ -91,9 +89,9 @@ public class MultipleStreamTests
         Received.InOrder(() =>
         {
 #pragma warning disable CA2012 // Use ValueTasks correctly
-            first.DisposeAsync();
-            second.DisposeAsync();
-            third.DisposeAsync();
+            _ = first.DisposeAsync();
+            _ = second.DisposeAsync();
+            _ = third.DisposeAsync();
 #pragma warning restore CA2012 // Use ValueTasks correctly
         });
     }
@@ -114,25 +112,25 @@ public class MultipleStreamTests
         var random = new Random();
         var secondBytes = new byte[byte.MaxValue];
         random.NextBytes(secondBytes);
-        multipleStream.SwitchTo(nameof(second));
+        _ = multipleStream.SwitchTo(nameof(second));
         multipleStream.Write(secondBytes, 0, secondBytes.Length);
 
         var thirdBytes = new byte[2 * byte.MaxValue];
         random.NextBytes(thirdBytes);
-        multipleStream.SwitchTo(nameof(third));
+        _ = multipleStream.SwitchTo(nameof(third));
         multipleStream.Write(thirdBytes, 0, thirdBytes.Length);
 
-        await Assert.That(first.ToArray()).IsEmpty();
-        await Assert.That(second.ToArray()).IsEquivalentTo(secondBytes);
-        await Assert.That(third.ToArray()).IsEquivalentTo(thirdBytes);
+        _ = await Assert.That(first.ToArray()).IsEmpty();
+        _ = await Assert.That(second.ToArray()).IsEquivalentTo(secondBytes);
+        _ = await Assert.That(third.ToArray()).IsEquivalentTo(thirdBytes);
     }
 
     [Test]
     public async Task TryAddTwice()
     {
         var multipleStream = Substitute.ForPartsOf<MultipleStream>();
-        await Assert.That(multipleStream.TryAdd(nameof(multipleStream), static () => default!)).IsTrue();
-        await Assert.That(multipleStream.TryAdd(nameof(multipleStream), static () => default!)).IsFalse();
+        _ = await Assert.That(multipleStream.TryAdd(nameof(multipleStream), static () => default!)).IsTrue();
+        _ = await Assert.That(multipleStream.TryAdd(nameof(multipleStream), static () => default!)).IsFalse();
     }
 
     [Test]
@@ -140,7 +138,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
+        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -171,7 +169,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
+        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -200,7 +198,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
+        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -214,10 +212,10 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        await Assert.That(stream.Read(third.AsSpan())).IsEqualTo(ReadSize);
+        _ = await Assert.That(stream.Read(third.AsSpan())).IsEqualTo(ReadSize);
 
-        await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
-        await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
+        _ = await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
+        _ = await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
     }
 
     [Test]
@@ -225,7 +223,7 @@ public class MultipleStreamTests
     {
         const int FirstSize = 1024;
         const int SecondSize = 2048;
-        const int ReadSize = FirstSize + (SecondSize - FirstSize) / 2;
+        const int ReadSize = FirstSize + ((SecondSize - FirstSize) / 2);
 
         var random = new Random();
         var first = new byte[FirstSize];
@@ -239,10 +237,10 @@ public class MultipleStreamTests
 
         var third = new byte[ReadSize];
 
-        await Assert.That(await stream.ReadAsync(third.AsMemory(), TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
+        _ = await Assert.That(await stream.ReadAsync(third.AsMemory(), TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None)).IsEqualTo(ReadSize);
 
-        await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
-        await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
+        _ = await Assert.That(new ArraySegment<byte>(third, 0, FirstSize)).IsEquivalentTo(new ArraySegment<byte>(first));
+        _ = await Assert.That(new ArraySegment<byte>(third, FirstSize, ReadSize - FirstSize)).IsEquivalentTo(new ArraySegment<byte>(second, 0, ReadSize - FirstSize));
     }
 #endif
 
@@ -333,14 +331,17 @@ public class MultipleStreamTests
             await stream.CopyToAsync(memoryStream, TestContext.Current?.Execution.CancellationToken ?? CancellationToken.None);
         }
 
-        await Assert.That(new ArraySegment<byte>(destination, 0, FirstSize)).IsEquivalentTo(first);
-        await Assert.That(new ArraySegment<byte>(destination, FirstSize, SecondSize)).IsEquivalentTo(second);
-        await Assert.That(new ArraySegment<byte>(destination, FirstSize + SecondSize, ThirdSize)).IsEquivalentTo(third);
+        _ = await Assert.That(new ArraySegment<byte>(destination, 0, FirstSize)).IsEquivalentTo(first);
+        _ = await Assert.That(new ArraySegment<byte>(destination, FirstSize, SecondSize)).IsEquivalentTo(second);
+        _ = await Assert.That(new ArraySegment<byte>(destination, FirstSize + SecondSize, ThirdSize)).IsEquivalentTo(third);
     }
 #endif
 
     private sealed class BasicMultipleStream(params IEnumerable<Stream> streams) : MultipleStream(streams.Select(static (s, i) => (s, i)).ToDictionary(static x => x.i.ToString(), static x => x.s))
     {
-        protected override Stream CreateStream(string name) => throw new NotImplementedException();
+        protected override Stream CreateStream(string name)
+        {
+            throw new System.Diagnostics.UnreachableException();
+        }
     }
 }

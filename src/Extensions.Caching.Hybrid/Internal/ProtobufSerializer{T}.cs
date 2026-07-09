@@ -10,6 +10,7 @@ namespace Altemiq.Extensions.Caching.Hybrid.Internal;
 /// The <see cref="Google.Protobuf.IMessage{T}"/> serializer.
 /// </summary>
 /// <typeparam name="T">The type of message to serialize.</typeparam>
+/// <param name="parser">The parser.</param>
 internal sealed class ProtobufSerializer<T>(Google.Protobuf.MessageParser<T> parser) : Microsoft.Extensions.Caching.Hybrid.IHybridCacheSerializer<T>
     where T : Google.Protobuf.IMessage<T>, new()
 {

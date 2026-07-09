@@ -13,13 +13,13 @@ public class ArrayTests
     {
         var array = new[] { 1, 2, 3, 4 };
         Array.PadLeft(ref array, 10);
-        await Assert.That(array).IsEquivalentTo([0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
+        _ = await Assert.That(array).IsEquivalentTo([0, 0, 0, 0, 0, 0, 1, 2, 3, 4]);
     }
 
     [Test]
     public async Task ThrowOnNullLeft()
     {
-        await Assert.That(static () =>
+        _ = await Assert.That(static () =>
         {
             int[]? array = default;
             Array.PadLeft(ref array!, default);
@@ -31,7 +31,7 @@ public class ArrayTests
     {
         var array = new[] { 1, 2, 3, 4 };
         Array.PadLeft(ref array, 4);
-        await Assert.That(array).IsEquivalentTo([1, 2, 3, 4]);
+        _ = await Assert.That(array).IsEquivalentTo([1, 2, 3, 4]);
     }
 
     [Test]
@@ -39,7 +39,7 @@ public class ArrayTests
     {
         var array = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
         Array.PadLeft(ref array, 10);
-        await Assert.That(array).IsEquivalentTo([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        _ = await Assert.That(array).IsEquivalentTo([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     }
 
     [Test]
@@ -47,13 +47,13 @@ public class ArrayTests
     {
         var array = new[] { 1, 2, 3, 4 };
         Array.PadRight(ref array, 10);
-        await Assert.That(array).IsEquivalentTo([1, 2, 3, 4, 0, 0, 0, 0, 0, 0]);
+        _ = await Assert.That(array).IsEquivalentTo([1, 2, 3, 4, 0, 0, 0, 0, 0, 0]);
     }
 
     [Test]
     public async Task ThrowOnNullRight()
     {
-        await Assert.That(static () =>
+        _ = await Assert.That(static () =>
         {
             int[]? array = default;
             Array.PadRight(ref array!, default);
@@ -65,7 +65,7 @@ public class ArrayTests
     {
         var array = new[] { 1, 2, 3, 4 };
         Array.PadRight(ref array, 4);
-        await Assert.That(array).IsEquivalentTo([1, 2, 3, 4]);
+        _ = await Assert.That(array).IsEquivalentTo([1, 2, 3, 4]);
     }
 
     [Test]
@@ -73,6 +73,6 @@ public class ArrayTests
     {
         var array = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
         Array.PadRight(ref array, 10);
-        await Assert.That(array).IsEquivalentTo([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        _ = await Assert.That(array).IsEquivalentTo([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     }
 }

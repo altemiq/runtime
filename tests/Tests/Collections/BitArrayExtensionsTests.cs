@@ -13,7 +13,7 @@ public class BitArrayExtensionsTests
     {
         const byte Value = 0x03;
         var bitConverter = new System.Collections.BitArray([Value]);
-        await Assert.That(bitConverter.GetByte()).IsEqualTo(Value);
+        _ = await Assert.That(bitConverter.GetByte()).IsEqualTo(Value);
     }
 
     [Test]
@@ -22,7 +22,7 @@ public class BitArrayExtensionsTests
         const byte First = 0x03;
         const byte Second = 0x05;
         var bitConverter = new System.Collections.BitArray([First, Second]);
-        await Assert.That(bitConverter.GetBytes()).IsEquivalentTo([First, Second]);
+        _ = await Assert.That(bitConverter.GetBytes()).IsEquivalentTo([First, Second]);
     }
 
     [Test]
@@ -30,7 +30,7 @@ public class BitArrayExtensionsTests
     {
         const byte Value = 0x03;
         var bitConverter = new System.Collections.BitArray(new byte[] { 0x00, Value, 0x00, 0x00 });
-        await Assert.That(bitConverter.GetByte(8, 3)).IsEqualTo(Value);
+        _ = await Assert.That(bitConverter.GetByte(8, 3)).IsEqualTo(Value);
     }
 
     [Test]
@@ -49,7 +49,7 @@ public class BitArrayExtensionsTests
             ? new System.Collections.BitArray([second.Value])
             : null;
 
-        await Assert.That(BitArrayExtensions.Equals(firstBitArray!, secondBitArray!)).IsEqualTo(expected);
+        _ = await Assert.That(BitArrayExtensions.Equals(firstBitArray!, secondBitArray!)).IsEqualTo(expected);
     }
 
     [Test]
@@ -63,6 +63,6 @@ public class BitArrayExtensionsTests
             ? [(byte)bits]
             : BitConverter.GetBytes(bits);
         var bitArray = new System.Collections.BitArray(bytes);
-        await Assert.That(bitArray.ToHexString(default)).IsEqualTo(expected);
+        _ = await Assert.That(bitArray.ToHexString(default)).IsEqualTo(expected);
     }
 }

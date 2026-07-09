@@ -18,13 +18,13 @@ public class ResolveTests
             Version = actualAssemblyName.Version,
         };
 
-        await Assert.That(Resolve.ResolveRuntimeAssembly(assemblyName)).IsNotNull();
+        _ = await Assert.That(Resolve.ResolveRuntimeAssembly(assemblyName)).IsNotNull();
     }
 
     [Test]
     public async Task LoadFromLib()
     {
         var assemblyName = new System.Reflection.AssemblyName { Name = "Altemiq.Dummy" };
-        await Assert.That(Resolve.ResolveRuntimeAssembly(assemblyName)).IsNotNull();
+        _ = await Assert.That(Resolve.ResolveRuntimeAssembly(assemblyName)).IsNotNull();
     }
 }

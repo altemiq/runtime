@@ -9,6 +9,7 @@ namespace Altemiq.Extensions.Configuration.Yaml;
 /// <summary>
 /// Provides configuration key-value pairs that are obtained from a YAML file.
 /// </summary>
+/// <param name="source">The file configuration source.</param>
 public class YamlConfigurationProvider(FileConfigurationSource source) : FileConfigurationProvider(source)
 {
     /// <inheritdoc />

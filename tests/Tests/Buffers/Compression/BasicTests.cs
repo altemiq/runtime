@@ -1,5 +1,3 @@
-using System.Buffers;
-
 namespace Altemiq.Buffers.Compression;
 
 public class BasicTests
@@ -7,9 +5,9 @@ public class BasicTests
     private static readonly IEnumerable<Func<IInt32Codec>> Codecs =
     [
         Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>,
-        () => new Copy(),
-        () => new VariableByte(),
-        () => new Differential.DifferentialVariableByte(),
+        static () => new Copy(),
+        static () => new VariableByte(),
+        static () => new Differential.DifferentialVariableByte(),
         Composition.Create<BinaryPacking, VariableByte>,
         Composition.Create<NewPfdS9, VariableByte>,
         Composition.Create<NewPfdS16, VariableByte>,
@@ -17,8 +15,8 @@ public class BasicTests
         Composition.Create<OptPfdS16, VariableByte>,
         Composition.Create<FastPatchingFrameOfReference128, VariableByte>,
         Composition.Create<FastPatchingFrameOfReference256, VariableByte>,
-        () => new Simple9(),
-        () => new Simple16(),
+        static () => new Simple9(),
+        static () => new Simple16(),
         Composition.Create<Differential.XorBinaryPacking, VariableByte>,
         Composition.Create<DeltaZigzagBinaryPacking, DeltaZigzagVariableByte>
     ];
@@ -39,7 +37,7 @@ public class BasicTests
 
             Array.Clear(decompressed, 0, decompressed.Length);
             _ = ic.Decompress(compressed.AsSpan(x, length), decompressed);
-            await Assert.That(decompressed).HasSameSequenceAs(data);
+            _ = await Assert.That(decompressed).HasSameSequenceAs(data);
         }
     }
 
@@ -63,7 +61,7 @@ public class BasicTests
 
             for (var k = 0; k < l; ++k)
             {
-                await Assert.That(answer[k]).IsEqualTo(data[k]);
+                _ = await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
 
@@ -73,7 +71,7 @@ public class BasicTests
             var answer = TestUtils.Decompress(c, comp, l);
             for (var k = 0; k < l; ++k)
             {
-                await Assert.That(answer[k]).IsEqualTo(data[k]);
+                _ = await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
     }
@@ -93,7 +91,7 @@ public class BasicTests
             var answer = TestUtils.Decompress(c, comp, l);
             for (var k = 0; k < l; ++k)
             {
-                await Assert.That(answer[k]).IsEqualTo(data[k]);
+                _ = await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
         for (var l = 128; l <= N; l *= 2)
@@ -102,7 +100,7 @@ public class BasicTests
             var answer = TestUtils.Decompress(c, comp, l);
             for (var k = 0; k < l; ++k)
             {
-                await Assert.That(answer[k]).IsEqualTo(data[k]);
+                _ = await Assert.That(answer[k]).IsEqualTo(data[k]);
             }
         }
     }
@@ -240,7 +238,7 @@ public class BasicTests
         BitPacking.Pack(data, compressed, bit);
         BitPacking.Unpack(compressed, uncompressed, bit);
 
-        await Assert.That(data).HasSameSequenceAs(data);
+        _ = await Assert.That(data).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -264,7 +262,7 @@ public class BasicTests
         BitPacking.PackWithoutMask(data, compressed, bit);
         BitPacking.Unpack(compressed, uncompressed, bit);
 
-        await Assert.That(data).HasSameSequenceAs(data);
+        _ = await Assert.That(data).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -293,7 +291,7 @@ public class BasicTests
 
             // Check assertions.
             MaskArray(data, (1 << bit) - 1);
-            await Assert.That(uncompressed).HasSameSequenceAs(data);
+            _ = await Assert.That(uncompressed).HasSameSequenceAs(data);
         }
 
         static void MaskArray(int[] array, int mask)
@@ -363,7 +361,7 @@ public class BasicTests
     public async Task SpuriousOut(Type type)
     {
         var codec = Activator.CreateInstance(type) as IInt32Codec;
-        await Assert.That(codec).IsNotNull();
+        _ = await Assert.That(codec).IsNotNull();
         await TestSpurious(codec!);
     }
 
@@ -376,25 +374,25 @@ public class BasicTests
 
     public static IEnumerable<Func<IntegerCodec>> ZeroInZeroOutData()
     {
-        yield return () => new(new Differential.DifferentialBinaryPacking());
-        yield return () => new(new Differential.DifferentialVariableByte());
-        yield return () => new(new BinaryPacking());
-        yield return () => new(new NewPfdS9());
-        yield return () => new(new NewPfdS16());
-        yield return () => new(new OptPfdS9());
-        yield return () => new(new OptPfdS16());
-        yield return () => new(new FastPatchingFrameOfReference128());
-        yield return () => new(new FastPatchingFrameOfReference256());
-        yield return () => new(new VariableByte());
-        yield return () => new(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
-        yield return () => new(Composition.Create<BinaryPacking, VariableByte>());
-        yield return () => new(Composition.Create<NewPfdS9, VariableByte>());
-        yield return () => new(Composition.Create<NewPfdS16, VariableByte>());
-        yield return () => new(Composition.Create<OptPfdS9, VariableByte>());
-        yield return () => new(Composition.Create<OptPfdS16, VariableByte>());
-        yield return () => new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
-        yield return () => new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
-        yield return () => new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
+        yield return static () => new(new Differential.DifferentialBinaryPacking());
+        yield return static () => new(new Differential.DifferentialVariableByte());
+        yield return static () => new(new BinaryPacking());
+        yield return static () => new(new NewPfdS9());
+        yield return static () => new(new NewPfdS16());
+        yield return static () => new(new OptPfdS9());
+        yield return static () => new(new OptPfdS16());
+        yield return static () => new(new FastPatchingFrameOfReference128());
+        yield return static () => new(new FastPatchingFrameOfReference256());
+        yield return static () => new(new VariableByte());
+        yield return static () => new(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
+        yield return static () => new(Composition.Create<BinaryPacking, VariableByte>());
+        yield return static () => new(Composition.Create<NewPfdS9, VariableByte>());
+        yield return static () => new(Composition.Create<NewPfdS16, VariableByte>());
+        yield return static () => new(Composition.Create<OptPfdS9, VariableByte>());
+        yield return static () => new(Composition.Create<OptPfdS16, VariableByte>());
+        yield return static () => new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
+        yield return static () => new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
+        yield return static () => new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
     }
 
     private static async Task TestSpurious(IInt32Codec c)
@@ -408,7 +406,7 @@ public class BasicTests
             var (read, written) = c.Compress(x.AsSpan(i0, length), y.AsSpan(i1));
             i0 += read;
             i1 += written;
-            await Assert.That(i1).IsEqualTo(0);
+            _ = await Assert.That(i1).IsEqualTo(0);
         }
     }
 
@@ -417,11 +415,11 @@ public class BasicTests
         int[] x = [];
         int[] y = [];
         var (_, i1) = c.Compress(x, y);
-        await Assert.That(i1).IsEqualTo(0);
+        _ = await Assert.That(i1).IsEqualTo(0);
 
         int[] output = [];
         var (_, outputPosition) = c.Decompress(y.AsSpan(i1), output);
-        await Assert.That(outputPosition).IsEqualTo(0);
+        _ = await Assert.That(outputPosition).IsEqualTo(0);
     }
 
     private static async Task TestCodec(IInt32Codec c, IInt32Codec co, int[][] data)
@@ -439,7 +437,7 @@ public class BasicTests
         var buffer = new int[maxlength + 1024];
 
         // 4x + 1024 to account for the possibility of some negative compression.
-        var dataOutput = new int[4 * maxlength + 1024];
+        var dataOutput = new int[(4 * maxlength) + 1024];
         for (var k = 0; k < n; ++k)
         {
             var backupData = TestUtils.CopyArray(data[k], data[k].Length);
@@ -461,8 +459,8 @@ public class BasicTests
             }
 
             // Check assertions.
-            await Assert.That(data[k]).Count().IsEqualTo(outputPosition);
-            await Assert.That(data[k]).HasSameSequenceAs(TestUtils.CopyArray(buffer, outputPosition));
+            _ = await Assert.That(data[k]).Count().IsEqualTo(outputPosition);
+            _ = await Assert.That(data[k]).HasSameSequenceAs(TestUtils.CopyArray(buffer, outputPosition));
         }
     }
 
@@ -489,17 +487,17 @@ public class BasicTests
 
     public static IEnumerable<Func<IntegerCodec>> ExampleCodecs()
     {
-        yield return () => new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
-        yield return () => new(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
-        yield return () => new(new VariableByte());
-        yield return () => new(new Differential.DifferentialVariableByte());
-        yield return () => new(Composition.Create<BinaryPacking, VariableByte>());
-        yield return () => new(Composition.Create<NewPfdS9, VariableByte>());
-        yield return () => new(Composition.Create<NewPfdS16, VariableByte>());
-        yield return () => new(Composition.Create<OptPfdS9, VariableByte>());
-        yield return () => new(Composition.Create<OptPfdS16, VariableByte>());
-        yield return () => new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
-        yield return () => new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
+        yield return static () => new(Differential.DifferentialComposition.Create<Differential.DifferentialBinaryPacking, Differential.DifferentialVariableByte>());
+        yield return static () => new(Composition.Create<Differential.DifferentialBinaryPacking, VariableByte>());
+        yield return static () => new(new VariableByte());
+        yield return static () => new(new Differential.DifferentialVariableByte());
+        yield return static () => new(Composition.Create<BinaryPacking, VariableByte>());
+        yield return static () => new(Composition.Create<NewPfdS9, VariableByte>());
+        yield return static () => new(Composition.Create<NewPfdS16, VariableByte>());
+        yield return static () => new(Composition.Create<OptPfdS9, VariableByte>());
+        yield return static () => new(Composition.Create<OptPfdS16, VariableByte>());
+        yield return static () => new(Composition.Create<FastPatchingFrameOfReference128, VariableByte>());
+        yield return static () => new(Composition.Create<FastPatchingFrameOfReference256, VariableByte>());
     }
 
     public static IEnumerable<Func<(IntegerCodec, int)>> ExampleCodecsWithSizes()
@@ -544,7 +542,7 @@ public class BasicTests
 
         var decompressed = new int[n];
         _ = codec.Decompress(compressed, decompressed);
-        await Assert.That(decompressed).HasSameSequenceAs(data);
+        _ = await Assert.That(decompressed).HasSameSequenceAs(data);
     }
 
     private static async Task TestUnsorted2(IInt32Codec codec)
@@ -558,7 +556,7 @@ public class BasicTests
 
         var decompressed = new int[128];
         _ = codec.Decompress(compressed, decompressed);
-        await Assert.That(data).HasSameSequenceAs(data);
+        _ = await Assert.That(data).HasSameSequenceAs(data);
     }
 
     private static async Task TestUnsorted3(IInt32Codec codec)
@@ -572,7 +570,7 @@ public class BasicTests
 
         var recovered = new int[128];
         _ = codec.Decompress(compressed, recovered);
-        await Assert.That(data).HasSameSequenceAs(data);
+        _ = await Assert.That(data).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -585,7 +583,7 @@ public class BasicTests
         var data = new int[N];
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        await Assert.That(TestUtils.Decompress(codec2, comp, N)).HasSameSequenceAs(data);
+        _ = await Assert.That(TestUtils.Decompress(codec2, comp, N)).HasSameSequenceAs(data);
     }
 
     [Test]
@@ -598,15 +596,21 @@ public class BasicTests
         var data = new int[N];
         data[126] = -1;
         var comp = TestUtils.Compress(codec1, TestUtils.CopyArray(data, N));
-        await Assert.That(TestUtils.Decompress(codec2, comp, N)).HasSameSequenceAs(data);
+        _ = await Assert.That(TestUtils.Decompress(codec2, comp, N)).HasSameSequenceAs(data);
     }
 
     public sealed class IntegerCodec
     {
-        internal IntegerCodec(IInt32Codec codec) => this.Codec = codec;
+        internal IntegerCodec(IInt32Codec codec)
+        {
+            Codec = codec;
+        }
 
         internal IInt32Codec Codec { get; }
 
-        public override string? ToString() => this.Codec.ToString();
+        public override string? ToString()
+        {
+            return Codec.ToString();
+        }
     }
 }

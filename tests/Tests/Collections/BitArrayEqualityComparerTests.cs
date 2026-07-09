@@ -12,7 +12,7 @@ public class BitArrayEqualityComparerTests
     public async Task ConsistentHashCode()
     {
         const int Value = 12345;
-        await Assert
+        _ = await Assert
             .That(BitArrayEqualityComparer.Instance.GetHashCode(new(BitConverter.GetBytes(Value))))
             .IsEqualTo(BitArrayEqualityComparer.Instance.GetHashCode(new(BitConverter.GetBytes(Value))));
     }

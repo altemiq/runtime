@@ -11,23 +11,23 @@ namespace System.IO.Compression.LZ;
 /// </summary>
 internal class InWindow : IInWindowStream
 {
-    // size of allocated memory block.
+    /* size of allocated memory block */
     private uint blockSize;
 
     private Stream? input;
 
-    // offset (from _buffer) of first byte when new block reading must be done
+    /* offset (from _buffer) of first byte when new block reading must be done */
     private uint posLimit;
 
-    // if (true) then _streamPos shows real end of stream
+    /* if (true) then _streamPos shows real end of stream */
     private bool streamEndWasReached;
 
     private uint pointerToLastSafePosition;
 
-    // how many BYTEs must be kept in buffer before _pos
+    /* how many BYTEs must be kept in buffer before _pos */
     private uint keepSizeBefore;
 
-    // how many BYTEs must be kept buffer after _pos
+    /* how many BYTEs must be kept buffer after _pos */
     private uint keepSizeAfter;
 
     /// <inheritdoc/>

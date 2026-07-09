@@ -66,7 +66,7 @@ internal sealed class DeltaZigzagVariableByte : IInt32Codec
 
         var destinationLength = (int)byteBuffer.Position / 4;
         byteBuffer.Position = 0;
-        byteBuffer.Read(destination[..destinationLength], ByteOrder.BigEndian);
+        _ = byteBuffer.Read(destination[..destinationLength], ByteOrder.BigEndian);
         return (length, destinationLength);
     }
 

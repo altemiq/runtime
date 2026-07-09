@@ -11,7 +11,7 @@
       M:System.ArgumentOutOfRangeException.ThrowIfLessThan``1(``0,``0,System.String)|
       T:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute|
       T:System.Diagnostics.CodeAnalysis.NotNullAttribute|
-      T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute
+      T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute|
     </MeziantouPolyfill_IncludedPolyfills>
   </PropertyGroup>
  

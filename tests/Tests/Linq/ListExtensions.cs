@@ -1,6 +1,6 @@
-using TUnit.Assertions.Sources;
-
 namespace Altemiq.Linq;
+
+using TUnit.Assertions.Sources;
 
 using TUnit.Assertions.Core;
 
@@ -19,7 +19,7 @@ public static partial class ListExtensions
     {
         if (first is IAssertionSource<IEnumerable<T>> { Context: { } context })
         {
-            context.ExpressionBuilder.Append($".IsLinqEqualTo({expression})");
+            _ = context.ExpressionBuilder.Append($".IsLinqEqualTo({expression})");
             return new LinqEqualsAssertion<T>(
                 context,
                 second,
@@ -46,7 +46,7 @@ public static partial class ListExtensions
     {
         if (first is IAssertionSource<IEnumerable<T>> { Context: { } context })
         {
-            context.ExpressionBuilder.Append($".IsLinqEqualTo({expression})");
+            _ = context.ExpressionBuilder.Append($".IsLinqEqualTo({expression})");
             return new LinqEqualsAssertion<T>(
                 context,
                 second,
@@ -66,7 +66,7 @@ public static partial class ListExtensions
     {
         if (source is IAssertionSource<IEnumerable<T>> { Context: { } context })
         {
-            context.ExpressionBuilder.Append(".HasIndexOf()");
+            _ = context.ExpressionBuilder.Append(".HasIndexOf()");
             return new(context, value);
         }
 
@@ -78,7 +78,7 @@ public static partial class ListExtensions
     {
         if (source is IAssertionSource<IEnumerable<T>> { Context: { } context })
         {
-            context.ExpressionBuilder.Append(".HasIndexOf()");
+            _ = context.ExpressionBuilder.Append(".HasIndexOf()");
             return new(context, value);
         }
 

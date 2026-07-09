@@ -37,7 +37,12 @@ public sealed class ProtobufSerializerFactory : Microsoft.Extensions.Caching.Hyb
         }
 
         // This does not appear to be a Google.Protobuf type.
-        serializer = null!;
+        serializer =
+#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
+            null;
+#else
+            null!;
+#endif
         return false;
     }
 }

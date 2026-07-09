@@ -622,7 +622,12 @@ public static class RuntimeEnvironment
                 static Stream GetManifestStream(string name)
                 {
                     var assembly = typeof(RuntimeEnvironment).GetTypeInfo().Assembly;
-                    return assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.Contains(name, StringComparison.Ordinal)))!;
+                    var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.Contains(name, StringComparison.Ordinal)));
+#if NETCOREAPP3_0_OR_GREATER
+                    return stream!;
+#else
+                    return stream;
+#endif
                 }
             }
         }

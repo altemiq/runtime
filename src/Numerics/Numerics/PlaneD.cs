@@ -144,7 +144,7 @@ public struct PlaneD : IEquatable<PlaneD>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PlaneD Transform(PlaneD plane, Matrix4x4D matrix)
     {
-        Matrix4x4D.Invert(matrix, out var inverseMatrix);
+        _ = Matrix4x4D.Invert(matrix, out var inverseMatrix);
         return Vector4D.Transform(plane.AsVector4D(), Matrix4x4D.Transpose(inverseMatrix)).AsPlaneD();
     }
 

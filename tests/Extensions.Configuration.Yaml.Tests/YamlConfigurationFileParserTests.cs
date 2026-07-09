@@ -1,8 +1,8 @@
+namespace Altemiq.Extensions.Configuration.Yaml;
+
 using System.Globalization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
-
-namespace Altemiq.Extensions.Configuration.Yaml;
 
 public class YamlConfigurationFileParserTests
 {
@@ -27,10 +27,10 @@ public class YamlConfigurationFileParserTests
               zipcode: '12345'
             """;
         var config = new ConfigurationBuilder().AddYamlStream(TestStreamHelpers.StringToStream(yaml)).Build();
-        await Assert.That(config["firstname"]).IsEqualTo("test");
-        await Assert.That(config["test.last.name"]).IsEqualTo("last.name");
-        await Assert.That(config["residential.address:STREET.name"]).IsEqualTo("Something street");
-        await Assert.That(config["residential.address:zipcode"]).IsEqualTo("12345");
+        _ = await Assert.That(config["firstname"]).IsEqualTo("test");
+        _ = await Assert.That(config["test.last.name"]).IsEqualTo("last.name");
+        _ = await Assert.That(config["residential.address:STREET.name"]).IsEqualTo("Something street");
+        _ = await Assert.That(config["residential.address:zipcode"]).IsEqualTo("12345");
     }
 
     [Test]
@@ -38,7 +38,7 @@ public class YamlConfigurationFileParserTests
     {
         var yaml = "firstname: test";
         var config = new ConfigurationBuilder().AddYamlStream(TestStreamHelpers.StringToStream(yaml)).Build();
-        await Assert.That(() => config.Reload()).Throws<InvalidOperationException>();
+        _ = await Assert.That(config.Reload).Throws<InvalidOperationException>();
     }
 
     [Test]
@@ -46,18 +46,18 @@ public class YamlConfigurationFileParserTests
     {
         var yaml =
             """
-            firstname: test
-            test.last.name: last.name
-            residential.address:
-              street.name: Something street
-              zipcode: '12345'
-            """;
+        firstname: test
+        test.last.name: last.name
+        residential.address:
+          street.name: Something street
+          zipcode: '12345'
+        """;
         var yamlConfigSrc = LoadProvider(yaml);
 
-        await Assert.That(yamlConfigSrc.Get("firstname")).IsEqualTo("test");
-        await Assert.That(yamlConfigSrc.Get("test.last.name")).IsEqualTo("last.name");
-        await Assert.That(yamlConfigSrc.Get("residential.address:STREET.name")).IsEqualTo("Something street");
-        await Assert.That(yamlConfigSrc.Get("residential.address:zipcode")).IsEqualTo("12345");
+        _ = await Assert.That(yamlConfigSrc.Get("firstname")).IsEqualTo("test");
+        _ = await Assert.That(yamlConfigSrc.Get("test.last.name")).IsEqualTo("last.name");
+        _ = await Assert.That(yamlConfigSrc.Get("residential.address:STREET.name")).IsEqualTo("Something street");
+        _ = await Assert.That(yamlConfigSrc.Get("residential.address:zipcode")).IsEqualTo("12345");
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class YamlConfigurationFileParserTests
     {
         var yaml = "name: ''";
         var yamlConfigSrc = LoadProvider(yaml);
-        await Assert.That(yamlConfigSrc.Get("name")).IsEmpty();
+        _ = await Assert.That(yamlConfigSrc.Get("name")).IsEmpty();
     }
 
     [Test]
@@ -79,7 +79,7 @@ public class YamlConfigurationFileParserTests
 
             var yaml = "number: 3.14";
             var yamlConfigSrc = LoadProvider(yaml);
-            await Assert.That(yamlConfigSrc.Get("number")).IsEqualTo("3.14");
+            _ = await Assert.That(yamlConfigSrc.Get("number")).IsEqualTo("3.14");
         }
         finally
         {
@@ -92,11 +92,11 @@ public class YamlConfigurationFileParserTests
     {
         var yaml =
             """
-            - first
-            - second
-            """;
+        - first
+        - second
+        """;
 
-        await Assert.That(() => LoadProvider(yaml)).Throws<FormatException>().And.Member(m => m.Message, message => message.IsNotNull());
+        _ = await Assert.That(() => LoadProvider(yaml)).Throws<FormatException>().And.Member(m => m.Message, message => message.IsNotNull());
     }
 
     [Test]
@@ -104,83 +104,79 @@ public class YamlConfigurationFileParserTests
     {
         var yaml =
             """
-            # Comments
-            name: test
-            # Comments
-            address:
-              street: Something street # Comments
-              zipcode: '12345'
-            """;
+        # Comments
+        name: test
+        # Comments
+        address:
+          street: Something street # Comments
+          zipcode: '12345'
+        """;
         var yamlConfigSrc = LoadProvider(yaml);
-        await Assert.That(yamlConfigSrc.Get("name")).IsEqualTo("test");
-        await Assert.That(yamlConfigSrc.Get("address:street")).IsEqualTo("Something street");
-        await Assert.That(yamlConfigSrc.Get("address:zipcode")).IsEqualTo("12345");
+        _ = await Assert.That(yamlConfigSrc.Get("name")).IsEqualTo("test");
+        _ = await Assert.That(yamlConfigSrc.Get("address:street")).IsEqualTo("Something street");
+        _ = await Assert.That(yamlConfigSrc.Get("address:zipcode")).IsEqualTo("12345");
     }
 
     [Test]
     public async Task ThrowExceptionWhenPassingNullAsFilePath()
     {
-        var expectedMsg = new ArgumentException(Properties.Resources.Error_InvalidFilePath, PathParameterName).Message;
-
-        await Assert.That(() => new ConfigurationBuilder().AddYamlFile(path: null!)).Throws<ArgumentException>().WithMessage(expectedMsg);
+        _ = await Assert.That(static () => new ConfigurationBuilder().AddYamlFile(path: null!)).Throws<ArgumentException>().WithParameterName("path");
     }
 
     [Test]
     public async Task ThrowExceptionWhenPassingEmptyStringAsFilePath()
     {
-        var expectedMsg = new ArgumentException(Properties.Resources.Error_InvalidFilePath, PathParameterName).Message;
-
-        await Assert.That(() => new ConfigurationBuilder().AddYamlFile(path: string.Empty)).Throws<ArgumentException>().WithMessage(expectedMsg);
+        _ = await Assert.That(static () => new ConfigurationBuilder().AddYamlFile(path: string.Empty)).Throws<ArgumentException>().WithParameterName("path");
     }
 
     [Test]
-    public async Task YamlConfiguration_Throws_On_Missing_Configuration_File()
+    public async Task YamlConfigurationThrowsOnMissingConfigurationFile()
     {
         var config = new ConfigurationBuilder().AddYamlFile("NotExistingConfig.yaml", optional: false);
-        await Assert.That(() => config.Build())
+        _ = await Assert.That(() => config.Build())
             .Throws<FileNotFoundException>()
             .WithMessageContaining("The configuration file 'NotExistingConfig.yaml' was not found and is not optional.");
     }
 
     [Test]
-    public async Task YamlConfiguration_Does_Not_Throw_On_Optional_Configuration()
+    public async Task YamlConfigurationDoesNotThrowOnOptionalConfiguration()
     {
-        await Assert.That(() => new ConfigurationBuilder().AddYamlFile("NotExistingConfig.yaml", optional: true).Build()).ThrowsNothing();
+        _ = await Assert.That(static () => new ConfigurationBuilder().AddYamlFile("NotExistingConfig.yaml", optional: true).Build()).ThrowsNothing();
     }
 
     [Test]
     public async Task ThrowFormatExceptionWhenFileIsEmpty()
     {
-        await Assert.That(() => LoadProvider(@"")).Throws<FormatException>().WithMessage("Could not parse the YAML file.");
+        _ = await Assert.That(static () => LoadProvider(@"")).Throws<FormatException>().WithMessage("Could not parse the YAML file.");
     }
 
     [Test]
-    public async Task AddYamlFile_FileProvider_Is_Not_Disposed_When_SourcesGetReloaded()
+    public async Task AddYamlFileFileProviderIsNotDisposedWhenSourcesGetReloaded()
     {
-        string filePath = Path.GetTempFileName();
+        var filePath = Path.GetTempFileName();
         File.WriteAllText(filePath, "some: value");
 
         IConfigurationBuilder builder = new ConfigurationManager();
 
-        builder.AddYamlFile(filePath, optional: false);
+        _ = builder.AddYamlFile(filePath, optional: false);
 
-        FileConfigurationSource fileConfigurationSource = (FileConfigurationSource)builder.Sources.Last();
-        PhysicalFileProvider? fileProvider = fileConfigurationSource.FileProvider as PhysicalFileProvider;
+        var fileConfigurationSource = (FileConfigurationSource)builder.Sources.Last();
+        var fileProvider = fileConfigurationSource.FileProvider as PhysicalFileProvider;
 
-        await Assert.That(fileConfigurationSource.FileProvider)
-            .IsTypeOf<PhysicalFileProvider>()
-            .And.Satisfies(GetIsDisposed, disposed => disposed.IsFalse());
+        _ = await Assert.That(fileConfigurationSource.FileProvider)
+            .IsTypeOf<PhysicalFileProvider>().And
+            .Satisfies(GetIsDisposed, static disposed => disposed.IsFalse());
 
         builder.Properties.Add("simplest", "repro");
 
-        await Assert.That(fileConfigurationSource.FileProvider)
-            .IsTypeOf<PhysicalFileProvider>()
-            .And.Satisfies(GetIsDisposed, disposed => disposed.IsFalse());
+        _ = await Assert.That(fileConfigurationSource.FileProvider)
+            .IsTypeOf<PhysicalFileProvider>().And
+            .Satisfies(GetIsDisposed, static disposed => disposed.IsFalse());
 
         fileProvider?.Dispose();
-        await Assert.That(fileConfigurationSource.FileProvider)
-            .IsTypeOf<PhysicalFileProvider>()
-            .And.Satisfies(GetIsDisposed, disposed => disposed.IsTrue());
+        _ = await Assert.That(fileConfigurationSource.FileProvider)
+            .IsTypeOf<PhysicalFileProvider>().And
+            .Satisfies(GetIsDisposed, static disposed => disposed.IsTrue());
 
         File.Delete(filePath);
     }
@@ -188,6 +184,6 @@ public class YamlConfigurationFileParserTests
     private static bool GetIsDisposed(PhysicalFileProvider? fileProvider)
     {
         var isDisposedField = typeof(PhysicalFileProvider).GetField("_disposed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-        return (bool)isDisposedField!.GetValue(fileProvider)!;
+        return isDisposedField?.GetValue(fileProvider) is bool b && b;
     }
 }

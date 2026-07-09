@@ -61,16 +61,17 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
 
                     if (version.HasMetadata)
                     {
-                        builder.Append('+');
-                        builder.Append(version.Metadata);
+                        _ = builder
+                            .Append('+')
+                            .Append(version.Metadata);
                     }
 
                     return;
                 case 'R':
-                    builder.Append(version.Release);
+                    _ = builder.Append(version.Release);
                     return;
                 case 'M':
-                    builder.Append(version.Metadata);
+                    _ = builder.Append(version.Metadata);
                     return;
                 case 'x':
                     AppendInt(builder, version.Major);
@@ -82,7 +83,7 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
                     AppendInt(builder, version.Patch);
                     return;
                 default:
-                    builder.Append(c);
+                    _ = builder.Append(c);
                     return;
             }
 
@@ -91,17 +92,17 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
                 switch (value)
                 {
                     case 0:
-                        sb.Append('0');
+                        _ = sb.Append('0');
                         return;
 
                     // special case min value since it'll overflow if we negate it
                     case int.MinValue:
-                        sb.Append("-2147483648");
+                        _ = sb.Append("-2147483648");
                         return;
 
                     // do all math with positive integers
                     case < 0:
-                        sb.Append('-');
+                        _ = sb.Append('-');
                         value = -value;
                         break;
                 }
@@ -124,7 +125,7 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
                         // '0' + 1 = 48 + 1 = 49 = '1'
                         // '0' + 2 = 48 + 2 = 50 = '2'
                         // etc...
-                        sb.Append((char)('0' + digit));
+                        _ = sb.Append((char)('0' + digit));
                     }
 
                     divisor /= 10;
@@ -134,9 +135,9 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
             static void AppendVersion(StringBuilder builder, SemanticVersion version)
             {
                 AppendInt(builder, version.Major);
-                builder.Append('.');
+                _ = builder.Append('.');
                 AppendInt(builder, version.Minor);
-                builder.Append('.');
+                _ = builder.Append('.');
                 AppendInt(builder, version.Patch);
             }
 
@@ -149,8 +150,9 @@ internal sealed class VersionFormatter : IFormatProvider, ICustomFormatter
                     return;
                 }
 
-                builder.Append('-');
-                builder.Append(version.Release);
+                _ = builder
+                    .Append('-')
+                    .Append(version.Release);
             }
         }
     }

@@ -14,7 +14,7 @@ public class EchoStream : Stream
 {
     private readonly Lock lockObject = new();
 
-    // Default underlying mechanism for BlockingCollection is ConcurrentQueue<T>, which is what we want
+    /* Default underlying mechanism for BlockingCollection is ConcurrentQueue<T>, which is what we want */
     private readonly System.Collections.Concurrent.BlockingCollection<byte[]> buffers;
 
     private byte[]? currentBuffer;
@@ -23,7 +23,7 @@ public class EchoStream : Stream
 
     private bool closed;
 
-    // after the stream is closed, set to true after returning a 0 for read()
+    /* after the stream is closed, set to true after returning a 0 for read() */
     private bool finalZero;
 
     private long length;
@@ -52,10 +52,8 @@ public class EchoStream : Stream
     /// <inheritdoc/>
     public override bool CanRead { get; } = true;
 
-#pragma warning disable CA1805
     /// <inheritdoc/>
-    public override bool CanSeek { get; } = false;
-#pragma warning restore CA1805
+    public override bool CanSeek { get; }
 
     /// <inheritdoc/>
     public override bool CanWrite { get; } = true;

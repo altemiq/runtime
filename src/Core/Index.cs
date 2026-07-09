@@ -61,6 +61,7 @@ public readonly struct Index : IEquatable<Index>
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The index from the start.</returns>
+    /// <exception cref="IndexOutOfRangeException"><paramref name="value"/> is less than zero.</exception>
     [Runtime.CompilerServices.MethodImpl(Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     [Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "Checked")]
     [Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "Checked")]
@@ -74,6 +75,7 @@ public readonly struct Index : IEquatable<Index>
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The index from the start.</returns>
+    /// <exception cref="IndexOutOfRangeException"><paramref name="value"/> is less than zero.</exception>
     [Runtime.CompilerServices.MethodImpl(Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     [Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "Checked")]
     [Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "Checked")]

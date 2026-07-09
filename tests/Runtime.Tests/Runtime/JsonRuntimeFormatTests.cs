@@ -14,7 +14,7 @@ public class JsonRuntimeFormatTests
     [Arguments("runtime.json.gz")]
     public async Task GetManifestStream(string name)
     {
-        await Assert.That(() => GetManifestStreamFromAssembly(name)).ThrowsNothing();
+        _ = await Assert.That(() => GetManifestStreamFromAssembly(name)).ThrowsNothing();
     }
 
     [Test]
@@ -39,6 +39,10 @@ public class JsonRuntimeFormatTests
         }
     }
 
-    private static Stream GetManifestStreamFromAssembly(string name) => typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();
+    private static Stream GetManifestStreamFromAssembly(string name)
+    {
+        return typeof(JsonRuntimeFormat).Assembly.GetManifestResourceStream(typeof(JsonRuntimeFormat), name) ?? throw new InvalidOperationException();
+    }
 }
+
 #endif

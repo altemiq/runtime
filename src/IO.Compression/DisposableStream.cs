@@ -23,7 +23,7 @@ public class DisposableStream : Stream
     /// <param name="archiveEntry">The archive entry.</param>
     /// <param name="leaveOpen"><see langword="true"/> to leave the stream open after the <see cref="SeekableStream"/> object is disposed; otherwise, <see langword="false"/>.</param>
     public DisposableStream(System.IO.Compression.ZipArchiveEntry archiveEntry, bool leaveOpen = false)
-        : this(archiveEntry.Archive!, archiveEntry.Open(), leaveOpen)
+        : this(archiveEntry.Archive, archiveEntry.Open(), leaveOpen)
     {
     }
 
@@ -183,9 +183,7 @@ public class DisposableStream : Stream
         }
 
         await base.DisposeAsync().ConfigureAwait(false);
-#pragma warning disable S3971 // "GC.SuppressFinalize" should not be called
         GC.SuppressFinalize(this);
-#pragma warning restore S3971 // "GC.SuppressFinalize" should not be called
     }
 #endif
 

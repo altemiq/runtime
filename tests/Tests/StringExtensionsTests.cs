@@ -54,13 +54,22 @@ public class StringExtensionsTests
 #endif
 
     [Test]
-    public async Task NullString() => await Assert.That(static () => default(string)!.SplitQuoted()).Throws<ArgumentNullException>();
+    public async Task NullString()
+    {
+        _ = await Assert.That(static () => default(string)!.SplitQuoted()).Throws<ArgumentNullException>();
+    }
 
     [Test]
-    public async Task EmptyString() => await Assert.That(string.Empty.SplitQuoted()).HasSingleItem();
+    public async Task EmptyString()
+    {
+        _ = await Assert.That(string.Empty.SplitQuoted()).HasSingleItem();
+    }
 
     [Test]
-    public async Task EmptyStringWithOptions() => await Assert.That(string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries)).IsEmpty();
+    public async Task EmptyStringWithOptions()
+    {
+        _ = await Assert.That(string.Empty.SplitQuoted(',', StringSplitOptions.RemoveEmptyEntries)).IsEmpty();
+    }
 
     [Test]
     [Arguments(SingleLineSimple, "3", 5, StringSplitOptions.None)]
@@ -69,7 +78,7 @@ public class StringExtensionsTests
     [Arguments(SingleLineWithNullValues, "4", 4, StringSplitOptions.RemoveEmptyEntries)]
     public async Task ReadSimple(string input, string? value, int length, StringSplitOptions options)
     {
-        await Assert.That(input.SplitQuoted(',', options))
+        _ = await Assert.That(input.SplitQuoted(',', options))
             .Count().IsEqualTo(length)
             .And.Member(static r => r.Skip(2).Take(1).Single(), v => v.IsEqualTo(value));
     }
@@ -86,7 +95,7 @@ public class StringExtensionsTests
     [Arguments(SingleLineNewLineCommaEmbeddedQuotes, 5)]
     public async Task ReadLength(string input, int length)
     {
-        await Assert.That(input.SplitQuoted(',')).Count().IsEqualTo(length);
+        _ = await Assert.That(input.SplitQuoted(',')).Count().IsEqualTo(length);
     }
 
     [Test]
@@ -103,36 +112,42 @@ public class StringExtensionsTests
     public async Task Quote(string input, string? delimiter, StringQuoteOptions options, bool quoted)
     {
         var d = delimiter?.ToCharArray() ?? [];
-        await Assert.That(input.Quote(d, options)).IsEqualTo(quoted ? "\"" + input + "\"" : input);
+        _ = await Assert.That(input.Quote(d, options)).IsEqualTo(quoted ? "\"" + input + "\"" : input);
     }
 
     [Test]
     [Arguments("value,second", ',', StringQuoteOptions.QuoteAll, true)]
     [Arguments("value,second", ',', StringQuoteOptions.None, true)]
-    public async Task QuoteChar(string input, char delimiter, StringQuoteOptions options, bool quoted) => await Assert.That(input.Quote(delimiter, options)).IsEqualTo(quoted ? "\"" + input + "\"" : input);
+    public async Task QuoteChar(string input, char delimiter, StringQuoteOptions options, bool quoted)
+    {
+        _ = await Assert.That(input.Quote(delimiter, options)).IsEqualTo(quoted ? "\"" + input + "\"" : input);
+    }
 
     [Test]
-    public async Task QuoteNull() => await Assert.That(default(string).Quote()).IsEqualTo(string.Empty);
+    public async Task QuoteNull()
+    {
+        _ = await Assert.That(default(string).Quote()).IsEqualTo(string.Empty);
+    }
 
     [Test]
     [MethodDataSource(nameof(GetCharArrays))]
     public async Task SplitQuotedWithEmptyDelimiter(char[]? chars)
     {
         const string Value = "This is a string";
-        await Assert.That(Value.SplitQuoted(chars, options: StringSplitOptions.None)).Count().IsEqualTo(4);
+        _ = await Assert.That(Value.SplitQuoted(chars, options: StringSplitOptions.None)).Count().IsEqualTo(4);
     }
 
     public static IEnumerable<Func<char[]?>> GetCharArrays()
     {
-        yield return () => default;
-        yield return () => [];
+        yield return static () => default;
+        yield return static () => [];
     }
 
     [Test]
     public async Task Format()
     {
         const int Formattable = 123;
-        await Assert.That(FormatValue(Formattable)).IsEqualTo(Formattable.ToString(default(IFormatProvider)));
+        _ = await Assert.That(FormatValue(Formattable)).IsEqualTo(Formattable.ToString(default(IFormatProvider)));
 
         static string FormatValue<T>(T value)
             where T : IFormattable
@@ -143,6 +158,9 @@ public class StringExtensionsTests
 
 #if NET5_0_OR_GREATER
     [Test]
-    public async Task TrimEntries() => await Assert.That("This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries)).IsEquivalentTo(Expectation);
+    public async Task TrimEntries()
+    {
+        _ = await Assert.That("This , is, a".SplitQuoted(',', StringSplitOptions.TrimEntries)).IsEquivalentTo(Expectation);
+    }
 #endif
 }

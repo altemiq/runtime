@@ -24,13 +24,13 @@ public class Int32CompressorTests
             var orig = new int[n];
             for (var k = 0; k < n; k++)
             {
-                orig[k] = 3 * k + 5;
+                orig[k] = (3 * k) + 5;
             }
 
             var comp = i.Compress(orig);
             var back = i.Decompress(comp);
 
-            await Assert.That(back).HasSameSequenceAs(orig);
+            _ = await Assert.That(back).HasSameSequenceAs(orig);
         }
     }
 

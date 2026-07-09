@@ -50,15 +50,22 @@ public class StructConverterBenchmarks
         };
 
         [Benchmark]
-        public string JsonSerializer() => System.Text.Json.JsonSerializer.Serialize(Struct, Options);
+        public string JsonSerializer()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(this.Struct, Options);
+        }
 
         [Benchmark]
-        public string StructToString() => Struct.ToString();
+        public string StructToString()
+        {
+            return this.Struct.ToString();
+        }
     }
 
     public class Deserialize()
     {
         private readonly string json =
+            /*lang=json,strict*/
             """
             {
                 "Number": 1,
@@ -81,9 +88,15 @@ public class StructConverterBenchmarks
             """;
 
         [Benchmark]
-        public Struct? JsonSerializer() => System.Text.Json.JsonSerializer.Deserialize<Struct>(json, Options);
+        public Struct? JsonSerializer()
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<Struct>(this.json, Options);
+        }
 
         [Benchmark]
-        public Struct Parse() => Struct.Parser.ParseJson(json);
+        public Struct Parse()
+        {
+            return Struct.Parser.ParseJson(this.json);
+        }
     }
 }

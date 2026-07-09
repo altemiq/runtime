@@ -9,6 +9,7 @@
     <MeziantouPolyfill_IncludedPolyfills>
       $(MeziantouPolyfill_IncludedPolyfills)|
       M:System.ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual``1(``0,``0,System.String)|
+      M:System.ArgumentOutOfRangeException.ThrowIfLessThan``1(``0,``0,System.String)|
       M:System.ArgumentOutOfRangeException.ThrowIfLessThanOrEqual``1(``0,``0,System.String)|
     </MeziantouPolyfill_IncludedPolyfills>
   </PropertyGroup>

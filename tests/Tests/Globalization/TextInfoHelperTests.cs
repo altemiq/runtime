@@ -33,6 +33,6 @@ public class TextInfoHelperTests
     private static async Task Test<T>(Func<T?, TextInfo> func, T? value, TextInfo textInfo)
         where T : IFormatProvider
     {
-        await Assert.That(func(value)).IsEqualTo(textInfo);
+        _ = await Assert.That(func(value)).IsEqualTo(textInfo);
     }
 }

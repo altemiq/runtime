@@ -210,6 +210,7 @@ public partial class Version :
     /// <inheritdoc />
     public int CompareTo(Version? other)
     {
+#pragma warning disable IDE0046 // Convert to conditional expression
         if (ReferenceEquals(other, this))
         {
             return 0;
@@ -241,6 +242,7 @@ public partial class Version :
         }
 
         return 0;
+#pragma warning restore IDE0046 // Convert to conditional expression
     }
 
     /// <summary>

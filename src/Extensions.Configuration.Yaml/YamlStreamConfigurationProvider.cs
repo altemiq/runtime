@@ -9,6 +9,7 @@ namespace Altemiq.Extensions.Configuration.Yaml;
 /// <summary>
 /// Provides configuration key-value pairs that are obtained from a YAML stream.
 /// </summary>
+/// <param name="source">The stream configuration source.</param>
 public class YamlStreamConfigurationProvider(StreamConfigurationSource source) : StreamConfigurationProvider(source)
 {
     /// <summary>

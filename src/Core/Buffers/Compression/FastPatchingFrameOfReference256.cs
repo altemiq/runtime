@@ -32,7 +32,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
     private readonly int[][] dataTobePacked = new int[33][];
     private readonly MemoryStream byteContainer;
 
-    // Working area for compress and decompress.
+    /* Working area for compress and decompress. */
     private readonly int[] dataPointers = new int[33];
     private readonly int[] frequencies = new int[33];
     private int bestB;
@@ -263,8 +263,7 @@ internal sealed class FastPatchingFrameOfReference256 : IInt32Codec, IHeadlessIn
             return default;
         }
 
-        var number = Util.GreatestMultiple(destination.Length, BlockSize);
-        var finalOutput = number;
+        var finalOutput = Util.GreatestMultiple(destination.Length, BlockSize);
         var totalRead = 0;
         var totalWritten = 0;
         while (totalWritten != finalOutput)

@@ -89,7 +89,7 @@ internal abstract class NewPfd(Compress compress, Decompress decompress) : IInt3
                     temporaryDestinationIndex += exceptionSize;
                 }
 
-                destinationPage[remember] = bestBit | bestException << 8 | exceptionSize << 16;
+                destinationPage[remember] = bestBit | (bestException << 8) | (exceptionSize << 16);
                 for (var k = 0; k < BlockSize; k += 32)
                 {
                     BitPacking.Pack(sourcePage[(temporarySourceIndex + k)..], destinationPage[temporaryDestinationIndex..], Bits[bestBit]);

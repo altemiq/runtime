@@ -13,7 +13,7 @@ public class DeltaZigzagEncodingTest
     public async Task CheckZigzagEncode(int value, int expected)
     {
         var e = new DeltaZigzagEncoding.Encoder(0);
-        await Assert.That(e.Encode(value)).IsEqualTo(expected);
+        _ = await Assert.That(e.Encode(value)).IsEqualTo(expected);
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class DeltaZigzagEncodingTest
     public async Task CheckZigzagDecoder(int value, int expected)
     {
         var d = new DeltaZigzagEncoding.Decoder(0);
-        await Assert.That(d.Decode(value)).IsEqualTo(expected);
+        _ = await Assert.That(d.Decode(value)).IsEqualTo(expected);
     }
 
     [Test]
@@ -36,8 +36,8 @@ public class DeltaZigzagEncodingTest
         int[] data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
         var output = new int[data.Length];
         e.Encode(data, output);
-        await Assert.That(output).IsEquivalentTo([0, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
-        await Assert.That(data[^1]).IsEqualTo(e.ContextValue);
+        _ = await Assert.That(output).IsEquivalentTo([0, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+        _ = await Assert.That(data[^1]).IsEqualTo(e.ContextValue);
     }
 
     [Test]
@@ -47,8 +47,8 @@ public class DeltaZigzagEncodingTest
         int[] data = [0, 2, 2, 2, 2, 2, 2, 2, 2, 2];
         var r = new int[data.Length];
         d.Decode(data, r);
-        await Assert.That(r).IsEquivalentTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-        await Assert.That(r[^1]).IsEqualTo(d.ContextValue);
+        _ = await Assert.That(r).IsEquivalentTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        _ = await Assert.That(r[^1]).IsEqualTo(d.ContextValue);
     }
 
     [Test]
@@ -63,7 +63,7 @@ public class DeltaZigzagEncodingTest
         await c.Check(value);
     }
 
-    private class SpotChecker
+    private sealed class SpotChecker
     {
         private readonly DeltaZigzagEncoding.Encoder encoder = new(0);
         private readonly DeltaZigzagEncoding.Decoder decoder = new(0);
@@ -72,7 +72,7 @@ public class DeltaZigzagEncodingTest
         {
             encoder.ContextValue = 0;
             decoder.ContextValue = 0;
-            await Assert.That(decoder.Decode(encoder.Encode(value))).IsEqualTo(value);
+            _ = await Assert.That(decoder.Decode(encoder.Encode(value))).IsEqualTo(value);
         }
     }
 }

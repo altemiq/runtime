@@ -4,13 +4,13 @@ public static class MatrixEqualsAssertion
 {
     public static Matrix3x2DEqualsAssertion IsEqualTo(this TUnit.Assertions.Core.IAssertionSource<Matrix3x2D> source, Matrix3x2D expected, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expected))] string? expectedExpression = null)
     {
-        source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(e => e != null)) + ")");
+        _ = source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(static e => e != null)) + ")");
         return new(source.Context, expected);
     }
 
     public static Matrix4x4DEqualsAssertion IsEqualTo(this TUnit.Assertions.Core.IAssertionSource<Matrix4x4D> source, Matrix4x4D expected, [System.Runtime.CompilerServices.CallerArgumentExpression(nameof(expected))] string? expectedExpression = null)
     {
-        source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(e => e != null)) + ")");
+        _ = source.Context.ExpressionBuilder.Append(".IsEqualTo(" + string.Join(", ", new[] { expectedExpression }.Where(static e => e != null)) + ")");
         return new(source.Context, expected);
     }
 }
@@ -19,43 +19,60 @@ public static class MatrixEqualsAssertion
 public class Matrix3x2DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Matrix3x2D> context, Matrix3x2D expected)
     : TUnit.Assertions.Conditions.ToleranceBasedEqualsAssertion<Matrix3x2D, Matrix3x2D>(context, expected)
 {
-    public TUnit.Assertions.Conditions.ToleranceBasedEqualsAssertion<Matrix3x2D, Matrix3x2D> Within(double tolerance) =>
-        this.Within(new Matrix3x2D(tolerance, tolerance, tolerance, tolerance, tolerance, tolerance));
+    public TUnit.Assertions.Conditions.ToleranceBasedEqualsAssertion<Matrix3x2D, Matrix3x2D> Within(double tolerance)
+    {
+        return Within(new Matrix3x2D(tolerance, tolerance, tolerance, tolerance, tolerance, tolerance));
+    }
 
-    protected override bool HasToleranceValue() => true;
+    protected override bool HasToleranceValue()
+    {
+        return true;
+    }
 
-    protected override bool IsWithinTolerance(Matrix3x2D actual, Matrix3x2D expected, Matrix3x2D tolerance) =>
-        MathHelper.IsWithinToleranceCore(actual.M11, expected.M11, tolerance.M11)
+    protected override bool IsWithinTolerance(Matrix3x2D actual, Matrix3x2D expected, Matrix3x2D tolerance)
+    {
+        return MathHelper.IsWithinToleranceCore(actual.M11, expected.M11, tolerance.M11)
         && MathHelper.IsWithinToleranceCore(actual.M12, expected.M12, tolerance.M12)
         && MathHelper.IsWithinToleranceCore(actual.M21, expected.M21, tolerance.M21)
         && MathHelper.IsWithinToleranceCore(actual.M22, expected.M22, tolerance.M22)
         && MathHelper.IsWithinToleranceCore(actual.M31, expected.M31, tolerance.M31)
         && MathHelper.IsWithinToleranceCore(actual.M32, expected.M32, tolerance.M32);
+    }
 
-    protected override object CalculateDifference(Matrix3x2D actual, Matrix3x2D expected) =>
-        new Matrix3x2D(
+    protected override object CalculateDifference(Matrix3x2D actual, Matrix3x2D expected)
+    {
+        return new Matrix3x2D(
             double.Abs(actual.M11 - expected.M11),
             double.Abs(actual.M12 - expected.M12),
             double.Abs(actual.M21 - expected.M21),
             double.Abs(actual.M22 - expected.M22),
             double.Abs(actual.M31 - expected.M31),
             double.Abs(actual.M32 - expected.M32));
+    }
 
-
-    protected override bool AreExactlyEqual(Matrix3x2D actual, Matrix3x2D expected) => actual == expected;
+    protected override bool AreExactlyEqual(Matrix3x2D actual, Matrix3x2D expected)
+    {
+        return actual == expected;
+    }
 }
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
 public class Matrix4x4DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Matrix4x4D> context, Matrix4x4D expected)
     : TUnit.Assertions.Conditions.ToleranceBasedEqualsAssertion<Matrix4x4D, Matrix4x4D>(context, expected)
 {
-    public TUnit.Assertions.Conditions.ToleranceBasedEqualsAssertion<Matrix4x4D, Matrix4x4D> Within(double tolerance) =>
-        this.Within(Matrix4x4D.Create(tolerance));
+    public TUnit.Assertions.Conditions.ToleranceBasedEqualsAssertion<Matrix4x4D, Matrix4x4D> Within(double tolerance)
+    {
+        return Within(Matrix4x4D.Create(tolerance));
+    }
 
-    protected override bool HasToleranceValue() => true;
+    protected override bool HasToleranceValue()
+    {
+        return true;
+    }
 
-    protected override bool IsWithinTolerance(Matrix4x4D actual, Matrix4x4D expected, Matrix4x4D tolerance) =>
-           MathHelper.IsWithinToleranceCore(actual.M11, expected.M11, tolerance.M11)
+    protected override bool IsWithinTolerance(Matrix4x4D actual, Matrix4x4D expected, Matrix4x4D tolerance)
+    {
+        return MathHelper.IsWithinToleranceCore(actual.M11, expected.M11, tolerance.M11)
         && MathHelper.IsWithinToleranceCore(actual.M12, expected.M12, tolerance.M12)
         && MathHelper.IsWithinToleranceCore(actual.M13, expected.M13, tolerance.M13)
         && MathHelper.IsWithinToleranceCore(actual.M14, expected.M14, tolerance.M14)
@@ -71,9 +88,11 @@ public class Matrix4x4DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Ma
         && MathHelper.IsWithinToleranceCore(actual.M42, expected.M42, tolerance.M42)
         && MathHelper.IsWithinToleranceCore(actual.M43, expected.M43, tolerance.M43)
         && MathHelper.IsWithinToleranceCore(actual.M44, expected.M44, tolerance.M44);
+    }
 
-    protected override object CalculateDifference(Matrix4x4D actual, Matrix4x4D expected) =>
-        new Matrix4x4D(
+    protected override object CalculateDifference(Matrix4x4D actual, Matrix4x4D expected)
+    {
+        return new Matrix4x4D(
             double.Abs(actual.M11 - expected.M11),
             double.Abs(actual.M12 - expected.M12),
             double.Abs(actual.M13 - expected.M13),
@@ -90,6 +109,10 @@ public class Matrix4x4DEqualsAssertion(TUnit.Assertions.Core.AssertionContext<Ma
             double.Abs(actual.M42 - expected.M42),
             double.Abs(actual.M43 - expected.M43),
             double.Abs(actual.M44 - expected.M44));
+    }
 
-    protected override bool AreExactlyEqual(Matrix4x4D actual, Matrix4x4D expected) => actual == expected;
+    protected override bool AreExactlyEqual(Matrix4x4D actual, Matrix4x4D expected)
+    {
+        return actual == expected;
+    }
 }

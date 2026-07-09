@@ -14,10 +14,10 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
     private const int S16NumSize = 16;
     private const int S16BitsSize = 28;
 
-    // the possible number of bits used to represent one integer
+    /* the possible number of bits used to represent one integer */
     private static readonly int[] S16Num = [28, 21, 21, 21, 14, 9, 8, 7, 6, 6, 5, 5, 4, 3, 2, 1];
 
-    // the corresponding number of elements for each value of the number of bits
+    /* the corresponding number of elements for each value of the number of bits */
     private static readonly int[][] S16Bits =
     [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -38,7 +38,7 @@ internal sealed class Simple16 : IInt32Codec, IHeadlessInt32Codec
         [28],
     ];
 
-    private static readonly int[][] ShiftedS16Bits = [.. S16Bits.Select(static x => x.Select(x => 1 << x).ToArray())];
+    private static readonly int[][] ShiftedS16Bits = [.. S16Bits.Select(static x => x.Select(static x => 1 << x).ToArray())];
 
     /// <inheritdoc/>
     (int Read, int Written) ICompressHeadlessCodec<int, int>.Compress(ReadOnlySpan<int> source, Span<int> destination) => HeadlessCompress(source, destination);

@@ -2013,7 +2013,7 @@ public partial class SourceGenerator
                     {
                         yield return i == index
                             ? IdentifierName(ResultsTypeParameter)
-                            : (TypeSyntax)IdentifierName(typeParameterNames[i]);
+                            : IdentifierName(typeParameterNames[i]);
                     }
                 }
 
@@ -2982,7 +2982,6 @@ public partial class SourceGenerator
                                                 NewLine,
                                                 TriviaList()))),
                                 ]))));
-            yield break;
 
             static SwitchExpressionSyntax GetSwitchExpression(IList<string> typeParameterNames)
             {
@@ -3489,7 +3488,7 @@ public partial class SourceGenerator
             return MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 GetBaseMemberAccessExpression([.. GetNames(typeof(T))]),
-                IdentifierName(Enum.GetName(typeof(T), value)!));
+                IdentifierName(Enum.GetName(typeof(T), value)));
 
             static MemberAccessExpressionSyntax GetBaseMemberAccessExpression(IList<IdentifierNameSyntax> names)
             {

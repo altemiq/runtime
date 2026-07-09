@@ -1,7 +1,7 @@
+namespace Altemiq.Buffers.Compression;
+
 using TUnit.Assertions.Core;
 using TUnit.Assertions.Sources;
-
-namespace Altemiq.Buffers.Compression;
 
 public static class BufferExtensions
 {
@@ -16,7 +16,7 @@ public static class BufferExtensions
             return collection;
         }
 
-        context.ExpressionBuilder.Append($".HasSameSequenceAs({expression})");
+        _ = context.ExpressionBuilder.Append($".HasSameSequenceAs({expression})");
         return new SequenceEqualsAssertion<TCollection, TItem>(context, expected);
 
     }

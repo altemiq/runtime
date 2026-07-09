@@ -9,28 +9,37 @@ namespace Altemiq;
 public class OneOfTests
 {
     [Test]
-    public async Task DefaultConstructorSetsValueToDefaultValueOfT0() => await Assert.That(new OneOf<int, bool>().Match(static n => n == default, static _ => false)).IsTrue();
+    public async Task DefaultConstructorSetsValueToDefaultValueOfT0()
+    {
+        _ = await Assert.That(new OneOf<int, bool>().Match(static n => n == default, static _ => false)).IsTrue();
+    }
 
     [Test]
-    public async Task DefaultSetsValueToDefaultValueOfT0() => await Assert.That(default(OneOf<int, bool>).Match(static n => n == default, static _ => false)).IsTrue();
+    public async Task DefaultSetsValueToDefaultValueOfT0()
+    {
+        _ = await Assert.That(default(OneOf<int, bool>).Match(static n => n == default, static _ => false)).IsTrue();
+    }
 
     [Test]
     public async Task AreEqual()
     {
         var a = OneOf.From(1);
-        OneOf<int> b = a;
-        await Assert.That(a).IsEqualTo(b);
+        var b = a;
+        _ = await Assert.That(a).IsEqualTo(b);
     }
 
     [Test]
-    public async Task ResolveIFooFromResultMethod() => await Assert.That(OneOf.From<IFoo, int>(new Foo()).AsT0).IsTypeOf<Foo>();
+    public async Task ResolveIFooFromResultMethod()
+    {
+        _ = await Assert.That(OneOf.From<IFoo, int>(new Foo()).AsT0).IsTypeOf<Foo>();
+    }
 
     [Test]
     public async Task MapValue()
     {
-        await Assert.That(ResolveString(2.1)).IsEqualTo("2.1");
-        await Assert.That(ResolveString(4)).IsEqualTo("4");
-        await Assert.That(ResolveString("6")).IsEqualTo("6");
+        _ = await Assert.That(ResolveString(2.1)).IsEqualTo("2.1");
+        _ = await Assert.That(ResolveString(4)).IsEqualTo("4");
+        _ = await Assert.That(ResolveString("6")).IsEqualTo("6");
 
         static string? ResolveString(OneOf<double, int, string> input)
         {
@@ -44,30 +53,48 @@ public class OneOfTests
     private static readonly System.Text.Json.JsonSerializerOptions Options = new() { Converters = { new OneOfJsonConverter() } };
 
     [Test]
-    public async Task CanSerializeOneOfValueTransparently() => await Assert.That(System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, Options)).IsEqualTo("{\"Value\":\"A string value\"}");
+    public async Task CanSerializeOneOfValueTransparently()
+    {
+        _ = await Assert.That(System.Text.Json.JsonSerializer.Serialize(new SomeThing { Value = "A string value" }, Options)).IsEqualTo(/*lang=json,strict*/ "{\"Value\":\"A string value\"}");
+    }
 
     [Test]
-    public async Task TheValueAndTypeNameAreFormattedCorrectly() => await Assert.That(OneOf.From<string, int, DateTime, decimal>(42).ToString()).IsEqualTo("System.Int32: 42");
+    public async Task TheValueAndTypeNameAreFormattedCorrectly()
+    {
+        _ = await Assert.That(OneOf.From<string, int, DateTime, decimal>(42).ToString()).IsEqualTo("System.Int32: 42");
+    }
 
     [Test]
-    public async Task CallingToStringOnANestedNonRecursiveTypeWorks() => await Assert.That(OneOf.From<OneOf<string, bool>, OneOf<bool, string>>(OneOf.From<string, bool>(true)).ToString()).IsEqualTo($"{nameof(Altemiq)}.{nameof(OneOf)}`2[[System.String, {typeof(string).Assembly.FullName}],[System.Boolean, {typeof(bool).Assembly.FullName}]]: System.Boolean: True");
+    public async Task CallingToStringOnANestedNonRecursiveTypeWorks()
+    {
+        _ = await Assert.That(OneOf.From<OneOf<string, bool>, OneOf<bool, string>>(OneOf.From<string, bool>(true)).ToString()).IsEqualTo($"{nameof(Altemiq)}.{nameof(OneOf)}`2[[System.String, {typeof(string).Assembly.FullName}],[System.Boolean, {typeof(bool).Assembly.FullName}]]: System.Boolean: True");
+    }
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString)).IsEqualTo(expectedResult);
+    public async Task LeftSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult)
+    {
+        _ = await Assert.That(RunInCulture(new(cultureName, false), OneOf.From<DateTime, string>(dateTime).ToString)).IsEqualTo(expectedResult);
+    }
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(RunInCulture(new(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString)).IsEqualTo(expectedResult);
+    public async Task RightSideFormatsWithCurrentCulture(string cultureName, DateTime dateTime, string expectedResult)
+    {
+        _ = await Assert.That(RunInCulture(new(cultureName, false), OneOf.From<string, DateTime>(dateTime).ToString)).IsEqualTo(expectedResult);
+    }
 
     [Test]
     [MethodDataSource(nameof(DateData))]
-    public async Task SpecifyCulture(string cultureName, DateTime dateTime, string expectedResult) => await Assert.That(OneOf.From<string, DateTime>(dateTime).ToString(new System.Globalization.CultureInfo(cultureName, false))).IsEqualTo(expectedResult);
+    public async Task SpecifyCulture(string cultureName, DateTime dateTime, string expectedResult)
+    {
+        _ = await Assert.That(OneOf.From<string, DateTime>(dateTime).ToString(new System.Globalization.CultureInfo(cultureName, false))).IsEqualTo(expectedResult);
+    }
 
     public static IEnumerable<Func<(string, DateTime, string)>> DateData()
     {
-        yield return () => Create(new("en-NZ"), new(2019, 1, 2, 1, 2, 3));
-        yield return () => Create(new("en-US"), new(2019, 1, 2, 1, 2, 3));
+        yield return static () => Create(new("en-NZ"), new(2019, 1, 2, 1, 2, 3));
+        yield return static () => Create(new("en-US"), new(2019, 1, 2, 1, 2, 3));
 
         static (string, DateTime, string) Create(System.Globalization.CultureInfo culture, DateTime dateTime)
         {
@@ -95,17 +122,17 @@ public class OneOfTests
         }
     }
 
-    private class SomeThing
+    private sealed class SomeThing
     {
         public OneOf<string, SomeOtherThing> Value { get; set; }
     }
 
-    private class SomeOtherThing
+    private sealed class SomeOtherThing
     {
         public int Value { get; set; }
     }
 
-    private class Foo : IFoo
+    private sealed class Foo : IFoo
     {
     }
 
@@ -113,12 +140,21 @@ public class OneOfTests
     {
     }
 
-    private class OneOfJsonConverter : System.Text.Json.Serialization.JsonConverter<IOneOf>
+    private sealed class OneOfJsonConverter : System.Text.Json.Serialization.JsonConverter<IOneOf>
     {
-        public override bool CanConvert(Type typeToConvert) => typeToConvert.GetInterfaces().Contains(typeof(IOneOf)) || base.CanConvert(typeToConvert);
+        public override bool CanConvert(Type typeToConvert)
+        {
+            return typeToConvert.GetInterfaces().Contains(typeof(IOneOf)) || base.CanConvert(typeToConvert);
+        }
 
-        public override void Write(System.Text.Json.Utf8JsonWriter writer, IOneOf value, System.Text.Json.JsonSerializerOptions options) => System.Text.Json.JsonSerializer.Serialize(writer, value.Value, options);
+        public override void Write(System.Text.Json.Utf8JsonWriter writer, IOneOf value, System.Text.Json.JsonSerializerOptions options)
+        {
+            System.Text.Json.JsonSerializer.Serialize(writer, value.Value, options);
+        }
 
-        public override IOneOf Read(ref System.Text.Json.Utf8JsonReader reader, Type objectType, System.Text.Json.JsonSerializerOptions options) => throw new NotImplementedException();
+        public override IOneOf Read(ref System.Text.Json.Utf8JsonReader reader, Type objectType, System.Text.Json.JsonSerializerOptions options)
+        {
+            throw new System.Diagnostics.UnreachableException();
+        }
     }
 }
