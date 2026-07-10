@@ -8,6 +8,12 @@ namespace Altemiq.IO;
 
 #pragma warning disable RCS1263, SA1101, S2325
 
+#if NETSTANDARD1_0
+using BinaryPrimitives = Altemiq.Buffers.Binary.BinaryPrimitives;
+#else
+using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+#endif
+
 /// <summary>
 /// <see cref="BinaryWriter"/> extensions.
 /// </summary>
@@ -113,7 +119,7 @@ public static class BinaryWriterExtensions
             writer.Write(value);
         }
 #else
-            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
+            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, BinaryPrimitives.ReverseEndianness));
 #endif
 
         /// <inheritdoc cref="BinaryWriter.Write(int)" />
@@ -132,7 +138,7 @@ public static class BinaryWriterExtensions
             writer.Write(value);
         }
 #else
-            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
+            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, BinaryPrimitives.ReverseEndianness));
 #endif
 
         /// <inheritdoc cref="BinaryWriter.Write(long)" />
@@ -151,7 +157,7 @@ public static class BinaryWriterExtensions
             writer.Write(value);
         }
 #else
-            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
+            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, BinaryPrimitives.ReverseEndianness));
 #endif
 
         /// <inheritdoc cref="BinaryWriter.Write(sbyte)" />
@@ -177,7 +183,7 @@ public static class BinaryWriterExtensions
             writer.Write(value);
         }
 #else
-            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
+            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, BinaryPrimitives.ReverseEndianness));
 #endif
 
         /// <inheritdoc cref="BinaryWriter.Write(uint)" />
@@ -197,7 +203,7 @@ public static class BinaryWriterExtensions
             writer.Write(value);
         }
 #else
-            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
+            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, BinaryPrimitives.ReverseEndianness));
 #endif
 
         /// <inheritdoc cref="BinaryWriter.Write(ulong)" />
@@ -217,7 +223,7 @@ public static class BinaryWriterExtensions
             writer.Write(value);
         }
 #else
-            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness));
+            => writer.Write(ReverseEndiannessIfRequired(value, byteOrder, BinaryPrimitives.ReverseEndianness));
 #endif
 
 #if NET6_0_OR_GREATER
@@ -303,14 +309,14 @@ public static class BinaryWriterExtensions
     private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction) => IsBigEndian(byteOrder) ? reverseEndiannessFunction(value) : value;
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static char ReverseEndianness(char value) => (char)Buffers.Binary.BinaryPrimitives.ReverseEndianness(unchecked((short)value));
+    private static char ReverseEndianness(char value) => (char)BinaryPrimitives.ReverseEndianness(unchecked((short)value));
 
 #if !NETSTANDARD2_1_OR_GREATER && !NETCOREAPP2_1_OR_GREATER
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static float ReverseEndianness(float value) => System.BitConverter.Int32BitsToSingle(Buffers.Binary.BinaryPrimitives.ReverseEndianness(System.BitConverter.SingleToInt32Bits(value)));
+    private static float ReverseEndianness(float value) => System.BitConverter.Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(System.BitConverter.SingleToInt32Bits(value)));
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static double ReverseEndianness(double value) => System.BitConverter.Int64BitsToDouble(Buffers.Binary.BinaryPrimitives.ReverseEndianness(System.BitConverter.DoubleToInt64Bits(value)));
+    private static double ReverseEndianness(double value) => System.BitConverter.Int64BitsToDouble(BinaryPrimitives.ReverseEndianness(System.BitConverter.DoubleToInt64Bits(value)));
 #endif
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -322,7 +328,7 @@ public static class BinaryWriterExtensions
         [System.Runtime.CompilerServices.UnsafeAccessor(System.Runtime.CompilerServices.UnsafeAccessorKind.Field, Name = "_encoding")]
         public static extern ref System.Text.Encoding GetEncoding(BinaryWriter writer);
 #else
-#if !NETSTANDARD2_0_OR_GREATER
+#if !NETSTANDARD2_0_OR_GREATER && !NET5_0_OR_GREATER && !NETFRAMEWORK
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0169:Use Equals method instead of operator", Justification = "This does not work with `Equals`")]
 #endif
         private static readonly System.Reflection.FieldInfo EncodingFieldInfo = System.Reflection.IntrospectionExtensions.GetTypeInfo(typeof(BinaryWriter)).DeclaredFields.Single(static f => f.FieldType == typeof(System.Text.Encoding));

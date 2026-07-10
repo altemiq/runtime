@@ -15,17 +15,17 @@ public static class Resolve
     private static readonly string[] Extensions = [".dll", ".DLL", ".exe", ".EXE"];
 #endif
 
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <summary>
     /// Resolves the specified executable tool.
     /// </summary>
     /// <param name="executable">The executable.</param>
     /// <returns>The tool path if found; otherwise <see langword="null"/>.</returns>
     public static string? Tool(string executable) =>
-        InteropServices.RuntimeEnvironment.GetToolDirectory(executable) is { } path
+        System.Runtime.InteropServices.RuntimeEnvironment.GetToolDirectory(executable) is { } path
             ? Path.Combine(path, executable)
             : default;
 
-#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK || NETCOREAPP2_0_OR_GREATER
     /// <summary>
     /// Resolves runtime assemblies.
     /// </summary>
@@ -50,7 +50,7 @@ public static class Resolve
 
         static System.Reflection.Assembly? FromLoaded(System.Reflection.AssemblyName requiredAssemblyName)
         {
-            return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), assembly => Reflection.AssemblyExtensions.IsCompatible(assembly, requiredAssemblyName));
+            return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), assembly => assembly.IsCompatible(requiredAssemblyName));
         }
 
         static System.Reflection.Assembly? FromPaths(System.Reflection.AssemblyName requiredAssemblyName)
@@ -60,16 +60,16 @@ public static class Resolve
                 .Where(p => p is not null)
                 .Cast<string>()
                 .Select(System.Reflection.Assembly.LoadFile)
-                .FirstOrDefault(a => Reflection.AssemblyExtensions.IsCompatible(a, requiredAssemblyName));
+                .FirstOrDefault(a => a.IsCompatible(requiredAssemblyName));
 
             static IEnumerable<string?> GetPaths()
             {
-                foreach (var directory in InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectories())
+                foreach (var directory in System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectories())
                 {
                     yield return directory;
                 }
 
-                foreach (var directory in InteropServices.RuntimeInformation.GetBaseDirectories())
+                foreach (var directory in System.Runtime.InteropServices.RuntimeInformation.GetBaseDirectories())
                 {
                     yield return directory;
                 }

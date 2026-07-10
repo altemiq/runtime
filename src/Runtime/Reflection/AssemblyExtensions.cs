@@ -4,15 +4,57 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altemiq.Reflection;
-
-#pragma warning disable CA1708, RCS1263, SA1101
+#pragma warning disable CA1050, CA1708, MA0047, RCS1110, RCS1263, SA1101, CheckNamespace
 
 /// <summary>
 /// <see cref="System.Reflection.Assembly"/> extensions.
 /// </summary>
 public static class AssemblyExtensions
 {
+    extension(System.Reflection.Assembly)
+    {
+        /// <summary>
+        /// Gets the entry assembly, taking into account <c>testhost</c> to make sure we get the required assembly.
+        /// </summary>
+        /// <returns>The entry assembly.</returns>
+        public static System.Reflection.Assembly? GetActualEntryAssembly()
+#if NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
+        {
+            return entryAssembly ??= GetEntryAssemblyCore();
+
+            static System.Reflection.Assembly? GetEntryAssemblyCore()
+            {
+                if (System.Reflection.Assembly.GetEntryAssembly() is { FullName: { } fullName } assembly)
+                {
+                    return IsTestAssembly(fullName) && GetTestAssembly() is { } testAssembly
+                        ? testAssembly
+                        : assembly;
+                }
+                else if (System.Diagnostics.Process.GetCurrentProcess() is { } process
+                    && IsTestAssembly(process.ProcessName)
+                    && GetTestAssembly() is { } testAssembly)
+                {
+                    return testAssembly;
+                }
+
+                return default;
+
+                static bool IsTestAssembly(string name)
+                {
+                    return name.Contains("testhost", StringComparison.OrdinalIgnoreCase);
+                }
+
+                static System.Reflection.Assembly? GetTestAssembly()
+                {
+                    return Array.Find(AppDomain.CurrentDomain.GetAssemblies(), static a => a.GetName().Name?.EndsWith(".Tests", StringComparison.OrdinalIgnoreCase) is true);
+                }
+            }
+        }
+#else
+        => entryAssembly ??= System.Reflection.Assembly.GetEntryAssembly();
+#endif
+    }
+
     /// <content>
     /// <see cref="System.Reflection.Assembly"/> extensions.
     /// </content>
@@ -60,6 +102,8 @@ public static class AssemblyExtensions
             }
         }
     }
+
+    private static System.Reflection.Assembly? entryAssembly;
 
     private readonly struct CheckValue<T>(T actual, Func<T, T?, bool> check)
     {

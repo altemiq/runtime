@@ -69,7 +69,7 @@ internal static class StreamExtensions
             var end = buffer.Length;
             for (var i = 0; i < end; i++)
             {
-                if (BitConverter.IsLittleEndian)
+                if (System.BitConverter.IsLittleEndian)
                 {
                     System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes, buffer[i]);
                 }
@@ -104,7 +104,7 @@ internal static class StreamExtensions
             var read = stream.Read(bytes);
             var count = read / sizeof(int);
 
-            if (!BitConverter.IsLittleEndian || byteOrder is not ByteOrder.BigEndian)
+            if (!System.BitConverter.IsLittleEndian || byteOrder is not ByteOrder.BigEndian)
             {
                 return count;
             }

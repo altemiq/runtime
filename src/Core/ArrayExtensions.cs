@@ -11,7 +11,7 @@ namespace System;
 /// <summary>
 /// <see cref="System.Array"/> extensions.
 /// </summary>
-public static class ArrayExtensions
+public static partial class ArrayExtensions
 {
     /// <summary>
     /// The <see cref="Array"/> extensions.

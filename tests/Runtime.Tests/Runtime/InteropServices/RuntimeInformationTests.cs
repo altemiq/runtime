@@ -6,14 +6,10 @@
 
 namespace Altemiq.Runtime.InteropServices;
 
+using System.Runtime.InteropServices;
+
 public class RuntimeInformationTests
 {
-    [Test]
-    public async Task SystemVsAltemiq()
-    {
-        _ = await Assert.That(System.Runtime.InteropServices.RuntimeInformation.TargetFramework).IsEquivalentTo(RuntimeInformation.TargetFramework);
-    }
-
     [Test]
     public async Task GetRuntimeIdentifier()
     {

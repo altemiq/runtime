@@ -4,39 +4,32 @@ public partial class BitConverterTests
 {
     public class VarInt
     {
-        private const int SByteMaxValue = sbyte.MaxValue;
-        private const int SByteDefault = default(sbyte);
-        private const int SByteMinValue = sbyte.MinValue;
-        private const int ByteMinValue = byte.MinValue;
-        private const int Int16Default = default(short);
-        private const int Int16MinValue = short.MinValue;
-
         public class Array
         {
             [Test]
-            [Arguments(SByteMaxValue)]
-            [Arguments(SByteMinValue)]
-            [Arguments(SByteDefault)]
-            [Arguments(SByteMaxValue / 2)]
+            [Arguments(sbyte.MaxValue)]
+            [Arguments(sbyte.MinValue)]
+            [Arguments(default(sbyte))]
+            [Arguments(sbyte.MaxValue / 2)]
             public async Task EncodeAndDecodeSByte(sbyte number)
             {
                 await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToSByte);
             }
 
             [Test]
-            [Arguments(ByteMaxValue)]
-            [Arguments(ByteMinValue)]
-            [Arguments(ByteMaxValue / 2)]
+            [Arguments(byte.MaxValue)]
+            [Arguments(byte.MinValue)]
+            [Arguments(byte.MaxValue / 2)]
             public async Task EncodeAndDecodeByte(byte number)
             {
                 await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToByte);
             }
 
             [Test]
-            [Arguments(Int16MaxValue)]
-            [Arguments(Int16MinValue)]
-            [Arguments(Int16Default)]
-            [Arguments(Int16MaxValue / 2)]
+            [Arguments(short.MaxValue)]
+            [Arguments(short.MinValue)]
+            [Arguments(default(short))]
+            [Arguments(short.MaxValue / 2)]
             public async Task EncodeAndDecodeInt16(short number)
             {
                 await EncodeAndDecode(number, BitConverter.GetVarBytes, BitConverter.ToInt16);
@@ -144,29 +137,29 @@ public partial class BitConverterTests
         public class Span
         {
             [Test]
-            [Arguments(SByteMaxValue)]
-            [Arguments(SByteMinValue)]
-            [Arguments(SByteDefault)]
-            [Arguments(SByteMaxValue / 2)]
+            [Arguments(sbyte.MaxValue)]
+            [Arguments(sbyte.MinValue)]
+            [Arguments(default(short))]
+            [Arguments(sbyte.MaxValue / 2)]
             public async Task EncodeAndDecodeSByte(sbyte number)
             {
                 await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToSByte);
             }
 
             [Test]
-            [Arguments(ByteMaxValue)]
-            [Arguments(ByteMinValue)]
-            [Arguments(ByteMaxValue / 2)]
+            [Arguments(byte.MaxValue)]
+            [Arguments(byte.MinValue)]
+            [Arguments(byte.MaxValue / 2)]
             public async Task EncodeAndDecodeByte(byte number)
             {
                 await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToByte);
             }
 
             [Test]
-            [Arguments(Int16MaxValue)]
-            [Arguments(Int16MinValue)]
-            [Arguments(Int16Default)]
-            [Arguments(Int16MaxValue / 2)]
+            [Arguments(short.MaxValue)]
+            [Arguments(short.MinValue)]
+            [Arguments(default(short))]
+            [Arguments(short.MaxValue / 2)]
             public async Task EncodeAndDecodeInt16(short number)
             {
                 await EncodeAndDecode(number, BitConverter.TryWriteBytes, BitConverter.ToInt16);

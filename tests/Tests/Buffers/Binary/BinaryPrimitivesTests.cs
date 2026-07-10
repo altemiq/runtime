@@ -24,7 +24,7 @@ public class BinaryPrimitivesTests
     public async Task WriteInt16BigEndian(short value, byte first, byte second)
     {
         var bytes = new byte[sizeof(short)];
-        BinaryPrimitives.WriteInt16BigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt16BigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -34,7 +34,7 @@ public class BinaryPrimitivesTests
     public async Task WriteInt16LittleEndian(short value, byte second, byte first)
     {
         var bytes = new byte[sizeof(short)];
-        BinaryPrimitives.WriteInt16LittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt16LittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -44,7 +44,7 @@ public class BinaryPrimitivesTests
     public async Task WriteInt32BigEndian(int value, byte first, byte second, byte third, byte forth)
     {
         var bytes = new byte[sizeof(int)];
-        BinaryPrimitives.WriteInt32BigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -54,7 +54,7 @@ public class BinaryPrimitivesTests
     public async Task WriteInt32LittleEndian(int value, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(int)];
-        BinaryPrimitives.WriteInt32LittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -64,7 +64,7 @@ public class BinaryPrimitivesTests
     public async Task WriteInt64BigEndian(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         var bytes = new byte[sizeof(long)];
-        BinaryPrimitives.WriteInt64BigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt64BigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -74,7 +74,7 @@ public class BinaryPrimitivesTests
     public async Task WriteInt64LittleEndian(long value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(long)];
-        BinaryPrimitives.WriteInt64LittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt64LittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -84,7 +84,7 @@ public class BinaryPrimitivesTests
     public async Task WriteUInt16BigEndian(ushort value, byte first, byte second)
     {
         var bytes = new byte[sizeof(ushort)];
-        BinaryPrimitives.WriteUInt16BigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt16BigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -94,7 +94,7 @@ public class BinaryPrimitivesTests
     public async Task WriteUInt16LittleEndian(ushort value, byte second, byte first)
     {
         var bytes = new byte[sizeof(ushort)];
-        BinaryPrimitives.WriteUInt16LittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt16LittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -104,7 +104,7 @@ public class BinaryPrimitivesTests
     public async Task WriteUInt32BigEndian(uint value, byte first, byte second, byte third, byte forth)
     {
         var bytes = new byte[sizeof(uint)];
-        BinaryPrimitives.WriteUInt32BigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -114,7 +114,7 @@ public class BinaryPrimitivesTests
     public async Task WriteUInt32LittleEndian(uint value, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(uint)];
-        BinaryPrimitives.WriteUInt32LittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt32LittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -124,7 +124,7 @@ public class BinaryPrimitivesTests
     public async Task WriteUInt64BigEndian(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         var bytes = new byte[sizeof(ulong)];
-        BinaryPrimitives.WriteUInt64BigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt64BigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -134,7 +134,7 @@ public class BinaryPrimitivesTests
     public async Task WriteUInt64LittleEndian(ulong value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(ulong)];
-        BinaryPrimitives.WriteUInt64LittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt64LittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -145,7 +145,7 @@ public class BinaryPrimitivesTests
     public async Task WriteHalfBigEndian(Half value, byte first, byte second)
     {
         var bytes = new byte[sizeof(short)];
-        BinaryPrimitives.WriteHalfBigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteHalfBigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -155,7 +155,7 @@ public class BinaryPrimitivesTests
     public async Task WriteHalfLittleEndian(Half value, byte second, byte first)
     {
         var bytes = new byte[sizeof(short)];
-        BinaryPrimitives.WriteHalfLittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteHalfLittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 #endif
@@ -166,7 +166,7 @@ public class BinaryPrimitivesTests
     public async Task WriteSingleBigEndian(float value, byte first, byte second, byte third, byte forth)
     {
         var bytes = new byte[sizeof(float)];
-        BinaryPrimitives.WriteSingleBigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteSingleBigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -176,7 +176,7 @@ public class BinaryPrimitivesTests
     public async Task WriteSingleLittleEndian(float value, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(float)];
-        BinaryPrimitives.WriteSingleLittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteSingleLittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -186,7 +186,7 @@ public class BinaryPrimitivesTests
     public async Task WriteDoubleBigEndian(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         var bytes = new byte[sizeof(double)];
-        BinaryPrimitives.WriteDoubleBigEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteDoubleBigEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -196,7 +196,7 @@ public class BinaryPrimitivesTests
     public async Task WriteDoubleLittleEndian(double value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(double)];
-        BinaryPrimitives.WriteDoubleLittleEndian(bytes, value);
+        System.Buffers.Binary.BinaryPrimitives.WriteDoubleLittleEndian(bytes, value);
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -206,7 +206,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteInt16BigEndian(short value, byte first, byte second)
     {
         var bytes = new byte[sizeof(short)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteInt16BigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteInt16BigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -216,7 +216,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteInt16LittleEndian(short value, byte second, byte first)
     {
         var bytes = new byte[sizeof(short)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteInt16LittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteInt16LittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -226,7 +226,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteInt32BigEndian(int value, byte first, byte second, byte third, byte forth)
     {
         var bytes = new byte[sizeof(int)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteInt32BigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteInt32BigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -236,7 +236,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteInt32LittleEndian(int value, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(int)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteInt32LittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteInt32LittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -246,7 +246,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteInt64BigEndian(long value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         var bytes = new byte[sizeof(long)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteInt64BigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteInt64BigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -256,7 +256,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteInt64LittleEndian(long value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(long)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteInt64LittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteInt64LittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -266,7 +266,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteUInt16BigEndian(ushort value, byte first, byte second)
     {
         var bytes = new byte[sizeof(ushort)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteUInt16BigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16BigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -276,7 +276,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteUInt16LittleEndian(ushort value, byte second, byte first)
     {
         var bytes = new byte[sizeof(ushort)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteUInt16LittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteUInt16LittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -286,7 +286,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteUInt32BigEndian(uint value, byte first, byte second, byte third, byte forth)
     {
         var bytes = new byte[sizeof(uint)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteUInt32BigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32BigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -296,7 +296,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteUInt32LittleEndian(uint value, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(uint)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteUInt32LittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteUInt32LittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -306,7 +306,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteUInt64BigEndian(ulong value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         var bytes = new byte[sizeof(ulong)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteUInt64BigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64BigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -316,7 +316,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteUInt64LittleEndian(ulong value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(ulong)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteUInt64LittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteUInt64LittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -327,7 +327,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteHalfBigEndian(Half value, byte first, byte second)
     {
         var bytes = new byte[sizeof(short)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteHalfBigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteHalfBigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 
@@ -337,7 +337,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteHalfLittleEndian(Half value, byte second, byte first)
     {
         var bytes = new byte[sizeof(short)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteHalfLittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteHalfLittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second]);
     }
 #endif
@@ -348,7 +348,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteSingleBigEndian(float value, byte first, byte second, byte third, byte forth)
     {
         var bytes = new byte[sizeof(float)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteSingleBigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteSingleBigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -358,7 +358,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteSingleLittleEndian(float value, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(float)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteSingleLittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteSingleLittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth]);
     }
 
@@ -368,7 +368,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteDoubleBigEndian(double value, byte first, byte second, byte third, byte forth, byte fifth, byte sixth, byte seventh, byte eighth)
     {
         var bytes = new byte[sizeof(double)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteDoubleBigEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteDoubleBigEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 
@@ -378,7 +378,7 @@ public class BinaryPrimitivesTests
     public async Task TryWriteDoubleLittleEndian(double value, byte eighth, byte seventh, byte sixth, byte fifth, byte forth, byte third, byte second, byte first)
     {
         var bytes = new byte[sizeof(double)];
-        _ = await Assert.That(BinaryPrimitives.TryWriteDoubleLittleEndian(bytes, value)).IsTrue();
+        _ = await Assert.That(System.Buffers.Binary.BinaryPrimitives.TryWriteDoubleLittleEndian(bytes, value)).IsTrue();
         _ = await Assert.That(bytes).IsEquivalentTo([first, second, third, forth, fifth, sixth, seventh, eighth]);
     }
 }

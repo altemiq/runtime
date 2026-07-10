@@ -1,17 +1,15 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="BitConverter.VarInt.cs" company="Altemiq">
+// <copyright file="BitConverterExtensions.VarInt.cs" company="Altemiq">
 // Copyright (c) Altemiq. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altemiq;
-
-#pragma warning disable CA1708
+#pragma warning disable CA1050, CA1708, MA0047, RCS1110
 
 /// <content>
 /// The <see cref="BitConverter"/> for variable integers.
 /// </content>
-public static partial class BitConverter
+public static partial class BitConverterExtensions
 {
     /// <summary>
     /// Extension methods for <see cref="System.BitConverter"/> for variable integers.
@@ -642,7 +640,7 @@ public static partial class BitConverter
 
                 if (shift > sizeBites)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(bytes), Properties.Resources.ByteArrayTooLarge);
+                    throw new ArgumentOutOfRangeException(nameof(bytes), Altemiq.Properties.Resources.ByteArrayTooLarge);
                 }
 
                 if ((byteValue & MostSignificantBit) is not MostSignificantBit)
@@ -654,7 +652,7 @@ public static partial class BitConverter
                 shift += BitShift;
             }
 
-            throw new ArgumentException(Properties.Resources.CanNotDecodeVarInt, nameof(bytes));
+            throw new ArgumentException(Altemiq.Properties.Resources.CanNotDecodeVarInt, nameof(bytes));
         }
 #else
         private static byte[] GetVarBytesCore(ulong value)
@@ -736,7 +734,6 @@ public static partial class BitConverter
 #pragma warning restore IDE0051, S1144, RCS1222, IDE0079
     }
 
-#pragma warning disable SA1201
     private const byte MostSignificantBit = 0x80;
 
     private const
@@ -748,5 +745,4 @@ public static partial class BitConverter
         ValueMask = 0x7F;
 
     private const int BitShift = 7;
-#pragma warning restore SA1201
 }

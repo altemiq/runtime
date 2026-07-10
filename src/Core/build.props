@@ -2,15 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <_AltemiqImplicitUsings>false</_AltemiqImplicitUsings>
-    <_AltemiqImplicitUsings Condition=" '$(ImplicitUsings)' == 'true' Or '$(ImplicitUsings)' == 'enable' ">true</_AltemiqImplicitUsings>
+    <AltemiqImplicitUsings>false</AltemiqImplicitUsings>
   </PropertyGroup>
-
-  <!-- Implicit imports -->
-  <ItemGroup Condition="$(_AltemiqImplicitUsings)">
-    <Using Include="Altemiq" />
-    <Using Include="Altemiq.IO" />
-    <Using Include="Altemiq.Linq" />
-  </ItemGroup>
   
 </Project>

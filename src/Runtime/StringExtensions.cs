@@ -15,7 +15,6 @@ using Altemiq.Globalization;
 /// <summary>
 /// The <see cref="string"/> extensions.
 /// </summary>
-[Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "ConvertToExtensionBlock", Justification = "This is valid here")]
 public static class StringExtensions
 {
     /// <content>

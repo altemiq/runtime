@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+
+  <!-- Implicit imports -->
+  <ItemGroup Condition=" ('$(AltemiqImplicitUsings)' == 'true' Or '$(AltemiqImplicitUsings)' == 'enable')  and ('$(ImplicitUsings)' == 'true' Or '$(ImplicitUsings)' == 'enable') ">
+    <Using Include="Altemiq" />
+    <Using Include="Altemiq.IO" />
+    <Using Include="Altemiq.Linq" />
+  </ItemGroup>
+
 </Project>

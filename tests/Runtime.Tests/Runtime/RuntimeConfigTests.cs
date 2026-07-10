@@ -7,7 +7,7 @@
 
 namespace Altemiq.Runtime;
 
-using Altemiq.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 public class RuntimeConfigTests
 {

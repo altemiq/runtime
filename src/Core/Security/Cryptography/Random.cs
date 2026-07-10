@@ -36,10 +36,10 @@ public class Random : System.Random
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
         Span<byte> buffer = stackalloc byte[4];
         this.NextBytes(buffer);
-        return BitConverter.ToUInt32(buffer) / (1.0 + uint.MaxValue);
+        return System.BitConverter.ToUInt32(buffer) / (1.0 + uint.MaxValue);
 #else
         this.NextBytes(this.buffer);
-        return BitConverter.ToUInt32(this.buffer, 0) / (1.0 + uint.MaxValue);
+        return System.BitConverter.ToUInt32(this.buffer, 0) / (1.0 + uint.MaxValue);
 #endif
     }
 

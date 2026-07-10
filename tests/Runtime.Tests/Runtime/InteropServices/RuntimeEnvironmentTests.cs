@@ -6,6 +6,8 @@
 
 namespace Altemiq.Runtime.InteropServices;
 
+using System.Runtime.InteropServices;
+
 public class RuntimeEnvironmentTests
 {
     [Test]

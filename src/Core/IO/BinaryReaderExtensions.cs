@@ -4,9 +4,13 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altemiq.IO;
+#pragma warning disable CA1050, MA0047, RCS1110, RCS1263, SA1101, S2325
 
-#pragma warning disable RCS1263, SA1101, S2325
+#if NETSTANDARD1_0
+using BinaryPrimitives = Altemiq.Buffers.Binary.BinaryPrimitives;
+#else
+using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+#endif
 
 /// <summary>
 /// <see cref="BinaryReader"/> extensions.
@@ -28,16 +32,16 @@ public static class BinaryReaderExtensions
         /// <inheritdoc cref="BinaryReader.ReadByte" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
-        public short ReadByte(ByteOrder byteOrder) => reader.ReadByte();
+        public short ReadByte(Altemiq.ByteOrder byteOrder) => reader.ReadByte();
 
         /// <inheritdoc cref="BinaryReader.ReadBytes" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
-        public byte[] ReadBytes(int count, ByteOrder byteOrder) => reader.ReadBytes(count);
+        public byte[] ReadBytes(int count, Altemiq.ByteOrder byteOrder) => reader.ReadBytes(count);
 
         /// <inheritdoc cref="BinaryReader.ReadChar" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public char ReadChar(ByteOrder byteOrder)
+        public char ReadChar(Altemiq.ByteOrder byteOrder)
         {
             // check whether this should be reversed
             var c = reader.ReadChar();
@@ -45,10 +49,10 @@ public static class BinaryReaderExtensions
         }
 
         /// <inheritdoc cref="BinaryReader.ReadChars" />
-        public char[] ReadChars(int count, ByteOrder byteOrder)
+        public char[] ReadChars(int count, Altemiq.ByteOrder byteOrder)
         {
             var chars = reader.ReadChars(count);
-            if (byteOrder is ByteOrder.LittleEndian)
+            if (byteOrder is Altemiq.ByteOrder.LittleEndian)
             {
                 return chars;
             }
@@ -63,44 +67,44 @@ public static class BinaryReaderExtensions
 
         /// <inheritdoc cref="BinaryReader.ReadInt16" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public short ReadInt16(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadInt16(), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
+        public short ReadInt16(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadInt16(), byteOrder, BinaryPrimitives.ReverseEndianness);
 
         /// <inheritdoc cref="BinaryReader.ReadInt32" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public int ReadInt32(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadInt32(), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
+        public int ReadInt32(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadInt32(), byteOrder, BinaryPrimitives.ReverseEndianness);
 
         /// <inheritdoc cref="BinaryReader.ReadInt64" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public long ReadInt64(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadInt64(), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
+        public long ReadInt64(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadInt64(), byteOrder, BinaryPrimitives.ReverseEndianness);
 
         /// <inheritdoc cref="BinaryReader.ReadSByte" />
         [CLSCompliant(false)]
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This parameter is not used.")]
-        public sbyte ReadSByte(ByteOrder byteOrder) => reader.ReadSByte();
+        public sbyte ReadSByte(Altemiq.ByteOrder byteOrder) => reader.ReadSByte();
 
         /// <inheritdoc cref="BinaryReader.ReadUInt16" />
         [CLSCompliant(false)]
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public ushort ReadUInt16(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadUInt16(), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
+        public ushort ReadUInt16(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadUInt16(), byteOrder, BinaryPrimitives.ReverseEndianness);
 
         /// <inheritdoc cref="BinaryReader.ReadUInt32" />
         [CLSCompliant(false)]
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public uint ReadUInt32(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadUInt32(), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
+        public uint ReadUInt32(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadUInt32(), byteOrder, BinaryPrimitives.ReverseEndianness);
 
         /// <inheritdoc cref="BinaryReader.ReadUInt64" />
         [CLSCompliant(false)]
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public ulong ReadUInt64(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadUInt64(), byteOrder, Buffers.Binary.BinaryPrimitives.ReverseEndianness);
+        public ulong ReadUInt64(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadUInt64(), byteOrder, BinaryPrimitives.ReverseEndianness);
 
         /// <inheritdoc cref="BinaryReader.ReadSingle" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public float ReadSingle(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadSingle(), byteOrder, ReverseEndianness);
+        public float ReadSingle(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadSingle(), byteOrder, ReverseEndianness);
 
         /// <inheritdoc cref="BinaryReader.ReadDouble" />
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public double ReadDouble(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadDouble(), byteOrder, ReverseEndianness);
+        public double ReadDouble(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadDouble(), byteOrder, ReverseEndianness);
 
 #if NET5_0
         /// <summary>
@@ -121,24 +125,24 @@ public static class BinaryReaderExtensions
         /// <exception cref="IOException">An I/O error occurs.</exception>
         /// <exception cref="ObjectDisposedException">The stream is closed.</exception>
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public Half ReadHalf(ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadHalf(), byteOrder, ReverseEndianness);
+        public Half ReadHalf(Altemiq.ByteOrder byteOrder) => ReverseEndiannessIfRequired(reader.ReadHalf(), byteOrder, ReverseEndianness);
 #endif
     }
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static T ReverseEndiannessIfRequired<T>(T value, ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction) => byteOrder is not ByteOrder.LittleEndian ? reverseEndiannessFunction(value) : value;
+    private static T ReverseEndiannessIfRequired<T>(T value, Altemiq.ByteOrder byteOrder, Func<T, T> reverseEndiannessFunction) => byteOrder is not Altemiq.ByteOrder.LittleEndian ? reverseEndiannessFunction(value) : value;
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static char ReverseEndianness(char value) => (char)Buffers.Binary.BinaryPrimitives.ReverseEndianness(unchecked((short)value));
+    private static char ReverseEndianness(char value) => (char)BinaryPrimitives.ReverseEndianness(unchecked((short)value));
 
 #if NET5_0_OR_GREATER
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static Half ReverseEndianness(Half value) => System.BitConverter.Int16BitsToHalf(Buffers.Binary.BinaryPrimitives.ReverseEndianness(System.BitConverter.HalfToInt16Bits(value)));
+    private static Half ReverseEndianness(Half value) => System.BitConverter.Int16BitsToHalf(BinaryPrimitives.ReverseEndianness(System.BitConverter.HalfToInt16Bits(value)));
 #endif
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static float ReverseEndianness(float value) => System.BitConverter.Int32BitsToSingle(Buffers.Binary.BinaryPrimitives.ReverseEndianness(System.BitConverter.SingleToInt32Bits(value)));
+    private static float ReverseEndianness(float value) => System.BitConverter.Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(System.BitConverter.SingleToInt32Bits(value)));
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    private static double ReverseEndianness(double value) => BitConverter.Int64BitsToDouble(Buffers.Binary.BinaryPrimitives.ReverseEndianness(BitConverter.DoubleToInt64Bits(value)));
+    private static double ReverseEndianness(double value) => System.BitConverter.Int64BitsToDouble(BinaryPrimitives.ReverseEndianness(System.BitConverter.DoubleToInt64Bits(value)));
 }

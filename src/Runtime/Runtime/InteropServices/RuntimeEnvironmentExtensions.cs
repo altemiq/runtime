@@ -9,6 +9,9 @@
 #pragma warning disable RCS1222
 #pragma warning disable CA1050, MA0047, RCS1110, CheckNamespace
 
+using System.Reflection;
+using Microsoft.Extensions.DependencyModel;
+
 /// <summary>
 /// <see cref="System.Runtime.InteropServices.RuntimeEnvironment"/> extensions.
 /// </summary>
@@ -20,97 +23,699 @@ public static class RuntimeEnvironmentExtensions
 #pragma warning disable SA1137, SA1400, S1144
     extension(System.Runtime.InteropServices.RuntimeEnvironment)
     {
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeNativeDirectory()" />
-        public static string? GetRuntimeNativeDirectory() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeNativeDirectory();
+        /// <summary>
+        /// Gets the runtime native directory.
+        /// </summary>
+        /// <returns>The runtime native directory.</returns>
+        public static string? GetRuntimeNativeDirectory() => GetRuntimeNativeDirectories().FirstOrDefault();
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeNativeDirectory(string)" />
-        public static string? GetRuntimeNativeDirectory(string name) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeNativeDirectory(name);
+        /// <summary>
+        /// Gets the runtime native directory that contains the specified module name.
+        /// </summary>
+        /// <param name="name">The module name.</param>
+        /// <returns>The directory containing <paramref name="name"/> if found; otherwise <see langword="null"/>.</returns>
+        public static string? GetRuntimeNativeDirectory(string name)
+        {
+            var candidateAssets = GetCandidateAssets(name);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeNativeDirectories" />
-        public static IEnumerable<string> GetRuntimeNativeDirectories() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeNativeDirectories();
+            TryAdd(candidateAssets, CreateAssetPath(System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier, name), 10001);
+            TryAdd(candidateAssets, CreateAssetPath(RuntimeInformationExtensions.GetNaïveRid(), name), 10001);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectory" />
-        public static string? GetRuntimeLibraryDirectory() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectory();
+            var probingDirectories = GetProbingDirectories();
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectories" />
-        public static IEnumerable<string> GetRuntimeLibraryDirectories() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeLibraryDirectories();
+            return candidateAssets
+                .OrderBy(p => p.Value)
+                .Select(p => p.Key.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar))
+                .SelectMany(assetPath => probingDirectories.Select(directory => Path.Combine(directory, assetPath)))
+                .Where(File.Exists)
+                .Select(Path.GetDirectoryName)
+                .FirstOrDefault();
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetToolDirectory" />
-        public static string? GetToolDirectory(string name) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetToolDirectory(name);
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static string CreateAssetPath(string rid, string name)
+            {
+                return $"runtimes{Path.AltDirectorySeparatorChar}{rid}{Path.AltDirectorySeparatorChar}{NativeDirectory}{Path.AltDirectorySeparatorChar}{name}";
+            }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetToolsDirectory" />
-        public static string? GetToolsDirectory() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetToolsDirectory();
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static void TryAdd<TKey, TValue>(Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
+                where TKey : notnull
+            {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+                dictionary.TryAdd(key, value);
+#else
+                if (!dictionary.ContainsKey(key))
+                {
+                    dictionary.Add(key, value);
+                }
+#endif
+            }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetToolsDirectories" />
-        public static IEnumerable<string> GetToolsDirectories() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.GetToolsDirectories();
+            static Dictionary<string, int> GetCandidateAssets(string name)
+            {
+                if (GetDependencyContext() is { RuntimeLibraries: { Count: > 0 } runtimeLibraries })
+                {
+                    var candidateAssets = new Dictionary<string, int>(StringComparer.Ordinal);
+                    var rids = GetRuntimeRids().ToList();
+                    foreach (var library in runtimeLibraries)
+                    {
+                        foreach (var group in library.NativeLibraryGroups)
+                        {
+                            foreach (var path in group
+                                .RuntimeFiles
+                                .Where(runtimeFile => string.Equals(
+                                    Path.GetFileName(runtimeFile.Path),
+                                    name,
+                                    StringComparison.OrdinalIgnoreCase))
+                                .Select(runtimeFile => runtimeFile.Path))
+                            {
+                                var fallbacks = rids.IndexOf(group.Runtime);
+                                if (fallbacks is not -1)
+                                {
+                                    TryAdd(candidateAssets, $"{library.Path}{Path.AltDirectorySeparatorChar}{path}", fallbacks);
+                                }
+                            }
+                        }
+                    }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory()" />
-        public static void AddRuntimeNativeDirectory() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory();
+                    return candidateAssets;
+                }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory(EnvironmentVariableTarget)" />
-        public static void AddRuntimeNativeDirectory(EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory(target);
+                return [];
+            }
+        }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory(string)" />
-        public static void AddRuntimeNativeDirectory(string moduleName) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory(moduleName);
+        /// <summary>
+        /// Gets the runtime native directories.
+        /// </summary>
+        /// <returns>The runtime native directories.</returns>
+        public static IEnumerable<string> GetRuntimeNativeDirectories() => GetRuntimeDirectories(NativeDirectory);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory(string,EnvironmentVariableTarget)" />
-        public static void AddRuntimeNativeDirectory(string moduleName, EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeNativeDirectory(moduleName, target);
+        /// <summary>
+        /// Gets the runtime library directory.
+        /// </summary>
+        /// <returns>The runtime library directory.</returns>
+        public static string? GetRuntimeLibraryDirectory() => GetRuntimeLibraryDirectories().FirstOrDefault();
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeLibraryDirectory()" />
-        public static void AddRuntimeLibraryDirectory() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeLibraryDirectory();
+        /// <summary>
+        /// Gets all possible runtime library directories.
+        /// </summary>
+        /// <returns>The runtime library directories.</returns>
+        public static IEnumerable<string> GetRuntimeLibraryDirectories() => GetRuntimeDirectories(LibraryDirectory).SelectMany(GetFrameworkDirectories);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeLibraryDirectory(EnvironmentVariableTarget)" />
-        public static void AddRuntimeLibraryDirectory(EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeLibraryDirectory(target);
+        /// <summary>
+        /// Gets the tools directory that contains the specified tool name.
+        /// </summary>
+        /// <param name="name">The tool name.</param>
+        /// <returns>The directory containing <paramref name="name"/> if found; otherwise <see langword="null"/>.</returns>
+        public static string? GetToolDirectory(string name) => GetToolsDirectories().FirstOrDefault(p => File.Exists(Path.Combine(p, name)));
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddToolsDirectory()" />
-        public static void AddToolsDirectory() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddToolsDirectory();
+        /// <summary>
+        /// Gets the directory containing tools.
+        /// </summary>
+        /// <returns>The directory containing tools.</returns>
+        public static string? GetToolsDirectory() => GetToolsDirectories().FirstOrDefault();
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddToolsDirectory(EnvironmentVariableTarget)" />
-        public static void AddToolsDirectory(EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddToolsDirectory(target);
+        /// <summary>
+        /// Gets all possible tool directories.
+        /// </summary>
+        /// <returns>The tool directories.</returns>
+        public static IEnumerable<string> GetToolsDirectories()
+        {
+            return FilterProbingPaths(GetProbingDirectoriesCore())
+                .Select(static probingDirectory => Path.Combine(probingDirectory, ToolsDirectory))
+                .Where(Directory.Exists)
+                .SelectMany(GetFrameworkDirectories)
+                .SelectMany(GetRidDirectories);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories()" />
-        public static void AddRuntimeDirectories() => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories(EnvironmentVariableTarget.Process);
+            static IEnumerable<string> GetRidDirectories(string directory)
+            {
+                if (Directory.GetDirectories(directory)
+                    .Select(Path.GetFileName)
+                    .OfType<string>()
+                    .ToList() is { Count: not 0 } availableRids)
+                {
+                    return GetRuntimeRids()
+                        .Intersect(availableRids, GetComparer())
+                        .Select(rid => Path.Combine(directory, rid))
+                        .Where(Directory.Exists);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories(EnvironmentVariableTarget)" />
-        public static void AddRuntimeDirectories(EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddRuntimeDirectories(target);
+                    static IEqualityComparer<string?> GetComparer()
+                    {
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+                        return OperatingSystem.IsWindows()
+#else
+                        return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+#endif
+                            ? StringComparer.OrdinalIgnoreCase
+                            : StringComparer.Ordinal;
+                    }
+                }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectoryToPath(string)" />
-        public static void AddDirectoryToPath(string directory) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectoryToPath(directory);
+                return [];
+            }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectoryToPath(string,EnvironmentVariableTarget)" />
-        public static void AddDirectoryToPath(string directory, EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectoryToPath(directory, target);
+            static IEnumerable<string> GetProbingDirectoriesCore()
+            {
+                foreach (var probingDirectory in GetProbingDirectories())
+                {
+                    yield return probingDirectory;
+                }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectory(string,string)" />
-        public static void AddDirectory(string directory, string variable) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectory(directory, variable);
+                var context = NuGet.Configuration.NuGetPathContext.Create(System.Runtime.InteropServices.RuntimeInformation.GetBaseDirectories().FirstOrDefault() ?? string.Empty);
+                if (context.UserPackageFolder is { } userPackageFolder)
+                {
+                    yield return userPackageFolder;
+                }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectory(string,string,EnvironmentVariableTarget)" />
-        public static void AddDirectory(string directory, string variable, EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.AddDirectory(directory, variable, target);
+                if (context.FallbackPackageFolders is { Count: not 0 } fallbackPackageFolders)
+                {
+                    foreach (var fallbackPackageFolder in fallbackPackageFolders)
+                    {
+                        yield return fallbackPackageFolder;
+                    }
+                }
+            }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddNativeDirectory(string)" />
-        public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddNativeDirectory(path);
+            static IEnumerable<string> FilterProbingPaths(IEnumerable<string> probingPaths)
+            {
+                var libraryPaths = GetDependencyContext()?.RuntimeLibraries?
+                    .Where(library => library.Type is "package")
+                    .Select(library => library.Path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar))
+                    .ToArray() ?? [];
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddNativeDirectory(string,EnvironmentVariableTarget)" />
-        public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddNativeDirectory(path, target);
+                foreach (var probingPath in probingPaths)
+                {
+                    // return any probing path that has a tools directory
+                    yield return probingPath;
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddLibraryDirectory(string)" />
-        public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddLibraryDirectory(path);
+                    foreach (var libraryPath in libraryPaths)
+                    {
+                        var path = Path.Combine(probingPath, libraryPath);
+                        if (Directory.Exists(path))
+                        {
+                            yield return path;
+                        }
+                    }
+                }
+            }
+        }
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddLibraryDirectory(string,EnvironmentVariableTarget)" />
-        public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddLibraryDirectory(path, target);
+#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+        /// <summary>
+        /// Adds the runtime native directory to the path environment variable if required.
+        /// </summary>
+        public static void AddRuntimeNativeDirectory() => AddRuntimeNativeDirectory(EnvironmentVariableTarget.Process);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddToolsDirectory(string)" />
-        public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddToolsDirectory(path);
+        /// <summary>
+        /// Adds the runtime native directory to the path environment variable if required.
+        /// </summary>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        public static void AddRuntimeNativeDirectory(EnvironmentVariableTarget target) => AddRuntimeDirectory(GetRuntimeNativeDirectory(), NativeDllSearchDirectories, target);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddToolsDirectory(string,EnvironmentVariableTarget)" />
-        public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.ShouldAddToolsDirectory(path, target);
+        /// <summary>
+        /// Adds the runtime native directory to the path environment variable if required.
+        /// </summary>
+        /// <param name="moduleName">The module name.</param>
+        public static void AddRuntimeNativeDirectory(string moduleName) => AddRuntimeNativeDirectory(moduleName, EnvironmentVariableTarget.Process);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.CreateModuleName" />
-        public static string CreateModuleName(string name) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.CreateModuleName(name);
+        /// <summary>
+        /// Adds the runtime native directory to the path environment variable if required.
+        /// </summary>
+        /// <param name="moduleName">The module name.</param>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        public static void AddRuntimeNativeDirectory(string moduleName, EnvironmentVariableTarget target) => AddRuntimeDirectory(GetRuntimeNativeDirectory(moduleName), NativeDllSearchDirectories, target);
 
-        /// <inheritdoc cref="Altemiq.Runtime.InteropServices.RuntimeEnvironment.CreateExecutableName" />
-        public static string CreateExecutableName(string name) => Altemiq.Runtime.InteropServices.RuntimeEnvironment.CreateExecutableName(name);
+        /// <summary>
+        /// Adds the runtime library directory to the path environment variable if required.
+        /// </summary>
+        public static void AddRuntimeLibraryDirectory() => AddRuntimeLibraryDirectory(EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Adds the runtime library directory to the path environment variable if required.
+        /// </summary>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        public static void AddRuntimeLibraryDirectory(EnvironmentVariableTarget target) => AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths, target);
+
+        /// <summary>
+        /// Adds the tools directory to the path environment variable if required.
+        /// </summary>
+        public static void AddToolsDirectory() => AddToolsDirectory(EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Adds the tools directory to the path environment variable if required.
+        /// </summary>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        public static void AddToolsDirectory(EnvironmentVariableTarget target) => AddRuntimeDirectory(GetToolsDirectory(), AppPaths, target);
+
+        /// <summary>
+        /// Adds the runtime directories to the path variable if required.
+        /// </summary>
+        public static void AddRuntimeDirectories() => AddRuntimeDirectories(EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Adds the runtime directories to the path variable if required.
+        /// </summary>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        public static void AddRuntimeDirectories(EnvironmentVariableTarget target)
+        {
+            AddRuntimeLibraryDirectory(target);
+            AddRuntimeNativeDirectory(target);
+        }
+
+        /// <summary>
+        /// Adds a directory to the path environment variable in the current process.
+        /// </summary>
+        /// <param name="directory">The directory to add.</param>
+        public static void AddDirectoryToPath(string directory) => AddDirectoryToPath(directory, EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Adds a directory to the path environment variable in the current process or from the Windows operating system registry key for the current user or local machine.
+        /// </summary>
+        /// <param name="directory">The directory to add.</param>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        public static void AddDirectoryToPath(string directory, EnvironmentVariableTarget target) => AddDirectory(directory, System.Runtime.InteropServices.RuntimeInformation.PathVariable, target);
+
+        /// <summary>
+        /// Adds a directory to the environment variable in the current process.
+        /// </summary>
+        /// <param name="directory">The directory to add.</param>
+        /// <param name="variable">The name of an environment variable.</param>
+        public static void AddDirectory(string directory, string variable) => AddDirectory(directory, variable, EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Adds a directory to the environment variable in the current process or from the Windows operating system registry key for the current user or local machine.
+        /// </summary>
+        /// <param name="directory">The directory to add.</param>
+        /// <param name="variable">The name of an environment variable.</param>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        public static void AddDirectory(string directory, string variable, EnvironmentVariableTarget target)
+        {
+            if (Environment.GetEnvironmentVariable(variable, target) is { } path)
+            {
+                if (path.Contains(directory, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path, target);
+            }
+            else
+            {
+                Environment.SetEnvironmentVariable(variable, directory, target);
+            }
+        }
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => ShouldAddNativeDirectory(path, EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is { } p && !IsAlreadyInAppContext(p, NativeDllSearchDirectories) && !EnvironmentVariableContains(System.Runtime.InteropServices.RuntimeInformation.PathVariable, target, p);
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => ShouldAddLibraryDirectory(path, EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is { } p && !IsAlreadyInAppContext(p, AppPaths) && !EnvironmentVariableContains(System.Runtime.InteropServices.RuntimeInformation.PathVariable, target, p);
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => ShouldAddToolsDirectory(path, EnvironmentVariableTarget.Process);
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <param name="target">One of the <see cref="EnvironmentVariableTarget"/> values. Only <see cref="EnvironmentVariableTarget.Process"/> is supported on .NET running of Unix-based systems.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path, EnvironmentVariableTarget target) => path is { } p && !EnvironmentVariableContains(System.Runtime.InteropServices.RuntimeInformation.PathVariable, target, p);
+#else
+        /// <summary>
+        /// Adds the runtime native directory to the path variable if required.
+        /// </summary>
+        public static void AddRuntimeNativeDirectory() => AddRuntimeDirectory(GetRuntimeNativeDirectory(), NativeDllSearchDirectories);
+
+        /// <summary>
+        /// Adds the runtime native directory to the path environment variable if required.
+        /// </summary>
+        /// <param name="moduleName">The module name.</param>
+        public static void AddRuntimeNativeDirectory(string moduleName) => AddRuntimeDirectory(GetRuntimeNativeDirectory(moduleName), NativeDllSearchDirectories);
+
+        /// <summary>
+        /// Adds the runtime library directory to the path variable if required.
+        /// </summary>
+        public static void AddRuntimeLibraryDirectory() => AddRuntimeDirectory(GetRuntimeLibraryDirectory(), AppPaths);
+
+        /// <summary>
+        /// Adds the tool directory to the path variable if required.
+        /// </summary>
+        public static void AddToolsDirectory()
+        {
+            if (GetToolsDirectory() is { } toolsDirectory)
+            {
+                AddDirectoryToPath(toolsDirectory);
+            }
+        }
+
+        /// <summary>
+        /// Adds the runtime directories to the path variable if required.
+        /// </summary>
+        public static void AddRuntimeDirectories()
+        {
+            AddRuntimeLibraryDirectory();
+            AddRuntimeNativeDirectory();
+        }
+
+        /// <summary>
+        /// Adds a directory to the path environment variable.
+        /// </summary>
+        /// <param name="directory">The directory to add.</param>
+        public static void AddDirectoryToPath(string directory) => AddDirectory(directory, RuntimeInformation.PathVariable);
+
+        /// <summary>
+        /// Adds a directory to the path variable.
+        /// </summary>
+        /// <param name="directory">The directory to add.</param>
+        /// <param name="variable">The name of an environment variable.</param>
+        public static void AddDirectory(string directory, string variable)
+        {
+            if (Environment.GetEnvironmentVariable(variable) is { } path)
+            {
+                if (path.Contains(directory, GetPlatformStringComparison()))
+                {
+                    return;
+                }
+
+                Environment.SetEnvironmentVariable(variable, directory + Path.PathSeparator + path);
+
+                static StringComparison GetPlatformStringComparison()
+                {
+                    return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+                        ? StringComparison.OrdinalIgnoreCase
+                        : StringComparison.Ordinal;
+                }
+            }
+            else
+            {
+                Environment.SetEnvironmentVariable(variable, directory);
+            }
+        }
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddNativeDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is { } p && !IsAlreadyInAppContext(p, NativeDllSearchDirectories) && !EnvironmentVariableContains(System.Runtime.InteropServices.RuntimeInformation.PathVariable, p);
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddLibraryDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is { } p && !IsAlreadyInAppContext(p, AppPaths) && !EnvironmentVariableContains(System.Runtime.InteropServices.RuntimeInformation.PathVariable, p);
+
+        /// <summary>
+        /// Returns whether the specified path should be added.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns><see langword="true"/> if <paramref name="path"/> should be added; otherwise <see langword="false"/>.</returns>
+        public static bool ShouldAddToolsDirectory([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) => path is { } p && !EnvironmentVariableContains(System.Runtime.InteropServices.RuntimeInformation.PathVariable, p);
+#endif
+
+        /// <summary>
+        /// Creates the module name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>The module name.</returns>
+        public static string CreateModuleName(string name) => System.Runtime.InteropServices.RuntimeInformation.SharedLibraryPrefix + name + System.Runtime.InteropServices.RuntimeInformation.SharedLibraryExtension;
+
+        /// <summary>
+        /// Creates the executable name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>The executable name.</returns>
+        public static string CreateExecutableName(string name) => name + System.Runtime.InteropServices.RuntimeInformation.ExecutableExtension;
+
+        /// <summary>
+        /// Gets the runtime config file name.
+        /// </summary>
+        /// <returns>The runtime config file name.</returns>
+        internal static string? GetRuntimeConfigFileName()
+        {
+            if (Assembly.GetActualEntryAssembly() is not { FullName: { } fullName })
+            {
+                return default;
+            }
+
+            var name = new AssemblyName(fullName);
+            var fileName = $"{name.Name}.runtimeconfig.json";
+
+            return System.Runtime.InteropServices.RuntimeInformation.GetBaseDirectories().Select(baseDirectory => Path.Combine(baseDirectory, fileName)).FirstOrDefault(File.Exists);
+        }
+
+        /// <summary>
+        /// Gets the runtime config.
+        /// </summary>
+        /// <returns>The runtime config.</returns>
+        internal static Altemiq.Runtime.RuntimeConfig? GetRuntimeConfig() => GetRuntimeConfigFileName() is { } path ? Altemiq.Runtime.RuntimeConfig.FromFile(path) : default;
     }
 #pragma warning restore SA1137, SA1400, S1144
+
+    private const string NativeDllSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES";
+    private const string AppPaths = "APP_PATHS";
+    private const string RuntimesDirectory = "runtimes";
+    private const string NativeDirectory = "native";
+    private const string LibraryDirectory = "lib";
+    private const string ToolsDirectory = "tools";
+
+    private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
+
+#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+    private static void AddRuntimeDirectory(string? directory, string variable, EnvironmentVariableTarget target)
+    {
+        if (DirectoryExists(directory) && !IsAlreadyInAppContext(directory, variable))
+        {
+            AddDirectoryToPath(directory, target);
+        }
+    }
+#else
+    private static void AddRuntimeDirectory(string? directory, string variable)
+    {
+        if (DirectoryExists(directory) && !IsAlreadyInAppContext(directory, variable))
+        {
+            AddDirectoryToPath(directory);
+        }
+    }
+#endif
+
+    private static bool DirectoryExists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? directory) => Directory.Exists(directory);
+
+#if NETCOREAPP1_0_OR_GREATER || NET46_OR_GREATER || NETSTANDARD1_3_OR_GREATER
+    private static bool IsAlreadyInAppContext(string value, string variable) => AppContext.GetData(variable) is string data && data.Contains(value, StringComparison.Ordinal);
+#else
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "This is required for a common API")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "This is required for a common API")]
+    private static bool IsAlreadyInAppContext(string value, string variable) => false;
+#endif
+
+    private static IEnumerable<string> GetRuntimeDirectories(string name)
+    {
+        if (System.Runtime.InteropServices.RuntimeInformation.GetBaseDirectories().Select(static baseDirectory => Path.Combine(baseDirectory, RuntimesDirectory)).FirstOrDefault(Directory.Exists) is not { } runtimesDirectory)
+        {
+            yield break;
+        }
+
+        // get the rids
+        if (Directory.GetDirectories(runtimesDirectory)
+                .Select(Path.GetFileName)
+                .OfType<string>()
+                .ToList() is { Count: not 0 } availableRids)
+        {
+            if (GetRuntimeRids().Intersect(availableRids, GetPathComparer()).ToList() is { Capacity: not 0 } rids)
+            {
+                foreach (var path in rids.Select(rid => Path.Combine(runtimesDirectory, rid, name)).Where(Directory.Exists))
+                {
+                    yield return path;
+                }
+
+                yield break;
+            }
+
+            yield return Path.Combine(runtimesDirectory, name);
+        }
+        else
+        {
+            yield return runtimesDirectory;
+        }
+    }
+
+    private static StringComparer GetPathComparer()
+    {
+#if NETCOREAPP2_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+        return OperatingSystem.IsWindows()
+#else
+        return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+#endif
+            ? StringComparer.OrdinalIgnoreCase
+            : StringComparer.Ordinal;
+    }
+
+    private static List<string> GetRuntimeRids()
+    {
+        runtimeGraph ??= GetRuntimeGraph();
+        if (runtimeGraph.Count > 0)
+        {
+            var rid = System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier;
+            if (runtimeGraph.FirstOrDefault(g => string.Equals(g.Runtime, rid, StringComparison.Ordinal)) is { } runtimeFallbacks)
+            {
+                var rids = runtimeFallbacks.Fallbacks.ToList();
+                rids.Insert(0, rid);
+                return rids;
+            }
+        }
+
+        return [System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier, RuntimeInformationExtensions.GetNaïveRid()];
+
+        static IReadOnlyList<RuntimeFallbacks> GetRuntimeGraph()
+        {
+            if (GetDependencyContext() is { RuntimeGraph: { Count: not 0 } runtimeFallbacks })
+            {
+                return runtimeFallbacks;
+            }
+
+            using var stream = new System.IO.Compression.GZipStream(GetManifestStream(!ShouldUseRidGraph()), System.IO.Compression.CompressionMode.Decompress, leaveOpen: false);
+            return Altemiq.Runtime.JsonRuntimeFormat.ReadRuntimeGraph(stream);
+
+            static bool ShouldUseRidGraph()
+            {
+                return GetRuntimeConfig() switch
+                {
+                    { } runtimeConfig => UseRidGraph(runtimeConfig),
+                    _ => true,
+                };
+
+                static bool UseRidGraph(Altemiq.Runtime.RuntimeConfig runtimeConfig)
+                {
+                    return runtimeConfig.GetPropertyValue("System.Runtime.Loader.UseRidGraph") is { } value
+                        && bool.TryParse(value, out var result)
+                        && result;
+                }
+            }
+
+            static Stream GetManifestStream(bool portable = true)
+            {
+                return portable
+                    ? GetManifestStream("PortableRuntimeIdentifierGraph.json")
+                    : GetManifestStream("runtime.json");
+
+                static Stream GetManifestStream(string name)
+                {
+                    var assembly = typeof(RuntimeEnvironmentExtensions).GetTypeInfo().Assembly;
+                    var stream = assembly.GetManifestResourceStream(assembly.GetManifestResourceNames().First(n => n.Contains(name, StringComparison.Ordinal)));
+#if NETCOREAPP3_0_OR_GREATER
+                    return stream!;
+#else
+                    return stream;
+#endif
+                }
+            }
+        }
+    }
+
+    private static DependencyContext? GetDependencyContext()
+    {
+        try
+        {
+            return DependencyContext.Default;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.Fail(ex.ToString());
+        }
+
+        return default;
+    }
+
+#if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
+    private static bool EnvironmentVariableContains(string variable, EnvironmentVariableTarget target, string value) => Environment.GetEnvironmentVariable(variable, target) is { } variableValue && variableValue.Contains(value, StringComparison.Ordinal);
+#else
+    private static bool EnvironmentVariableContains(string variable, string value) => Environment.GetEnvironmentVariable(variable) is { } variableValue && variableValue.Contains(value, StringComparison.Ordinal);
+#endif
+
+    private static IEnumerable<string> GetFrameworkDirectories(string directory)
+    {
+        var frameworkNameProvider = NuGet.Frameworks.DefaultFrameworkNameProvider.Instance;
+
+        // get all the available TFMs
+        if (Directory.GetDirectories(directory)
+            .Select(Path.GetFileName)
+            .Select(folder => NuGet.Frameworks.NuGetFramework.ParseFolder(folder, frameworkNameProvider))
+            .ToList() is { Count: not 0 } availableFrameworks)
+        {
+            // get the current TFM
+            var targetFramework = NuGet.Frameworks.NuGetFramework.ParseFrameworkName(System.Runtime.InteropServices.RuntimeInformation.TargetFramework, frameworkNameProvider);
+            var targetFrameworkWithProfile = System.Runtime.InteropServices.RuntimeInformation.TargetPlatform is { Length: > 0 } targetPlatform
+                ? new NuGet.Frameworks.NuGetFramework(targetFramework.Framework, targetFramework.Version, targetPlatform)
+                : default;
+
+            var frameworkReducer = new NuGet.Frameworks.FrameworkReducer(frameworkNameProvider, NuGet.Frameworks.DefaultCompatibilityProvider.Instance);
+            while (true)
+            {
+                if (targetFrameworkWithProfile is { } framework && frameworkReducer.GetNearest(framework, availableFrameworks) is { } nearestFrameworkWithProfile)
+                {
+                    yield return Path.Combine(directory, nearestFrameworkWithProfile.GetShortFolderName());
+                    _ = availableFrameworks.Remove(nearestFrameworkWithProfile);
+                }
+                else if (frameworkReducer.GetNearest(targetFramework, availableFrameworks) is { } nearestFramework)
+                {
+                    yield return Path.Combine(directory, nearestFramework.GetShortFolderName());
+                    _ = availableFrameworks.Remove(nearestFramework);
+                    targetFrameworkWithProfile = default;
+                }
+                else
+                {
+                    yield break;
+                }
+            }
+        }
+
+        yield return directory;
+    }
+
+    private static string[] GetProbingDirectories()
+    {
+#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK || NETSTANDARD2_0_OR_GREATER
+        if (AppDomain.CurrentDomain.GetData("PROBING_DIRECTORIES") is string probingDirectories
+            && !string.IsNullOrEmpty(probingDirectories))
+        {
+            return probingDirectories.Split(Path.PathSeparator);
+        }
+#endif
+
+        return [.. System.Runtime.InteropServices.RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal)];
+    }
 }
 #pragma warning restore CA1050, MA0047, RCS1110, RCS1222, IDE0079, CheckNamespace
 #endif

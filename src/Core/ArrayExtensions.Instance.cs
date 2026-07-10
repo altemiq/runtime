@@ -4,14 +4,16 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace Altemiq;
+#pragma warning disable IDE0130, CheckNamespace
+namespace System;
+#pragma warning restore IDE0130, CheckNamespace
 
 #pragma warning disable RCS1263, SA1101, S2325
 
 /// <summary>
 /// <see cref="ArrayExtensions"/> extensions.
 /// </summary>
-public static class ArrayExtensions
+public static partial class ArrayExtensions
 {
     /// <content>
     /// <see cref="ArrayExtensions"/> extensions.

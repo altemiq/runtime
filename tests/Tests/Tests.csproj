@@ -6,7 +6,7 @@
     <TargetFrameworks Condition="$([System.OperatingSystem]::IsWindows())">$(TargetFrameworks);net472</TargetFrameworks>
     <NoWarn>$(NoWarn);CA1861</NoWarn>
     <LangVersion>preview</LangVersion>
-    <MeziantouPolyfill_ExcludedPolyfills>$(MeziantouPolyfill_ExcludedPolyfills)|M:System.BitConverter|M:System.Buffers.Binary|M:System.Linq.AsyncEnumerable|M:System.Random.NextInt64</MeziantouPolyfill_ExcludedPolyfills>
+    <MeziantouPolyfill_ExcludedPolyfills>$(MeziantouPolyfill_ExcludedPolyfills)|M:System.BitConverter|M:System.Buffers.Binary|</MeziantouPolyfill_ExcludedPolyfills>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="BitConverterTests.*.cs;Linq\ListTests.*.cs">
+    <Compile Update="BitConverterExtensionsTests.*.cs;Linq\ListTests.*.cs">
       <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)%(Extension)', '\.[^.]+\%(Extension)$', '%(Extension)'))</DependentUpon>
     </Compile>
   </ItemGroup>
