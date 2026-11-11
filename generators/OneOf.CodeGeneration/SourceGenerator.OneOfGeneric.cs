@@ -17,7 +17,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 /// </content>
 public partial class SourceGenerator
 {
-    private static (string Name, StructDeclarationSyntax StructDeclaration) GenerateOneOfGeneric(int count)
+    private static (string Name, StructDeclarationSyntax StructDeclaration) GenerateOneOfGeneric(int count, bool includeUnionAttribute)
     {
         var typeParameterNames = GetTypeParameterNames(count).ToArray();
         var name = FormattableString.Invariant($"{OneOf}`{count}");
@@ -34,6 +34,7 @@ public partial class SourceGenerator
             .WithMembers(List(
                 GetFieldDeclarations(typeParameterNames)
                 .Append<MemberDeclarationSyntax>(GetConstructor(typeParameterNames))
+                .Concat(GetUnionConstructorDeclarations(typeParameterNames))
                 .Append(GetValuePropertyDeclaration(count))
                 .Append(GetIndexPropertyDeclaration())
                 .Concat(GetIsPropertyDeclarations(typeParameterNames))
@@ -62,8 +63,15 @@ public partial class SourceGenerator
 
         return (name, structDeclaration);
 
-        static IEnumerable<AttributeListSyntax> GetAttributes()
+        IEnumerable<AttributeListSyntax> GetAttributes()
         {
+            if (includeUnionAttribute)
+            {
+                yield return AttributeList(
+                    SingletonSeparatedList(
+                        GetUnionAttribute()));
+            }
+
             yield return AttributeList(
                 SingletonSeparatedList(
                     Attribute(
@@ -304,6 +312,205 @@ public partial class SourceGenerator
                                 ThisExpression(),
                                 name),
                             name));
+                }
+            }
+        }
+
+        IEnumerable<ConstructorDeclarationSyntax> GetUnionConstructorDeclarations(IList<string> typeParameterNames)
+        {
+            if (!includeUnionAttribute)
+            {
+                yield break;
+            }
+
+            for (var i = 0; i < typeParameterNames.Count; i++)
+            {
+                var valueName = GetValueName(i);
+
+                yield return ConstructorDeclaration(
+                    Identifier(OneOf))
+                    .WithModifiers(
+                    TokenList(
+                        Token(SyntaxKind.PublicKeyword)))
+                    .WithParameterList(
+                    ParameterList(
+                        SingletonSeparatedList(
+                            Parameter(
+                                Identifier(valueName))
+                            .WithType(
+                                NullableType(
+                                    IdentifierName(typeParameterNames[i]))))))
+                    .WithInitializer(
+                    ConstructorInitializer(
+                        SyntaxKind.ThisConstructorInitializer,
+                        ArgumentList(
+                            SeparatedList<ArgumentSyntax>(
+                                [
+                                    Argument(
+                                        LiteralExpression(
+                                            SyntaxKind.NumericLiteralExpression,
+                                            Literal(i))),
+                                    Token(SyntaxKind.CommaToken),
+                                    Argument(
+                                        IdentifierName(valueName))
+                                    .WithNameColon(
+                                        NameColon(
+                                            IdentifierName(valueName))),
+                                ]))))
+                    .WithBody(
+                    Block())
+                    .WithLeadingTrivia(
+                    Trivia(
+                        DocumentationCommentTrivia(
+                            SyntaxKind.SingleLineDocumentationCommentTrivia,
+                            List<XmlNodeSyntax>(
+                                GetDocumentation(i, typeParameterNames)))));
+
+                static IEnumerable<XmlNodeSyntax> GetDocumentation(int index, IList<string> typeParameterNames)
+                {
+                    yield return XmlText()
+                        .WithTextTokens(
+                        TokenList(
+                            XmlTextLiteral(
+                                TriviaList(
+                                    DocumentationCommentExterior(TripleSlash)),
+                                Space,
+                                Space,
+                                TriviaList())));
+                    yield return XmlExampleElement(
+                        XmlText()
+                        .WithTextTokens(
+                            TokenList(
+                                XmlTextNewLine(
+                                    TriviaList(),
+                                    NewLine,
+                                    NewLine,
+                                    TriviaList()),
+                                XmlTextLiteral(
+                                    TriviaList(
+                                        DocumentationCommentExterior(TripleSlash)),
+                                    " Creates a new instance of ",
+                                    " Creates a new instance of ",
+                                    TriviaList()))),
+                        XmlNullKeywordElement()
+                        .WithAttributes(
+                            SingletonList<XmlAttributeSyntax>(
+                                XmlCrefAttribute(
+                                    NameMemberCref(
+                                        GenericName(
+                                            Identifier(OneOf))
+                                        .WithTypeArgumentList(
+                                            TypeArgumentList(
+                                                SeparatedList<TypeSyntax>(
+                                                    Join(typeParameterNames.Select(IdentifierName))))))))),
+                        XmlText()
+                        .WithTextTokens(
+                            TokenList(
+                                XmlTextLiteral(
+                                    TriviaList(),
+                                    " containing a ",
+                                    " containing a ",
+                                    TriviaList()))),
+                        XmlNullKeywordElement()
+                        .WithName(
+                            XmlName(
+                                Identifier(Keywords.TypeParamRef)))
+                        .WithAttributes(
+                            SingletonList<XmlAttributeSyntax>(
+                                XmlNameAttribute(
+                                    XmlName(
+                                        Identifier(Keywords.Name)),
+                                    Token(SyntaxKind.DoubleQuoteToken),
+                                    IdentifierName(typeParameterNames[index]),
+                                    Token(SyntaxKind.DoubleQuoteToken)))),
+                        XmlText()
+                        .WithTextTokens(
+                            TokenList(
+                                XmlTextLiteral(
+                                    TriviaList(),
+                                    " value.",
+                                    " value.",
+                                    TriviaList()),
+                                XmlTextNewLine(
+                                    TriviaList(),
+                                    NewLine,
+                                    NewLine,
+                                    TriviaList()),
+                                XmlTextLiteral(
+                                    TriviaList(
+                                        DocumentationCommentExterior(TripleSlash)),
+                                    Space,
+                                    Space,
+                                    TriviaList()))))
+                        .WithStartTag(
+                            XmlElementStartTag(
+                                XmlName(
+                                    Identifier(Keywords.Summary))))
+                        .WithEndTag(
+                            XmlElementEndTag(
+                                XmlName(
+                                    Identifier(Keywords.Summary))));
+                    yield return XmlText()
+                        .WithTextTokens(
+                        TokenList(
+                            XmlTextNewLine(
+                                TriviaList(),
+                                NewLine,
+                                NewLine,
+                                TriviaList())));
+                    yield return XmlText()
+                        .WithTextTokens(
+                        TokenList(
+                            XmlTextLiteral(
+                                TriviaList(
+                                    DocumentationCommentExterior(TripleSlash)),
+                                Space,
+                                Space,
+                                TriviaList())));
+                    yield return XmlExampleElement(
+                        SingletonList<XmlNodeSyntax>(
+                            XmlText()
+                            .WithTextTokens(
+                                TokenList(
+                                    XmlTextLiteral(
+                                        TriviaList(),
+                                        "The value.",
+                                        "The value.",
+                                        TriviaList())))))
+                        .WithStartTag(
+                        XmlElementStartTag(
+                            XmlName(
+                                Identifier(
+                                    TriviaList(),
+                                    SyntaxKind.ParamKeyword,
+                                    Keywords.Param,
+                                    Keywords.Param,
+                                    TriviaList())))
+                        .WithAttributes(
+                            SingletonList<XmlAttributeSyntax>(
+                                XmlNameAttribute(
+                                    XmlName(
+                                        Identifier(Keywords.Name)),
+                                    Token(SyntaxKind.DoubleQuoteToken),
+                                    IdentifierName(GetValueName(index)),
+                                    Token(SyntaxKind.DoubleQuoteToken)))))
+                        .WithEndTag(
+                        XmlElementEndTag(
+                            XmlName(
+                                Identifier(
+                                    TriviaList(),
+                                    SyntaxKind.ParamKeyword,
+                                    Keywords.Param,
+                                    Keywords.Param,
+                                    TriviaList()))));
+                    yield return XmlText()
+                        .WithTextTokens(
+                        TokenList(
+                            XmlTextNewLine(
+                                TriviaList(),
+                                NewLine,
+                                NewLine,
+                                TriviaList())));
                 }
             }
         }
