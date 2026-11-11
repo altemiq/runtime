@@ -10,9 +10,9 @@ namespace System;
 
 #pragma warning disable RCS1263, SA1101, S2325
 
-/// <summary>
-/// <see cref="ArrayExtensions"/> extensions.
-/// </summary>
+/// <content>
+/// <see cref="Array"/> instance extensions.
+/// </content>
 public static partial class ArrayExtensions
 {
     /// <content>

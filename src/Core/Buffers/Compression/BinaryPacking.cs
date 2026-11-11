@@ -90,8 +90,8 @@ internal sealed class BinaryPacking : IInt32Codec, IHeadlessInt32Codec
         for (s = 0; s + (BlockSize * 4) - 1 < written; s += BlockSize * 4)
         {
             var firstMaxBits = source[read] >>> 24;
-            var secondMaxBits = source[read] >>> 16 & 0xFF;
-            var thirdMaxBits = source[read] >>> 8 & 0xFF;
+            var secondMaxBits = (source[read] >>> 16) & 0xFF;
+            var thirdMaxBits = (source[read] >>> 8) & 0xFF;
             var forthMaxBits = (int)(uint)source[read] & 0xFF;
             read++;
             BitPacking.Unpack(source[read..], destination[s..], firstMaxBits);

@@ -8,8 +8,6 @@ namespace Altemiq.Linq;
 
 using System.Reflection;
 
-#pragma warning disable CA1708, RCS1263, SA1101
-
 /// <summary>
 /// Provides a set of static methods for querying objects that implement <see cref="IList{T}"/>.
 /// </summary>
@@ -465,9 +463,7 @@ public static partial class List
                     static object?[] GetParameters(IEnumerable<ConstructorInfo> constructors, IEnumerable<TSource> source)
                     {
                         // Get the best constructor
-                        return constructors
-                            .Select(static constructor => constructor.GetParameters())
-                            .SingleOrDefault(static parameters => parameters.Length is 1 && typeof(IEnumerable<TResult>).GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType.GetTypeInfo())) is not null
+                        return constructors.Select(static constructor => constructor.GetParameters()).SingleOrDefault(static parameters => parameters.Length is 1 && typeof(IEnumerable<TResult>).GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType.GetTypeInfo())) is not null
                             ? [source]
                             : [];
                     }

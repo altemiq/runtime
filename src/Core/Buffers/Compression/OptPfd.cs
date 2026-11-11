@@ -168,7 +168,7 @@ internal abstract class OptPfd(Compress compress, Decompress decompress, Estimat
             for (var run = 0; run < runEnd; run++, written += BlockSize)
             {
                 var b = sourcePage[read] & 0xFF;
-                var exceptionCount = sourcePage[read] >>> 8 & 0xFF;
+                var exceptionCount = (sourcePage[read] >>> 8) & 0xFF;
                 var exceptionSize = sourcePage[read] >>> 16;
                 read++;
                 decompress(sourcePage.Slice(read, exceptionSize), this.exceptionBuffer.AsSpan(0, 2 * exceptionCount));

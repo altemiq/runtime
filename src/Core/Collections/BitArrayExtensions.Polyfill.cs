@@ -13,6 +13,8 @@ namespace Altemiq.Collections;
 /// </content>
 public static partial class BitArrayExtensions
 {
+    private static readonly System.Reflection.FieldInfo ArrayFieldInfo = System.Reflection.IntrospectionExtensions.GetTypeInfo(typeof(System.Collections.BitArray)).DeclaredFields.FirstOrDefault(static field => field.FieldType.Equals(typeof(int[]))) ?? throw new InvalidOperationException();
+
     /// <content>
     /// The <see cref="System.Collections.BitArray"/> extensions.
     /// </content>
@@ -119,6 +121,4 @@ public static partial class BitArrayExtensions
         /// <returns>A shallow copy of the <see cref="System.Collections.BitArray"/>.</returns>
         public object Clone() => new System.Collections.BitArray(bitArray);
     }
-
-    private static readonly System.Reflection.FieldInfo ArrayFieldInfo = System.Reflection.IntrospectionExtensions.GetTypeInfo(typeof(System.Collections.BitArray)).DeclaredFields.FirstOrDefault(static field => field.FieldType.Equals(typeof(int[]))) ?? throw new InvalidOperationException();
 }

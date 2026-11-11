@@ -105,9 +105,9 @@ internal sealed class XorBinaryPacking : IDifferentialInt32Codec
         for (; written < destinationLength; written += BlockLength)
         {
             var bits1 = source[read] >>> 24;
-            var bits2 = source[read] >>> 16 & 0xFF;
-            var bits3 = source[read] >>> 8 & 0xFF;
-            var bits4 = source[read] >>> 0 & 0xFF;
+            var bits2 = (source[read] >>> 16) & 0xFF;
+            var bits3 = (source[read] >>> 8) & 0xFF;
+            var bits4 = (source[read] >>> 0) & 0xFF;
             read++;
             read += XorUnpack(source[read..], destination[(written + 0)..], bits1, context, work);
             read += XorUnpack(source[read..], destination[(written + 32)..], bits2, destination[written + 31], work);

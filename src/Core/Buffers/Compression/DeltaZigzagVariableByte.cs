@@ -36,22 +36,22 @@ internal sealed class DeltaZigzagVariableByte : IInt32Codec
 
             if (zeros < 4)
             {
-                byteBuffer.WriteSByte((sbyte)((n >>> 28 & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)(((n >>> 28) & 0x7F) | 0x80));
             }
 
             if (zeros < 11)
             {
-                byteBuffer.WriteSByte((sbyte)((n >>> 21 & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)(((n >>> 21) & 0x7F) | 0x80));
             }
 
             if (zeros < 18)
             {
-                byteBuffer.WriteSByte((sbyte)((n >>> 14 & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)(((n >>> 14) & 0x7F) | 0x80));
             }
 
             if (zeros < 25)
             {
-                byteBuffer.WriteSByte((sbyte)((n >>> 7 & 0x7F) | 0x80));
+                byteBuffer.WriteSByte((sbyte)(((n >>> 7) & 0x7F) | 0x80));
             }
 
             byteBuffer.WriteSByte((sbyte)((uint)n & 0x7F));
@@ -86,7 +86,7 @@ internal sealed class DeltaZigzagVariableByte : IInt32Codec
         while (sourcePosition < sourceIndexLast)
         {
             // Fetch a byte value.
-            var n = source[sourcePosition] >>> variableByteContextShift & 0xFF;
+            var n = (source[sourcePosition] >>> variableByteContextShift) & 0xFF;
             if (variableByteContextShift > 0)
             {
                 variableByteContextShift -= 8;

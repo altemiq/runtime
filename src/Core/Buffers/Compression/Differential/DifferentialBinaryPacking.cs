@@ -122,8 +122,8 @@ internal sealed class DifferentialBinaryPacking : IDifferentialInt32Codec, IHead
         for (; s + (BlockSize * 4) - 1 < destinationLength; s += BlockSize * 4)
         {
             var bits1 = source[temporarySourceIndex] >>> 24;
-            var bits2 = source[temporarySourceIndex] >>> 16 & 0xFF;
-            var bits3 = source[temporarySourceIndex] >>> 8 & 0xFF;
+            var bits2 = (source[temporarySourceIndex] >>> 16) & 0xFF;
+            var bits3 = (source[temporarySourceIndex] >>> 8) & 0xFF;
             var bits4 = source[temporarySourceIndex] & 0xFF;
 
             temporarySourceIndex++;

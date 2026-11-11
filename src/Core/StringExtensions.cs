@@ -6,13 +6,17 @@
 
 namespace Altemiq;
 
-#pragma warning disable CA1708, RCS1263, SA1101, S2325
-
 /// <summary>
 /// <see cref="string"/> extensions.
 /// </summary>
 public static class StringExtensions
 {
+    private const char QuoteChar = '\"';
+
+    private const string QuoteString = "\"";
+
+    private const string EscapedQuoteString = QuoteString + QuoteString;
+
     /// <content>
     /// <see cref="string"/> extensions.
     /// </content>
@@ -267,7 +271,13 @@ public static class StringExtensions
             }
         }
 
-        private static string QuoteReturnString(string value) => QuoteString + value.Replace(QuoteString, EscapedQuoteString, StringComparison.Ordinal) + QuoteString;
+        private static string QuoteReturnString(string value) => QuoteString
+#if NETSTANDARD1_5_OR_GREATER || NETCOREAPP || NETFRAMEWORK
+            + value.Replace(QuoteString, EscapedQuoteString, StringComparison.Ordinal)
+#else
+            + value.Replace(QuoteString, EscapedQuoteString)
+#endif
+            + QuoteString;
     }
 
     /// <content>
@@ -283,10 +293,4 @@ public static class StringExtensions
         /// <returns>The string value of this instance using <paramref name="provider"/>.</returns>
         public string ToString(IFormatProvider? provider) => formattable.ToString(format: default, provider);
     }
-
-    private const char QuoteChar = '\"';
-
-    private const string QuoteString = "\"";
-
-    private const string EscapedQuoteString = QuoteString + QuoteString;
 }

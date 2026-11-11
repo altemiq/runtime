@@ -6,6 +6,8 @@
 
 namespace Altemiq.Buffers.Compression;
 
+#pragma warning disable SA1649
+
 /// <summary>
 /// Compressed data from an input array into an output array.
 /// </summary>

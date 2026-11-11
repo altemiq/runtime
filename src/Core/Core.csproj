@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.1;netstandard1.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0;net9.0;net8.0;net7.0;net6.0;net5.0;netstandard2.1;netstandard2.0;net461;netstandard1.3;netstandard1.1;netstandard1.0</TargetFrameworks>
     <RootNamespace Condition="$(RootNamespace.Contains('.Core'))">$(RootNamespace.Replace('.Core', ''))</RootNamespace>
     <AssemblyName Condition="$(AssemblyName.Contains('.Core'))">$(AssemblyName.Replace('.Core', ''))</AssemblyName>
 
@@ -12,7 +12,6 @@
       M:System.ArgumentOutOfRangeException.ThrowIfLessThan``1(``0,``0,System.String)|
       M:System.ArgumentOutOfRangeException.ThrowIfLessThanOrEqual``1(``0,``0,System.String)|
       M:System.String.Join``1(System.Char,System.Collections.Generic.IEnumerable{``0})|
-      M:System.String.Replace(System.String,System.String,System.StringComparison)|
       T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute|
       T:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute|
       T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute|
@@ -23,20 +22,16 @@
       T:System.Diagnostics.CodeAnalysis.NotNullWhenAttribute|
       T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute|
       T:System.Runtime.CompilerServices.CallerArgumentExpressionAttribute|
-      T:System.Threading.Lock|
+      T:System.Threading.Lock
     </MeziantouPolyfill_IncludedPolyfills>
 
-    <MeziantouPolyfill_IncludedPolyfills Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.3')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp1.0')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11')) ">
+    <MeziantouPolyfill_IncludedPolyfills Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.3')) OR $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp1.0')) ">
       $(MeziantouPolyfill_IncludedPolyfills)|
       T:System.HashCode
     </MeziantouPolyfill_IncludedPolyfills>
 
-    <MeziantouPolyfill_IncludedPolyfills>
+    <MeziantouPolyfill_IncludedPolyfills Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard1.5')) ">
       $(MeziantouPolyfill_IncludedPolyfills)|
-      M:System.ArgumentOutOfRangeException.ThrowIfGreaterThan``1(``0,``0,System.String)|
-      M:System.ArgumentOutOfRangeException.ThrowIfLessThan``1(``0,``0,System.String)|
-      M:System.ArgumentOutOfRangeException.ThrowIfLessThanOrEqual``1(``0,``0,System.String)|
-      M:System.String.Join``1(System.Char,System.Collections.Generic.IEnumerable{``0})|
       M:System.String.Replace(System.String,System.String,System.StringComparison)
     </MeziantouPolyfill_IncludedPolyfills>
     

@@ -151,7 +151,7 @@ internal sealed class S16
             var bits = 0;
             for (var j = 0; j < count; j++)
             {
-                destination[j] = source[0] >>> bits & (int)(0xffffffff >> (32 - S16Bits[index][j]));
+                destination[j] = (source[0] >>> bits) & (int)(0xffffffff >> (32 - S16Bits[index][j]));
                 bits += S16Bits[index][j];
             }
 
