@@ -7,11 +7,11 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFileName.Replace('Packages', 'Versions'))$(MSBuildThisFileExtension)))" />
   
   <ItemGroup>
-    <PackageVersion Include="System.CommandLine" Version="2.0.9" />    
+    <PackageVersion Include="System.CommandLine" Version="3.0.0" />    
   </ItemGroup>
 
   <ItemGroup Label="Coding Standards">
-    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.312" />
+    <GlobalPackageReference Include="Altemiq.DotNet.CodingStandard" Version="1.0.469" />
   </ItemGroup>
 
 </Project>

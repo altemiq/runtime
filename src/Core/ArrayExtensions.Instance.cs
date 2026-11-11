@@ -8,8 +8,6 @@
 namespace System;
 #pragma warning restore IDE0130, CheckNamespace
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <content>
 /// <see cref="Array"/> instance extensions.
 /// </content>

@@ -8,8 +8,6 @@
 namespace System.Threading;
 #pragma warning restore IDE0130, CheckNamespace
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <summary>
 /// Async extensions.
 /// </summary>

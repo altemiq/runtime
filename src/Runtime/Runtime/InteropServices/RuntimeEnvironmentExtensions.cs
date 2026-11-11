@@ -5,22 +5,26 @@
 // -----------------------------------------------------------------------
 
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER || NETFRAMEWORK
-#pragma warning disable IDE0079
-#pragma warning disable RCS1222
-#pragma warning disable CA1050, MA0047, RCS1110, CheckNamespace
 
 using System.Reflection;
 using Microsoft.Extensions.DependencyModel;
+
+#pragma warning disable CA1050, MA0047, RCS1110, CheckNamespace
 
 /// <summary>
 /// <see cref="System.Runtime.InteropServices.RuntimeEnvironment"/> extensions.
 /// </summary>
 public static class RuntimeEnvironmentExtensions
 {
-    /// <summary>
-    /// <see cref="System.Runtime.InteropServices.RuntimeEnvironment"/> extensions.
-    /// </summary>
-#pragma warning disable SA1137, SA1400, S1144
+    private const string NativeDllSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES";
+    private const string AppPaths = "APP_PATHS";
+    private const string RuntimesDirectory = "runtimes";
+    private const string NativeDirectory = "native";
+    private const string LibraryDirectory = "lib";
+    private const string ToolsDirectory = "tools";
+
+    private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
+
     extension(System.Runtime.InteropServices.RuntimeEnvironment)
     {
         /// <summary>
@@ -101,7 +105,7 @@ public static class RuntimeEnvironmentExtensions
                     return candidateAssets;
                 }
 
-                return [];
+                return [with(StringComparer.Ordinal)];
             }
         }
 
@@ -501,16 +505,6 @@ public static class RuntimeEnvironmentExtensions
         /// <returns>The runtime config.</returns>
         internal static Altemiq.Runtime.RuntimeConfig? GetRuntimeConfig() => GetRuntimeConfigFileName() is { } path ? Altemiq.Runtime.RuntimeConfig.FromFile(path) : default;
     }
-#pragma warning restore SA1137, SA1400, S1144
-
-    private const string NativeDllSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES";
-    private const string AppPaths = "APP_PATHS";
-    private const string RuntimesDirectory = "runtimes";
-    private const string NativeDirectory = "native";
-    private const string LibraryDirectory = "lib";
-    private const string ToolsDirectory = "tools";
-
-    private static IReadOnlyList<RuntimeFallbacks>? runtimeGraph;
 
 #if NETCOREAPP2_0_OR_GREATER || NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
     private static void AddRuntimeDirectory(string? directory, string variable, EnvironmentVariableTarget target)
@@ -717,5 +711,4 @@ public static class RuntimeEnvironmentExtensions
         return [.. System.Runtime.InteropServices.RuntimeInformation.GetBaseDirectories().Distinct(StringComparer.Ordinal)];
     }
 }
-#pragma warning restore CA1050, MA0047, RCS1110, RCS1222, IDE0079, CheckNamespace
 #endif

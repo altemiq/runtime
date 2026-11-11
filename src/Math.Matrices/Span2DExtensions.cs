@@ -6,15 +6,70 @@
 
 namespace Altemiq.Math;
 
-#pragma warning disable CA1708, RCS1263, S2325, SA1101
-
 /// <summary>
 /// The <see cref="Span2D{T}"/> extensions.
 /// </summary>
 public static class Span2DExtensions
 {
+    /// <content>
+    /// The <see cref="Span2D{T}"/> of <see cref="float"/> extensions.
+    /// </content>
+    /// <param name="input">The input.</param>
     extension(ref Span2D<float> input)
     {
+        /// <summary>
+        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="System.Numerics.Matrix4x4"/>.
+        /// </summary>
+        /// <param name="matrix">The input matrix.</param>
+        /// <returns>The new <see cref="Span2D{Double}"/>.</returns>
+        public static Span2D<float> FromMatrix(System.Numerics.Matrix4x4 matrix)
+        {
+            var items = new float[16];
+
+            items[0] = matrix.M11;
+            items[1] = matrix.M12;
+            items[2] = matrix.M13;
+            items[3] = matrix.M14;
+
+            items[4] = matrix.M21;
+            items[5] = matrix.M22;
+            items[6] = matrix.M23;
+            items[7] = matrix.M24;
+
+            items[8] = matrix.M31;
+            items[9] = matrix.M32;
+            items[10] = matrix.M33;
+            items[11] = matrix.M34;
+
+            items[12] = matrix.M41;
+            items[13] = matrix.M42;
+            items[14] = matrix.M43;
+            items[15] = matrix.M44;
+
+            return new(items, 4, 4);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="System.Numerics.Matrix3x2"/>.
+        /// </summary>
+        /// <param name="matrix">The input matrix.</param>
+        /// <returns>The new <see cref="Span2D{Double}"/>.</returns>
+        public static Span2D<float> FromMatrix(System.Numerics.Matrix3x2 matrix)
+        {
+            var items = new float[6];
+
+            items[0] = matrix.M11;
+            items[1] = matrix.M12;
+
+            items[3] = matrix.M21;
+            items[4] = matrix.M22;
+
+            items[5] = matrix.M31;
+            items[6] = matrix.M32;
+
+            return new(items, 3, 2);
+        }
+
 #pragma warning disable InconsistentNaming
         /// <summary>
         /// Creates a new <see cref="System.Numerics.Matrix4x4" /> from this <see cref="Span2D{Double}"/>.
@@ -91,64 +146,48 @@ public static class Span2DExtensions
                     span[5]);
             }
         }
-
 #pragma warning restore InconsistentNaming
+    }
+
+    /// <content>
+    /// The <see cref="Span2D{T}"/> of <see cref="double"/> extensions.
+    /// </content>
+    /// <param name="input">The input.</param>
+    extension(ref Span2D<double> input)
+    {
         /// <summary>
-        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="System.Numerics.Matrix4x4"/>.
+        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="Numerics.Matrix4x4D"/>.
         /// </summary>
         /// <param name="matrix">The input matrix.</param>
         /// <returns>The new <see cref="Span2D{Double}"/>.</returns>
-        public static Span2D<float> FromMatrix(System.Numerics.Matrix4x4 matrix)
+        public static Span2D<double> FromMatrix(Numerics.Matrix4x4D matrix)
         {
-            var items = new float[16];
+            var items = new double[16];
 
-            items[0] = matrix.M11;
-            items[1] = matrix.M12;
-            items[2] = matrix.M13;
-            items[3] = matrix.M14;
-
-            items[4] = matrix.M21;
-            items[5] = matrix.M22;
-            items[6] = matrix.M23;
-            items[7] = matrix.M24;
-
-            items[8] = matrix.M31;
-            items[9] = matrix.M32;
-            items[10] = matrix.M33;
-            items[11] = matrix.M34;
-
-            items[12] = matrix.M41;
-            items[13] = matrix.M42;
-            items[14] = matrix.M43;
-            items[15] = matrix.M44;
+            matrix.X.CopyTo(items.AsSpan(0, 4));
+            matrix.Y.CopyTo(items.AsSpan(4, 4));
+            matrix.Z.CopyTo(items.AsSpan(8, 4));
+            matrix.W.CopyTo(items.AsSpan(12, 4));
 
             return new(items, 4, 4);
         }
 
         /// <summary>
-        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="System.Numerics.Matrix3x2"/>.
+        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="Numerics.Matrix3x2D"/>.
         /// </summary>
         /// <param name="matrix">The input matrix.</param>
         /// <returns>The new <see cref="Span2D{Double}"/>.</returns>
-        public static Span2D<float> FromMatrix(System.Numerics.Matrix3x2 matrix)
+        public static Span2D<double> FromMatrix(Numerics.Matrix3x2D matrix)
         {
-            var items = new float[6];
+            var items = new double[6];
 
-            items[0] = matrix.M11;
-            items[1] = matrix.M12;
-
-            items[3] = matrix.M21;
-            items[4] = matrix.M22;
-
-            items[5] = matrix.M31;
-            items[6] = matrix.M32;
+            matrix.X.CopyTo(items.AsSpan(0, 2));
+            matrix.Y.CopyTo(items.AsSpan(2, 2));
+            matrix.Z.CopyTo(items.AsSpan(4, 2));
 
             return new(items, 3, 2);
         }
-    }
 
-    extension(ref Span2D<double> input)
-    {
 #pragma warning disable InconsistentNaming
         /// <summary>
         /// Creates a new <see cref="Numerics.Matrix4x4D" /> from this <see cref="Span2D{Double}"/>.
@@ -226,43 +265,10 @@ public static class Span2DExtensions
             }
         }
 #pragma warning restore InconsistentNaming
-
-        /// <summary>
-        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="Numerics.Matrix4x4D"/>.
-        /// </summary>
-        /// <param name="matrix">The input matrix.</param>
-        /// <returns>The new <see cref="Span2D{Double}"/>.</returns>
-        public static Span2D<double> FromMatrix(Numerics.Matrix4x4D matrix)
-        {
-            var items = new double[16];
-
-            matrix.X.CopyTo(items.AsSpan(0, 4));
-            matrix.Y.CopyTo(items.AsSpan(4, 4));
-            matrix.Z.CopyTo(items.AsSpan(8, 4));
-            matrix.W.CopyTo(items.AsSpan(12, 4));
-
-            return new(items, 4, 4);
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="Span2D{Double}" /> from the <see cref="Numerics.Matrix3x2D"/>.
-        /// </summary>
-        /// <param name="matrix">The input matrix.</param>
-        /// <returns>The new <see cref="Span2D{Double}"/>.</returns>
-        public static Span2D<double> FromMatrix(Numerics.Matrix3x2D matrix)
-        {
-            var items = new double[6];
-
-            matrix.X.CopyTo(items.AsSpan(0, 2));
-            matrix.Y.CopyTo(items.AsSpan(2, 2));
-            matrix.Z.CopyTo(items.AsSpan(4, 2));
-
-            return new(items, 3, 2);
-        }
     }
 
     /// <summary>
-    /// The <see cref="ReadOnlySpan2D{T}"/> extension block.
+    /// The <see cref="Span2D{T}"/> extension block.
     /// </summary>
     /// <typeparam name="T">The type of number in the matrix.</typeparam>
     /// <param name="matrix">The matrix to operate on.</param>

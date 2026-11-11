@@ -46,35 +46,6 @@ public static class StringExtensions
         /// <returns>An array whose elements contain the substrings from this instance that are delimited by <paramref name="separator"/>.</returns>
         public string[] SplitQuoted(char[]? separator, StringSplitOptions options = StringSplitOptions.None) => string.SplitQuotedInternal(s, separator, options);
 
-        /// <summary>
-        /// Quotes the specified string.
-        /// </summary>
-        /// <param name="options">The options to use to quote the string.</param>
-        /// <returns>The quoted string.</returns>
-        public string Quote(StringQuoteOptions options = StringQuoteOptions.None) => s.Quote([], options);
-
-        /// <summary>
-        /// Quotes the specified string.
-        /// </summary>
-        /// <param name="delimiter">The delimiter to quote.</param>
-        /// <param name="options">The options to use to quote the string.</param>
-        /// <returns>The quoted string.</returns>
-        public string Quote(char delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => s.Quote([delimiter], options);
-
-        /// <summary>
-        /// Quotes the specified string.
-        /// </summary>
-        /// <param name="delimiter">The delimiter to quote.</param>
-        /// <param name="options">The options to use to quote the string.</param>
-        /// <returns>The quoted string.</returns>
-        public string Quote(char[] delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => s switch
-        {
-            // quote an empty string to differentiate it from a null string
-            { Length: 0 } => string.Concat(QuoteString, QuoteString),
-            { } value => string.SmartQuote(value, delimiter, options),
-            _ => string.Empty,
-        };
-
         private static string[] SplitQuotedInternal(string str, IList<char>? separator, StringSplitOptions options)
         {
             ArgumentNullException.ThrowIfNull(str);
@@ -213,71 +184,52 @@ public static class StringExtensions
 #endif
             }
         }
+    }
 
-        private static string SmartQuote(string value, IList<char> delimiter, StringQuoteOptions options)
+    /// <content>
+    /// Nullable <see cref="string"/> extensions.
+    /// </content>
+    /// <param name="s">The string to quote.</param>
+    extension(string? s)
+    {
+        /// <summary>
+        /// Quotes the specified string.
+        /// </summary>
+        /// <param name="options">The options to use to quote the string.</param>
+        /// <returns>The quoted string.</returns>
+        public string? Quote(StringQuoteOptions options = StringQuoteOptions.None) => s switch
         {
-            var quoteDelimiter = ShouldQuoteDelimiter(delimiter);
-            var quoteNewLine = options.HasFlag(StringQuoteOptions.QuoteNewLine);
-            var quoteQuotes = options.HasFlag(StringQuoteOptions.QuoteQuotes);
-            var quoteNonAscii = options.HasFlag(StringQuoteOptions.QuoteNonAscii);
+            { Length: 0 } => EscapedQuoteString,
+            { } value => SmartQuote(value, [], options),
+            _ => default,
+        };
 
-            // see if we should quote or not
-            return !HaveOptions() || Enumerable.Range(0, value.Length).Any(IsQuotableAt)
-                ? string.QuoteReturnString(value)
-                : value;
+        /// <summary>
+        /// Quotes the specified string.
+        /// </summary>
+        /// <param name="delimiter">The delimiter to quote.</param>
+        /// <param name="options">The options to use to quote the string.</param>
+        /// <returns>The quoted string.</returns>
+        public string? Quote(char delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => s switch
+        {
+            { Length: 0 } => EscapedQuoteString,
+            { } value => SmartQuote(value, [delimiter], options),
+            _ => default,
+        };
 
-            bool HaveOptions()
-            {
-                return quoteDelimiter || quoteNewLine || quoteQuotes || quoteNonAscii;
-            }
-
-            bool IsQuotableAt(int i)
-            {
-                var character = value[i];
-                return (quoteDelimiter && IsDelimiter(character, value, i, delimiter))
-                       || (quoteNewLine && IsNewLine(character))
-                       || (quoteQuotes && IsQuote(character))
-                       || (quoteNonAscii && IsNonAscii(character));
-
-                static bool IsDelimiter(char character, string s, int index, IList<char> delimiter)
-                {
-                    return delimiter[0] == character
-                        && delimiter.Count <= s.Length - index
-                        && !delimiter.Where((t, i) => s[index + i] != t).Any();
-                }
-
-                [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-                static bool IsNewLine(char character)
-                {
-                    return character is '\r' or '\n';
-                }
-
-                [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-                static bool IsQuote(char character)
-                {
-                    return character is QuoteChar;
-                }
-
-                [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-                static bool IsNonAscii(char character)
-                {
-                    return character >= 128;
-                }
-            }
-
-            static bool ShouldQuoteDelimiter([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] IList<char>? delimiter)
-            {
-                return delimiter?.Count > 0;
-            }
-        }
-
-        private static string QuoteReturnString(string value) => QuoteString
-#if NETSTANDARD1_5_OR_GREATER || NETCOREAPP || NETFRAMEWORK
-            + value.Replace(QuoteString, EscapedQuoteString, StringComparison.Ordinal)
-#else
-            + value.Replace(QuoteString, EscapedQuoteString)
-#endif
-            + QuoteString;
+        /// <summary>
+        /// Quotes the specified string.
+        /// </summary>
+        /// <param name="delimiter">The delimiter to quote.</param>
+        /// <param name="options">The options to use to quote the string.</param>
+        /// <returns>The quoted string.</returns>
+        public string? Quote(char[] delimiter, StringQuoteOptions options = StringQuoteOptions.QuoteAll) => s switch
+        {
+            // quote an empty string to differentiate it from a null string
+            { Length: 0 } => EscapedQuoteString,
+            { } value => SmartQuote(value, delimiter, options),
+            _ => default,
+        };
     }
 
     /// <content>
@@ -292,5 +244,73 @@ public static class StringExtensions
         /// <param name="provider">The provider to use to format the value.</param>
         /// <returns>The string value of this instance using <paramref name="provider"/>.</returns>
         public string ToString(IFormatProvider? provider) => formattable.ToString(format: default, provider);
+    }
+
+    private static string SmartQuote(string value, IList<char> delimiter, StringQuoteOptions options)
+    {
+        var quoteDelimiter = ShouldQuoteDelimiter(delimiter);
+        var quoteNewLine = options.HasFlag(StringQuoteOptions.QuoteNewLine);
+        var quoteQuotes = options.HasFlag(StringQuoteOptions.QuoteQuotes);
+        var quoteNonAscii = options.HasFlag(StringQuoteOptions.QuoteNonAscii);
+
+        // see if we should quote or not
+        return !HaveOptions() || Enumerable.Range(0, value.Length).Any(IsQuotableAt)
+            ? QuoteReturnString(value)
+            : value;
+
+        bool HaveOptions()
+        {
+            return quoteDelimiter || quoteNewLine || quoteQuotes || quoteNonAscii;
+        }
+
+        bool IsQuotableAt(int i)
+        {
+            var character = value[i];
+            return (quoteDelimiter && IsDelimiter(character, value, i, delimiter))
+                   || (quoteNewLine && IsNewLine(character))
+                   || (quoteQuotes && IsQuote(character))
+                   || (quoteNonAscii && IsNonAscii(character));
+
+            static bool IsDelimiter(char character, string s, int index, IList<char> delimiter)
+            {
+                return delimiter[0] == character
+                    && delimiter.Count <= s.Length - index
+                    && !delimiter.Where((t, i) => s[index + i] != t).Any();
+            }
+
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static bool IsNewLine(char character)
+            {
+                return character is '\r' or '\n';
+            }
+
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static bool IsQuote(char character)
+            {
+                return character is QuoteChar;
+            }
+
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            static bool IsNonAscii(char character)
+            {
+                return character >= 128;
+            }
+        }
+
+        static bool ShouldQuoteDelimiter([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] IList<char>? delimiter)
+        {
+            return delimiter?.Count > 0;
+        }
+
+        static string QuoteReturnString(string value)
+        {
+            return QuoteString
+#if NETSTANDARD1_5_OR_GREATER || NETCOREAPP || NETFRAMEWORK
+                + value.Replace(QuoteString, EscapedQuoteString, StringComparison.Ordinal)
+#else
+                + value.Replace(QuoteString, EscapedQuoteString)
+#endif
+                + QuoteString;
+        }
     }
 }

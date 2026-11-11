@@ -754,7 +754,7 @@ public class LzmaEncoder
                 offs += 2;
             }
 
-#pragma warning disable S1994 // "for" loop increment clauses should modify the loops' counters
+#pragma warning disable S1994
             for (; ; len++)
             {
                 var distance = this.matchDistances[offs + 1];
@@ -777,7 +777,7 @@ public class LzmaEncoder
                     }
                 }
             }
-#pragma warning restore S1994 // "for" loop increment clauses should modify the loops' counters
+#pragma warning restore S1994
         }
 
         var cur = 0U;
@@ -1031,7 +1031,6 @@ public class LzmaEncoder
                     startLen = lenTest + 1;
                 }
 
-                // if (_maxMode)
                 if (lenTest < numAvailableBytesFull)
                 {
                     var t = Math.Min(numAvailableBytesFull - 1 - lenTest, this.fastBytes);
@@ -1102,7 +1101,7 @@ public class LzmaEncoder
                     offs += 2;
                 }
 
-#pragma warning disable S1994 // "for" loop increment clauses should modify the loops' counters
+#pragma warning disable S1994
                 for (var lenTest = startLen; ; lenTest++)
                 {
                     var curBack = this.matchDistances[offs + 1];
@@ -1168,7 +1167,7 @@ public class LzmaEncoder
                         }
                     }
                 }
-#pragma warning restore S1994 // "for" loop increment clauses should modify the loops' counters
+#pragma warning restore S1994
             }
         }
     }

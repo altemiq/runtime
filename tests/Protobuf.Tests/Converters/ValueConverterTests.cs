@@ -33,19 +33,19 @@ public class ValueConverterTests
         [Test]
         public async Task CreateFromJson()
         {
-            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse(Json).RootElement)).IsNotNull();
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonElement.Parse(Json))).IsNotNull();
         }
 
         [Test]
         public async Task CreateFromEmpty()
         {
-            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("{}").RootElement)).IsNotNull();
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonElement.Parse("{}"))).IsNotNull();
         }
 
         [Test]
         public async Task CreateFromNull()
         {
-            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonDocument.Parse("null").RootElement).KindCase).IsEqualTo(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
+            _ = await Assert.That(ValueConverter.ToValue(System.Text.Json.JsonElement.Parse("null")).KindCase).IsEqualTo(Google.Protobuf.WellKnownTypes.Value.KindOneofCase.NullValue);
         }
 
         [Test]

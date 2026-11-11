@@ -12,7 +12,7 @@ public class XorBinaryPackingTest
 
     public static IEnumerable<Func<int[]>> Data()
     {
-        yield return static () => System.Linq.Enumerable
+        yield return static () => Enumerable
             .Range(0, 128)
             .Select(static i => i switch
             {
@@ -22,9 +22,9 @@ public class XorBinaryPackingTest
                 >= 96 and < 127 => 8,
                 _ => 0,
             }).ToArray();
-        yield return static () => System.Linq.Enumerable.Range(0, 128).Select(static i => i).ToArray();
-        yield return static () => System.Linq.Enumerable.Range(0, 128).Select(static i => i * (i + 1) / 2).ToArray();
-        yield return static () => System.Linq.Enumerable
+        yield return static () => Enumerable.Range(0, 128).Select(static i => i).ToArray();
+        yield return static () => Enumerable.Range(0, 128).Select(static i => i * (i + 1) / 2).ToArray();
+        yield return static () => Enumerable
             .Range(0, 256)
             .Select(static i => i switch
             {
@@ -32,7 +32,7 @@ public class XorBinaryPackingTest
                 > 127 => 3,
                 _ => 0,
             }).ToArray();
-        yield return static () => System.Linq.Enumerable
+        yield return static () => Enumerable
             .Range(0, 256)
             .Select(static i => i switch
             {
@@ -40,6 +40,6 @@ public class XorBinaryPackingTest
                 > 127 => 2,
                 _ => 0,
             }).ToArray();
-        yield return static () => System.Linq.Enumerable.Range(0, 256).Select(static i => i).ToArray();
+        yield return static () => Enumerable.Range(0, 256).Select(static i => i).ToArray();
     }
 }

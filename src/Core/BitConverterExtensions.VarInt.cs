@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable CA1050, CA1708, MA0047, RCS1110
+#pragma warning disable CA1050, MA0047, RCS1110
 
 /// <content>
 /// The <see cref="BitConverter"/> for variable integers.
@@ -23,16 +23,13 @@ public static partial class BitConverterExtensions
 
     private const int BitShift = 7;
 
-    /// <summary>
-    /// Extension methods for <see cref="System.BitConverter"/> for variable integers.
-    /// </summary>
     extension(System.BitConverter)
     {
         /// <summary>
-        /// Returns the specified signed byte value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified signed byte value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">Signed byte value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         [CLSCompliant(false)]
         public static byte[] GetVarBytes(sbyte value) =>
 #if NET7_0_OR_GREATER
@@ -42,18 +39,18 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns the specified byte value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified byte value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">Byte value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         [CLSCompliant(false)]
         public static byte[] GetVarBytes(byte value) => System.BitConverter.GetVarBytesCore(value);
 
         /// <summary>
-        /// Returns the specified 16-bit signed value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 16-bit signed value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">16-bit signed value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         public static byte[] GetVarBytes(short value) =>
 #if NET7_0_OR_GREATER
             System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<short, ushort>(value, sizeof(short) * 8));
@@ -62,18 +59,18 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns the specified 16-bit unsigned value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 16-bit unsigned value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">16-bit unsigned value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         [CLSCompliant(false)]
         public static byte[] GetVarBytes(ushort value) => System.BitConverter.GetVarBytesCore(value);
 
         /// <summary>
-        /// Returns the specified 32-bit signed value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 32-bit signed value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">32-bit signed value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         public static byte[] GetVarBytes(int value) =>
 #if NET7_0_OR_GREATER
             System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<int, uint>(value, sizeof(int) * 8));
@@ -82,18 +79,18 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns the specified 32-bit unsigned value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 32-bit unsigned value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">32-bit unsigned value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         [CLSCompliant(false)]
         public static byte[] GetVarBytes(uint value) => System.BitConverter.GetVarBytesCore(value);
 
         /// <summary>
-        /// Returns the specified 64-bit signed value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 64-bit signed value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">64-bit signed value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         public static byte[] GetVarBytes(long value) =>
 #if NET7_0_OR_GREATER
             System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<long, ulong>(value, sizeof(long) * 8));
@@ -102,34 +99,34 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns the specified 64-bit unsigned value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 64-bit unsigned value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">64-bit unsigned value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         [CLSCompliant(false)]
         public static byte[] GetVarBytes(ulong value) => System.BitConverter.GetVarBytesCore(value);
 
 #if NET7_0_OR_GREATER
         /// <summary>
-        /// Returns the specified 64-bit signed value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 64-bit signed value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">64-bit signed value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         public static byte[] GetVarBytes(Int128 value) => System.BitConverter.GetVarBytesCore(System.BitConverter.EncodeZigZag<Int128, UInt128>(value, 128));
 
         /// <summary>
-        /// Returns the specified 64-bit unsigned value as <c>varint</c> encoded array of bytes.
+        /// Returns the specified 64-bit unsigned value as <pre>varint</pre> encoded array of bytes.
         /// </summary>
         /// <param name="value">64-bit unsigned value.</param>
-        /// <returns><c>varint</c> array of bytes.</returns>
+        /// <returns><pre>varint</pre> array of bytes.</returns>
         [CLSCompliant(false)]
         public static byte[] GetVarBytes(UInt128 value) => System.BitConverter.GetVarBytesCore(value);
 #endif
 
         /// <summary>
-        /// Returns signed byte value from <c>varint</c> encoded array of bytes.
+        /// Returns signed byte value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>Byte value.</returns>
@@ -143,9 +140,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns signed byte value from <c>varint</c> encoded array of bytes.
+        /// Returns signed byte value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>Byte value.</returns>
         [CLSCompliant(false)]
@@ -158,9 +155,9 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns byte value from <c>varint</c> encoded array of bytes.
+        /// Returns byte value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>Byte value.</returns>
@@ -173,9 +170,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns byte value from <c>varint</c> encoded array of bytes.
+        /// Returns byte value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>Byte value.</returns>
         public static byte ToByte(ReadOnlySpan<byte> bytes, out int bytesRead) =>
@@ -187,9 +184,9 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns 16-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 16-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>16-bit signed value.</returns>
@@ -202,9 +199,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns 16-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 16-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>16-bit signed value.</returns>
         public static short ToInt16(ReadOnlySpan<byte> bytes, out int bytesRead) =>
@@ -216,9 +213,9 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns 16-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 16-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>16-bit unsigned value.</returns>
@@ -232,9 +229,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns 16-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 16-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>16-bit unsigned value.</returns>
         [CLSCompliant(false)]
@@ -247,9 +244,9 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns 32-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 32-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>32-bit signed value.</returns>
@@ -262,9 +259,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns 32-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 32-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>32-bit signed value.</returns>
         public static int ToInt32(ReadOnlySpan<byte> bytes, out int bytesRead) =>
@@ -276,9 +273,9 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns 32-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 32-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>32-bit unsigned value.</returns>
@@ -292,9 +289,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns 32-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 32-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>32-bit unsigned value.</returns>
         [CLSCompliant(false)]
@@ -307,9 +304,9 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns 64-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit signed value.</returns>
@@ -322,9 +319,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns 64-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit signed value.</returns>
         [CLSCompliant(false)]
@@ -337,9 +334,9 @@ public static partial class BitConverterExtensions
 #endif
 
         /// <summary>
-        /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit unsigned value.</returns>
@@ -353,9 +350,9 @@ public static partial class BitConverterExtensions
 
 #if NETSTANDARD1_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET45_OR_GREATER
         /// <summary>
-        /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit unsigned value.</returns>
         [CLSCompliant(false)]
@@ -369,27 +366,27 @@ public static partial class BitConverterExtensions
 
 #if NET7_0_OR_GREATER
         /// <summary>
-        /// Returns 64-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit signed value.</returns>
         public static Int128 ToInt128(byte[] bytes, int startIndex, out int bytesRead) => System.BitConverter.DecodeZigZag<UInt128, Int128>(System.BitConverter.ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead));
 
         /// <summary>
-        /// Returns 64-bit signed value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit signed value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit signed value.</returns>
         [CLSCompliant(false)]
         public static Int128 ToInt128(ReadOnlySpan<byte> bytes, out int bytesRead) => System.BitConverter.DecodeZigZag<UInt128, Int128>(System.BitConverter.ToTarget<UInt128>(bytes, 128, out bytesRead));
 
         /// <summary>
-        /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="startIndex">The start index.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit unsigned value.</returns>
@@ -397,9 +394,9 @@ public static partial class BitConverterExtensions
         public static UInt128 ToUInt128(byte[] bytes, int startIndex, out int bytesRead) => System.BitConverter.ToTarget<UInt128>(bytes, startIndex, 128, out bytesRead);
 
         /// <summary>
-        /// Returns 64-bit unsigned value from <c>varint</c> encoded array of bytes.
+        /// Returns 64-bit unsigned value from <pre>varint</pre> encoded array of bytes.
         /// </summary>
-        /// <param name="bytes"><c>varint</c> encoded array of bytes.</param>
+        /// <param name="bytes"><pre>varint</pre> encoded array of bytes.</param>
         /// <param name="bytesRead">The number of bytes from <paramref name="bytes"/>.</param>
         /// <returns>64-bit unsigned value.</returns>
         [CLSCompliant(false)]

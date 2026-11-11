@@ -6,8 +6,6 @@
 
 namespace System.IO.Compression;
 
-#pragma warning disable S2325
-
 /// <summary>
 /// Provides compression options to be used with <see cref="LzmaStream"/>.
 /// </summary>

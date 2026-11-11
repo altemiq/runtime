@@ -53,7 +53,7 @@ public partial class SourceGenerator : IIncrementalGenerator
         var hasUnionAttribute = context.CompilationProvider
             .Select(static (compilation, _) => compilation.GetTypeByMetadataName(UnionAttributeMetadataName) is not null);
 
-        context.RegisterSourceOutput(hasUnionAttribute, (ctx, includeUnionAttribute) =>
+        context.RegisterSourceOutput(hasUnionAttribute, static (ctx, includeUnionAttribute) =>
         {
             const int Count = 10;
 
@@ -129,15 +129,13 @@ public partial class SourceGenerator : IIncrementalGenerator
         }
     }
 
-    private static AttributeSyntax GetUnionAttribute()
-    {
-        return Attribute(
+    private static AttributeSyntax GetUnionAttribute() =>
+        Attribute(
             QualifiedName(
                 QualifiedName(
                     IdentifierName("System"),
                     IdentifierName("Runtime.CompilerServices")),
                 IdentifierName("Union")));
-    }
 
     private static NameSyntax GetQualifiedName(Type type)
     {

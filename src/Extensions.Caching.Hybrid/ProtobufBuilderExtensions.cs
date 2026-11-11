@@ -8,8 +8,6 @@
 namespace Microsoft.Extensions.DependencyInjection;
 #pragma warning restore IDE0130, CheckNamespace
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <summary>
 /// The <see cref="Google.Protobuf.IMessage{T}"/> serializer builder extensions.
 /// </summary>

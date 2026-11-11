@@ -6,8 +6,6 @@
 
 namespace Altemiq.Collections;
 
-#pragma warning disable CA1708, RCS1263, SA1101, S2325
-
 /// <summary>
 /// Extensions for <see cref="System.Collections.BitArray"/>.
 /// </summary>

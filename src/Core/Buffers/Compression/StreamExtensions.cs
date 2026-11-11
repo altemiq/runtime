@@ -6,8 +6,6 @@
 
 namespace Altemiq.Buffers.Compression;
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <summary>
 /// <see cref="Stream"/> extensions.
 /// </summary>

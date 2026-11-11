@@ -29,7 +29,7 @@ public class ByteBasicTest
     public async Task VaryingLengthTest(ByteIntegerCodec codec)
     {
         const int N = 4096;
-        var data = System.Linq.Enumerable.Range(0, N).ToArray();
+        var data = Enumerable.Range(0, N).ToArray();
 
         var c = codec.Codec;
         for (var l = 1; l <= 128; l++)

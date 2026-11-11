@@ -70,7 +70,7 @@ public partial class BitConverterExtensionTests
     [Arguments(0, false)]
     public async Task ToBooleanBytes(byte value, bool expected)
     {
-        _ = await Assert.That(BitConverter.ToBoolean(new[] { value }, 0)).IsEqualTo(expected);
+        _ = await Assert.That(BitConverter.ToBoolean([value], 0)).IsEqualTo(expected);
     }
 
     [Test]

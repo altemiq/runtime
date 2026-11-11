@@ -10,8 +10,6 @@ namespace System;
 
 using Altemiq.Globalization;
 
-#pragma warning disable CA1708, RCS1263, SA1101
-
 /// <summary>
 /// The <see cref="string"/> extensions.
 /// </summary>

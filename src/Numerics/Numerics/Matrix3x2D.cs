@@ -24,27 +24,27 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     // at the relevant points.
 
     /// <summary>The first element of the first row.</summary>
-    /// <remarks>This element exists at index: <c>[0, 0]</c> and is part of row <see cref="X"/>.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[0, 0]</c> and is part of row <see cref="X"/>.</remarks>
     public double M11;
 
     /// <summary>The second element of the first row.</summary>
-    /// <remarks>This element exists at index: <c>[0, 1]</c> and is part of row <see cref="X"/>.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[0, 1]</c> and is part of row <see cref="X"/>.</remarks>
     public double M12;
 
     /// <summary>The first element of the second row.</summary>
-    /// <remarks>This element exists at index: <c>[1, 0]</c> and is part of row <see cref="Y"/>.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[1, 0]</c> and is part of row <see cref="Y"/>.</remarks>
     public double M21;
 
     /// <summary>The second element of the second row.</summary>
-    /// <remarks>This element exists at index: <c>[1, 1]</c> and is part of row <see cref="Y"/>.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[1, 1]</c> and is part of row <see cref="Y"/>.</remarks>
     public double M22;
 
     /// <summary>The first element of the third row.</summary>
-    /// <remarks>This element exists at index: <c>[2, 0]</c> and is part of row <see cref="Z"/>.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[2, 0]</c> and is part of row <see cref="Z"/>.</remarks>
     public double M31;
 
     /// <summary>The second element of the third row.</summary>
-    /// <remarks>This element exists at index: <c>[2, 1]</c> and is part of row <see cref="Z"/>.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[2, 1]</c> and is part of row <see cref="Z"/>.</remarks>
     public double M32;
 
     /// <summary>Initializes a <see cref="Matrix3x2D"/> using the specified elements.</summary>
@@ -85,7 +85,7 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     }
 
     /// <summary>Gets or sets the first row of the matrix.</summary>
-    /// <remarks>This row comprises <see cref="M11" /> and <see cref="M12" />; it exists at index: <c>[0]</c>.</remarks>
+    /// <remarks>This row comprises <see cref="M11" /> and <see cref="M12" />; it exists at index: <c language="none">[0]</c>.</remarks>
     public Vector2D X
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -96,7 +96,7 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     }
 
     /// <summary>Gets or sets the second row of the matrix.</summary>
-    /// <remarks>This row comprises <see cref="M21" /> and <see cref="M22" />; it exists at index: <c>[1]</c>.</remarks>
+    /// <remarks>This row comprises <see cref="M21" /> and <see cref="M22" />; it exists at index: <c language="none">[1]</c>.</remarks>
     public Vector2D Y
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -107,7 +107,7 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     }
 
     /// <summary>Gets or sets the third row of the matrix.</summary>
-    /// <remarks>This row comprises <see cref="M31" /> and <see cref="M32" />; it exists at index: <c>[2]</c>.</remarks>
+    /// <remarks>This row comprises <see cref="M31" /> and <see cref="M32" />; it exists at index: <c language="none">[2]</c>.</remarks>
     public Vector2D Z
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -120,7 +120,7 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <summary>Gets or sets the row at the specified index.</summary>
     /// <param name="row">The index of the row to get or set.</param>
     /// <returns>The row at index: [<paramref name="row" />].</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>3</c>).</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">3</c>).</exception>
     public Vector2D this[int row]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -161,9 +161,9 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <param name="column">The index of the column containing the element to get or set.</param>
     /// <returns>The element at index: [<paramref name="row" />, <paramref name="column" />].</returns>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>3</c>).
+    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">3</c>).
     /// -or-
-    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c>2</c>).
+    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c language="none">2</c>).
     /// </exception>
     public double this[int row, int column]
     {
@@ -438,9 +438,9 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <param name="column">The index of the column containing the element to get.</param>
     /// <returns>The element at index: [<paramref name="row" />, <paramref name="column" />].</returns>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>3</c>).
+    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">3</c>).
     /// -or-
-    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c>2</c>).
+    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c language="none">2</c>).
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly double GetElement(int row, int column) => this[row, column];
@@ -448,7 +448,7 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <summary>Gets or sets the row at the specified index.</summary>
     /// <param name="index">The index of the row to get.</param>
     /// <returns>The row at index: [<paramref name="index" />].</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c>3</c>).</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c language="none">3</c>).</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly Vector2D GetRow(int index) => this[index];
 
@@ -459,7 +459,7 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
 
     /// <summary>Returns a string that represents this matrix.</summary>
     /// <returns>The string representation of this matrix.</returns>
-    /// <remarks>The numeric values in the returned string are formatted by using the conventions of the current culture. For example, for the en-US culture, the returned string might appear as <c>{ {M11:1.1 M12:1.2} {M21:2.1 M22:2.2} {M31:3.1 M32:3.2} }</c>.</remarks>
+    /// <remarks>The numeric values in the returned string are formatted by using the conventions of the current culture. For example, for the en-US culture, the returned string might appear as <c language="none">{ {M11:1.1 M12:1.2} {M21:2.1 M22:2.2} {M31:3.1 M32:3.2} }</c>.</remarks>
     public override readonly string ToString() => $"{{ {{M11:{this.M11} M12:{this.M12}}} {{M21:{this.M21} M22:{this.M22}}} {{M31:{this.M31} M32:{this.M32}}} }}";
 
     /// <summary>Creates a new <see cref="Matrix3x2D"/> with the element at the specified row and column set to the given value and the remaining elements set to the same value as that in the current matrix.</summary>
@@ -468,9 +468,9 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <param name="value">The value to assign to the element at index: [<paramref name="row"/>, <paramref name="column"/>].</param>
     /// <returns>A <see cref="Matrix3x2D" /> with the value of the element at index: [<paramref name="row"/>, <paramref name="column"/>] set to <paramref name="value" /> and the remaining elements set to the same value as that in the current matrix.</returns>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>3</c>).
+    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">3</c>).
     /// -or-
-    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c>2</c>).
+    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c language="none">2</c>).
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly Matrix3x2D WithElement(int row, int column, double value)
@@ -484,7 +484,7 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <param name="index">The index of the row to replace.</param>
     /// <param name="value">The value to assign to the row at index: [<paramref name="index"/>].</param>
     /// <returns>A <see cref="Matrix3x2D" /> with the value of the row at index: [<paramref name="index"/>] set to <paramref name="value" /> and the remaining rows set to the same value as that in the current matrix.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c>3</c>).</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c language="none">3</c>).</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly Matrix3x2D WithRow(int index, Vector2D value)
     {

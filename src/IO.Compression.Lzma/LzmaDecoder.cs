@@ -97,7 +97,7 @@ public class LzmaDecoder
 
         static LiteralDecoder CreateLiteralDecoder(int positionBitCount, int previousBitCount)
         {
-            return (numPosBits: positionBitCount, numPrevBits: previousBitCount) switch
+            return (positionBitCount, previousBitCount) switch
             {
 #pragma warning disable SA1008
                 ( > 8, _) => throw new ArgumentOutOfRangeException(nameof(positionBitCount)),

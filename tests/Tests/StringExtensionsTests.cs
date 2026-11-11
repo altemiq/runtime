@@ -111,8 +111,7 @@ public class StringExtensionsTests
     [Arguments("value€second", null, StringQuoteOptions.QuoteAll & ~StringQuoteOptions.QuoteNonAscii, false)]
     public async Task Quote(string input, string? delimiter, StringQuoteOptions options, bool quoted)
     {
-        var d = delimiter?.ToCharArray() ?? [];
-        _ = await Assert.That(input.Quote(d, options)).IsEqualTo(quoted ? "\"" + input + "\"" : input);
+        _ = await Assert.That(input.Quote(delimiter?.ToCharArray() ?? [], options)).IsEqualTo(quoted ? "\"" + input + "\"" : input);
     }
 
     [Test]
@@ -133,8 +132,7 @@ public class StringExtensionsTests
     [MethodDataSource(nameof(GetCharArrays))]
     public async Task SplitQuotedWithEmptyDelimiter(char[]? chars)
     {
-        const string Value = "This is a string";
-        _ = await Assert.That(Value.SplitQuoted(chars, options: StringSplitOptions.None)).Count().IsEqualTo(4);
+        _ = await Assert.That("This is a string".SplitQuoted(chars, options: StringSplitOptions.None)).Count().IsEqualTo(4);
     }
 
     public static IEnumerable<Func<char[]?>> GetCharArrays()

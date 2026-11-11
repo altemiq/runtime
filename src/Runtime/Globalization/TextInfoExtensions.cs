@@ -6,8 +6,6 @@
 
 namespace Altemiq.Globalization;
 
-#pragma warning disable RCS1263, SA1101
-
 /// <summary>
 /// <see cref="System.Globalization.TextInfo"/> extensions.
 /// </summary>
@@ -226,7 +224,7 @@ public static class TextInfoExtensions
     }
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-    private static string AsString(Span<char> source) => new(source);
+    private static string AsString(ReadOnlySpan<char> source) => new(source);
 #else
     private static string AsString(Span<char> source)
     {

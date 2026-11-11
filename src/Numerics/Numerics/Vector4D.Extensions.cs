@@ -6,8 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-#pragma warning disable CA1708, RCS1263, SA1101, S2325
-
 /// <content>
 /// <see cref="Vector4D"/> extensions.
 /// </content>
@@ -45,19 +43,31 @@ public static partial class VectorD
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
-        public unsafe void Store(double* destination) => value.AsVector256().Store(destination);
+        public
+#if !NET11_0_OR_GREATER
+            unsafe
+#endif
+            void Store(double* destination) => value.AsVector256().Store(destination);
 
         /// <summary>Stores a vector at the given 16-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 16-byte aligned.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void StoreAligned(double* destination) => value.AsVector256().StoreAligned(destination);
+        public
+#if !NET11_0_OR_GREATER
+            unsafe
+#endif
+            void StoreAligned(double* destination) => value.AsVector256().StoreAligned(destination);
 
         /// <summary>Stores a vector at the given 16-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 16-byte aligned.</exception>
         /// <remarks>This method may bypass the cache on certain platforms.</remarks>
-        public unsafe void StoreAlignedNonTemporal(double* destination) => value.AsVector256().StoreAlignedNonTemporal(destination);
+        public
+#if !NET11_0_OR_GREATER
+            unsafe
+#endif
+            void StoreAlignedNonTemporal(double* destination) => value.AsVector256().StoreAlignedNonTemporal(destination);
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>

@@ -6,8 +6,6 @@
 
 namespace Altemiq;
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <content>
 /// Extensions for getting the index of any value.
 /// </content>

@@ -4,16 +4,16 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable CA1050, CA1708, MA0047, RCS1110
-
-#if !NET6_0_OR_GREATER
-#pragma warning disable S6640
-#endif
-
 #if NETSTANDARD1_0
 using BinaryPrimitives = Altemiq.Buffers.Binary.BinaryPrimitives;
 #else
 using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+#endif
+
+#pragma warning disable CA1050, MA0047, RCS1110
+
+#if !NET6_0_OR_GREATER
+#pragma warning disable S6640
 #endif
 
 /// <summary>
@@ -21,9 +21,6 @@ using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
 /// </summary>
 public static partial class BitConverterExtensions
 {
-    /// <summary>
-    /// Extension methods for <see cref="System.BitConverter"/>.
-    /// </summary>
     extension(System.BitConverter)
     {
         /// <inheritdoc cref="System.BitConverter.GetBytes(bool)" />

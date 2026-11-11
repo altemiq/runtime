@@ -149,8 +149,6 @@ public ref struct SpanSplitEnumerator<T>
         var firstSeparatorIndex = slice.IndexOf(this.firstSpanSeparator);
         var secondSeparatorIndex = slice.IndexOf(this.secondSpanSeparator);
 
-#pragma warning disable IDE0079
-#pragma warning disable RCS1222
 #pragma warning disable SA1008
         var (elementLength, length) = (firstSeparatorIndex, secondSeparatorIndex) switch
         {
@@ -160,7 +158,7 @@ public ref struct SpanSplitEnumerator<T>
             ( >= 0, >= 0) when firstSeparatorIndex < secondSeparatorIndex => (firstSeparatorIndex, this.firstSpanSeparator.Length),
             _ => (slice.Length, 1),
         };
-#pragma warning restore SA1008, RCS1222, IDE0079
+#pragma warning restore SA1008
 
         this.endCurrent = this.startCurrent + elementLength;
         this.startNext = this.endCurrent + length;

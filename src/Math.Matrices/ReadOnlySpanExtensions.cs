@@ -6,8 +6,6 @@
 
 namespace Altemiq.Math;
 
-#pragma warning disable CA1708, SA1101, RCS1263
-
 /// <summary>
 /// The <see cref="ReadOnlySpan{T}"/> extensions.
 /// </summary>
@@ -25,6 +23,11 @@ public static class ReadOnlySpanExtensions
         where T : struct, System.Numerics.IMultiplyOperators<T, T, T>
 #endif
     {
+        /// <summary>
+        /// Multiplies this instance by the specified <see cref="ReadOnlySpan{T}"/> to the destination.
+        /// </summary>
+        /// <param name="multiplier">The multiplier.</param>
+        /// <param name="destination">The destination.</param>
         internal void ScaleTo(T multiplier, Span<T> destination)
         {
             var count = System.Numerics.Vector<T>.Count;
@@ -59,6 +62,12 @@ public static class ReadOnlySpanExtensions
         where T : struct, System.Numerics.IAdditionOperators<T, T, T>
 #endif
     {
+        /// <summary>
+        /// Adds this instance and the specified <see cref="ReadOnlySpan{T}"/> to the destination.
+        /// </summary>
+        /// <param name="other">The other span to add.</param>
+        /// <param name="destination">The destination.</param>
+        /// <exception cref="InvalidOperationException">The lengths of <paramref name="input"/> and <paramref name="other"/> do not match.</exception>
         internal void AddTo(ReadOnlySpan<T> other, Span<T> destination)
         {
             if (input.Length != other.Length || input.Length != destination.Length)
@@ -94,6 +103,12 @@ public static class ReadOnlySpanExtensions
         where T : struct, System.Numerics.ISubtractionOperators<T, T, T>
 #endif
     {
+        /// <summary>
+        /// Subtracts the specified <see cref="ReadOnlySpan{T}"/> from this instance and to the destination.
+        /// </summary>
+        /// <param name="other">The other span to add.</param>
+        /// <param name="destination">The destination.</param>
+        /// <exception cref="InvalidOperationException">The lengths of <paramref name="input"/> and <paramref name="other"/> do not match.</exception>
         internal void SubtractTo(ReadOnlySpan<T> other, Span<T> destination)
         {
             if (input.Length != other.Length || input.Length != destination.Length)

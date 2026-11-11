@@ -6,8 +6,6 @@
 
 namespace Altemiq.Collections;
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <content>
 /// Polyfill extensions for <see cref="System.Collections.BitArray"/>.
 /// </content>
@@ -26,6 +24,7 @@ public static partial class BitArrayExtensions
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="Array"/> that is the destination of the elements copied from <see cref="System.Collections.BitArray"/>. The <see cref="ArrayExtensions"/> must have zero-based indexing.</param>
         /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
+        /// <exception cref="ArgumentException">The array is multi-dimensional.</exception>
         public void CopyTo(Array array, int index)
         {
             const int BitShiftPerInt32 = 5;

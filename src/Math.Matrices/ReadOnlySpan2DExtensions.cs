@@ -6,8 +6,6 @@
 
 namespace Altemiq.Math;
 
-#pragma warning disable CA1708, SA1101, RCS1263
-
 /// <summary>
 /// The <see cref="ReadOnlySpan2D{T}"/> extensions.
 /// </summary>
@@ -73,14 +71,6 @@ public static class ReadOnlySpan2DExtensions
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.
         /// </summary>
-        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.</returns>
-        /// <seealso cref="op_Addition"/>
-        public ReadOnlySpan2D<T> Add(ReadOnlySpan2D<T> other) => matrix + other;
-
-        /// <summary>
-        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.
-        /// </summary>
         /// <param name="matrix1">The first instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
         /// <param name="matrix2">The second instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.</returns>
@@ -119,6 +109,14 @@ public static class ReadOnlySpan2DExtensions
 
             return new(returnValue, matrix1.Height, matrix1.Width);
         }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the addition of the two specified matrices.</returns>
+        /// <seealso cref="op_Addition"/>
+        public ReadOnlySpan2D<T> Add(ReadOnlySpan2D<T> other) => matrix + other;
     }
 
     /// <summary>
@@ -133,14 +131,6 @@ public static class ReadOnlySpan2DExtensions
         where T : struct, System.Numerics.ISubtractionOperators<T, T, T>
 #endif
     {
-        /// <summary>
-        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.
-        /// </summary>
-        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.</returns>
-        /// <seealso cref="op_Subtraction"/>
-        public ReadOnlySpan2D<T> Subtract(ReadOnlySpan2D<T> other) => matrix - other;
-
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.
         /// </summary>
@@ -181,6 +171,14 @@ public static class ReadOnlySpan2DExtensions
 
             return new(returnValue, matrix1.Height, matrix1.Width);
         }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the subtraction of the two specified matrices.</returns>
+        /// <seealso cref="op_Subtraction"/>
+        public ReadOnlySpan2D<T> Subtract(ReadOnlySpan2D<T> other) => matrix - other;
     }
 
     /// <summary>
@@ -195,14 +193,6 @@ public static class ReadOnlySpan2DExtensions
         where T : struct, System.Numerics.IMultiplyOperators<T, T, T>, System.Numerics.IAdditionOperators<T, T, T>
 #endif
     {
-        /// <summary>
-        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.
-        /// </summary>
-        /// <param name="multiplier">A double value to scale the matrix by.</param>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
-        /// <seealso cref="ReadOnlySpan2DExtensions.op_Multiply{T}(ReadOnlySpan2D{T},T)"/>
-        public ReadOnlySpan2D<T> Scale(T multiplier) => matrix * multiplier;
-
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.
         /// </summary>
@@ -241,6 +231,14 @@ public static class ReadOnlySpan2DExtensions
 
             return new(returnValue, value.Height, value.Width);
         }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.
+        /// </summary>
+        /// <param name="multiplier">A double value to scale the matrix by.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the scaling of the specified matrix by the specified scale.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.op_Multiply{T}(ReadOnlySpan2D{T},T)"/>
+        public ReadOnlySpan2D<T> Scale(T multiplier) => matrix * multiplier;
     }
 
     /// <summary>
@@ -251,14 +249,6 @@ public static class ReadOnlySpan2DExtensions
     extension<T>(ReadOnlySpan2D<T> matrix)
         where T : System.Numerics.IMultiplyOperators<T, T, T>, System.Numerics.IAdditionOperators<T, T, T>
     {
-        /// <summary>
-        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.
-        /// </summary>
-        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.</returns>
-        /// <seealso cref="ReadOnlySpan2DExtensions.op_Multiply{T}(ReadOnlySpan2D{T},ReadOnlySpan2D{T})"/>
-        public ReadOnlySpan2D<T> Multiply(ReadOnlySpan2D<T> other) => matrix * other;
-
         /// <summary>
         /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.
         /// </summary>
@@ -278,6 +268,20 @@ public static class ReadOnlySpan2DExtensions
             return new(returnValue, matrix1.Height, matrix2.Width);
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.
+        /// </summary>
+        /// <param name="other">The instance of <see cref="ReadOnlySpan2D{T}"/>.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/> from the multiplication of the two specified matrices.</returns>
+        /// <seealso cref="ReadOnlySpan2DExtensions.op_Multiply{T}(ReadOnlySpan2D{T},ReadOnlySpan2D{T})"/>
+        public ReadOnlySpan2D<T> Multiply(ReadOnlySpan2D<T> other) => matrix * other;
+
+        /// <summary>
+        /// Outputs the results from multiplication of the two specified matrices to an instance of <see cref="ReadOnlySpan2D{T}"/>.
+        /// </summary>
+        /// <param name="matrix1">The first matrix.</param>
+        /// <param name="matrix2">The second matrix.</param>
+        /// <param name="destination">The destination.</param>
         internal static void Multiply(ReadOnlySpan2D<T> matrix1, ReadOnlySpan2D<T> matrix2, Span<T> destination)
         {
             for (var column = 0; column < matrix2.Width; column++)
@@ -317,13 +321,6 @@ public static class ReadOnlySpan2DExtensions
 #endif
     {
         /// <summary>
-        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
-        /// </summary>
-        /// <param name="y">A double-precision floating-point number that specifies a power.</param>
-        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
-        public ReadOnlySpan2D<T> Pow(double y) => matrix ^ y;
-
-        /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the specified instance of <see cref="ReadOnlySpan2D{T}"/>.
         /// </summary>
         /// <param name="x">A <see cref="ReadOnlySpan2D{T}"/> to be raised to a power.</param>
@@ -338,6 +335,13 @@ public static class ReadOnlySpan2DExtensions
         /// <param name="y">The inverter to use to invert <paramref name="x"/>.</param>
         /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
         public static ReadOnlySpan2D<T> operator ^(ReadOnlySpan2D<T> x, IMatrixInverter y) => y.Invert(x);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.
+        /// </summary>
+        /// <param name="y">A double-precision floating-point number that specifies a power.</param>
+        /// <returns>A new instance of <see cref="ReadOnlySpan2D{T}"/>.</returns>
+        public ReadOnlySpan2D<T> Pow(double y) => matrix ^ y;
 
         /// <summary>
         /// Creates a new <see cref="ReadOnlySpan2D{T}"/> from the inverse of the current instance of <see cref="ReadOnlySpan2D{T}"/>.

@@ -6,8 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-#pragma warning disable CA1708, RCS1263, SA1101
-
 /// <content>
 /// <see cref="PlaneD"/> extensions.
 /// </content>

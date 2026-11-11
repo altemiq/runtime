@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable CA1050, MA0047, RCS1110, RCS1263, SA1101, S2325
+#pragma warning disable CA1050, MA0047, RCS1110
 
 #if NETSTANDARD1_0
 using BinaryPrimitives = Altemiq.Buffers.Binary.BinaryPrimitives;

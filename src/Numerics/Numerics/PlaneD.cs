@@ -175,6 +175,6 @@ public struct PlaneD : IEquatable<PlaneD>
 
     /// <summary>Returns the string representation of this plane object.</summary>
     /// <returns>A string that represents this <see cref="PlaneD" /> object.</returns>
-    /// <remarks>The string representation of a <see cref="PlaneD" /> object use the formatting conventions of the current culture to format the numeric values in the returned string. For example, a <see cref="PlaneD" /> object whose string representation is formatted by using the conventions of the en-US culture might appear as <c>{Normal:&lt;1.1, 2.2, 3.3&gt; D:4.4}</c>.</remarks>
+    /// <remarks>The string representation of a <see cref="PlaneD" /> object use the formatting conventions of the current culture to format the numeric values in the returned string. For example, a <see cref="PlaneD" /> object whose string representation is formatted by using the conventions of the en-US culture might appear as <c language="none">{Normal:&lt;1.1, 2.2, 3.3&gt; D:4.4}</c>.</remarks>
     public override readonly string ToString() => $"{{Normal:{this.Normal} D:{this.D}}}";
 }

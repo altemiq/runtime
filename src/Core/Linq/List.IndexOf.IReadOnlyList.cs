@@ -6,8 +6,6 @@
 
 namespace Altemiq.Linq;
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <content>
 /// <see cref="IReadOnlyList{T}"/> extensions for getting the index.
 /// </content>

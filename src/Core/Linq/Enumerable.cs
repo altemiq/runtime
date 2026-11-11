@@ -6,8 +6,6 @@
 
 namespace Altemiq.Linq;
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 /// <summary>
 /// Extensions for <see cref="IEnumerable{T}"/>.
 /// </summary>

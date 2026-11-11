@@ -44,8 +44,6 @@ public delegate bool TryParse<TInput, TOutput>(ReadOnlySpan<TInput> input, IForm
 /// <returns><see langword="true"/> if successful; otherwise <see langword="false"/>.</returns>
 public delegate bool TryParse<T>(ReadOnlySpan<char> input, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value);
 
-#pragma warning disable CA1708, RCS1263, SA1101, S2325
-
 /// <summary>
 /// Memory extensions.
 /// </summary>
@@ -533,7 +531,6 @@ public static partial class MemoryExtensions
         /// <returns>The result from <paramref name="parser"/> for the next value.</returns>
         public T GetNextValue<T>(ref SpanSplitEnumerator<char> enumerator, Parse<char, T> parser, IFormatProvider? provider) => parser(span.GetNextOrThrow(ref enumerator), provider);
 
-#pragma warning disable MA0202 // Conditional compilation branches have identical code
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
         /// <summary>
         /// Gets the next value from the span as the specified enum.
@@ -585,7 +582,6 @@ public static partial class MemoryExtensions
 #else
             (T)Enum.Parse(typeof(T), span.GetNextOrThrow(ref enumerator).ToString(), ignoreCase);
 #endif
-#pragma warning restore MA0202 // Conditional compilation branches have identical code
 
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
         /// <summary>

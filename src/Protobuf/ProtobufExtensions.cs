@@ -6,8 +6,6 @@
 
 namespace Altemiq.Protobuf;
 
-#pragma warning disable SA1101
-
 /// <summary>
 /// <see cref="Protobuf"/> extensions.
 /// </summary>

@@ -13,9 +13,6 @@ namespace System;
 /// </summary>
 public static partial class ArrayExtensions
 {
-    /// <summary>
-    /// The <see cref="Array"/> extensions.
-    /// </summary>
     extension(Array)
     {
         /// <summary>

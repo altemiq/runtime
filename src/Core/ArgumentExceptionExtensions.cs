@@ -14,9 +14,6 @@ namespace System;
 public static class ArgumentExceptionExtensions
 {
 #if !NET8_0_OR_GREATER
-    /// <summary>
-    /// The <see cref="ArgumentOutOfRangeException"/> extensions.
-    /// </summary>
     extension(ArgumentOutOfRangeException)
     {
 #if NET7_0_OR_GREATER

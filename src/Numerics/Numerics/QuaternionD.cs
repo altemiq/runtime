@@ -7,7 +7,7 @@
 namespace Altemiq.Numerics;
 
 /// <summary>Represents a vector that is used to encode three-dimensional physical rotations.</summary>
-/// <remarks>The <see cref="QuaternionD"/> structure is used to efficiently rotate an object about the (x,y,z) vector by the angle theta, where: <c>w = cos(theta/2)</c>.</remarks>
+/// <remarks>The <see cref="QuaternionD"/> structure is used to efficiently rotate an object about the (x,y,z) vector by the angle theta, where: <c language="math">w = cos(theta/2)</c>.</remarks>
 [Intrinsic]
 [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
 public struct QuaternionD : IEquatable<QuaternionD>
@@ -44,7 +44,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     public QuaternionD(Vector3D vectorPart, double scalarPart) => this = Create(vectorPart, scalarPart);
 
     /// <summary>Gets a quaternion that represents a zero.</summary>
-    /// <value>A quaternion whose values are <c>(0, 0, 0, 0)</c>.</value>
+    /// <value>A quaternion whose values are <c language="none">(0, 0, 0, 0)</c>.</value>
     public static QuaternionD Zero
     {
         [Intrinsic]
@@ -52,7 +52,7 @@ public struct QuaternionD : IEquatable<QuaternionD>
     }
 
     /// <summary>Gets a quaternion that represents no rotation.</summary>
-    /// <value>A quaternion whose values are <c>(0, 0, 0, 1)</c>.</value>
+    /// <value>A quaternion whose values are <c language="none">(0, 0, 0, 1)</c>.</value>
     public static QuaternionD Identity
     {
         [Intrinsic]
@@ -449,6 +449,6 @@ public struct QuaternionD : IEquatable<QuaternionD>
 
     /// <summary>Returns a string that represents this quaternion.</summary>
     /// <returns>The string representation of this quaternion.</returns>
-    /// <remarks>The numeric values in the returned string are formatted by using the conventions of the current culture. For example, for the en-US culture, the returned string might appear as <c>{X:1.1 Y:2.2 Z:3.3 W:4.4}</c>.</remarks>
+    /// <remarks>The numeric values in the returned string are formatted by using the conventions of the current culture. For example, for the en-US culture, the returned string might appear as <c language="none">{X:1.1 Y:2.2 Z:3.3 W:4.4}</c>.</remarks>
     public override readonly string ToString() => $"{{X:{this.X} Y:{this.Y} Z:{this.Z} W:{this.W}}}";
 }

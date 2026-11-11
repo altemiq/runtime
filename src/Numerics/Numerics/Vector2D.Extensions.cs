@@ -6,8 +6,6 @@
 
 namespace Altemiq.Numerics;
 
-#pragma warning disable CA1708, RCS1263, SA1101, S2325
-
 /// <content>
 /// <see cref="Vector2D"/> extensions.
 /// </content>

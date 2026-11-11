@@ -6,8 +6,6 @@
 
 namespace Altemiq.IO;
 
-#pragma warning disable RCS1263, SA1101, S2325
-
 #if NETSTANDARD1_0
 using BinaryPrimitives = Altemiq.Buffers.Binary.BinaryPrimitives;
 #else

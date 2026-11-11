@@ -4,17 +4,19 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable CA1050, CA1708, MA0047, RCS1110, RCS1263, SA1101, CheckNamespace
+#pragma warning disable CA1050, MA0047, RCS1110, CheckNamespace
 
 /// <summary>
 /// <see cref="System.Reflection.Assembly"/> extensions.
 /// </summary>
 public static class AssemblyExtensions
 {
+    private static System.Reflection.Assembly? entryAssembly;
+
     extension(System.Reflection.Assembly)
     {
         /// <summary>
-        /// Gets the entry assembly, taking into account <c>testhost</c> to make sure we get the required assembly.
+        /// Gets the entry assembly, taking into account <c language="none">testhost</c> to make sure we get the required assembly.
         /// </summary>
         /// <returns>The entry assembly.</returns>
         public static System.Reflection.Assembly? GetActualEntryAssembly()
@@ -24,20 +26,26 @@ public static class AssemblyExtensions
 
             static System.Reflection.Assembly? GetEntryAssemblyCore()
             {
-                if (System.Reflection.Assembly.GetEntryAssembly() is { FullName: { } fullName } assembly)
+                return FromEntryAssembly() ?? FromCurrentProcess();
+
+                static System.Reflection.Assembly? FromEntryAssembly()
                 {
-                    return IsTestAssembly(fullName) && GetTestAssembly() is { } testAssembly
-                        ? testAssembly
-                        : assembly;
-                }
-                else if (System.Diagnostics.Process.GetCurrentProcess() is { } process
-                    && IsTestAssembly(process.ProcessName)
-                    && GetTestAssembly() is { } testAssembly)
-                {
-                    return testAssembly;
+                    return System.Reflection.Assembly.GetEntryAssembly() switch
+                    {
+                        { FullName: { } fullName } when IsTestAssembly(fullName) && GetTestAssembly() is { } testAssembly => testAssembly,
+                        { } assembly => assembly,
+                        _ => default,
+                    };
                 }
 
-                return default;
+                static System.Reflection.Assembly? FromCurrentProcess()
+                {
+                    return System.Diagnostics.Process.GetCurrentProcess() switch
+                    {
+                        { } process when IsTestAssembly(process.ProcessName) && GetTestAssembly() is { } testAssembly => testAssembly,
+                        _ => default,
+                    };
+                }
 
                 static bool IsTestAssembly(string name)
                 {
@@ -102,8 +110,6 @@ public static class AssemblyExtensions
             }
         }
     }
-
-    private static System.Reflection.Assembly? entryAssembly;
 
     private readonly struct CheckValue<T>(T actual, Func<T, T?, bool> check)
     {

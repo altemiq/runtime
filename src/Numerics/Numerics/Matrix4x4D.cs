@@ -24,67 +24,67 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     // at the relevant points.
 
     /// <summary>The first element of the first row.</summary>
-    /// <remarks>This element exists at index: <c>[0, 0]</c> and is part of row <see cref="X" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[0, 0]</c> and is part of row <see cref="X" />.</remarks>
     public double M11;
 
     /// <summary>The second element of the first row.</summary>
-    /// <remarks>This element exists at index: <c>[0, 1]</c> and is part of row <see cref="X" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[0, 1]</c> and is part of row <see cref="X" />.</remarks>
     public double M12;
 
     /// <summary>The third element of the first row.</summary>
-    /// <remarks>This element exists at index: <c>[0, 2]</c> and is part of row <see cref="X" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[0, 2]</c> and is part of row <see cref="X" />.</remarks>
     public double M13;
 
     /// <summary>The fourth element of the first row.</summary>
-    /// <remarks>This element exists at index: <c>[0, 3]</c> and is part of row <see cref="X" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[0, 3]</c> and is part of row <see cref="X" />.</remarks>
     public double M14;
 
     /// <summary>The first element of the second row.</summary>
-    /// <remarks>This element exists at index: <c>[1, 0]</c> and is part of row <see cref="Y" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[1, 0]</c> and is part of row <see cref="Y" />.</remarks>
     public double M21;
 
     /// <summary>The second element of the second row.</summary>
-    /// <remarks>This element exists at index: <c>[1, 1]</c> and is part of row <see cref="Y" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[1, 1]</c> and is part of row <see cref="Y" />.</remarks>
     public double M22;
 
     /// <summary>The third element of the second row.</summary>
-    /// <remarks>This element exists at index: <c>[1, 2]</c> and is part of row <see cref="Y" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[1, 2]</c> and is part of row <see cref="Y" />.</remarks>
     public double M23;
 
     /// <summary>The fourth element of the second row.</summary>
-    /// <remarks>This element exists at index: <c>[1, 3]</c> and is part of row <see cref="Y" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[1, 3]</c> and is part of row <see cref="Y" />.</remarks>
     public double M24;
 
     /// <summary>The first element of the third row.</summary>
-    /// <remarks>This element exists at index: <c>[2, 0]</c> and is part of row <see cref="Z" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[2, 0]</c> and is part of row <see cref="Z" />.</remarks>
     public double M31;
 
     /// <summary>The second element of the third row.</summary>
-    /// <remarks>This element exists at index: <c>[2, 1]</c> and is part of row <see cref="Z" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[2, 1]</c> and is part of row <see cref="Z" />.</remarks>
     public double M32;
 
     /// <summary>The third element of the third row.</summary>
-    /// <remarks>This element exists at index: <c>[2, 2]</c> and is part of row <see cref="Z" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[2, 2]</c> and is part of row <see cref="Z" />.</remarks>
     public double M33;
 
     /// <summary>The fourth element of the third row.</summary>
-    /// <remarks>This element exists at index: <c>[2, 3]</c> and is part of row <see cref="Z" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[2, 3]</c> and is part of row <see cref="Z" />.</remarks>
     public double M34;
 
     /// <summary>The first element of the fourth row.</summary>
-    /// <remarks>This element exists at index: <c>[3, 0]</c> and is part of row <see cref="W" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[3, 0]</c> and is part of row <see cref="W" />.</remarks>
     public double M41;
 
     /// <summary>The second element of the fourth row.</summary>
-    /// <remarks>This element exists at index: <c>[3, 1]</c> and is part of row <see cref="W" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[3, 1]</c> and is part of row <see cref="W" />.</remarks>
     public double M42;
 
     /// <summary>The third element of the fourth row.</summary>
-    /// <remarks>This element exists at index: <c>[3, 2]</c> and is part of row <see cref="W" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[3, 2]</c> and is part of row <see cref="W" />.</remarks>
     public double M43;
 
     /// <summary>The fourth element of the fourth row.</summary>
-    /// <remarks>This element exists at index: <c>[3, 3]</c> and is part of row <see cref="W" />.</remarks>
+    /// <remarks>This element exists at index: <c language="none">[3, 3]</c> and is part of row <see cref="W" />.</remarks>
     public double M44;
 
     /// <summary>The row count.</summary>
@@ -144,7 +144,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     }
 
     /// <summary>Gets or sets the first row of the matrix.</summary>
-    /// <remarks>This row comprises <see cref="M11" />, <see cref="M12" />, <see cref="M13" />, and <see cref="M14" />; it exists at index: <c>[0]</c>.</remarks>
+    /// <remarks>This row comprises <see cref="M11" />, <see cref="M12" />, <see cref="M13" />, and <see cref="M14" />; it exists at index: <c language="none">[0]</c>.</remarks>
     public Vector4D X
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -155,7 +155,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     }
 
     /// <summary>Gets or sets the second row of the matrix.</summary>
-    /// <remarks>This row comprises <see cref="M21" />, <see cref="M22" />, <see cref="M23" />, and <see cref="M24" />; it exists at index: <c>[1]</c>.</remarks>
+    /// <remarks>This row comprises <see cref="M21" />, <see cref="M22" />, <see cref="M23" />, and <see cref="M24" />; it exists at index: <c language="none">[1]</c>.</remarks>
     public Vector4D Y
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -166,7 +166,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     }
 
     /// <summary>Gets or sets the third row of the matrix.</summary>
-    /// <remarks>This row comprises <see cref="M31" />, <see cref="M32" />, <see cref="M33" />, and <see cref="M34" />; it exists at index: <c>[2]</c>.</remarks>
+    /// <remarks>This row comprises <see cref="M31" />, <see cref="M32" />, <see cref="M33" />, and <see cref="M34" />; it exists at index: <c language="none">[2]</c>.</remarks>
     public Vector4D Z
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -177,7 +177,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     }
 
     /// <summary>Gets or sets the fourth row of the matrix.</summary>
-    /// <remarks>This row comprises <see cref="M41" />, <see cref="M42" />, <see cref="M43" />, and <see cref="M44" />; it exists at index: <c>[3]</c>.</remarks>
+    /// <remarks>This row comprises <see cref="M41" />, <see cref="M42" />, <see cref="M43" />, and <see cref="M44" />; it exists at index: <c language="none">[3]</c>.</remarks>
     public Vector4D W
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -190,7 +190,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <summary>Gets or sets the row at the specified index.</summary>
     /// <param name="row">The index of the row to get or set.</param>
     /// <returns>The row that at index: [<paramref name="row" />].</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>4</c>).</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">4</c>).</exception>
     public Vector4D this[int row]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -242,9 +242,9 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="column">The index of the column containing the element to get or set.</param>
     /// <returns>The element at index: [<paramref name="row" />, <paramref name="column" />].</returns>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>4</c>).
+    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">4</c>).
     /// -or-
-    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c>4</c>).
+    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c language="none">4</c>).
     /// </exception>
     public double this[int row, int column]
     {
@@ -741,7 +741,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <summary>Creates a world matrix with the specified parameters.</summary>
     /// <param name="position">The position of the object.</param>
     /// <param name="forward">The forward direction of the object.</param>
-    /// <param name="up">The upward direction of the object. Its value is usually <c>[0, 1, 0]</c>.</param>
+    /// <param name="up">The upward direction of the object. Its value is usually <c language="none">[0, 1, 0]</c>.</param>
     /// <returns>The world matrix.</returns>
     /// <remarks><paramref name="position" /> is used in translation operations.</remarks>
     public static Matrix4x4D CreateWorld(Vector3D position, Vector3D forward, Vector3D up) => Impl.CreateWorld(in position, in forward, in up).AsM4x4D();
@@ -831,9 +831,9 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="column">The index of the column containing the element to get.</param>
     /// <returns>The element at index: [<paramref name="row" />, <paramref name="column" />].</returns>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>4</c>).
+    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">4</c>).
     /// -or-
-    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c>4</c>).
+    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c language="none">4</c>).
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly double GetElement(int row, int column) => this[row, column];
@@ -841,7 +841,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <summary>Gets or sets the row at the specified index.</summary>
     /// <param name="index">The index of the row to get.</param>
     /// <returns>The row at index: [<paramref name="index" />].</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c>4</c>).</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c language="none">4</c>).</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly Vector4D GetRow(int index) => this[index];
 
@@ -852,7 +852,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
 
     /// <summary>Returns a string that represents this matrix.</summary>
     /// <returns>The string representation of this matrix.</returns>
-    /// <remarks>The numeric values in the returned string are formatted by using the conventions of the current culture. For example, for the en-US culture, the returned string might appear as <c>{ {M11:1.1 M12:1.2 M13:1.3 M14:1.4} {M21:2.1 M22:2.2 M23:2.3 M24:2.4} {M31:3.1 M32:3.2 M33:3.3 M34:3.4} {M41:4.1 M42:4.2 M43:4.3 M44:4.4} }</c>.</remarks>
+    /// <remarks>The numeric values in the returned string are formatted by using the conventions of the current culture. For example, for the en-US culture, the returned string might appear as <c language="none">{ {M11:1.1 M12:1.2 M13:1.3 M14:1.4} {M21:2.1 M22:2.2 M23:2.3 M24:2.4} {M31:3.1 M32:3.2 M33:3.3 M34:3.4} {M41:4.1 M42:4.2 M43:4.3 M44:4.4} }</c>.</remarks>
     public override readonly string ToString() =>
         $"{{ {{M11:{this.M11} M12:{this.M12} M13:{this.M13} M14:{this.M14}}} {{M21:{this.M21} M22:{this.M22} M23:{this.M23} M24:{this.M24}}} {{M31:{this.M31} M32:{this.M32} M33:{this.M33} M34:{this.M34}}} {{M41:{this.M41} M42:{this.M42} M43:{this.M43} M44:{this.M44}}} }}";
 
@@ -862,9 +862,9 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="value">The value to assign to the element at index: [<paramref name="row"/>, <paramref name="column"/>].</param>
     /// <returns>A <see cref="Matrix4x4D" /> with the value of the element at index: [<paramref name="row"/>, <paramref name="column"/>] set to <paramref name="value" /> and the remaining elements set to the same value as that in the current matrix.</returns>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c>4</c>).
+    /// <paramref name="row" /> was less than zero or greater than or equal to the number of rows (<c language="none">4</c>).
     /// -or-
-    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c>4</c>).
+    /// <paramref name="column" /> was less than zero or greater than or equal to the number of columns (<c language="none">4</c>).
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly Matrix4x4D WithElement(int row, int column, double value)
@@ -878,7 +878,7 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <param name="index">The index of the row to replace.</param>
     /// <param name="value">The value to assign to the row at index: [<paramref name="index"/>].</param>
     /// <returns>A <see cref="Matrix4x4D" /> with the value of the row at index: [<paramref name="index"/>] set to <paramref name="value" /> and the remaining rows set to the same value as that in the current matrix.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c>4</c>).</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than or equal to the number of rows (<c language="none">4</c>).</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly Matrix4x4D WithRow(int index, Vector4D value)
     {

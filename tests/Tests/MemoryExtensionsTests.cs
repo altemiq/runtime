@@ -268,7 +268,7 @@ public class MemoryExtensionsTests
         public async Task CharSeparated(Func<Random, int, double> creator, GetValuesChar<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
+            var randomValues = Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture);
             _ = await Assert.That(parsedValues).IsEquivalentTo(randomValues);
@@ -284,7 +284,7 @@ public class MemoryExtensionsTests
         public async Task StringSeparated(Func<Random, int, double> creator, GetValuesSpan<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
+            var randomValues = Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             var parsedValues = getValues(span, "|", 10, System.Globalization.CultureInfo.CurrentCulture);
             _ = await Assert.That(parsedValues).IsEquivalentTo(randomValues);
@@ -302,7 +302,7 @@ public class MemoryExtensionsTests
     {
         var random = new Random();
 
-        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
+        var randomValues = Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var enumerator =
 #if NET9_0_OR_GREATER
@@ -369,7 +369,7 @@ public class MemoryExtensionsTests
         public async Task CharSeparated(Func<Random, int, double> creator, TryGetValuesChar<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
+            var randomValues = Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             var span = string.Join("|", randomValues).AsSpan();
             _ = await Assert.That(getValues(span, '|', 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
             _ = await Assert.That(parsedValues).IsEquivalentTo(randomValues);
@@ -385,7 +385,7 @@ public class MemoryExtensionsTests
         public async Task StringSeparated(Func<Random, int, double> creator, TryGetValuesSpan<double> getValues)
         {
             var random = new Random();
-            var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
+            var randomValues = Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
             _ = await Assert.That(getValues(string.Join("|", randomValues).AsSpan(), "|".AsSpan(), 10, System.Globalization.CultureInfo.CurrentCulture, out var parsedValues)).IsTrue();
             _ = await Assert.That(parsedValues).IsEquivalentTo(randomValues);
         }
@@ -401,7 +401,7 @@ public class MemoryExtensionsTests
     public async Task TryGet(Func<Random, int, object> creator, TryGetObject parser)
     {
         var random = new Random();
-        var randomValues = System.Linq.Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
+        var randomValues = Enumerable.Range(0, 10).Select(i => creator(random, i)).ToArray();
         var span = string.Join("|", randomValues).AsSpan();
         var enumerator =
 #if NET9_0_OR_GREATER

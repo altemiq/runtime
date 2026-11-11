@@ -4,8 +4,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#pragma warning disable IDE0079
-#pragma warning disable RCS1222
 #pragma warning disable CA1050, MA0047, RCS1110, CheckNamespace
 
 using System.Reflection;
@@ -15,10 +13,17 @@ using System.Reflection;
 /// </summary>
 public static class RuntimeInformationExtensions
 {
-#pragma warning disable SA1137, SA1400, S1144
-    /// <summary>
-    /// <see cref="System.Runtime.InteropServices.RuntimeInformation"/> extensions.
-    /// </summary>
+    private static readonly string PathVariable = GetPathVariable();
+    private static readonly string SharedLibraryExtension = GetSharedLibraryExtension();
+    private static readonly string ExecutableExtension = GetExecutableExtension();
+    private static readonly string SharedLibraryPrefix = GetSharedLibraryPrefix();
+
+    private static string? targetFramework;
+    private static string? targetPlatform;
+#if !NET5_0_OR_GREATER
+    private static string? runtimeIdentifier;
+#endif
+
     extension(System.Runtime.InteropServices.RuntimeInformation)
     {
         /// <summary>
@@ -153,19 +158,8 @@ public static class RuntimeInformationExtensions
 #endif
         }
     }
-#pragma warning restore SA1137, SA1400, S1144
 
-    private static readonly string PathVariable = GetPathVariable();
-    private static readonly string SharedLibraryExtension = GetSharedLibraryExtension();
-    private static readonly string ExecutableExtension = GetExecutableExtension();
-    private static readonly string SharedLibraryPrefix = GetSharedLibraryPrefix();
-
-    private static string? targetFramework;
-    private static string? targetPlatform;
-#if !NET5_0_OR_GREATER
-    private static string? runtimeIdentifier;
-#endif
-
+#pragma warning disable SA1317
     /// <summary>
     /// Gets the naïve RID.
     /// </summary>
@@ -346,6 +340,7 @@ public static class RuntimeInformationExtensions
 
         throw new InvalidOperationException();
     }
+#pragma warning restore SA1317
 
 #if NETSTANDARD2_0_OR_GREATER || NET40_OR_GREATER || NETCOREAPP2_0_OR_GREATER
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -467,5 +462,3 @@ public static class RuntimeInformationExtensions
         throw new InvalidOperationException();
     }
 }
-
-#pragma warning restore CA1050, MA0047, RCS1110, RCS1222, IDE0079, CheckNamespace

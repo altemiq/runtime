@@ -6,8 +6,6 @@
 
 namespace Altemiq.Math;
 
-#pragma warning disable CA1708, SA1101, RCS1263
-
 /// <summary>
 /// The <see cref="Span{T}"/> extensions.
 /// </summary>
@@ -127,6 +125,11 @@ public static class SpanExtensions
         where T : struct, System.Numerics.IAdditionOperators<T, T, T>
 #endif
     {
+        /// <summary>
+        /// Adds the specified <see cref="ReadOnlySpan{T}" /> to this instance.
+        /// </summary>
+        /// <param name="other">The span to add.</param>
+        /// <exception cref="InvalidOperationException">The lengths of <paramref name="input"/> and <paramref name="other"/> do not match.</exception>
         internal void Add(ReadOnlySpan<T> other)
         {
             if (input.Length != other.Length)
@@ -162,6 +165,11 @@ public static class SpanExtensions
         where T : struct, System.Numerics.ISubtractionOperators<T, T, T>
 #endif
     {
+        /// <summary>
+        /// Subtracts the specified <see cref="ReadOnlySpan{T}" /> from this instance.
+        /// </summary>
+        /// <param name="other">The span to subtract.</param>
+        /// <exception cref="InvalidOperationException">The lengths of <paramref name="input"/> and <paramref name="other"/> do not match.</exception>
         internal void Subtract(ReadOnlySpan<T> other)
         {
             if (input.Length != other.Length)

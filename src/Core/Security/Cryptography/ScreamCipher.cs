@@ -7,7 +7,7 @@
 namespace Altemiq.Security.Cryptography;
 
 /// <summary>
-/// The <c>Scream</c> cipher.
+/// The <pre>Scream</pre> cipher.
 /// </summary>
 public class ScreamCipher
 {
@@ -147,33 +147,23 @@ public class ScreamCipher
     {
 #if NETSTANDARD1_0
         var stringBuilder = new System.Text.StringBuilder();
-        for (var i = 0; i < input.Length; i++)
+outer_: for (var i = 0; i < input.Length; i++)
         {
             var current = i + 1 > input.Length
                 ? input.Substring(i, 1)
                 : input.Substring(i, 2);
-
-            var flag = false;
             while (current.Length > 0)
             {
                 if (ScreamCipherToPlainTextMap.TryGetValue(current, out var plainText))
                 {
                     stringBuilder.Append(plainText);
-#pragma warning disable IDE0079
-#pragma warning disable RCS1222
 #pragma warning disable S127
                     i += current.Length - 1;
-#pragma warning restore S127, RCS1222, IDE0079
-                    flag = true;
-                    break;
+#pragma warning restore S127
+                    continue outer_;
                 }
 
                 current = current[..^1];
-            }
-
-            if (flag)
-            {
-                continue;
             }
 
             stringBuilder.Append(input[i]);
@@ -200,13 +190,11 @@ public class ScreamCipher
     {
         charsWritten = 0;
 
-        while (source.Length > 0)
+outer_: while (source.Length > 0)
         {
             var current = source.Length < 2
                 ? source[..1]
                 : source[..2];
-
-            var flag = false;
             while (current.Length > 0)
             {
 #if NET9_0_OR_GREATER
@@ -217,16 +205,10 @@ public class ScreamCipher
                 {
                     WriteCharacter(plainText, ref destination, ref charsWritten);
                     source = source[current.Length..];
-                    flag = true;
-                    break;
+                    continue outer_;
                 }
 
                 current = current[..^1];
-            }
-
-            if (flag)
-            {
-                continue;
             }
 
             WriteCharacter(source[0], ref destination, ref charsWritten);

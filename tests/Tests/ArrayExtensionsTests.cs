@@ -6,6 +6,8 @@
 
 namespace Altemiq;
 
+#pragma warning disable CA1716
+
 public class ArrayExtensionTests
 {
     public class Static

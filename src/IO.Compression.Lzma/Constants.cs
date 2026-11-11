@@ -77,7 +77,7 @@ internal static class Constants
     public const uint FullDistances = 1U << ((int)EndPositionModelIndex / 2);
 
     /// <summary>
-    /// The maximum number of literal position states <c>bit</c> encoding.
+    /// The maximum number of literal position states <pre>bit</pre> encoding.
     /// </summary>
     public const uint LiteralPositionStatesBitsEncodingMaximum = 4U;
 

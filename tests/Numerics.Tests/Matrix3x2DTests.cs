@@ -2,7 +2,6 @@ namespace Altemiq.Numerics;
 
 using System.Runtime.InteropServices;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Checked")]
 public sealed class Matrix3x2DTests
 {
     private static Matrix3x2D GenerateIncrementalMatrixNumber(double value = 0.0)

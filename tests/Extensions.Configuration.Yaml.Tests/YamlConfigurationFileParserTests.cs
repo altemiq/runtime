@@ -6,8 +6,6 @@ using Microsoft.Extensions.FileProviders;
 
 public class YamlConfigurationFileParserTests
 {
-    private const string PathParameterName = "path";
-
     private static YamlConfigurationProvider LoadProvider(string yaml)
     {
         var p = new YamlConfigurationProvider(new YamlConfigurationSource { Optional = true });
