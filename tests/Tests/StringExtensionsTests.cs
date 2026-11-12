@@ -125,7 +125,7 @@ public class StringExtensionsTests
     [Test]
     public async Task QuoteNull()
     {
-        _ = await Assert.That(default(string).Quote()).IsEqualTo(string.Empty);
+        _ = await Assert.That(default(string).Quote()).IsNull();
     }
 
     [Test]
