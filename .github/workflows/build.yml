@@ -25,22 +25,23 @@ jobs:
       DOTNET_MULTILEVEL_LOOKUP: false
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Install .NET
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
             6.0.x
             8.0.x
             9.0.x
             10.0.x
+            11.0.x
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Run local/enable-test-upload@v1
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
@@ -67,7 +68,7 @@ jobs:
         shell: pwsh
         run: Get-Content '${{ github.workspace }}/coverage/reports/SummaryGithub.md' >> $env:GITHUB_STEP_SUMMARY
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: coverage_${{ matrix.os }}
           path: ${{ github.workspace }}/coverage/reports
@@ -82,14 +83,14 @@ jobs:
       Configuration: Release
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # get all history here, for semantic versioning
-      
+
       # Install the .NET workload
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -119,14 +120,14 @@ jobs:
       - name: Run local/dotnet-pack@v1
         run: dotnet pack --output ${{ github.workspace }}/nupkg -property:ComputeSemanticVersion=true -property:SemanticVersionOutputPath=${{ github.workspace }}/versions -property:SemanticVersionIncrement=ReleaseLabel --version-suffix ${{ steps.suffix.outputs.value }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: NuPkg
           if-no-files-found: error
           retention-days: 7
           path: ${{ github.workspace }}/nupkg
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Versions
           if-no-files-found: error
@@ -151,7 +152,7 @@ jobs:
       DOTNET_MULTILEVEL_LOOKUP: false
 
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: NuPkg
           path: ${{ github.workspace }}/nupkg
@@ -173,7 +174,7 @@ jobs:
         run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
       
       # delete-artifact
-      - uses: GeekyEggo/delete-artifact@v5
+      - uses: GeekyEggo/delete-artifact@v6
         if: ${{ steps.push.conclusion == 'success' }}
         with:
           name: NuPkg
