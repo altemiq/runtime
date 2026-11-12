@@ -26,18 +26,15 @@ public static class ZipArchiveEntryExtensions
         /// <param name="leaveOpen"><see langword="true"/> to leave this entry open after the <see cref="Stream"/> object is disposed; otherwise, <see langword="false"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="entry"/> is <see langword="null"/>.</exception>
         public Stream OpenSeekable(bool leaveOpen = true)
-        {
-            if (entry is not { Archive: { } archive, Length: var length })
-            {
 #pragma warning disable CA2208
-                throw new ArgumentNullException(nameof(entry));
+            => (entry, entry?.Open(), leaveOpen) switch
+            {
+                (_, { CanSeek: true } seekable, true) => seekable,
+                (_, { } stream, true) => new Altemiq.IO.SeekableStream(stream),
+                ({ Archive: { } archive }, { CanSeek: true } seekable, false) => new Altemiq.IO.Compression.DisposableStream(archive, seekable, leaveOpen),
+                ({ Archive: { } archive, Length: var length }, { } stream, false) => new Altemiq.IO.Compression.SeekableStream(archive, stream, length, leaveOpen),
+                _ => throw new ArgumentNullException(nameof(entry)),
+            };
 #pragma warning restore CA2208
-            }
-
-            var stream = entry.Open();
-            return stream.CanSeek
-                ? new Altemiq.IO.Compression.DisposableStream(archive, stream, leaveOpen)
-                : new Altemiq.IO.Compression.SeekableStream(archive, stream, length, leaveOpen);
-        }
     }
 }
