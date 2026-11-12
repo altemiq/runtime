@@ -32,7 +32,7 @@ public static class StringExtensions
         /// </summary>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The specified string converted to camel case.</returns>
-        public string ToCamelCase(Globalization.CultureInfo? culture) => GetTextInfo(culture).ToCamelCase(input);
+        public string ToCamelCase(Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToCamelCase(input);
 
         /// <summary>
         /// Converts the specified string to pascal case.
@@ -45,7 +45,7 @@ public static class StringExtensions
         /// </summary>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The specified string converted to pascal case.</returns>
-        public string ToPascalCase(Globalization.CultureInfo? culture) => GetTextInfo(culture).ToPascalCase(input);
+        public string ToPascalCase(Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToPascalCase(input);
 
         /// <summary>
         /// Converts the specified string to kebab case.
@@ -58,7 +58,7 @@ public static class StringExtensions
         /// </summary>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The specified string converted to kebab case.</returns>
-        public string ToKebabCase(Globalization.CultureInfo? culture) => GetTextInfo(culture).ToKebabCase(input);
+        public string ToKebabCase(Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToKebabCase(input);
 
         /// <summary>
         /// Converts the specified string to snake case.
@@ -71,7 +71,7 @@ public static class StringExtensions
         /// </summary>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The specified string converted to snake case.</returns>
-        public string ToSnakeCase(Globalization.CultureInfo? culture) => GetTextInfo(culture).ToSnakeCase(input);
+        public string ToSnakeCase(Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToSnakeCase(input);
 
         /// <summary>
         /// Removes the specified suffix from the input if found.
@@ -103,8 +103,7 @@ public static class StringExtensions
         /// <param name="destination">The destination span which contains the transformed characters.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
-        // ReSharper disable once ConvertToExtensionBlock
-        public int ToCamelCase(Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToCamelCase(source, destination);
+        public int ToCamelCase(Span<char> destination, Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToCamelCase(source, destination);
 
         /// <summary>
         /// Copies the characters from the source span into the destination, converting each character to pascal case, using the casing rules of the specified culture.
@@ -112,8 +111,7 @@ public static class StringExtensions
         /// <param name="destination">The destination span which contains the transformed characters.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
-        // ReSharper disable once ConvertToExtensionBlock
-        public int ToPascalCase(Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToPascalCase(source, destination);
+        public int ToPascalCase(Span<char> destination, Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToPascalCase(source, destination);
 
         /// <summary>
         /// Copies the characters from the source span into the destination, converting each character to kebab case, using the casing rules of the specified culture.
@@ -121,7 +119,7 @@ public static class StringExtensions
         /// <param name="destination">The destination span which contains the transformed characters.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
-        public int ToKebabCase(Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToKebabCase(source, destination);
+        public int ToKebabCase(Span<char> destination, Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToKebabCase(source, destination);
 
         /// <summary>
         /// Copies the characters from the source span into the destination, converting each character to snake case, using the casing rules of the specified culture.
@@ -129,7 +127,7 @@ public static class StringExtensions
         /// <param name="destination">The destination span which contains the transformed characters.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
         /// <returns>The number of characters written into the destination span. If the destination is too small, returns -1.</returns>
-        public int ToSnakeCase(Span<char> destination, Globalization.CultureInfo? culture) => GetTextInfo(culture).ToSnakeCase(source, destination);
+        public int ToSnakeCase(Span<char> destination, Globalization.CultureInfo? culture) => System.Globalization.TextInfo.GetInstance(culture).ToSnakeCase(source, destination);
 
         /// <summary>
         /// Removes the specified suffix from the input if found.
@@ -149,11 +147,4 @@ public static class StringExtensions
             return source.Length - suffix.Length;
         }
     }
-
-    private static Globalization.TextInfo GetTextInfo(Globalization.CultureInfo? culture) =>
-        culture switch
-        {
-            { TextInfo: var textInfo } => textInfo,
-            _ => Globalization.CultureInfo.CurrentCulture.TextInfo,
-        };
 }

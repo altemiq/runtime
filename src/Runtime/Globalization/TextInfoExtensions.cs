@@ -11,6 +11,35 @@ namespace Altemiq.Globalization;
 /// </summary>
 public static class TextInfoExtensions
 {
+    extension(System.Globalization.TextInfo)
+    {
+        /// <summary>
+        /// Gets a read-only <see cref="System.Globalization.TextInfo"/> object associated with the current culture.
+        /// </summary>
+        public static System.Globalization.TextInfo CurrentInfo => System.Globalization.CultureInfo.CurrentCulture.TextInfo;
+
+        /// <summary>
+        /// Gets a read-only <see cref="System.Globalization.TextInfo"/> object that is culture-independent (invariant).
+        /// </summary>
+        public static System.Globalization.TextInfo InvariantInfo => System.Globalization.CultureInfo.InvariantCulture.TextInfo;
+
+        /// <summary>
+        /// Gets the <see cref="System.Globalization.TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.
+        /// </summary>
+        /// <param name="formatProvider">
+        /// <para>The <see cref="IFormatProvider"/> used to get the <see cref="System.Globalization.TextInfo"/>.</para>
+        /// -or-
+        /// <para><see langword="null"/> to get <see cref="get_CurrentInfo"/>.</para>
+        /// </param>
+        /// <returns>The <see cref="System.Globalization.TextInfo"/> associated with the specified <see cref="IFormatProvider"/>.</returns>
+        public static System.Globalization.TextInfo GetInstance(IFormatProvider? formatProvider) => formatProvider switch
+        {
+            System.Globalization.CultureInfo { TextInfo: { } info } => info,
+            { } p when p.GetFormat(typeof(System.Globalization.TextInfo)) is System.Globalization.TextInfo info => info,
+            _ => System.Globalization.TextInfo.CurrentInfo,
+        };
+    }
+
     /// <content>
     /// <see cref="System.Globalization.TextInfo"/> extensions.
     /// </content>
