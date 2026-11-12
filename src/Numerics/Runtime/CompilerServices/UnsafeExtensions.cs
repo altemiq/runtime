@@ -31,15 +31,12 @@ public static class UnsafeExtensions
             where TFrom : struct
             where TTo : struct
         {
-            unsafe
-            {
 #pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
-                if (sizeof(TFrom) != sizeof(TTo))
-                {
-                    throw new NotSupportedException();
-                }
-#pragma warning restore CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
+            if (sizeof(TFrom) != sizeof(TTo))
+            {
+                throw new NotSupportedException();
             }
+#pragma warning restore CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
 
             return Unsafe.As<byte, TTo>(ref Unsafe.As<TFrom, byte>(ref source));
         }

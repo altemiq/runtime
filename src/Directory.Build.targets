@@ -1,0 +1,8 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('$(MSBuildThisFile)', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup Label="Memory Safety" Condition=" '$(MeziantouPolyfill_AllowUnsafeBlocks)' == 'true' ">
+    <Features>$(Features);updated-memory-safety-rules</Features>
+    <NoWarn>$(NoWarn);S6640</NoWarn>
+  </PropertyGroup>
+</Project>

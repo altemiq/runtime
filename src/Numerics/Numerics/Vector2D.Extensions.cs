@@ -44,9 +44,16 @@ public static partial class VectorD
                 ? throw new ArgumentOutOfRangeException(nameof(index))
                 : value.AsVector256Unsafe().GetElement(index);
 
+#pragma warning disable IDE0380
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
-        public unsafe void Store(double* destination) => value.StoreUnsafe(ref *destination);
+        public unsafe void Store(double* destination)
+        {
+            unsafe
+            {
+                value.StoreUnsafe(ref *destination);
+            }
+        }
 
         /// <summary>Stores a vector at the given 8-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
@@ -61,22 +68,35 @@ public static partial class VectorD
                 throw new AccessViolationException();
             }
 
-            *(Vector2D*)destination = value;
+            unsafe
+            {
+                *(Vector2D*)destination = value;
+            }
         }
 
         /// <summary>Stores a vector at the given 8-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 8-byte aligned.</exception>
         /// <remarks>This method may bypass the cache on certain platforms.</remarks>
-        public unsafe void StoreAlignedNonTemporal(double* destination) => value.StoreAligned(destination);
+        public unsafe void StoreAlignedNonTemporal(double* destination)
+        {
+            unsafe
+            {
+                value.StoreAligned(destination);
+            }
+        }
+#pragma warning restore IDE0380
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void StoreUnsafe(ref double destination)
         {
-            ref var address = ref Unsafe.As<double, byte>(ref destination);
-            Unsafe.WriteUnaligned(ref address, value);
+            unsafe
+            {
+                ref var address = ref Unsafe.As<double, byte>(ref destination);
+                Unsafe.WriteUnaligned(ref address, value);
+            }
         }
 
         /// <summary>Stores a vector at the given destination.</summary>
@@ -85,8 +105,11 @@ public static partial class VectorD
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void StoreUnsafe(ref double destination, nuint elementOffset)
         {
-            destination = ref Unsafe.Add(ref destination, (nint)elementOffset);
-            Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref destination), value);
+            unsafe
+            {
+                destination = ref Unsafe.Add(ref destination, (nint)elementOffset);
+                Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref destination), value);
+            }
         }
 
         /// <inheritdoc cref="ToScalar(Vector4D)" />

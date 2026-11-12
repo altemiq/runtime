@@ -19,11 +19,11 @@ public static partial class VectorD
     {
         /// <summary>Reinterprets a <see cref="Vector4D"/> as a new <see cref="PlaneD"/>.</summary>
         /// <returns>The input reinterpreted as a new <see cref="PlaneD"/>.</returns>
-        public PlaneD AsPlaneD() => Unsafe.BitCast<Vector4D, PlaneD>(value);
+        public PlaneD AsPlaneD() => unsafe (Unsafe.BitCast<Vector4D, PlaneD>(value));
 
         /// <summary>Reinterprets a <see cref="Vector4D"/> as a new <see cref="QuaternionD"/>.</summary>
         /// <returns>The input reinterpreted as a new <see cref="QuaternionD"/>.</returns>
-        public QuaternionD AsQuaternionD() => Unsafe.BitCast<Vector4D, QuaternionD>(value);
+        public QuaternionD AsQuaternionD() => unsafe (Unsafe.BitCast<Vector4D, QuaternionD>(value));
 
         /// <summary>Reinterprets a <see cref="Vector4D"/> as a new <see cref="Vector2D"/>.</summary>
         /// <returns>The input reinterpreted as a new <see cref="Vector2D"/>.</returns>
@@ -41,44 +41,69 @@ public static partial class VectorD
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double GetElement(int index) => value.AsVector256().GetElement(index);
 
+#pragma warning disable IDE0380
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
-        public
-#if !NET11_0_OR_GREATER
+        public unsafe void Store(double* destination)
+        {
+            var vector = value.AsVector256();
             unsafe
-#endif
-            void Store(double* destination) => value.AsVector256().Store(destination);
+            {
+                vector.Store(destination);
+            }
+        }
 
         /// <summary>Stores a vector at the given 16-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 16-byte aligned.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public
-#if !NET11_0_OR_GREATER
+        public unsafe void StoreAligned(double* destination)
+        {
+            var vector = value.AsVector256();
             unsafe
-#endif
-            void StoreAligned(double* destination) => value.AsVector256().StoreAligned(destination);
+            {
+                vector.StoreAligned(destination);
+            }
+        }
 
         /// <summary>Stores a vector at the given 16-byte aligned destination.</summary>
         /// <param name="destination">The aligned destination at which The input will be stored.</param>
         /// <exception cref="AccessViolationException"><paramref name="destination" /> is not 16-byte aligned.</exception>
         /// <remarks>This method may bypass the cache on certain platforms.</remarks>
-        public
-#if !NET11_0_OR_GREATER
+        public unsafe void StoreAlignedNonTemporal(double* destination)
+        {
+            var vector = value.AsVector256();
             unsafe
-#endif
-            void StoreAlignedNonTemporal(double* destination) => value.AsVector256().StoreAlignedNonTemporal(destination);
+            {
+                vector.StoreAlignedNonTemporal(destination);
+            }
+        }
+#pragma warning restore IDE0380
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination at which The input will be stored.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void StoreUnsafe(ref double destination) => value.AsVector256().StoreUnsafe(ref destination);
+        public void StoreUnsafe(ref double destination)
+        {
+            var vector = value.AsVector256();
+            unsafe
+            {
+                vector.StoreUnsafe(ref destination);
+            }
+        }
 
         /// <summary>Stores a vector at the given destination.</summary>
         /// <param name="destination">The destination to which <paramref name="elementOffset" /> will be added before the vector will be stored.</param>
         /// <param name="elementOffset">The element offset from <paramref name="destination" /> from which the vector will be stored.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void StoreUnsafe(ref double destination, nuint elementOffset) => value.AsVector256().StoreUnsafe(ref destination, elementOffset);
+        public void StoreUnsafe(ref double destination, nuint elementOffset)
+        {
+            var vector = value.AsVector256();
+            unsafe
+            {
+                vector.StoreUnsafe(ref destination, elementOffset);
+            }
+        }
 
         /// <inheritdoc cref="Vector256.ToScalar{T}(Vector256{T})" />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

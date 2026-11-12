@@ -216,12 +216,12 @@ public static class Vector256Extensions
         /// <summary>Reinterprets a <see langword="Vector256{double}" /> as a new <see cref="Numerics.PlaneD" />.</summary>
         /// <returns>The input reinterpreted as a new <see cref="Numerics.PlaneD" />.</returns>
         [Intrinsic]
-        public Numerics.PlaneD AsPlaneD() => Unsafe.BitCast<Vector256<double>, Numerics.PlaneD>(value);
+        public Numerics.PlaneD AsPlaneD() => unsafe (Unsafe.BitCast<Vector256<double>, Numerics.PlaneD>(value));
 
         /// <summary>Reinterprets a <see langword="Vector256{Double}" /> as a new <see cref="Numerics.QuaternionD" />.</summary>
         /// <returns>The input reinterpreted as a new <see cref="Numerics.QuaternionD" />.</returns>
         [Intrinsic]
-        public Numerics.QuaternionD AsQuaternionD() => Unsafe.BitCast<Vector256<double>, Numerics.QuaternionD>(value);
+        public Numerics.QuaternionD AsQuaternionD() => unsafe (Unsafe.BitCast<Vector256<double>, Numerics.QuaternionD>(value));
 
         /// <summary>Reinterprets a <see langword="Vector256{double}" /> as a new <see cref="Numerics.Vector2D" />.</summary>
         /// <returns>The input reinterpreted as a new <see cref="Numerics.Vector2D" />.</returns>
@@ -229,8 +229,11 @@ public static class Vector256Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Numerics.Vector2D AsVector2D()
         {
-            ref var address = ref Unsafe.As<Vector256<double>, byte>(ref value);
-            return Unsafe.ReadUnaligned<Numerics.Vector2D>(ref address);
+            unsafe
+            {
+                ref var address = ref Unsafe.As<Vector256<double>, byte>(ref value);
+                return Unsafe.ReadUnaligned<Numerics.Vector2D>(ref address);
+            }
         }
 
         /// <summary>Reinterprets a <see langword="Vector256{double}" /> as a new <see cref="Numerics.Vector3D" />.</summary>
@@ -239,14 +242,17 @@ public static class Vector256Extensions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Numerics.Vector3D AsVector3D()
         {
-            ref var address = ref Unsafe.As<Vector256<double>, byte>(ref value);
-            return Unsafe.ReadUnaligned<Numerics.Vector3D>(ref address);
+            unsafe
+            {
+                ref var address = ref Unsafe.As<Vector256<double>, byte>(ref value);
+                return Unsafe.ReadUnaligned<Numerics.Vector3D>(ref address);
+            }
         }
 
         /// <summary>Reinterprets a <see langword="Vector256{double}" /> as a new <see cref="Numerics.Vector4D" />.</summary>
         /// <returns>The input reinterpreted as a new <see cref="Numerics.Vector4D" />.</returns>
         [Intrinsic]
-        public Numerics.Vector4D AsVector4D() => Unsafe.BitCast<Vector256<double>, Numerics.Vector4D>(value);
+        public Numerics.Vector4D AsVector4D() => unsafe (Unsafe.BitCast<Vector256<double>, Numerics.Vector4D>(value));
     }
 
     /// <summary>The <see cref="Numerics.Vector2D"/> extensions.</summary>
@@ -264,8 +270,13 @@ public static class Vector256Extensions
         public Vector256<double> AsVector256Unsafe()
         {
             // This relies on us stripping the "init" flag from the ".locals" declaration to let the upper bits be uninitialized.
-            Unsafe.SkipInit(out Vector256<double> result);
-            Unsafe.WriteUnaligned(ref Unsafe.As<Vector256<double>, byte>(ref result), value);
+            Vector256<double> result;
+            unsafe
+            {
+                Unsafe.SkipInit(out result);
+                Unsafe.WriteUnaligned(ref Unsafe.As<Vector256<double>, byte>(ref result), value);
+            }
+
             return result;
         }
     }
@@ -284,9 +295,14 @@ public static class Vector256Extensions
         [Intrinsic]
         public Vector256<double> AsVector256Unsafe()
         {
-            // This relies on us stripping the "init" flag from the ".locals" declaration to let the upper bits be uninitialized.
-            Unsafe.SkipInit(out Vector256<double> result);
-            Unsafe.WriteUnaligned(ref Unsafe.As<Vector256<double>, byte>(ref result), value);
+            Vector256<double> result;
+            unsafe
+            {
+                // This relies on us stripping the "init" flag from the ".locals" declaration to let the upper bits be uninitialized.
+                Unsafe.SkipInit(out result);
+                Unsafe.WriteUnaligned(ref Unsafe.As<Vector256<double>, byte>(ref result), value);
+            }
+
             return result;
         }
     }
@@ -300,7 +316,7 @@ public static class Vector256Extensions
         /// <summary>Reinterprets a <see cref="Numerics.PlaneD" /> as a new <see langword="Vector256{double}" />.</summary>
         /// <returns>The input reinterpreted as a new <see langword="Vector256{double}" />.</returns>
         [Intrinsic]
-        public Vector256<double> AsVector256() => Unsafe.BitCast<Numerics.PlaneD, Vector256<double>>(value);
+        public Vector256<double> AsVector256() => unsafe (Unsafe.BitCast<Numerics.PlaneD, Vector256<double>>(value));
     }
 
     /// <content>
@@ -312,7 +328,7 @@ public static class Vector256Extensions
         /// <summary>Reinterprets a <see cref="Numerics.QuaternionD" /> as a new <see langword="Vector256{double}" />.</summary>
         /// <returns>The input reinterpreted as a new <see langword="Vector256{double}" />.</returns>
         [Intrinsic]
-        public Vector256<double> AsVector256() => Unsafe.BitCast<Numerics.QuaternionD, Vector256<double>>(value);
+        public Vector256<double> AsVector256() => unsafe (Unsafe.BitCast<Numerics.QuaternionD, Vector256<double>>(value));
     }
 
     /// <content>
@@ -324,6 +340,6 @@ public static class Vector256Extensions
         /// <summary>Reinterprets a <see langword="Numerics.Vector4D" /> as a new <see cref="Vector256{Double}" />.</summary>
         /// <returns>The input reinterpreted as a new <see langword="Vector256{Double}" />.</returns>
         [Intrinsic]
-        public Vector256<double> AsVector256() => Unsafe.BitCast<Numerics.Vector4D, Vector256<double>>(value);
+        public Vector256<double> AsVector256() => unsafe (Unsafe.BitCast<Numerics.Vector4D, Vector256<double>>(value));
     }
 }

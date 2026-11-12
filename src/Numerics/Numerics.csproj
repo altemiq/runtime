@@ -12,6 +12,14 @@
       M:System.ArgumentOutOfRangeException.ThrowIfLessThan``1(``0,``0,System.String)|
       M:System.ArgumentOutOfRangeException.ThrowIfLessThanOrEqual``1(``0,``0,System.String)
     </MeziantouPolyfill_IncludedPolyfills>
+
+    <MeziantouPolyfill_AllowUnsafeBlocks>true</MeziantouPolyfill_AllowUnsafeBlocks>
+
+    <NoWarn>
+      $(NoWarn);
+      RCS1216;
+      SA1008
+    </NoWarn>
   </PropertyGroup>
   
   <ItemGroup>

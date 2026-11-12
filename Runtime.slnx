@@ -30,6 +30,8 @@
   </Folder>
   <Folder Name="/src/">
     <File Path="src/.editorconfig" />
+    <File Path="src/Directory.Build.props" />
+    <File Path="src/Directory.Build.targets" />
     <File Path="src\Directory.Packages.props" />
     <Project Path="src/Core/Core.csproj" />
     <Project Path="src/Extensions.Caching.Hybrid/Extensions.Caching.Hybrid.csproj" />

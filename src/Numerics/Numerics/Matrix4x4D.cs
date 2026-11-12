@@ -377,7 +377,11 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Matrix4x4D Create(Vector4D x, Vector4D y, Vector4D z, Vector4D w)
     {
-        Unsafe.SkipInit(out Matrix4x4D result);
+        Matrix4x4D result;
+        unsafe
+        {
+            Unsafe.SkipInit(out result);
+        }
 
         result.X = x;
         result.Y = y;
@@ -760,7 +764,11 @@ public partial struct Matrix4x4D : IEquatable<Matrix4x4D>
     /// <returns><see langword="true" /> if <paramref name="matrix" /> was converted successfully; otherwise,  <see langword="false" />.</returns>
     public static bool Invert(Matrix4x4D matrix, out Matrix4x4D result)
     {
-        Unsafe.SkipInit(out result);
+        unsafe
+        {
+            Unsafe.SkipInit(out result);
+        }
+
         return Impl.Invert(in matrix.AsImpl(), out result.AsImpl());
     }
 

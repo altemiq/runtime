@@ -19,6 +19,6 @@ public static partial class VectorD
     {
         /// <summary>Reinterprets a <see cref="PlaneD"/> as a new <see cref="Vector4D"/>.</summary>
         /// <returns>This instance reinterpreted as a new <see cref="Vector4D"/>.</returns>
-        public Vector4D AsVector4D() => Unsafe.BitCast<PlaneD, Vector4D>(value);
+        public Vector4D AsVector4D() => unsafe (Unsafe.BitCast<PlaneD, Vector4D>(value));
     }
 }

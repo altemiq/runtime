@@ -324,7 +324,7 @@ public static class BinaryWriterExtensions
     {
 #if NET8_0_OR_GREATER
         [System.Runtime.CompilerServices.UnsafeAccessor(System.Runtime.CompilerServices.UnsafeAccessorKind.Field, Name = "_encoding")]
-        public static extern ref System.Text.Encoding GetEncoding(BinaryWriter writer);
+        public static extern safe ref System.Text.Encoding GetEncoding(BinaryWriter writer);
 #else
 #if !NETSTANDARD2_0_OR_GREATER && !NET5_0_OR_GREATER && !NETFRAMEWORK
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0169:Use Equals method instead of operator", Justification = "This does not work with `Equals`")]

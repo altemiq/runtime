@@ -34,6 +34,8 @@
       $(MeziantouPolyfill_IncludedPolyfills)|
       M:System.String.Replace(System.String,System.String,System.StringComparison)
     </MeziantouPolyfill_IncludedPolyfills>
+
+    <MeziantouPolyfill_AllowUnsafeBlocks>true</MeziantouPolyfill_AllowUnsafeBlocks>
     
     <!-- turn off buggy analyzer -->
     <NoWarn>$(NoWarn);S1117</NoWarn>

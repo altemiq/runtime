@@ -392,7 +392,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 #pragma warning disable S3236
         ArgumentOutOfRangeException.ThrowIfLessThan(values.Length, ElementCount, nameof(values));
 #pragma warning restore S3236
-        return Unsafe.ReadUnaligned<Vector2D>(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(values)));
+        return unsafe (Unsafe.ReadUnaligned<Vector2D>(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(values))));
     }
 
     /// <summary>Creates a vector with <see cref="X" /> initialized to the specified value and the remaining elements initialized to zero.</summary>
@@ -405,7 +405,7 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     /// <param name="x">The value to assign to the <see cref="X" /> field.</param>
     /// <returns>A new <see cref="Vector2D" /> with <see cref="X" /> initialized <paramref name="x" /> and the remaining elements left uninitialized.</returns>
     [Intrinsic]
-    public static Vector2D CreateScalarUnsafe(double x) => Vector256.CreateScalarUnsafe(x).AsVector2D();
+    public static Vector2D CreateScalarUnsafe(double x) => unsafe (Vector256.CreateScalarUnsafe(x)).AsVector2D();
 
     /// <summary>
     /// Returns the z-value of the cross product of two vectors.
@@ -679,18 +679,18 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
 
     /// <inheritdoc cref="Vector4D.Load(double*)" />
     [Intrinsic]
-    public static unsafe Vector2D Load(double* source) => LoadUnsafe(in *source);
+    public static Vector2D Load(double* source) => unsafe (LoadUnsafe(in *source));
 
     /// <inheritdoc cref="Vector4D.LoadAligned(double*)" />
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0012:Do not raise reserved exception type", Justification = "This is valid")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "This is valid")]
-    public static unsafe Vector2D LoadAligned(double* source) => ((nuint)source % Alignment) is not 0 ? throw new AccessViolationException() : *(Vector2D*)source;
+    public static Vector2D LoadAligned(double* source) => ((nuint)source % Alignment) is not 0 ? throw new AccessViolationException() : unsafe (*(Vector2D*)source);
 
     /// <inheritdoc cref="Vector4D.LoadAlignedNonTemporal(double*)" />
     [Intrinsic]
-    public static unsafe Vector2D LoadAlignedNonTemporal(double* source) => LoadAligned(source);
+    public static Vector2D LoadAlignedNonTemporal(double* source) => unsafe (LoadAligned(source));
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />
@@ -698,8 +698,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source)
     {
-        ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
-        return Unsafe.ReadUnaligned<Vector2D>(in address);
+        unsafe
+        {
+            ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
+            return Unsafe.ReadUnaligned<Vector2D>(in address);
+        }
     }
 #else
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T)" />
@@ -707,8 +710,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source)
     {
-        ref var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
-        return Unsafe.ReadUnaligned<Vector2D>(ref address);
+        unsafe
+        {
+            ref var address = ref Unsafe.As<double, byte>(ref Unsafe.AsRef(in source));
+            return Unsafe.ReadUnaligned<Vector2D>(ref address);
+        }
     }
 #endif
 
@@ -718,8 +724,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source, nuint elementOffset)
     {
-        ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
-        return Unsafe.ReadUnaligned<Vector2D>(in address);
+        unsafe
+        {
+            ref readonly var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
+            return Unsafe.ReadUnaligned<Vector2D>(in address);
+        }
     }
 #else
     /// <inheritdoc cref="Vector4D.LoadUnsafe(ref double, nuint)" />
@@ -727,8 +736,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector2D LoadUnsafe(ref readonly double source, nuint elementOffset)
     {
-        ref var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
-        return Unsafe.ReadUnaligned<Vector2D>(ref address);
+        unsafe
+        {
+            ref var address = ref Unsafe.As<double, byte>(ref Unsafe.Add(ref Unsafe.AsRef(in source), (nint)elementOffset));
+            return Unsafe.ReadUnaligned<Vector2D>(ref address);
+        }
     }
 #endif
 
@@ -995,7 +1007,10 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
             throw new ArgumentException("Destination too short", nameof(array));
         }
 
-        Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref array[0]), this);
+        unsafe
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref array[0]), this);
+        }
     }
 
     /// <summary>Copies the elements of the vector to a specified array starting at a specified index position.</summary>
@@ -1022,7 +1037,10 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
             throw new ArgumentException("Destination too short", nameof(array));
         }
 
-        Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref array[index]), this);
+        unsafe
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref array[index]), this);
+        }
     }
 
     /// <summary>Copies the vector to the given <see cref="Span{T}" />.The length of the destination span must be at least 2.</summary>
@@ -1036,7 +1054,10 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
             throw new ArgumentException("Destination too short", nameof(destination));
         }
 
-        Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination)), this);
+        unsafe
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination)), this);
+        }
     }
 
     /// <summary>Attempts to copy the vector to the given <see cref="Span{Single}" />. The length of the destination span must be at least 2.</summary>
@@ -1050,7 +1071,11 @@ public struct Vector2D : IEquatable<Vector2D>, IFormattable
             return false;
         }
 
-        Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination)), this);
+        unsafe
+        {
+            Unsafe.WriteUnaligned(ref Unsafe.As<double, byte>(ref System.Runtime.InteropServices.MemoryMarshal.GetReference(destination)), this);
+        }
+
         return true;
     }
 

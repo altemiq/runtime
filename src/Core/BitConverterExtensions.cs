@@ -12,10 +12,6 @@ using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
 
 #pragma warning disable CA1050, MA0047, RCS1110
 
-#if !NET6_0_OR_GREATER
-#pragma warning disable S6640
-#endif
-
 /// <summary>
 /// Extended <see cref="System.BitConverter"/>.
 /// </summary>

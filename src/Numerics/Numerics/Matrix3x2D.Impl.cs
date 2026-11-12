@@ -28,7 +28,7 @@ public partial struct Matrix3x2D
     [System.Diagnostics.CodeAnalysis.UnscopedRef]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
-    internal ref Impl AsImpl() => ref Unsafe.As<Matrix3x2D, Impl>(ref this);
+    internal ref Impl AsImpl() => ref unsafe (Unsafe.As<Matrix3x2D, Impl>(ref this));
 
     /// <summary>
     /// Gets this <see cref="Matrix3x2D"/> as and <see cref="Impl"/>.
@@ -36,7 +36,7 @@ public partial struct Matrix3x2D
     /// <returns>The <see cref="Impl" />.</returns>
     [System.Diagnostics.CodeAnalysis.UnscopedRef]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal readonly ref readonly Impl AsROImpl() => ref Unsafe.As<Matrix3x2D, Impl>(ref Unsafe.AsRef(in this));
+    internal readonly ref readonly Impl AsROImpl() => ref unsafe (Unsafe.As<Matrix3x2D, Impl>(ref Unsafe.AsRef(in this)));
 
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass", Justification = "Checked")]
@@ -402,7 +402,7 @@ public partial struct Matrix3x2D
         [System.Diagnostics.CodeAnalysis.UnscopedRef]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
-        public ref Matrix3x2D AsM3x2D() => ref Unsafe.As<Impl, Matrix3x2D>(ref this);
+        public ref Matrix3x2D AsM3x2D() => ref unsafe (Unsafe.As<Impl, Matrix3x2D>(ref this));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override readonly bool Equals([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] object? obj) => (obj is Matrix3x2D other) && this.Equals(in other.AsImpl());

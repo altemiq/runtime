@@ -486,7 +486,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <param name="x">The value to assign to the <see cref="X" /> field.</param>
     /// <returns>A <see cref="Vector4D" /> with <see cref="X" /> initialized <paramref name="x" /> and the remaining elements left uninitialized.</returns>
     [Intrinsic]
-    public static Vector4D CreateScalarUnsafe(double x) => Vector256.CreateScalarUnsafe(x).AsVector4D();
+    public static Vector4D CreateScalarUnsafe(double x) => unsafe (Vector256.CreateScalarUnsafe(x)).AsVector4D();
 
     /// <summary>
     /// Computes the cross product of two vectors. For homogeneous coordinates,
@@ -778,20 +778,12 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.Load{T}(T*)" />
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static
-#if !NET11_0_OR_GREATER
-        unsafe
-#endif
-        Vector4D Load(double* source) => Vector256.Load(source).AsVector4D();
+    public static Vector4D Load(double* source) => unsafe (Vector256.Load(source)).AsVector4D();
 
     /// <inheritdoc cref="Vector256.LoadAligned{T}(T*)" />
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static
-#if !NET11_0_OR_GREATER
-        unsafe
-#endif
-        Vector4D LoadAligned(double* source) => Vector256.LoadAligned(source).AsVector4D();
+    public static Vector4D LoadAligned(double* source) => unsafe (Vector256.LoadAligned(source)).AsVector4D();
 
     /// <inheritdoc cref="Vector256.LoadAlignedNonTemporal{T}(T*)" />
     [Intrinsic]
@@ -800,13 +792,13 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
 #if !NET11_0_OR_GREATER
         unsafe
 #endif
-        Vector4D LoadAlignedNonTemporal(double* source) => Vector256.LoadAlignedNonTemporal(source).AsVector4D();
+        Vector4D LoadAlignedNonTemporal(double* source) => unsafe (Vector256.LoadAlignedNonTemporal(source)).AsVector4D();
 
 #if NET8_0_OR_GREATER
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T)" />
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector4D LoadUnsafe(ref readonly double source) => Vector256.LoadUnsafe(in source).AsVector4D();
+    public static Vector4D LoadUnsafe(ref readonly double source) => unsafe (Vector256.LoadUnsafe(in source)).AsVector4D();
 #else
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T)" />
     [Intrinsic]
@@ -818,7 +810,7 @@ public struct Vector4D : IEquatable<Vector4D>, IFormattable
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref readonly T, nuint)" />
     [Intrinsic]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Vector4D LoadUnsafe(ref readonly double source, nuint elementOffset) => Vector256.LoadUnsafe(in source, elementOffset).AsVector4D();
+    public static Vector4D LoadUnsafe(ref readonly double source, nuint elementOffset) => unsafe (Vector256.LoadUnsafe(in source, elementOffset)).AsVector4D();
 #else
     /// <inheritdoc cref="Vector256.LoadUnsafe{T}(ref T, nuint)" />
     [Intrinsic]

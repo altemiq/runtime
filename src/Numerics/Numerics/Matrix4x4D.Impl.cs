@@ -30,7 +30,7 @@ public partial struct Matrix4x4D
     [System.Diagnostics.CodeAnalysis.UnscopedRef]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
-    internal ref Impl AsImpl() => ref Unsafe.As<Matrix4x4D, Impl>(ref this);
+    internal ref Impl AsImpl() => ref unsafe (Unsafe.As<Matrix4x4D, Impl>(ref this));
 
     /// <summary>
     /// Gets this <see cref="Matrix3x2D"/> as and <see cref="Impl"/>.
@@ -38,7 +38,7 @@ public partial struct Matrix4x4D
     /// <returns>The <see cref="Impl" />.</returns>
     [System.Diagnostics.CodeAnalysis.UnscopedRef]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal readonly ref readonly Impl AsROImpl() => ref Unsafe.As<Matrix4x4D, Impl>(ref Unsafe.AsRef(in this));
+    internal readonly ref readonly Impl AsROImpl() => ref unsafe (Unsafe.As<Matrix4x4D, Impl>(ref Unsafe.AsRef(in this)));
 
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass", Justification = "Checked")]
@@ -948,8 +948,7 @@ public partial struct Matrix4x4D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Vulnerability", "S6640:Unsafe code blocks should not be used", Justification = "Checked")]
-        public static unsafe bool Decompose(in Impl matrix, out Vector3D scale, out QuaternionD rotation, out Vector3D translation)
+        public static bool Decompose(in Impl matrix, out Vector3D scale, out QuaternionD rotation, out Vector3D translation)
         {
             var matTemp = Identity.AsImpl();
 
@@ -959,129 +958,132 @@ public partial struct Matrix4x4D
 
             var vectorBasis = stackalloc Vector3D*[3] { (Vector3D*)&matTemp.X, (Vector3D*)&matTemp.Y, (Vector3D*)&matTemp.Z, };
 
-            *vectorBasis[0] = matrix.X.AsVector3D();
-            *vectorBasis[1] = matrix.Y.AsVector3D();
-            *vectorBasis[2] = matrix.Z.AsVector3D();
-
-            var scales = stackalloc double[3] { vectorBasis[0]->Length(), vectorBasis[1]->Length(), vectorBasis[2]->Length(), };
-
-            uint a, b, c;
-            var x = scales[0];
-            var y = scales[1];
-            var z = scales[2];
-
-            if (x < y)
+            bool result;
+            unsafe
             {
-                if (y < z)
-                {
-                    a = 2;
-                    b = 1;
-                    c = 0;
-                }
-                else
-                {
-                    a = 1;
+                *vectorBasis[0] = matrix.X.AsVector3D();
+                *vectorBasis[1] = matrix.Y.AsVector3D();
+                *vectorBasis[2] = matrix.Z.AsVector3D();
 
-                    if (x < z)
+                var scales = stackalloc double[3] { vectorBasis[0]->Length(), vectorBasis[1]->Length(), vectorBasis[2]->Length(), };
+
+                uint a, b, c;
+                var x = scales[0];
+                var y = scales[1];
+                var z = scales[2];
+
+                if (x < y)
+                {
+                    if (y < z)
                     {
-                        b = 2;
+                        a = 2;
+                        b = 1;
                         c = 0;
                     }
                     else
                     {
-                        b = 0;
-                        c = 2;
+                        a = 1;
+
+                        if (x < z)
+                        {
+                            b = 2;
+                            c = 0;
+                        }
+                        else
+                        {
+                            b = 0;
+                            c = 2;
+                        }
                     }
                 }
-            }
-            else if (x < z)
-            {
-                a = 2;
-                b = 0;
-                c = 1;
-            }
-            else
-            {
-                a = 0;
-
-                if (y < z)
+                else if (x < z)
                 {
-                    b = 2;
+                    a = 2;
+                    b = 0;
                     c = 1;
                 }
                 else
                 {
-                    b = 1;
-                    c = 2;
+                    a = 0;
+
+                    if (y < z)
+                    {
+                        b = 2;
+                        c = 1;
+                    }
+                    else
+                    {
+                        b = 1;
+                        c = 2;
+                    }
                 }
-            }
 
-            if (scales[a] < DecomposeEpsilon)
-            {
-                *vectorBasis[a] = canonicalBasis[a];
-            }
-
-            *vectorBasis[a] = Vector3D.Normalize(*vectorBasis[a]);
-
-            if (scales[b] < DecomposeEpsilon)
-            {
-                uint cc = default;
-
-                var fAbsX = double.Abs(vectorBasis[a]->X);
-                var fAbsY = double.Abs(vectorBasis[a]->Y);
-                var fAbsZ = double.Abs(vectorBasis[a]->Z);
-                if ((fAbsY >= fAbsZ && fAbsX >= fAbsZ) || (fAbsX >= fAbsZ && fAbsY >= fAbsZ))
+                if (scales[a] < DecomposeEpsilon)
                 {
-                    cc = 2U;
+                    *vectorBasis[a] = canonicalBasis[a];
                 }
-                else if (fAbsX >= fAbsY)
+
+                *vectorBasis[a] = Vector3D.Normalize(*vectorBasis[a]);
+
+                if (scales[b] < DecomposeEpsilon)
                 {
-                    cc = 1U;
+                    uint cc = default;
+
+                    var fAbsX = double.Abs(vectorBasis[a]->X);
+                    var fAbsY = double.Abs(vectorBasis[a]->Y);
+                    var fAbsZ = double.Abs(vectorBasis[a]->Z);
+                    if ((fAbsY >= fAbsZ && fAbsX >= fAbsZ) || (fAbsX >= fAbsZ && fAbsY >= fAbsZ))
+                    {
+                        cc = 2U;
+                    }
+                    else if (fAbsX >= fAbsY)
+                    {
+                        cc = 1U;
+                    }
+
+                    *vectorBasis[b] = Vector3D.Cross(*vectorBasis[a], canonicalBasis[cc]);
                 }
 
-                *vectorBasis[b] = Vector3D.Cross(*vectorBasis[a], canonicalBasis[cc]);
+                *vectorBasis[b] = Vector3D.Normalize(*vectorBasis[b]);
+
+                if (scales[c] < DecomposeEpsilon)
+                {
+                    *vectorBasis[c] = Vector3D.Cross(*vectorBasis[a], *vectorBasis[b]);
+                }
+
+                *vectorBasis[c] = Vector3D.Normalize(*vectorBasis[c]);
+
+                var det = matTemp.GetDeterminant();
+
+                // use Kramer's rule to check for handedness of coordinate system
+                if (det < 0.0)
+                {
+                    // switch coordinate system by negating the scale and inverting the basis vector on the x-axis
+                    scales[a] = -scales[a];
+                    *vectorBasis[a] = -*vectorBasis[a];
+
+                    det = -det;
+                }
+
+                det--;
+                det *= det;
+
+                if (det > DecomposeEpsilon)
+                {
+                    // Non-SRT matrix encountered
+                    rotation = QuaternionD.Identity;
+                    result = false;
+                }
+                else
+                {
+                    // generate the quaternion from the matrix
+                    rotation = QuaternionD.CreateFromRotationMatrix(matTemp.AsM4x4D());
+                    result = true;
+                }
+
+                scale = Unsafe.ReadUnaligned<Vector3D>(scales);
             }
 
-            *vectorBasis[b] = Vector3D.Normalize(*vectorBasis[b]);
-
-            if (scales[c] < DecomposeEpsilon)
-            {
-                *vectorBasis[c] = Vector3D.Cross(*vectorBasis[a], *vectorBasis[b]);
-            }
-
-            *vectorBasis[c] = Vector3D.Normalize(*vectorBasis[c]);
-
-            var det = matTemp.GetDeterminant();
-
-            // use Kramer's rule to check for handedness of coordinate system
-            if (det < 0.0)
-            {
-                // switch coordinate system by negating the scale and inverting the basis vector on the x-axis
-                scales[a] = -scales[a];
-                *vectorBasis[a] = -*vectorBasis[a];
-
-                det = -det;
-            }
-
-            det--;
-            det *= det;
-
-            bool result;
-
-            if (det > DecomposeEpsilon)
-            {
-                // Non-SRT matrix encountered
-                rotation = QuaternionD.Identity;
-                result = false;
-            }
-            else
-            {
-                // generate the quaternion from the matrix
-                rotation = QuaternionD.CreateFromRotationMatrix(matTemp.AsM4x4D());
-                result = true;
-            }
-
-            scale = Unsafe.ReadUnaligned<Vector3D>(scales);
             return result;
         }
 
@@ -1471,7 +1473,7 @@ public partial struct Matrix4x4D
         [System.Diagnostics.CodeAnalysis.UnscopedRef]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0102:Make member readonly", Justification = "Checked")]
-        public ref Matrix4x4D AsM4x4D() => ref Unsafe.As<Impl, Matrix4x4D>(ref this);
+        public ref Matrix4x4D AsM4x4D() => ref unsafe (Unsafe.As<Impl, Matrix4x4D>(ref this));
 
         readonly bool IEquatable<Impl>.Equals(Impl other) => this.Equals(in other);
 

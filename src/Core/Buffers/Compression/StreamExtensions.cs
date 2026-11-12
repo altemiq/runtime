@@ -60,7 +60,12 @@ internal static class StreamExtensions
         public void Write(ReadOnlySpan<int> buffer)
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-            var bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer);
+            ReadOnlySpan<byte> bytes;
+            unsafe
+            {
+                bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer);
+            }
+
             stream.Write(bytes);
 #else
             var bytes = new byte[4];
@@ -98,7 +103,12 @@ internal static class StreamExtensions
         public int Read(Span<int> buffer, ByteOrder byteOrder)
         {
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
-            var bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer);
+            Span<byte> bytes;
+            unsafe
+            {
+                bytes = System.Runtime.InteropServices.MemoryMarshal.AsBytes(buffer);
+            }
+
             var read = stream.Read(bytes);
             var count = read / sizeof(int);
 

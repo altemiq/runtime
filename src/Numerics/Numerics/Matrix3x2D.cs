@@ -278,7 +278,11 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Matrix3x2D Create(Vector2D x, Vector2D y, Vector2D z)
     {
-        Unsafe.SkipInit(out Matrix3x2D result);
+        Matrix3x2D result;
+        unsafe
+        {
+            Unsafe.SkipInit(out result);
+        }
 
         result.X = x;
         result.Y = y;
@@ -374,7 +378,11 @@ public partial struct Matrix3x2D : IEquatable<Matrix3x2D>
     /// <returns><see langword="true" /> if <paramref name="matrix" /> was converted successfully; otherwise,  <see langword="false" />.</returns>
     public static bool Invert(Matrix3x2D matrix, out Matrix3x2D result)
     {
-        Unsafe.SkipInit(out result);
+        unsafe
+        {
+            Unsafe.SkipInit(out result);
+        }
+
         return Impl.Invert(in matrix.AsImpl(), out result.AsImpl());
     }
 

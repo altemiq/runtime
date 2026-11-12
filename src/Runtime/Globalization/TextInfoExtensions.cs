@@ -228,13 +228,11 @@ public static class TextInfoExtensions
 #else
     private static string AsString(Span<char> source)
     {
-#pragma warning disable S6640
         unsafe
         {
             var ptr = (char*)System.Runtime.CompilerServices.Unsafe.AsPointer(ref source.GetPinnableReference());
             return new(ptr, 0, source.Length);
         }
-#pragma warning restore S6640
     }
 #endif
 }
